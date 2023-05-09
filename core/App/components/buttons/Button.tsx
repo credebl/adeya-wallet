@@ -27,7 +27,6 @@ const Button: React.FC<ButtonProps & React.RefAttributes<HTMLInputElement | unde
       [ButtonType.Secondary]: { color: Buttons.secondary, text: Buttons.secondaryText },
       [ButtonType.Critical]: { color: Buttons.critical, text: Buttons.primaryText },
     }
-
     return (
       <TouchableOpacity
         onPress={onPress}
