@@ -1,0 +1,25 @@
+{
+  "name": "RNArgon2",
+  "version": "2.0.1",
+  "summary": "React Native Wrapper around Argon2",
+  "description": "React Native Wrapper around Argon2",
+  "license": "MIT",
+  "authors": "zanechua",
+  "homepage": "https://github.com/poowf/react-native-argon2#readme",
+  "source": {
+    "git": "https://github.com/poowf/react-native-argon2.git",
+    "tag": "v2.0.1"
+  },
+  "source_files": "ios/*.{h,m,swift}",
+  "platforms": {
+    "ios": "10.0"
+  },
+  "dependencies": {
+    "React-Core": [
+
+    ],
+    "CatCrypto": [
+
+    ]
+  }
+}
