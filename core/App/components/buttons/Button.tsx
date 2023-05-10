@@ -18,8 +18,11 @@ export interface ButtonProps {
   disabled?: boolean
 }
 
-const Button: React.FC<ButtonProps & React.RefAttributes<HTMLInputElement | undefined>> = forwardRef(
-  ({ title, buttonType, accessibilityLabel, testID, onPress, disabled = false, children }, ref: any) => {
+const Button: React.FC<ButtonProps & React.RefAttributes<TouchableOpacity>> = forwardRef(
+  (
+    { title, buttonType, accessibilityLabel, testID, onPress, disabled = false, children },
+    ref: React.LegacyRef<TouchableOpacity>
+  ) => {
     const accessible = accessibilityLabel && accessibilityLabel !== '' ? true : false
     const { Buttons, heavyOpacity } = useTheme()
     const buttonStyles = {
@@ -27,7 +30,6 @@ const Button: React.FC<ButtonProps & React.RefAttributes<HTMLInputElement | unde
       [ButtonType.Secondary]: { color: Buttons.secondary, text: Buttons.secondaryText },
       [ButtonType.Critical]: { color: Buttons.critical, text: Buttons.primaryText },
     }
-
     return (
       <TouchableOpacity
         onPress={onPress}
