@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "AdeyaWallet.app"
+               BuildableName = "Adeya.app"
                BlueprintName = "AdeyaWallet"
                ReferencedContainer = "container:AdeyaWallet.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "AdeyaWalletTests.xctest"
+               BuildableName = "Adeya.xctest"
                BlueprintName = "AdeyaWalletTests"
                ReferencedContainer = "container:AdeyaWallet.xcodeproj">
             </BuildableReference>
@@ -55,7 +55,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "AdeyaWallet.app"
+            BuildableName = "Adeya.app"
             BlueprintName = "AdeyaWallet"
             ReferencedContainer = "container:AdeyaWallet.xcodeproj">
          </BuildableReference>
@@ -72,7 +72,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "AdeyaWallet.app"
+            BuildableName = "Adeya.app"
             BlueprintName = "AdeyaWallet"
             ReferencedContainer = "container:AdeyaWallet.xcodeproj">
          </BuildableReference>

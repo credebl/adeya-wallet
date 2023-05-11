@@ -30,6 +30,7 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
     const { t } = useTranslation()
     const { TextTheme, PINInputTheme } = useTheme()
     const cellHeight = 48
+    const cellWidth = 40
 
     const style = StyleSheet.create({
       container: {
@@ -47,19 +48,22 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
         borderRadius: 5,
         paddingHorizontal: 12,
         paddingVertical: 4,
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         backgroundColor: PINInputTheme.cell.backgroundColor,
       },
       cell: {
+        width: cellWidth,
         height: cellHeight,
-        paddingHorizontal: 2,
-        backgroundColor: PINInputTheme.cell.backgroundColor,
+        borderWidth: 2,
+        borderRadius: 5,
+        borderColor: PINInputTheme.cell.borderColor,
       },
       cellText: {
         ...TextTheme.headingThree,
         color: PINInputTheme.cellText.color,
         textAlign: 'center',
-        lineHeight: cellHeight,
+        textAlignVertical: 'center',
+        lineHeight: 42,
       },
       hideIcon: {
         flexShrink: 1,
