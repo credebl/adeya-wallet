@@ -1,0 +1,53 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled]
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Linting
+    steps:
+      - name: Checkout aries-mobile-agent-react-native
+        uses: actions/checkout@v2
+
+      - name: Setup NodeJS
+        uses: ./.github/actions/setup-node
+
+      - name: Install dependencies
+        run: |
+          yarn install --immutable
+
+      - name: Bundle Legacy Core
+        run: |
+          cd packages/legacy/core && \
+          yarn run prepack
+
+      - name: Check style
+        run: |
+          yarn run prettier
+
+      - name: LINTing
+        run: |
+          yarn run lint
+  test:
+    runs-on: ubuntu-latest
+    name: Testing
+    steps:
+      - name: Checkout aries-mobile-agent-react-native
+        uses: actions/checkout@v2
+
+      - name: Setup NodeJS
+        uses: ./.github/actions/setup-node
+
+      - name: Install dependencies
+        run: |
+          yarn install --immutable
+
+      - name: Automated testing
+        run: |
+          yarn run test
