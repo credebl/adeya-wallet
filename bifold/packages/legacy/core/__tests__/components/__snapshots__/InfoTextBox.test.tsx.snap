@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InfoTextBox Component Renders correctly 1`] = `
+<View
+  style={
+    Object {
+      "backgroundColor": "#313132",
+      "borderColor": "#0099FF",
+      "borderRadius": 5,
+      "borderWidth": 1,
+      "padding": 10,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+      }
+    }
+  >
+    <View
+      style={
+        Object {
+          "alignSelf": "center",
+          "marginRight": 10,
+        }
+      }
+    >
+      <Icon
+        color="#0099FF"
+        name="info"
+        size={30}
+      />
+    </View>
+    <Text
+      style={
+        Object {
+          "alignSelf": "center",
+          "color": "#FFFFFF",
+          "flexShrink": 1,
+          "fontSize": 18,
+          "fontWeight": "bold",
+        }
+      }
+    >
+      Hello World
+    </Text>
+  </View>
+</View>
+`;
