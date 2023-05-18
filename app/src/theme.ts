@@ -665,10 +665,9 @@ export const Assets: IAssets = {
   svg: { ...BifoldImageAssets.svg, logo: Logo as React.FC },
   img: {
     logoSecondary: {
-      src: require('./assets/img/logo-large.png'),
-      aspectRatio: 1,
-      height: 120,
-      width: 120,
+      src: require('./assets/img/adeya-logo-secondary.png'),
+      height: hp('7%'),
+      width: wp('36%'),
       resizeMode: 'contain',
     },
     logoPrimary: {
