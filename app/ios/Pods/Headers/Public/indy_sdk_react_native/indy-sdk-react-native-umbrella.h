@@ -1,1 +1,0 @@
-../../../Target Support Files/indy-sdk-react-native/indy-sdk-react-native-umbrella.h

@@ -1,6 +1,0 @@
-module indy_sdk_react_native {
-  umbrella header "indy-sdk-react-native-umbrella.h"
-
-  export *
-  module * { export * }
-}
