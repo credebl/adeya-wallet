@@ -1,1 +1,0 @@
-../../../CatCrypto/Sources/ModuleMaps/SHA3/SimpleFIPS202.h

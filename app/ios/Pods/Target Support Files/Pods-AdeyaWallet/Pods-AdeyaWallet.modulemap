@@ -1,6 +1,0 @@
-module Pods_AdeyaWallet {
-  umbrella header "Pods-AdeyaWallet-umbrella.h"
-
-  export *
-  module * { export * }
-}

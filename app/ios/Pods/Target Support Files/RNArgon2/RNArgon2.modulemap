@@ -1,6 +1,0 @@
-module RNArgon2 {
-  umbrella header "RNArgon2-umbrella.h"
-
-  export *
-  module * { export * }
-}
