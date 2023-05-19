@@ -1,0 +1,6 @@
+module CatCrypto {
+  umbrella header "CatCrypto-umbrella.h"
+
+  export *
+  module * { export * }
+}
