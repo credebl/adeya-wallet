@@ -1,0 +1,1 @@
+../../../../../node_modules/indy-sdk-react-native/ios/IndySdk-Bridging-Header.h
