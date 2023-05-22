@@ -4,6 +4,7 @@
 - Npm: `8.5.5`
 
 1. React Native setup
+
 React Native environment setup instructions are documented [here](https://reactnative.dev/docs/environment-setup). Be sure to select the correct React Native version (currently 0.66.x) from the dropdown. This will guide you through setting up your development environment for your operating system and choice of iOS (only if you are using a Mac) or Android. 
 
 
