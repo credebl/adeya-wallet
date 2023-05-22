@@ -3,11 +3,11 @@
 - Node: `16.15.0`
 - Npm: `8.5.5`
 
-## React Native setup
+1. React Native setup
 React Native environment setup instructions are documented [here](https://reactnative.dev/docs/environment-setup). Be sure to select the correct React Native version (currently 0.66.x) from the dropdown. This will guide you through setting up your development environment for your operating system and choice of iOS (only if you are using a Mac) or Android. 
 
 
-1. Clone the ADEYA repo and install its dependencies:
+2. Clone the ADEYA repo and install its dependencies:
 
 ```sh
 # Clone GitHub repository:
@@ -17,14 +17,14 @@ git clone https://github.com/credebl/adeya-wallet.git
 cd adeya-wallet
 ```
 
-2. Then initialize the bifold submodule:
+3. Then initialize the bifold submodule:
 
 ```sh
 # Initialize the aries bifold submodule:
 git submodule update --init
 ```
 
-2. Installing npm modules
+4. Installing npm modules
 
 install the npm modules from the root of the repository:
 
@@ -33,7 +33,7 @@ npm install --force
 ```
 Note: the `--force` flag is needed here due to some peer dependencies' versions of bifold being exceeded in ADEYA Wallet
 
-3. Configuration
+5. Configuration
 In the `adeya-wallet/app/` directory add an `.env` file containing:
 
 ```
@@ -41,7 +41,7 @@ MEDIATOR_URL=https://public.mediator.indiciotech.io?c_i=eyJAdHlwZSI6ICJkaWQ6c292
 
 ```
 
-4. Running in an Android emulator
+6. Running in an Android emulator
 In the `adeya-wallet/app/` directory 
 ```
 # Open a new terminal session, and run command
@@ -50,7 +50,7 @@ npm run android
 
 ```
 
-5. Running in an ios device
+7. Running in an ios device
 In the `adeya-wallet/app/ios` directory 
 ```
 # Open a new terminal session, and run command
