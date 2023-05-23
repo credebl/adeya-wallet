@@ -1,10 +1,10 @@
-### Prerequisites
-<font size="4" fontWight="bold">1. Compatible Node Version </font>
+#### Prerequisites
+## 1. Compatible Node Version 
 
 - Node: `16.15.0`
 - Npm: `8.5.5`
 
-<font size="2">2. React Native setup</font>
+## 2. React Native setup
 
 Please follow the instruction from the following document to setup React Native environment on your machine.<br /> 
 [React Native Setup](https://reactnative.dev/docs/environment-setup)
@@ -12,9 +12,9 @@ Please follow the instruction from the following document to setup React Native 
 Be sure to select the correct React Native version (currently 0.66.x) from the dropdown. This will guide you through setting up your development environment for your operating system and choice of iOS (only if you are using a Mac) or Android.
 
 
-### Setting up the repo 
+#### Setting up the repo 
 
-<font size="2">1. Clone the ADEYA repo and install its dependencies:</font>
+## 1. Clone the ADEYA repo and install its dependencies:
 
 ```sh
 # Clone GitHub repository:
@@ -24,14 +24,14 @@ git clone https://github.com/credebl/adeya-wallet.git
 cd adeya-wallet
 ```
 
-<font size="2">2. Then initialize the bifold submodule:</font>
+## 2. Then initialize the bifold submodule:
 
 ```sh
 # Initialize the aries bifold submodule:
 git submodule update --init
 ```
 
-<font size="2">3. Installing npm modules</font>
+## 3. Installing npm modules
 
 install the npm modules from the root of the repository:
 
@@ -40,7 +40,7 @@ npm install --force
 ```
 Note: the `--force` flag is needed here due to some peer dependencies' versions of bifold being exceeded in ADEYA Wallet
 
-<font size="2">4. Configuration</font>
+## 4. Configuration
 In the `adeya-wallet/app/` directory add an `.env` file containing:
 
 ```
@@ -48,9 +48,9 @@ MEDIATOR_URL=https://public.mediator.indiciotech.io?c_i=eyJAdHlwZSI6ICJkaWQ6c292
 
 ```
 
-### Running your application
+#### Running your application
 
-### Running in an Android emulator
+## Running in an Android emulator
 In the `adeya-wallet/app/` directory 
 ```
 # Open a new terminal session, and run command
@@ -59,7 +59,7 @@ npm run android
 
 ```
 
-### Running in an ios device
+## Running in an ios device
 In the `adeya-wallet/app/ios` directory 
 ```
 # Open a new terminal session, and run command
