@@ -1,5 +1,5 @@
-*** Prerequisites ***
-<font size="2">1. Compatible Node Version </font>
+### Prerequisites
+<font size="2" fontWight="bold">1. Compatible Node Version </font>
 
 - Node: `16.15.0`
 - Npm: `8.5.5`
@@ -12,7 +12,7 @@ Please follow the instruction from the following document to setup React Native 
 Be sure to select the correct React Native version (currently 0.66.x) from the dropdown. This will guide you through setting up your development environment for your operating system and choice of iOS (only if you are using a Mac) or Android.
 
 
-*** Setting up the repo ***
+### Setting up the repo 
 
 <font size="2">1. Clone the ADEYA repo and install its dependencies:</font>
 
@@ -31,7 +31,7 @@ cd adeya-wallet
 git submodule update --init
 ```
 
-<font>3. Installing npm modules</font>
+<font size="2">3. Installing npm modules</font>
 
 install the npm modules from the root of the repository:
 
@@ -48,7 +48,7 @@ MEDIATOR_URL=https://public.mediator.indiciotech.io?c_i=eyJAdHlwZSI6ICJkaWQ6c292
 
 ```
 
-*** Running your application ***
+### Running your application
 
 ### Running in an Android emulator
 In the `adeya-wallet/app/` directory 
