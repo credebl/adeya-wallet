@@ -1,5 +1,5 @@
 ### Prerequisites
-<font size="2" fontWight="bold">1. Compatible Node Version </font>
+<font size="4" fontWight="bold">1. Compatible Node Version </font>
 
 - Node: `16.15.0`
 - Npm: `8.5.5`
