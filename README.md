@@ -6,7 +6,7 @@
 
 <font size="2">2. React Native setup</font>
 
-Please follow the instruction from the following document to setup React Native environment on your machine.
+Please follow the instruction from the following document to setup React Native environment on your machine.<br /> 
 [React Native Setup](https://reactnative.dev/docs/environment-setup)
 
 Be sure to select the correct React Native version (currently 0.66.x) from the dropdown. This will guide you through setting up your development environment for your operating system and choice of iOS (only if you are using a Mac) or Android.
