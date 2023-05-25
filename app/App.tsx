@@ -42,20 +42,20 @@ const App = () => {
   const { navigate } = useNavigation()
 
   const settings = [
-    {
-      header: {
-        title: t('Settings.Help'),
-        icon: 'help',
-      },
-      data: [
-        {
-          title: t('Settings.HelpUsingBCWallet'),
-          accessibilityLabeL: t('Settings.HelpUsingBCWallet'),
-          testID: testIdWithKey('HelpUsingBCWallet'),
-          onPress: () => Linking.openURL(''),
-        },
-      ],
-    },
+    // {
+    //   header: {
+    //     title: t('Settings.Help'),
+    //     icon: 'help',
+    //   },
+    //   data: [
+    //     {
+    //       title: t('Settings.HelpUsingBCWallet'),
+    //       accessibilityLabeL: t('Settings.HelpUsingBCWallet'),
+    //       testID: testIdWithKey('HelpUsingBCWallet'),
+    //       onPress: () => Linking.openURL(''),
+    //     },
+    //   ],
+    // },
     {
       header: {
         title: t('Settings.MoreInformation'),
