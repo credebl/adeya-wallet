@@ -17,12 +17,6 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-// const appleTermsUrl = 'https://www.apple.com/legal/internet-services/itunes/us/terms.html'
-// const bcWalletHomeUrl = 'https://www2.gov.bc.ca/gov/content/governments/government-id/bc-wallet'
-// const digitalTrustHomeUrl = 'https://digital.gov.bc.ca/digital-trust/'
-// const bcWebPrivacyUrl = 'https://www2.gov.bc.ca/gov/content/home/privacy'
-// const digitalWalletPrivacyUrl = 'https://www2.gov.bc.ca/gov/content/governments/government-id/bc-wallet/privacy'
-
 const Terms: React.FC = () => {
   const [store, dispatch] = useStore()
   const [checked, setChecked] = useState(false)
@@ -83,16 +77,6 @@ const Terms: React.FC = () => {
 
     navigation.navigate(Screens.Onboarding)
   }, [])
-
-  // const openLink = async (url: string) => {
-  //   // Only `https://` is allowed. Update manifest as needed.
-  //   const supported = await Linking.canOpenURL(url)
-
-  //   if (supported) {
-  //     // Will open in device browser.
-  //     await Linking.openURL(url)
-  //   }
-  // }
 
   return (
     <SafeAreaView edges={['left', 'right', 'bottom']}>
