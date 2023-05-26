@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import { useTheme, useStore, Button, ButtonType, testIdWithKey } from 'aries-bifold'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -65,7 +66,7 @@ const IASEnvironmentScreen: React.FC<IASEnvironmentProps> = ({ shouldDismissModa
                 unfillColor="#FFFFFFFF"
                 size={36}
                 innerIconStyle={{ borderColor: ColorPallet.brand.primary, borderWidth: 2 }}
-                ImageComponent={() => <Icon name="circle" size={18} color={ColorPallet.brand.primary}></Icon>}
+                ImageComponent={() => <Icon name="circle" size={18} color={ColorPallet.brand.primary} />}
                 onPress={() => {
                   handleEnvironmentChange(environment)
                 }}
@@ -78,7 +79,7 @@ const IASEnvironmentScreen: React.FC<IASEnvironmentProps> = ({ shouldDismissModa
         }}
         ItemSeparatorComponent={() => (
           <View style={{ backgroundColor: SettingsTheme.groupBackground }}>
-            <View style={[styles.itemSeparator]}></View>
+            <View style={[styles.itemSeparator]} />
           </View>
         )}
       />

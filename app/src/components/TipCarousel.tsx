@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useTheme } from 'aries-bifold'
 import React, { memo, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'

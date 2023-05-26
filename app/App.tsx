@@ -20,7 +20,7 @@ import {
 } from 'aries-bifold'
 import React, { useEffect, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Linking, StatusBar } from 'react-native'
+import { StatusBar } from 'react-native'
 import SplashScreen from 'react-native-splash-screen'
 import Toast from 'react-native-toast-message'
 
@@ -101,7 +101,7 @@ const App = () => {
                 />
                 <NetInfo />
                 <ErrorModal />
-                <TourProvider steps={homeTourSteps} overlayColor={'black'} overlayOpacity={0.6}>
+                <TourProvider steps={homeTourSteps} overlayColor="black" overlayOpacity={0.6}>
                   <RootStack />
                 </TourProvider>
                 <Toast topOffset={15} config={toastConfig} />

@@ -5,6 +5,7 @@ import { Text, View, DeviceEventEmitter } from 'react-native'
 
 import EmptyWallet from '../assets/img/emptyWallet.svg'
 import { BCWalletEventTypes } from '../events/eventTypes'
+
 export interface EmptyListProps {
   message?: string
 }
@@ -40,10 +41,14 @@ const EmptyList: React.FC<EmptyListProps> = ({ message }) => {
           buttonType={ButtonType.Primary}
           onPress={addCredentialPress}
           disabled={addCredentialPressed}
-        ></Button>
+        />
       </View>
     </View>
   )
+}
+
+EmptyList.defaultProps = {
+  message: '',
 }
 
 export default EmptyList

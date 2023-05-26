@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { useStore, Button, ButtonType, ITheme, createStyles, GenericFn, testIdWithKey } from 'aries-bifold'
 import React from 'react'
 import { Text, View } from 'react-native'
@@ -12,7 +13,7 @@ const EndPage = (onTutorialCompleted: GenericFn, theme: ITheme['OnboardingTheme'
   const [store] = useStore()
   const defaultStyle = createStyles(theme)
   const imageDisplayOptions = {
-    fill: theme.imageDisplayOptions.fill,
+    fill: theme?.imageDisplayOptions?.fill,
     height: 180,
     width: 180,
   }
@@ -40,8 +41,8 @@ const EndPage = (onTutorialCompleted: GenericFn, theme: ITheme['OnboardingTheme'
           }}
         >
           <Button
-            title={'Get Started'}
-            accessibilityLabel={'Get Started'}
+            title="Get Started"
+            accessibilityLabel="Get Started"
             testID={testIdWithKey('GetStarted')}
             onPress={onTutorialCompleted}
             buttonType={ButtonType.Primary}
@@ -64,8 +65,8 @@ const StartPages = (theme: ITheme) => {
         It is highly secure, and helps protect your privacy online.
       </Text>
       <Text style={[defaultStyle.bodyText, { marginTop: 25 }]}>
-        ADEYA Wallet is currently in its early stages and the technology is being explored. Most people will not have a use
-        for ADEYA Wallet yet, because very few digital credentials are available.
+        ADEYA Wallet is currently in its early stages and the technology is being explored. Most people will not have a
+        use for ADEYA Wallet yet, because very few digital credentials are available.
       </Text>
     </ScrollView>
   )

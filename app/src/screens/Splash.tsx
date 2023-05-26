@@ -143,8 +143,9 @@ const Splash: React.FC = () => {
         return JSON.parse(data)
       }
     } catch {
-      return
+      return null
     }
+    return null
   }
 
   const loadAuthAttempts = async (): Promise<LoginAttemptState | undefined> => {
@@ -157,6 +158,7 @@ const Splash: React.FC = () => {
       })
       return attempts
     }
+    return undefined
   }
 
   const loadPersonNotificationDismissed = async (): Promise<void> => {
@@ -235,7 +237,8 @@ const Splash: React.FC = () => {
               })
             )
             return
-          } else if (onboardingComplete(dataAsJSON) && attemptData?.lockoutDate) {
+          }
+          if (onboardingComplete(dataAsJSON) && attemptData?.lockoutDate) {
             // return to lockout screen if lockout date is set
             navigation.dispatch(
               CommonActions.reset({

@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 /* eslint-disable import/no-extraneous-dependencies */
 import { storiesOf } from '@storybook/react-native'
 import { components, ThemeProvider } from 'aries-bifold'
@@ -5,11 +6,13 @@ import React from 'react'
 import { SafeAreaView, ScrollView, Text, View } from 'react-native'
 
 import { defaultTheme as theme } from '../../../src/theme'
+
 const Button = components.buttons.Button.default
+// eslint-disable-next-line prefer-destructuring
 const ButtonType = components.buttons.Button.ButtonType
 
 storiesOf('Button', module)
-  //.addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
+  // .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .add('All', () => {
     const items = []
     for (const buttonType of [ButtonType.Primary, ButtonType.Secondary, ButtonType.Critical]) {

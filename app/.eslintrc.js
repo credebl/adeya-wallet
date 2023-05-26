@@ -7,6 +7,7 @@ module.exports = {
     sourceType: 'module', // Allows for the use of imports
   },
   extends: [
+    'airbnb',
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
@@ -52,6 +53,26 @@ module.exports = {
         devDependencies: false,
       },
     ],
+    'react/function-component-definition': [
+      2,
+      {
+        namedComponents: 'arrow-function',
+        unnamedComponents: 'arrow-function',
+      },
+    ],
+    'import/extensions': 'off',
+    'no-shadow': 'off',
+    'no-use-before-define': 'off',
+    'react/jsx-filename-extension': 'off',
+    'global-require': 0,
+    'react/jsx-one-expression-per-line': 'off',
+    'no-plusplus': 'off',
+    'no-param-reassign': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    'function-paren-newline': 'off',
+    'import/prefer-default-export': 'off',
+    'no-restricted-syntax': 'off',
+    'react/destructuring-assignment': 'off',
   },
   globals: {
     require: true,

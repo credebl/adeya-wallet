@@ -9,7 +9,7 @@ const plugins = [
   ],
 ]
 
-if (process.env['ENV'] === 'prod') {
+if (process.env.ENV === 'prod') {
   plugins.push('transform-remove-console')
 }
 

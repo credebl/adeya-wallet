@@ -21,13 +21,13 @@ const AddCredentialButton: React.FC = () => {
   })
   return (
     <TouchableOpacity
-      accessible={true}
+      accessible
       accessibilityLabel={t('Credentials.AddCredential')}
       testID={testIdWithKey('AddCredential')}
       style={styles.button}
       onPress={activateSlider}
     >
-      <Icon name="plus-circle-outline" size={24} color={ColorPallet.grayscale.white}></Icon>
+      <Icon name="plus-circle-outline" size={24} color={ColorPallet.grayscale.white} />
     </TouchableOpacity>
   )
 }

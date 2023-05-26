@@ -20,12 +20,12 @@ const WebDisplay: React.FC<WebDisplayProps> = ({ destinationUrl, exitUrl, visibl
   })
 
   return (
-    <Modal animationType="slide" transparent={true} visible={visible}>
+    <Modal animationType="slide" transparent visible={visible}>
       <WebView
         style={styles.container}
         source={{ uri: destinationUrl }}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
+        javaScriptEnabled
+        domStorageEnabled
         onNavigationStateChange={(nav: WebViewNavigation) => {
           if (exitUrl && nav.url.includes(exitUrl)) {
             onClose()
