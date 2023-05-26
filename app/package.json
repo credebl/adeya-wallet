@@ -27,8 +27,7 @@
     "postinstall": "run-s postinstall:copy-patches postinstall:patch",
     "typecheck": "tsc --noEmit",
     "storybook": "start-storybook -p 7007",
-    "build-storybook": "build-storybook",
-    "prepare": "husky install"
+    "build-storybook": "build-storybook"
   },
   "repository": {
     "type": "git",
