@@ -30,8 +30,8 @@ export const homeTourSteps: TourStep[] = [
         >
           <Image
             source={require('../../assets/img/mobile-phone-scanning-laptop.jpg')}
-            resizeMode={'contain'}
-            resizeMethod={'resize'}
+            resizeMode="contain"
+            resizeMethod="resize"
             style={{
               alignSelf: 'center',
               width: imageWidth,
@@ -102,8 +102,8 @@ export const homeTourSteps: TourStep[] = [
         >
           <Image
             source={require('../../assets/img/list-of-credentials.jpg')}
-            resizeMode={'contain'}
-            resizeMethod={'resize'}
+            resizeMode="contain"
+            resizeMethod="resize"
             style={{
               alignSelf: 'center',
               width: imageWidth,

@@ -102,8 +102,6 @@ const Splash: React.FC = () => {
     setProgressPercent(percent)
   }
 
-  var abc:any = 'abx'
-
   const styles = StyleSheet.create({
     screenContainer: {
       backgroundColor: ColorPallet.grayscale.white,

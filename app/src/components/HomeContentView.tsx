@@ -121,4 +121,8 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
   )
 }
 
+HomeContentView.defaultProps = {
+  children: null,
+}
+
 export default HomeContentView

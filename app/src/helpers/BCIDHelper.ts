@@ -57,6 +57,7 @@ export const getInvitationCredentialDate = (
   credentials: CredentialExchangeRecord[],
   canUseLSBCCredential: boolean
 ): Date | undefined => {
+  // eslint-disable-next-line array-callback-return, consistent-return
   const invitationCredential = credentials.find((c) => {
     const credDef = c.metadata.data[CredentialMetadataKeys.IndyCredential].credentialDefinitionId as string
     if (
@@ -164,6 +165,7 @@ export const cleanupAfterServiceCardAuthentication = (status: AuthenticationResu
   if (status === AuthenticationResultType.Cancel) {
     return false
   }
+  return undefined
 }
 
 export const authenticateWithServiceCard = async (
@@ -203,6 +205,7 @@ export const authenticateWithServiceCard = async (
         result.type === AuthenticationResultType.Dismiss &&
         typeof (result as unknown as RedirectResult).url === 'undefined'
       ) {
+        // eslint-disable-next-line no-unused-expressions
         callback && callback(agentDetails.connectionId)
       }
 
@@ -213,6 +216,7 @@ export const authenticateWithServiceCard = async (
         (result as unknown as RedirectResult).url.includes(did) &&
         (result as unknown as RedirectResult).url.includes('success')
       ) {
+        // eslint-disable-next-line no-unused-expressions
         callback && callback(agentDetails.connectionId)
       }
 
@@ -233,7 +237,7 @@ export const authenticateWithServiceCard = async (
 
     cleanupAfterServiceCardAuthentication(AuthenticationResultType.Success)
   } catch (error: unknown) {
-    const code = (error as BifoldError).code
+    const { code } = error as BifoldError
     cleanupAfterServiceCardAuthentication(
       code === ErrorCodes.CanceledByUser ? AuthenticationResultType.Cancel : AuthenticationResultType.Fail
     )

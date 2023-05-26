@@ -51,6 +51,7 @@ const PersonCredential: React.FC = () => {
 
   const acceptPersonCredentialOffer = useCallback(() => {
     setWorkflowInProgress(true)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     startFlow(agent!, store, setWorkflowInProgress, t, (connectionId) => setWorkflowConnectionId(connectionId))
   }, [])
 
@@ -93,7 +94,7 @@ const PersonCredential: React.FC = () => {
             onPress={dismissPersonCredentialOffer}
             disabled={workflowInProgress}
             buttonType={ButtonType.Secondary}
-          ></Button>
+          />
         </View>
       </View>
     )
@@ -113,7 +114,7 @@ const PersonCredential: React.FC = () => {
                   <CredentialCard credDefId={item.credDefId} schemaId={item.schemaId} displayItems={item.attributes} />
                 </View>
                 <Text style={TextTheme.normal}>
-                  {t('PersonCredential.Description') + ' '}
+                  {`${t('PersonCredential.Description')} `}
                   <TouchableOpacity onPress={getBCServicesCardApp}>
                     <Text style={{ ...TextTheme.normal, color: ColorPallet.brand.link }}>
                       {t('PersonCredential.LinkDescription')}

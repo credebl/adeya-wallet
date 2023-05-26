@@ -30,8 +30,8 @@ export default class Welcome extends Component {
           many stories as you want. In other words a story is like a visual test case.
         </Text>
         <Text style={this.styles.content}>
-          We have added some stories inside the "storybook/stories" directory for examples. Try editing the
-          "storybook/stories/Welcome.js" file to edit this message.
+          {`We have added some stories inside the "storybook/stories" directory for examples. Try editing the
+          "storybook/stories/Welcome.js" file to edit this message.`}
         </Text>
       </View>
     )

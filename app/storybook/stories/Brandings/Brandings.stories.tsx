@@ -1,3 +1,6 @@
+/* eslint-disable react/jsx-no-constructed-context-values */
+/* eslint-disable object-shorthand */
+/* eslint-disable react/require-default-props */
 /* eslint-disable import/no-extraneous-dependencies */
 import {
   CredentialExchangeRecord,
@@ -50,6 +53,7 @@ const CredentialWrapper: FC<CredentialProps> = ({
 }) => {
   const indyCredential = { credentialRecordType: 'indy', credentialRecordId }
   const props: CredentialExchangeRecordProps = {
+    // eslint-disable-next-line object-shorthand
     connectionId: connectionId,
     threadId: '',
     state: CredentialState.CredentialIssued,
@@ -65,6 +69,7 @@ const CredentialWrapper: FC<CredentialProps> = ({
   }
   const credential: CredentialExchangeRecord = new CredentialExchangeRecord(props)
   credential.metadata.set(CredentialMetadataKeys.IndyCredential, {
+    // eslint-disable-next-line object-shorthand
     credentialDefinitionId: credentialDefinitionId,
     schemaId: '',
   })
@@ -118,10 +123,9 @@ const Credentials: FC<CredentialsProps> = ({ items }) => {
     changeFlag()
   }, [lang])
   return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
-      {isLoaded && (
-        <FlatList data={items} scrollEnabled={true} renderItem={renderItem} ItemSeparatorComponent={ItemDivider} />
-      )}
+      {isLoaded && <FlatList data={items} scrollEnabled renderItem={renderItem} ItemSeparatorComponent={ItemDivider} />}
     </>
   )
 }
@@ -139,7 +143,7 @@ storiesOf('Brandings', module)
     const state = contexts.store.defaultState
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch: Dispatch<any> = () => {
-      return
+      return 0
     }
     const list: ListItem[] = [
       {
@@ -228,7 +232,7 @@ storiesOf('Brandings', module)
     const state = contexts.store.defaultState
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch: Dispatch<any> = () => {
-      return
+      return null
     }
     const list: ListItem[] = [
       {
@@ -255,7 +259,7 @@ storiesOf('Brandings', module)
     const state = contexts.store.defaultState
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dispatch: Dispatch<any> = () => {
-      return
+      return null
     }
     const list: ListItem[] = [
       {

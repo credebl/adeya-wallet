@@ -107,5 +107,6 @@ const bcReducer = (state: BCState, action: ReducerAction<BCDispatchAction>): BCS
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const reducer = mergeReducers(bifoldReducer, bcReducer)

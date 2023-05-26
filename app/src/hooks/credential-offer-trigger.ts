@@ -18,6 +18,7 @@ export const useCredentialOfferTrigger = (workflowConnectionId?: string): void =
 
   useEffect(() => {
     for (const credential of offers) {
+      // eslint-disable-next-line eqeqeq
       if (credential.state == CredentialState.OfferReceived && credential.connectionId === workflowConnectionId) {
         goToCredentialOffer(credential.id)
       }

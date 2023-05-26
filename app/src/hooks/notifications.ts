@@ -39,9 +39,11 @@ export const useNotifications = (): Notifications => {
   const revoked = useCredentialByState(CredentialState.Done).filter((cred: CredentialRecord) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const metadata = cred!.metadata.get(CredentialMetadata.customMetadata) as customMetadata
+    // eslint-disable-next-line eqeqeq
     if (cred?.revocationNotification && metadata?.revoked_seen == undefined) {
       return cred
     }
+    return null
   })
 
   const credentials = [

@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable react/require-default-props */
 import { useTheme, useStore, testIdWithKey, DispatchAction } from 'aries-bifold'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -110,7 +112,7 @@ const Settings: React.FC = () => {
           accessibilityLabel: t('Settings.Developer'),
           testID: testIdWithKey('Developer'),
           onPress: () => {
-            return
+            return 0
           },
         },
       ]
@@ -133,7 +135,7 @@ const Settings: React.FC = () => {
   }> = ({ title, value, accessibilityLabel, testID, onPress, children }) => (
     <View style={[styles.section]}>
       <TouchableOpacity
-        accessible={true}
+        accessible
         accessibilityLabel={accessibilityLabel}
         testID={testID}
         style={styles.sectionRow}
@@ -176,10 +178,10 @@ const Settings: React.FC = () => {
     <SafeAreaView edges={['bottom', 'left', 'right']}>
       <Modal
         visible={environmentModalVisible}
-        transparent={true}
-        animationType={'slide'}
+        transparent
+        animationType="slide"
         onRequestClose={() => {
-          return
+          return 0
         }}
       >
         <IASEnvironment shouldDismissModal={shouldDismissModal} />
@@ -196,7 +198,7 @@ const Settings: React.FC = () => {
             value={devMode}
           />
         </SectionRow>
-        <View style={[styles.sectionSeparator]}></View>
+        <View style={[styles.sectionSeparator]} />
         <SectionList
           renderItem={({ item: { title, value, onPress } }) => (
             <SectionRow
@@ -214,13 +216,13 @@ const Settings: React.FC = () => {
           }) => <SectionHeader icon={icon} title={title} />}
           ItemSeparatorComponent={() => (
             <View style={{ backgroundColor: SettingsTheme.groupBackground }}>
-              <View style={[styles.itemSeparator]}></View>
+              <View style={[styles.itemSeparator]} />
             </View>
           )}
-          SectionSeparatorComponent={() => <View style={[styles.sectionSeparator]}></View>}
+          SectionSeparatorComponent={() => <View style={[styles.sectionSeparator]} />}
           sections={settingsSections}
           stickySectionHeadersEnabled={false}
-        ></SectionList>
+        />
         <SectionRow title={t('Verifier.UseVerifierCapability')}>
           <Switch
             accessibilityLabel={t('Verifier.Toggle')}
