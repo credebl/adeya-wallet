@@ -7,6 +7,7 @@ module.exports = {
     sourceType: 'module', // Allows for the use of imports
   },
   extends: [
+    'airbnb',
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
