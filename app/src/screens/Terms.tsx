@@ -67,9 +67,9 @@ const Terms: React.FC = () => {
   }, [])
 
   const onBackPressed = useCallback(() => {
-    //TODO:(jl) goBack() does not unwind the navigation stack but rather goes
-    //back to the splash screen. Needs fixing before the following code will
-    //work as expected.
+    // TODO:(jl) goBack() does not unwind the navigation stack but rather goes
+    // back to the splash screen. Needs fixing before the following code will
+    // work as expected.
 
     // if (nav.canGoBack()) {
     //   nav.goBack()

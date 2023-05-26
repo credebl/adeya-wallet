@@ -99,22 +99,22 @@ const AddCredentialSlider: React.FC = () => {
   }, [])
 
   return (
-    <Modal animationType="slide" transparent={true} visible={addCredentialPressed} onRequestClose={deactivateSlider}>
+    <Modal animationType="slide" transparent visible={addCredentialPressed} onRequestClose={deactivateSlider}>
       <TouchableOpacity style={styles.outsideListener} onPress={deactivateSlider} />
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <TouchableOpacity onPress={deactivateSlider}>
-            <Icon name="window-close" size={35} style={styles.drawerRowItem}></Icon>
+            <Icon name="window-close" size={35} style={styles.drawerRowItem} />
           </TouchableOpacity>
           <Text style={styles.drawerTitleText}>Choose</Text>
           {showGetFoundationCredential && (
             <TouchableOpacity style={styles.drawerRow} onPress={goToPersonCredentialScreen}>
-              <Icon name="credit-card" size={30} style={styles.drawerRowItem}></Icon>
+              <Icon name="credit-card" size={30} style={styles.drawerRowItem} />
               <Text style={{ ...styles.drawerRowItem, marginLeft: 5 }}>Get your Person credential</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity style={styles.drawerRow} onPress={goToScanScreen}>
-            <Icon name="qrcode" size={30} style={styles.drawerRowItem}></Icon>
+            <Icon name="qrcode" size={30} style={styles.drawerRowItem} />
             <Text style={{ ...styles.drawerRowItem, marginLeft: 5 }}>Scan a QR code</Text>
           </TouchableOpacity>
         </View>
