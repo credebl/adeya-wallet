@@ -155,5 +155,5 @@
       "prettier --write",
       "eslint --fix"
     ]
-}
+  }
 }

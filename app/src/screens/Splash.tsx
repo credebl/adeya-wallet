@@ -102,7 +102,7 @@ const Splash: React.FC = () => {
     setProgressPercent(percent)
   }
 
-  var abc:any = 'abc'
+  var abc:any = 'abs'
 
   const styles = StyleSheet.create({
     screenContainer: {
