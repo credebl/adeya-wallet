@@ -8,6 +8,7 @@
     "node": ">= 16.10.0",
     "npm": ">= 8.0.0"
   },
+  
   "scripts": {
     "style-check": "npm run prettier -- --check",
     "style-format": "npm run prettier -- --write",
@@ -108,6 +109,7 @@
     "@babel/core": "7.15.5",
     "@babel/runtime": "7.15.4",
     "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^17.6.6",
     "@react-native-community/eslint-config": "^2.0.0",
     "@storybook/addon-actions": "^5.3.21",
     "@storybook/addon-knobs": "^5.3.21",

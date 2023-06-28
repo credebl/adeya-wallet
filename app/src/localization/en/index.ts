@@ -32,7 +32,9 @@ const translation = {
     "EnabledText3": "Anyone who can access your phone with biometrics can access your ADEYA Wallet.",
     "EnabledText3Bold": "Ensure only you have access to your wallet.",
     "Warning": "Ensure only you have access to your wallet.",
-    "UseToUnlock": "Use biometrics to unlock wallet?"
+    "UseToUnlock": "Use biometrics to unlock wallet?",
+    "NotEnabledText1":"Use your phone's biometrics to log in rather than your wallet's PIN.",
+    "NotEnabledText2":"Because of this, your ADEYA wallet may be accessed using any fingerprint or face data you upload to this phone. Make sure you are the only one who can access your wallet.",
   },
   "Credentials": {
     "AddCredential": "Add Credential",
