@@ -59,7 +59,7 @@ const GrayscaleColors: IGrayscaleColors = {
 }
 
 const BrandColors: IBrandColors = {
-  primary: '#2289f7',
+  primary: '#1F4EAD',
   primaryDisabled: `rgba(31, 78, 173, ${lightOpacity})`,
   secondary: '#FFFFFFFF',
   secondaryDisabled: `rgba(31, 78, 173, ${lightOpacity})`,
@@ -675,7 +675,7 @@ export const Assets: IAssets = {
       resizeMode: 'contain',
     },
     logoPrimary: {
-      src: require('./assets/img/adeya-logo-secondary.png'),
+      src: require('./assets/img/adeyaWhiteLogo.png'),
       height: hp('7%'),
       width: wp('36%'),
       resizeMode: 'contain',
