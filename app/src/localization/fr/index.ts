@@ -33,6 +33,8 @@ const translation = {
     "EnabledText3Bold": "Ensure only you have access to your wallet. (FR)",
     "Warning": "Ensure only you have access to your wallet. (FR)",
     "UseToUnlock": "Use biometrics to unlock wallet? (FR)",
+    "NotEnabledText1":"Utilisez les données biométriques de votre téléphone pour vous connecter plutôt que le code PIN de votre portefeuille.",
+    "NotEnabledText2":"Pour cette raison, votre portefeuille ADEYA peut être consulté à l'aide de n'importe quelle empreinte digitale ou données faciales que vous téléchargez sur ce téléphone. Assurez-vous que vous êtes le seul à pouvoir accéder à votre portefeuille.",
   },
   "Credentials": {
     "AddCredential": "Add Credential (FR)",

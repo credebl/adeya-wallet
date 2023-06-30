@@ -1,45 +1,35 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useStore, Button, ButtonType, ITheme, createStyles, GenericFn, testIdWithKey } from 'aries-bifold'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, Image, ImageBackground } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { SvgProps } from 'react-native-svg'
 
-import CredentialList from '../assets/img/credential-list.svg'
-import ScanShare from '../assets/img/scan-share.svg'
-import SecureImage from '../assets/img/secure-image.svg'
+import onBoardingOrganizeease from '../assets/img/onBoardingOrganizeease.svg'
+import onBoardingdatasafe from '../assets/img/onBoardingdatasafe.svg'
+import { styles } from '../onBordingstyle'
 
 const EndPage = (onTutorialCompleted: GenericFn, theme: ITheme['OnboardingTheme']) => {
   const [store] = useStore()
+
   const defaultStyle = createStyles(theme)
-  const imageDisplayOptions = {
-    fill: theme?.imageDisplayOptions?.fill,
-    height: 180,
-    width: 180,
-  }
+
   return (
     <>
-      <ScrollView style={{ padding: 20 }}>
-        <View style={{ alignItems: 'center' }}>
-          <SecureImage {...imageDisplayOptions} />
-        </View>
-        <View style={{ marginBottom: 20 }}>
-          <Text style={[defaultStyle.headerText, { fontSize: 18 }]}>Privacy and confidentiality</Text>
-          <Text style={[defaultStyle.bodyText, { marginTop: 25 }]}>
-            You approve every use of information from your ADEYA Wallet. You also only share what is needed for a
-            situation.
-            {'\n\n'}
-            The Government of British Columbia is not told when you use your digital credentials.
+      <ScrollView style={styles.container} contentContainerStyle={{ justifyContent: 'center' }}>
+        <Text style={[defaultStyle.headerText, styles.headerText]}>Share Securely</Text>
+        <ImageBackground source={require('../assets/img/sharesecure.png')} style={styles.backgroundImage}>
+          <Image source={require('../assets/img/qr-code.png')} style={styles.qrImage} />
+        </ImageBackground>
+        <View style={styles.descriptiionText}>
+          <Text style={[styles.bodyText]}>
+            Take complete control over your data. Securely connect with people and organizations to share necessary
+            information without compromising your privacy.
           </Text>
         </View>
       </ScrollView>
       {!(store.onboarding.didCompleteTutorial && store.authentication.didAuthenticate) && (
-        <View
-          style={{
-            marginTop: 'auto',
-            margin: 20,
-          }}
-        >
+        <View style={styles.startedButtonconatiner}>
           <Button
             title="Get Started"
             accessibilityLabel="Get Started"
@@ -56,18 +46,18 @@ const EndPage = (onTutorialCompleted: GenericFn, theme: ITheme['OnboardingTheme'
 const StartPages = (theme: ITheme) => {
   const defaultStyle = createStyles(theme)
   return (
-    <ScrollView style={{ padding: 20, paddingTop: 30 }}>
-      <Text style={[defaultStyle.headerText]}>Welcome</Text>
-      <Text style={[defaultStyle.bodyText, { marginTop: 25 }]}>
-        ADEYA Wallet lets you receive, store and use digital credentials.
-      </Text>
-      <Text style={[defaultStyle.bodyText, { marginTop: 25 }]}>
-        It is highly secure, and helps protect your privacy online.
-      </Text>
-      <Text style={[defaultStyle.bodyText, { marginTop: 25 }]}>
-        ADEYA Wallet is currently in its early stages and the technology is being explored. Most people will not have a
-        use for ADEYA Wallet yet, because very few digital credentials are available.
-      </Text>
+    <ScrollView style={styles.container}>
+      <Text style={[defaultStyle.headerText, styles.headerText]}>Welcome!</Text>
+      <ImageBackground source={require('../assets/img/onBoardingfirst.png')} style={styles.backgroundImage}>
+        <Image source={require('../assets/img/face-scan.png')} style={styles.Image} />
+      </ImageBackground>
+
+      <View style={styles.descriptiionText}>
+        <Text style={[styles.bodyText]}>
+          Unlock the power of your digital identity with our all-in-one wallet! Let embark on a journey to take full
+          control of your digital presence.
+        </Text>
+      </View>
     </ScrollView>
   )
 }
@@ -78,14 +68,14 @@ const guides: Array<{
   body: string
 }> = [
   {
-    image: CredentialList,
-    title: 'Digital credentials, stored securely',
-    body: 'ADEYA Wallet holds digital credentials—the digital versions of things like licenses, identities and permits.\n\nThey are stored securely, only on this device.',
+    image: onBoardingdatasafe,
+    title: 'Keep your data safe',
+    body: 'Safeguard your digital Credentials with ADEYA, ensuring that your data remains protected and shared with your consent only.',
   },
   {
-    image: ScanShare,
-    title: 'Receiving and using credentials',
-    body: 'To receive and use credentials you use the “Scan” feature in the app to scan a special QR code.\n\nInformation is sent and received over a private, encrypted connection.',
+    image: onBoardingOrganizeease,
+    title: 'Organize with ease',
+    body: 'To receive and use credentials you use the “Scan” feature in the app to scan a special QR code.Information is sent and received over a private, encrypted connection.',
   },
 ]
 
@@ -93,15 +83,15 @@ const CreatePageWith = (image: React.FC<SvgProps>, title: string, body: string, 
   const defaultStyle = createStyles(theme)
   const imageDisplayOptions = {
     fill: theme.imageDisplayOptions.fill,
-    height: 180,
-    width: 180,
+    height: 245,
+    width: 345,
   }
   return (
-    <ScrollView style={{ padding: 20 }}>
-      <View style={{ alignItems: 'center' }}>{image(imageDisplayOptions)}</View>
-      <View style={{ marginBottom: 20 }}>
-        <Text style={[defaultStyle.headerText, { fontSize: 18 }]}>{title}</Text>
-        <Text style={[defaultStyle.bodyText, { marginTop: 25 }]}>{body}</Text>
+    <ScrollView style={styles.container}>
+      <Text style={[defaultStyle.headerText, styles.headerText]}>{title}</Text>
+      <View style={styles.guideimages}>{image(imageDisplayOptions)}</View>
+      <View style={styles.descriptiionText}>
+        <Text style={[styles.bodyText]}>{body}</Text>
       </View>
     </ScrollView>
   )

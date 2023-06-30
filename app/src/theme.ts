@@ -59,7 +59,7 @@ const GrayscaleColors: IGrayscaleColors = {
 }
 
 const BrandColors: IBrandColors = {
-  primary: '#2289f7',
+  primary: '#1F4EAD',
   primaryDisabled: `rgba(31, 78, 173, ${lightOpacity})`,
   secondary: '#FFFFFFFF',
   secondaryDisabled: `rgba(31, 78, 173, ${lightOpacity})`,
@@ -98,7 +98,7 @@ export const TextTheme: ITextTheme = {
   headingTwo: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: ColorPallet.grayscale.darkGrey,
+    color: '#2289F7',
   },
   headingThree: {
     fontSize: 26,
@@ -113,12 +113,13 @@ export const TextTheme: ITextTheme = {
   normal: {
     fontSize: 18,
     fontWeight: 'normal',
+    // color: '#1F4EAD',
     color: ColorPallet.grayscale.darkGrey,
   },
   label: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: ColorPallet.grayscale.darkGrey,
+    color: '#94A0AB',
   },
   labelTitle: {
     fontSize: 16,
@@ -224,6 +225,7 @@ export const Buttons = StyleSheet.create({
     padding: 16,
     borderRadius: 4,
     backgroundColor: ColorPallet.brand.primary,
+    textAlign: 'center',
   },
   primaryDisabled: {
     padding: 16,
@@ -646,8 +648,7 @@ const LoadingTheme = {
 
 const PINInputTheme = {
   cell: {
-    backgroundColor: ColorPallet.grayscale.lightGrey,
-    borderColor: ColorPallet.grayscale.lightGrey,
+    backgroundColor: ColorPallet.grayscale.white,
   },
   focussedCell: {
     borderColor: '#3399FF',
@@ -656,13 +657,16 @@ const PINInputTheme = {
     color: ColorPallet.grayscale.darkGrey,
   },
   icon: {
-    color: ColorPallet.grayscale.darkGrey,
+    color: '#94A0AB',
   },
 }
 
 export const Assets: IAssets = {
   ...BifoldImageAssets,
-  svg: { ...BifoldImageAssets.svg, logo: Logo as React.FC },
+  svg: {
+    ...BifoldImageAssets.svg,
+    logo: Logo as React.FC,
+  },
   img: {
     logoSecondary: {
       src: require('./assets/img/adeya-logo-secondary.png'),
@@ -671,7 +675,7 @@ export const Assets: IAssets = {
       resizeMode: 'contain',
     },
     logoPrimary: {
-      src: require('./assets/img/adeya-logo-secondary.png'),
+      src: require('./assets/img/adeyaWhiteLogo.png'),
       height: hp('7%'),
       width: wp('36%'),
       resizeMode: 'contain',
