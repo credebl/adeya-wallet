@@ -111,12 +111,13 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
       <View style={styles.homebadageview}>
         {homebadage.map((g) => (
           <View style={styles.badagecontainer}>
+            <Text style={styles.badageText}>{credentials.length}</Text>
+            <Image source={require('../assets/img/Line.png')} style={styles.line} />
             <View style={styles.badageview}>
               <View style={styles.homebadage}>{g.image(imageDisplayOptions)}</View>
             </View>
             <View>
               <Text style={styles.badageText}>{g.title}</Text>
-              <Text style={styles.badageText}>{credentials.length}</Text>
             </View>
           </View>
         ))}
