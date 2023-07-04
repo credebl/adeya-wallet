@@ -34,9 +34,9 @@ const NotificationColors: INotificationColors = {
   successBorder: '#D6E9C6',
   successIcon: '#2D4821',
   successText: '#2D4821',
-  info: '#9BDAF1',
-  infoBorder: '#046B99',
-  infoIcon: '#046B99',
+  info: '#FFFF',
+  infoBorder: '#234CB4',
+  infoIcon: '#244CB4;',
   infoText: '#046B99',
   warn: '#F9F1C6',
   warnBorder: '#FAEBCC',
@@ -62,11 +62,12 @@ const BrandColors: IBrandColors = {
   primary: '#1F4EAD',
   primaryDisabled: `rgba(31, 78, 173, ${lightOpacity})`,
   secondary: '#FFFFFFFF',
+  // tabbackground:'#D3E4FA',
   secondaryDisabled: `rgba(31, 78, 173, ${lightOpacity})`,
   primaryLight: '#D9EAF7',
   highlight: '#FCBA19',
   primaryBackground: '#F2F2F2',
-  secondaryBackground: '#FFFFFF',
+  secondaryBackground: '#FFFF',
   modalPrimary: '#003366',
   modalSecondary: '#FFFFFFFF',
   modalPrimaryBackground: '#FFFFFF',
@@ -101,9 +102,9 @@ export const TextTheme: ITextTheme = {
     color: '#2289F7',
   },
   headingThree: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: ColorPallet.grayscale.darkGrey,
+    color: ColorPallet.brand.primary,
   },
   headingFour: {
     fontSize: 21,
@@ -413,7 +414,7 @@ export const ListItems = StyleSheet.create({
 export const TabTheme = {
   tabBarStyle: {
     height: 60,
-    backgroundColor: ColorPallet.brand.secondaryBackground,
+    backgroundColor: '#D3E4FA',
     shadowOffset: { width: 0, height: -3 },
     shadowRadius: 6,
     shadowColor: ColorPallet.grayscale.black,
@@ -473,7 +474,7 @@ export const HomeTheme = StyleSheet.create({
   },
   noNewUpdatesText: {
     ...TextTheme.normal,
-    color: ColorPallet.notification.infoText,
+    color: ColorPallet.brand.primary,
   },
   link: {
     ...TextTheme.normal,

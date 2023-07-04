@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   feedbackIcon: {
     paddingRight: 10,
   },
-  homebadage: { width: 28, height: 28, flexShrink: 0, justifyContent: 'space-between' },
+  homebadage: { width: 29, height: 28, flexShrink: 0, justifyContent: 'space-between' },
   homebadageview: {
     flexDirection: 'row',
     marginTop: 30,
@@ -36,16 +36,19 @@ export const styles = StyleSheet.create({
     height: 100,
     width: 100,
     alignSelf: 'center',
+    marginRight: 20,
   },
   badageText: {
     fontSize: 12,
-    color: '##1F4EAD',
+    color: '#1F4EAD',
     textAlign: 'center',
+    fontWeight: 'bold',
     marginTop: 5,
+    marginLeft: 5,
   },
   homeImage: {
-    width: 325.236,
-    height: 328.303,
+    width: 300.236,
+    height: 300.303,
     flexShrink: 0,
   },
   button: {
@@ -67,5 +70,10 @@ export const styles = StyleSheet.create({
     top: 0,
     height: 19,
     width: 19,
+  },
+  line: {
+    alignSelf: 'center',
+    marginBottom: 5,
+    marginTop: 5,
   },
 })
