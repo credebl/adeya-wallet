@@ -75,7 +75,7 @@ const guides: Array<{
   {
     image: onBoardingOrganizeease,
     title: 'Organize with ease',
-    body: 'To receive and use credentials you use the “Scan” feature in the app to scan a special QR code.Information is sent and received over a private, encrypted connection.',
+    body: 'Organize and manage your digital credentials effortlessly within ADEYA.Say goodbye to paper documents and embrace the convenience of an identity wallet in your hand.',
   },
 ]
 
