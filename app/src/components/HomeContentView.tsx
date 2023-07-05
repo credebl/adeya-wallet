@@ -1,5 +1,5 @@
-import { CredentialState } from '@aries-framework/core'
-import { useCredentialByState } from '@aries-framework/react-hooks'
+import { CredentialState, ProofState } from '@aries-framework/core'
+import { useCredentialByState, useConnections, useProofByState } from '@aries-framework/react-hooks'
 import { useStore, Button, ButtonType, testIdWithKey, useTheme } from 'aries-bifold'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,6 +25,9 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
     ...useCredentialByState(CredentialState.CredentialReceived),
     ...useCredentialByState(CredentialState.Done),
   ]
+  const contactscount = useConnections.length
+  const requestcount = useProofByState(ProofState.RequestReceived).length
+
   const notifications = useNotifications()
   const { ColorPallet } = useTheme()
   const { t } = useTranslation()
@@ -35,18 +38,22 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
   const homebadage: {
     image: React.FC<SvgProps>
     title: string
+    count: number
   }[] = [
     {
       image: contacts,
       title: 'CONTACTS',
+      count: contactscount,
     },
     {
       image: credentialImage,
       title: 'CREDENTIALS',
+      count: credentials.length,
     },
     {
       image: request,
       title: 'REQUEST',
+      count: requestcount,
     },
   ]
   const imageDisplayOptions = {
@@ -89,7 +96,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
       <View style={styles.homebadageview}>
         {homebadage.map((g) => (
           <View style={styles.badagecontainer}>
-            <Text style={styles.badageText}>{credentials.length}</Text>
+            <Text style={styles.badageText}>{g.count}</Text>
             <Image source={require('../assets/img/Line.png')} style={styles.line} />
             <View style={styles.badageview}>
               <View style={styles.homebadage}>{g.image(imageDisplayOptions)}</View>
