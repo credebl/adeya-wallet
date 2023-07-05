@@ -1,10 +1,9 @@
 import { CredentialState } from '@aries-framework/core'
 import { useCredentialByState } from '@aries-framework/react-hooks'
-import { useNavigation } from '@react-navigation/native'
 import { useStore, Button, ButtonType, testIdWithKey, useTheme } from 'aries-bifold'
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, Text, Image, TouchableOpacity, ImageBackground } from 'react-native'
+import { View, Text, Image } from 'react-native'
 import { SvgProps } from 'react-native-svg'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -31,7 +30,6 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
   const { t } = useTranslation()
   const [surveyVisible, setSurveyVisible] = useState(false)
   const [store] = useStore<BCState>()
-  const navigation = useNavigation()
 
   const toggleSurveyVisibility = () => setSurveyVisible(!surveyVisible)
   const homebadage: {
@@ -55,26 +53,6 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
     height: 28,
     width: 28,
   }
-
-  const Notification = useMemo(
-    () => (
-      <TouchableOpacity style={styles.button}>
-        <Image source={require('../assets/img/Vector.png')} />
-        <ImageBackground source={require('../assets/img/Countbackground.png')} style={styles.countbackgroundImage}>
-          <Text style={styles.countext}>{credentials.length}</Text>
-        </ImageBackground>
-      </TouchableOpacity>
-    ),
-    []
-  )
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => Notification,
-      // tabBarLabel: 'Home',
-      // tabBarIcon: () => Notification,
-    })
-  }, [])
 
   return (
     <View style={[styles.feedbackContainer]}>
