@@ -33,18 +33,26 @@ export const styles = StyleSheet.create({
     marginLeft: 40,
   },
   badagecontainer: {
-    height: 100,
+    height: 200,
     width: 100,
     alignSelf: 'center',
     marginRight: 20,
   },
   badageText: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#1F4EAD',
     textAlign: 'center',
     fontWeight: 'bold',
     marginTop: 5,
     marginLeft: 5,
+  },
+  badageCount: {
+    fontSize: 17,
+    color: '#1F4EAD',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginTop: 5,
+    marginLeft: 10,
   },
   homeImage: {
     width: 300.236,
