@@ -25,8 +25,8 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
     ...useCredentialByState(CredentialState.CredentialReceived),
     ...useCredentialByState(CredentialState.Done),
   ]
-  const contactscount = useConnections.length
-  const requestcount = useProofByState(ProofState.RequestReceived).length
+  const contactscount = useConnections?.length
+  const requestcount = useProofByState(ProofState.RequestReceived)?.length
 
   const notifications = useNotifications()
   const { ColorPallet } = useTheme()
@@ -48,7 +48,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
     {
       image: credentialImage,
       title: 'CREDENTIALS',
-      count: credentials.length,
+      count: credentials?.length,
     },
     {
       image: request,
