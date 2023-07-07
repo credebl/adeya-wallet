@@ -48,9 +48,7 @@ const StartPages = (theme: ITheme) => {
   return (
     <ScrollView style={styles.container}>
       <Text style={[defaultStyle.headerText, styles.headerText]}>Welcome!</Text>
-      <ImageBackground source={require('../assets/img/onBoardingfirst.png')} style={styles.backgroundImage}>
-        <Image source={require('../assets/img/face-scan.png')} style={styles.Image} />
-      </ImageBackground>
+      <Image source={require('../assets/img/onBoardingfirst.png')} style={styles.backgroundImage} />
 
       <View style={styles.descriptiionText}>
         <Text style={[styles.bodyText]}>
