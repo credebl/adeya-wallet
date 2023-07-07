@@ -1,6 +1,8 @@
-import { StyleSheet } from 'react-native'
+import { Dimensions, StyleSheet } from 'react-native'
 
 const offset = 25
+const windowWidth = Dimensions.get('window').width
+const windowHeight = Dimensions.get('window').height
 
 export const styles = StyleSheet.create({
   container: {
@@ -33,8 +35,8 @@ export const styles = StyleSheet.create({
     marginLeft: 40,
   },
   badagecontainer: {
-    height: 200,
-    width: 100,
+    height: windowHeight / 4,
+    width: windowWidth / 4,
     alignSelf: 'center',
     marginRight: 20,
   },
