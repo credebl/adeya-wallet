@@ -4,6 +4,9 @@ const translation = {
     "GetID": "Get BCID",
     "GetDigitalID": "Get your Person credential",
   },
+  "PINCreate": { 
+    "PINDisclaimer": "If you forget it, you may need to set up your wallet again and re-add your credentials.",
+  },
   "Error": {
     "Title2020": "Unable to parse invitation",
     "Message2020": "There was a problem parsing the connection invitation.",
