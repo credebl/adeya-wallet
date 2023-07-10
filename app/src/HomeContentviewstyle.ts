@@ -23,31 +23,31 @@ export const styles = StyleSheet.create({
   feedbackIcon: {
     paddingRight: 10,
   },
-  homebadage: { width: 29, height: 28, flexShrink: 0, justifyContent: 'space-between' },
-  homebadageview: {
+  homebadge: { width: 29, height: 28, flexShrink: 0, justifyContent: 'space-between' },
+  homebadgeview: {
     flexDirection: 'row',
     marginTop: 30,
     justifyContent: 'center',
     alignSelf: 'center',
   },
-  badageview: {
+  badgeview: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignSelf: 'center',
   },
-  badagecontainer: {
+  badgecontainer: {
     height: hp('30%'),
     width: wp('30%'),
     alignSelf: 'center',
   },
-  badageText: {
+  badgeText: {
     fontSize: 14,
     color: '#1F4EAD',
     textAlign: 'center',
     fontWeight: 'bold',
     marginTop: 5,
   },
-  badageCount: {
+  badgeCount: {
     fontSize: 15,
     color: '#1F4EAD',
     textAlign: 'center',
