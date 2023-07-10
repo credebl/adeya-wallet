@@ -3,7 +3,7 @@ import { useCredentialByState, useConnections, useProofByState } from '@aries-fr
 import { useStore, Button, ButtonType, testIdWithKey, useTheme } from 'aries-bifold'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, ScrollView } from 'react-native'
 import { SvgProps } from 'react-native-svg'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -62,7 +62,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
   }
 
   return (
-    <View style={[styles.feedbackContainer]}>
+    <ScrollView style={[styles.feedbackContainer]}>
       {store.preferences.developerModeEnabled ? (
         <>
           <Button
@@ -108,7 +108,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
         ))}
       </View>
       {children}
-    </View>
+    </ScrollView>
   )
 }
 
