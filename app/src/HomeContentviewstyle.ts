@@ -1,11 +1,12 @@
-import { Dimensions, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 
 const offset = 25
-const windowWidth = Dimensions.get('window').width
-const windowHeight = Dimensions.get('window').height
 
 export const styles = StyleSheet.create({
   container: {
+    height: hp('100%'),
+    width: wp('100%'),
     paddingHorizontal: offset,
     paddingBottom: 25 * 3,
   },
@@ -28,17 +29,16 @@ export const styles = StyleSheet.create({
     marginTop: 30,
     justifyContent: 'center',
     alignSelf: 'center',
-    marginLeft: 20,
   },
   badageview: {
     flexDirection: 'row',
-    marginLeft: 40,
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   badagecontainer: {
-    height: windowHeight / 4,
-    width: windowWidth / 4,
+    height: hp('30%'),
+    width: wp('30%'),
     alignSelf: 'center',
-    marginRight: 20,
   },
   badageText: {
     fontSize: 14,
@@ -46,15 +46,13 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     marginTop: 5,
-    marginLeft: 5,
   },
   badageCount: {
-    fontSize: 17,
+    fontSize: 15,
     color: '#1F4EAD',
     textAlign: 'center',
     fontWeight: 'bold',
     marginTop: 5,
-    marginLeft: 10,
   },
   homeImage: {
     width: 300.236,
