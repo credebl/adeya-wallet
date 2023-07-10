@@ -35,7 +35,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
   const [store] = useStore<BCState>()
 
   const toggleSurveyVisibility = () => setSurveyVisible(!surveyVisible)
-  const homebadage: {
+  const homebadge: {
     image: React.FC<SvgProps>
     title: string
     count: number
@@ -93,16 +93,16 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
         </View>
       )}
 
-      <View style={styles.homebadageview}>
-        {homebadage.map((g) => (
-          <View style={styles.badagecontainer}>
-            <Text style={styles.badageText}>{g.count}</Text>
+      <View style={styles.homebadgeview}>
+        {homebadge.map((g) => (
+          <View style={styles.badgecontainer}>
+            <Text style={styles.badgeText}>{g.count}</Text>
             <Image source={require('../assets/img/Line.png')} style={styles.line} />
-            <View style={styles.badageview}>
-              <View style={styles.homebadage}>{g.image(imageDisplayOptions)}</View>
+            <View style={styles.badgeview}>
+              <View style={styles.homebadge}>{g.image(imageDisplayOptions)}</View>
             </View>
             <View>
-              <Text style={styles.badageText}>{g.title}</Text>
+              <Text style={styles.badgeText}>{g.title}</Text>
             </View>
           </View>
         ))}
