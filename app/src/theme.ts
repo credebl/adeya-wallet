@@ -97,7 +97,7 @@ export const TextTheme: ITextTheme = {
     color: ColorPallet.grayscale.darkGrey,
   },
   headingTwo: {
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: 'bold',
     color: '#2289F7',
   },
@@ -113,7 +113,7 @@ export const TextTheme: ITextTheme = {
   },
   normal: {
     fontSize: 18,
-    fontWeight: 'normal',
+    fontWeight: '400',
     // color: '#1F4EAD',
     color: ColorPallet.grayscale.darkGrey,
   },

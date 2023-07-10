@@ -1,19 +1,24 @@
 import { StyleSheet } from 'react-native'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 
 export const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    paddingTop: 50,
+    height: hp('100%'),
+    width: wp('100%'),
+    padding: wp('5%'),
+    paddingTop: hp('5%'),
   },
   headerText: {
     alignSelf: 'center',
-    marginBottom: 25,
+    marginBottom: hp('2.5%'),
+    justifyContent: 'center',
   },
   backgroundImage: {
     height: 245,
     width: 343,
     alignSelf: 'center',
   },
+
   Image: {
     width: 78,
     height: 78,
@@ -25,27 +30,32 @@ export const styles = StyleSheet.create({
     bottom: 0,
   },
   qrImage: {
-    width: 81,
-    height: 82,
+    width: wp('21%'),
+    height: wp('21%'),
     flexShrink: 0,
     position: 'absolute',
-    right: 100,
-    top: 100,
-    left: 170,
+    right: wp('20%'),
+    top: hp('12.5%'),
+    left: wp('37.5%'),
   },
   bodyText: {
-    marginTop: 25,
+    marginTop: hp('2.5%'),
     display: 'flex',
-    width: 345,
+    width: wp('80%'),
     flexDirection: 'column',
     flexShrink: 0,
-    fontSize: 18,
+    fontSize: hp('2%'),
     textAlign: 'center',
     color: '#2289F7',
   },
-  descriptiionText: { alignSelf: 'center', marginHorizontal: 20 },
-  startedButtonconatiner: {
-    margin: 25,
+  descriptiionText: {
+    alignSelf: 'center',
+    marginHorizontal: wp('1%'),
   },
-  guideimages: { alignItems: 'center' },
+  startedButtonconatiner: {
+    margin: wp('5%'),
+  },
+  guideimages: {
+    alignItems: 'center',
+  },
 })
