@@ -1,4 +1,5 @@
-import { DidRepository, CredentialMetadataKeys, CredentialExchangeRecord } from '@aries-framework/core'
+import { AnonCredsCredentialMetadataKey } from '@aries-framework/anoncreds/build/utils/metadata'
+import { DidRepository, CredentialExchangeRecord } from '@aries-framework/core'
 import { BifoldError, Agent, EventTypes as BifoldEventTypes } from 'aries-bifold'
 import React from 'react'
 import { TFunction } from 'react-i18next'
@@ -57,15 +58,15 @@ export const getInvitationCredentialDate = (
   credentials: CredentialExchangeRecord[],
   canUseLSBCCredential: boolean
 ): Date | undefined => {
-  // eslint-disable-next-line array-callback-return, consistent-return
   const invitationCredential = credentials.find((c) => {
-    const credDef = c.metadata.data[CredentialMetadataKeys.IndyCredential].credentialDefinitionId as string
+    const credDef = c.metadata.data[AnonCredsCredentialMetadataKey].credentialDefinitionId as string
     if (
       trustedInvitationIssuerRe.test(credDef) ||
       (trustedLSBCCredentialIssuerRe.test(credDef) && canUseLSBCCredential)
     ) {
       return true
     }
+    return undefined
   })
   return invitationCredential?.createdAt
 }
@@ -128,7 +129,7 @@ export const recieveBCIDInvite = async (
   }
 
   const dids = await didRepository.getAll(agent.context)
-  const didRecord = dids.filter((d) => d.did === record.connectionRecord?.did).pop()
+  const didRecord = dids.filter((d: { did: any }) => d.did === record.connectionRecord?.did).pop()
 
   if (!didRecord) {
     throw new BifoldError(
