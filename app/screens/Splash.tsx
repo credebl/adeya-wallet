@@ -192,6 +192,16 @@ const Splash: React.FC = () => {
           })
         }
 
+        const migrationData = await AsyncStorage.getItem(LocalStorageKeys.Migration)
+        if (migrationData) {
+          const dataAsJSON = JSON.parse(migrationData) as MigrationState
+
+          dispatch({
+            type: DispatchAction.MIGRATION_UPDATED,
+            payload: [dataAsJSON],
+          })
+        }
+
         const toursData = await AsyncStorage.getItem(LocalStorageKeys.Tours)
         if (toursData) {
           const dataAsJSON = JSON.parse(toursData) as ToursState
@@ -302,6 +312,19 @@ const Splash: React.FC = () => {
             }),
           },
         })) as unknown as AdeyaAgent
+
+        // If we haven't migrated to Aries Askar yet, we need to do this before we initialize the agent.
+        if (!didMigrateToAskar(store.migration)) {
+          newAgent.config.logger.debug('Agent not updated to Aries Askar, updating...')
+
+          await migrateToAskar(credentials.id, credentials.key, newAgent)
+
+          newAgent.config.logger.debug('Successfully finished updating agent to Aries Askar')
+          // Store that we migrated to askar.
+          dispatch({
+            type: DispatchAction.DID_MIGRATE_TO_ASKAR,
+          })
+        }
 
         setStep(6)
         setAgent(newAgent)
