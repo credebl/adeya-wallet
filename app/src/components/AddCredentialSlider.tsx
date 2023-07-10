@@ -1,11 +1,13 @@
-import { CredentialMetadataKeys, CredentialState } from '@aries-framework/core'
+import { AnonCredsCredentialMetadataKey } from '@aries-framework/anoncreds/build/utils/metadata'
+import { CredentialState } from '@aries-framework/core'
 import { useCredentialByState } from '@aries-framework/react-hooks'
-import { useNavigation } from '@react-navigation/core'
-import { useTheme, Screens, Stacks } from 'aries-bifold'
+import { useNavigation } from '@react-navigation/native'
+import { useTheme, Screens, Stacks, testIdWithKey } from 'aries-bifold'
 import React, { useEffect, useState, useCallback } from 'react'
 import { DeviceEventEmitter, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
+import { hitSlop } from '../constants'
 import { BCWalletEventTypes } from '../events/eventTypes'
 import { showBCIDSelector } from '../helpers/BCIDHelper'
 
@@ -81,7 +83,7 @@ const AddCredentialSlider: React.FC = () => {
 
   useEffect(() => {
     const credentialDefinitionIDs = credentials.map(
-      (c) => c.metadata.data[CredentialMetadataKeys.IndyCredential].credentialDefinitionId as string
+      (c) => c.metadata.data[AnonCredsCredentialMetadataKey].credentialDefinitionId as string
     )
 
     setShowGetFoundationCredential(showBCIDSelector(credentialDefinitionIDs, true))
@@ -97,13 +99,12 @@ const AddCredentialSlider: React.FC = () => {
       handle.remove()
     }
   }, [])
-
   return (
     <Modal animationType="slide" transparent visible={addCredentialPressed} onRequestClose={deactivateSlider}>
       <TouchableOpacity style={styles.outsideListener} onPress={deactivateSlider} />
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <TouchableOpacity onPress={deactivateSlider}>
+          <TouchableOpacity testID={testIdWithKey('Close')} hitSlop={hitSlop} onPress={deactivateSlider}>
             <Icon name="window-close" size={35} style={styles.drawerRowItem} />
           </TouchableOpacity>
           <Text style={styles.drawerTitleText}>Choose</Text>
