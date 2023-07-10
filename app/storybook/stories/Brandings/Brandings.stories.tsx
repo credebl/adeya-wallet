@@ -2,10 +2,10 @@
 /* eslint-disable object-shorthand */
 /* eslint-disable react/require-default-props */
 /* eslint-disable import/no-extraneous-dependencies */
+import { AnonCredsCredentialMetadataKey } from '@aries-framework/anoncreds/build/utils/metadata'
 import {
   CredentialExchangeRecord,
   CredentialExchangeRecordProps,
-  CredentialMetadataKeys,
   CredentialPreviewAttribute,
   CredentialState,
   RevocationNotification,
@@ -68,8 +68,7 @@ const CredentialWrapper: FC<CredentialProps> = ({
     ]
   }
   const credential: CredentialExchangeRecord = new CredentialExchangeRecord(props)
-  credential.metadata.set(CredentialMetadataKeys.IndyCredential, {
-    // eslint-disable-next-line object-shorthand
+  credential.metadata.set(AnonCredsCredentialMetadataKey, {
     credentialDefinitionId: credentialDefinitionId,
     schemaId: '',
   })
