@@ -1,6 +1,6 @@
+import { AnonCredsCredentialMetadataKey } from '@aries-framework/anoncreds/build/utils/metadata'
 import {
   CredentialExchangeRecord as CredentialRecord,
-  CredentialMetadataKeys,
   CredentialState,
   ProofExchangeRecord,
   ProofState,
@@ -39,11 +39,10 @@ export const useNotifications = (): Notifications => {
   const revoked = useCredentialByState(CredentialState.Done).filter((cred: CredentialRecord) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const metadata = cred!.metadata.get(CredentialMetadata.customMetadata) as customMetadata
-    // eslint-disable-next-line eqeqeq
-    if (cred?.revocationNotification && metadata?.revoked_seen == undefined) {
+    if (cred?.revocationNotification && metadata?.revoked_seen === undefined) {
       return cred
     }
-    return null
+    return undefined
   })
 
   const credentials = [
@@ -51,7 +50,7 @@ export const useNotifications = (): Notifications => {
     ...useCredentialByState(CredentialState.Done),
   ]
   const credentialDefinitionIDs = credentials.map(
-    (c) => c.metadata.data[CredentialMetadataKeys.IndyCredential].credentialDefinitionId as string
+    (c) => c.metadata.data[AnonCredsCredentialMetadataKey].credentialDefinitionId as string
   )
   const invitationDate = getInvitationCredentialDate(credentials, true)
   const custom: CustomNotification[] =

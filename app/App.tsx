@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/core'
+import { useNavigation } from '@react-navigation/native'
 import {
   Stacks,
   Screens,
@@ -40,6 +40,11 @@ const App = () => {
   const [agent] = useState<Agent | undefined>(undefined)
   const { t } = useTranslation()
   const { navigate } = useNavigation()
+  useEffect(() => {
+    // Hide the native splash / loading screen so that our
+    // RN version can be displayed.
+    SplashScreen.hide()
+  }, [])
 
   const settings = [
     // {
