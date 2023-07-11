@@ -42,7 +42,7 @@ export const useNotifications = (): Notifications => {
     if (cred?.revocationNotification && metadata?.revoked_seen === undefined) {
       return cred
     }
-    return undefined
+    return null
   })
 
   const credentials = [
