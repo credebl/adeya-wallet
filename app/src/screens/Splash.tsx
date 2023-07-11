@@ -323,7 +323,7 @@ const Splash: React.FC = () => {
         setStep(5)
         const options = {
           config: {
-            label: store.preferences.walletName || 'BC Wallet',
+            label: store.preferences.walletName || 'ADEYA Wallet',
             walletConfig: {
               id: credentials.id,
               key: credentials.key,
