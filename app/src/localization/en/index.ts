@@ -4,6 +4,9 @@ const translation = {
     "GetID": "Get BCID",
     "GetDigitalID": "Get your Person credential",
   },
+  "PINCreate": { 
+    "PINDisclaimer": "If you forget it, you may need to set up your wallet again and re-add your credentials.",
+  },
   "Error": {
     "Title2020": "Unable to parse invitation",
     "Message2020": "There was a problem parsing the connection invitation.",
@@ -26,16 +29,16 @@ const translation = {
   },
   "Biometry": {
     "Toggle": "Toggle Biometrics",
-    "EnabledText1": "Log in with your phone's biometrics instead of your wallet PIN.",
+    "EnabledText1": "Use your phone's biometrics to log in rather than your wallet's PIN.",
     "EnabledText1Bold": "you will need to use biometrics to open your ADEYA Wallet.",
-    "EnabledText2": "This means all fingerprint and facial data added on this phone can be used to access your ADEYA Wallet.",
+    "EnabledText2": "Because of this, your ADEYA wallet may be accessed using any fingerprint or face data you upload to this phone. Make sure you are the only one who can access your wallet.",
     "EnabledText3": "Anyone who can access your phone with biometrics can access your ADEYA Wallet.",
     "EnabledText3Bold": "Ensure only you have access to your wallet.",
     "Warning": "Ensure only you have access to your wallet.",
     "UseToUnlock": "Use biometrics to unlock wallet?",
-    "NotEnabledText1":"Use your phone's biometrics to log in rather than your wallet's PIN.",
-    "NotEnabledText2":"Because of this, your ADEYA wallet may be accessed using any fingerprint or face data you upload to this phone. Make sure you are the only one who can access your wallet.",
-  },
+    "NotEnabledText1": "Biometrics is not currently setup on this device and therefore cannot be enabled.",
+    "NotEnabledText2": "If you wish to enable this feature turn biometrics on in the device settings and then return to this screen.",
+      },
   "Credentials": {
     "AddCredential": "Add Credential",
     "EmptyList": "Your wallet is empty.",

@@ -18,9 +18,7 @@ const EndPage = (onTutorialCompleted: GenericFn, theme: ITheme['OnboardingTheme'
     <>
       <ScrollView style={styles.container} contentContainerStyle={{ justifyContent: 'center' }}>
         <Text style={[defaultStyle.headerText, styles.headerText]}>Share Securely</Text>
-        <ImageBackground source={require('../assets/img/sharesecure.png')} style={styles.backgroundImage}>
-          <Image source={require('../assets/img/qr-code.png')} style={styles.qrImage} />
-        </ImageBackground>
+        <Image source={require('../assets/img/sharesecure.png')} style={styles.backgroundImage} />
         <View style={styles.descriptiionText}>
           <Text style={[styles.bodyText]}>
             Take complete control over your data. Securely connect with people and organizations to share necessary
@@ -48,7 +46,7 @@ const StartPages = (theme: ITheme) => {
   return (
     <ScrollView style={styles.container}>
       <Text style={[defaultStyle.headerText, styles.headerText]}>Welcome!</Text>
-      <ImageBackground source={require('../assets/img/onBoardingfirst.png')} style={styles.backgroundImage}>
+      <ImageBackground source={require('../assets/img/onBoardingfirst1.png')} style={styles.backgroundImage}>
         <Image source={require('../assets/img/face-scan.png')} style={styles.Image} />
       </ImageBackground>
 

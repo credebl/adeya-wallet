@@ -3,7 +3,7 @@ import { useCredentialByState, useConnections, useProofByState } from '@aries-fr
 import { useStore, Button, ButtonType, testIdWithKey, useTheme } from 'aries-bifold'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, ScrollView } from 'react-native'
 import { SvgProps } from 'react-native-svg'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -25,8 +25,8 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
     ...useCredentialByState(CredentialState.CredentialReceived),
     ...useCredentialByState(CredentialState.Done),
   ]
-  const contactscount = useConnections.length
-  const requestcount = useProofByState(ProofState.RequestReceived).length
+  const contactscount = useConnections?.length
+  const requestcount = useProofByState(ProofState.RequestReceived)?.length
 
   const notifications = useNotifications()
   const { ColorPallet } = useTheme()
@@ -35,7 +35,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
   const [store] = useStore<BCState>()
 
   const toggleSurveyVisibility = () => setSurveyVisible(!surveyVisible)
-  const homebadage: {
+  const homebadge: {
     image: React.FC<SvgProps>
     title: string
     count: number
@@ -48,7 +48,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
     {
       image: credentialImage,
       title: 'CREDENTIALS',
-      count: credentials.length,
+      count: credentials?.length,
     },
     {
       image: request,
@@ -62,7 +62,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
   }
 
   return (
-    <View style={[styles.feedbackContainer]}>
+    <ScrollView style={[styles.feedbackContainer]}>
       {store.preferences.developerModeEnabled ? (
         <>
           <Button
@@ -93,22 +93,22 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
         </View>
       )}
 
-      <View style={styles.homebadageview}>
-        {homebadage.map((g) => (
-          <View style={styles.badagecontainer}>
-            <Text style={styles.badageText}>{g.count}</Text>
+      <View style={styles.homebadgeview}>
+        {homebadge.map((g) => (
+          <View style={styles.badgecontainer}>
+            <Text style={styles.badgeText}>{g.count}</Text>
             <Image source={require('../assets/img/Line.png')} style={styles.line} />
-            <View style={styles.badageview}>
-              <View style={styles.homebadage}>{g.image(imageDisplayOptions)}</View>
+            <View style={styles.badgeview}>
+              <View style={styles.homebadge}>{g.image(imageDisplayOptions)}</View>
             </View>
             <View>
-              <Text style={styles.badageText}>{g.title}</Text>
+              <Text style={styles.badgeText}>{g.title}</Text>
             </View>
           </View>
         ))}
       </View>
       {children}
-    </View>
+    </ScrollView>
   )
 }
 

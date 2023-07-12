@@ -4,6 +4,9 @@ const translation = {
     "GetID": "Get BCID (FR)",
     "GetDigitalID": "Get your Person credential (FR)",
   },
+  "PINCreate": { 
+    "PINDisclaimer": "Si vous l'oubliez, vous devrez peut-être reconfigurer votre portefeuille et rajouter vos informations d'identification.",
+  },
   "Error": {
     "Title2020": "Unable to parse invitation (FR)",
     "Message2020": "There was a problem parsing the connection invitation. (FR)",
@@ -26,15 +29,15 @@ const translation = {
   },
   "Biometry": {
     "Toggle": "Toggle Biometrics (FR)",
-    "EnabledText1": "Log in with your phone's biometrics instead of your wallet PIN. (FR)",
+    "EnabledText1": "Utilisez les données biométriques de votre téléphone pour vous connecter plutôt que le code PIN de votre portefeuille. (FR)",
     "EnabledText1Bold": "you will need to use biometrics to open your ADEYA Wallet. (FR)",
-    "EnabledText2": "This means all fingerprint and facial data added on this phone can be used to access your ADEYA Wallet. (FR)",
+    "EnabledText2": "Pour cette raison, votre portefeuille ADEYA peut être consulté à l'aide de n'importe quelle empreinte digitale ou données faciales que vous téléchargez sur ce téléphone. Assurez-vous que vous êtes le seul à pouvoir accéder à votre portefeuille. (FR)",
     "EnabledText3": "Anyone who can access your phone with biometrics can access your ADEYA Wallet. (FR)",
     "EnabledText3Bold": "Ensure only you have access to your wallet. (FR)",
     "Warning": "Ensure only you have access to your wallet. (FR)",
     "UseToUnlock": "Use biometrics to unlock wallet? (FR)",
     "NotEnabledText1":"Utilisez les données biométriques de votre téléphone pour vous connecter plutôt que le code PIN de votre portefeuille.",
-    "NotEnabledText2":"Pour cette raison, votre portefeuille ADEYA peut être consulté à l'aide de n'importe quelle empreinte digitale ou données faciales que vous téléchargez sur ce téléphone. Assurez-vous que vous êtes le seul à pouvoir accéder à votre portefeuille.",
+    "NotEnabledText2":"Si vous souhaitez activer cette fonctionnalité, activez la biométrie dans les paramètres de l'appareil, puis revenez à cet écran.",
   },
   "Credentials": {
     "AddCredential": "Add Credential (FR)",

@@ -1,9 +1,12 @@
 import { StyleSheet } from 'react-native'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 
 const offset = 25
 
 export const styles = StyleSheet.create({
   container: {
+    height: hp('100%'),
+    width: wp('100%'),
     paddingHorizontal: offset,
     paddingBottom: 25 * 3,
   },
@@ -20,39 +23,36 @@ export const styles = StyleSheet.create({
   feedbackIcon: {
     paddingRight: 10,
   },
-  homebadage: { width: 29, height: 28, flexShrink: 0, justifyContent: 'space-between' },
-  homebadageview: {
+  homebadge: { width: 29, height: 28, flexShrink: 0, justifyContent: 'space-between' },
+  homebadgeview: {
     flexDirection: 'row',
     marginTop: 30,
     justifyContent: 'center',
     alignSelf: 'center',
-    marginLeft: 20,
   },
-  badageview: {
+  badgeview: {
     flexDirection: 'row',
-    marginLeft: 40,
-  },
-  badagecontainer: {
-    height: 200,
-    width: 100,
+    justifyContent: 'center',
     alignSelf: 'center',
-    marginRight: 20,
   },
-  badageText: {
+  badgecontainer: {
+    height: hp('30%'),
+    width: wp('30%'),
+    alignSelf: 'center',
+  },
+  badgeText: {
     fontSize: 14,
     color: '#1F4EAD',
     textAlign: 'center',
     fontWeight: 'bold',
     marginTop: 5,
-    marginLeft: 5,
   },
-  badageCount: {
-    fontSize: 17,
+  badgeCount: {
+    fontSize: 15,
     color: '#1F4EAD',
     textAlign: 'center',
     fontWeight: 'bold',
     marginTop: 5,
-    marginLeft: 10,
   },
   homeImage: {
     width: 300.236,

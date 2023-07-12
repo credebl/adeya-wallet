@@ -4,6 +4,9 @@ const translation = {
     "GetID": "Get BCID (PT-BR)",
     "GetDigitalID": "Get your Person credential (PT-BR)",
   },
+  "PINCreate": { 
+    "PINDisclaimer": "Se você esquecer, pode ser necessário configurar sua carteira novamente e adicionar novamente suas credenciais.",
+  },
   "Error": {
     "Title2020": "Unable to parse invitation (PT-BR)",
     "Message2020": "There was a problem parsing the connection invitation. (PT-BR)",
@@ -16,6 +19,7 @@ const translation = {
     "Title2026": "Oops! Something went wrong (PT-BR)",
     "Message2026": "The app has encountered a problem. Try restarting the app. (PT-BR)",
     "NoMessage": "No Message (PT-BR)",
+   
   },
   "CameraDisclosure": {
     "AllowCameraUse": "Allow camera use (PT-BR)",
@@ -26,15 +30,15 @@ const translation = {
   },
   "Biometry": {
     "Toggle": "Toggle Biometrics (PT-BR)",
-    "EnabledText1": "Log in with your phone's biometrics instead of your wallet PIN. (PT-BR)",
+    "EnabledText1": "Use a biometria do seu telefone para fazer login em vez do PIN da sua carteira. (PT-BR)",
     "EnabledText1Bold": "you will need to use biometrics to open your ADEYA Wallet. (PT-BR)",
-    "EnabledText2": "This means all fingerprint and facial data added on this phone can be used to access your ADEYA Wallet. (PT-BR)",
+    "EnabledText2": "Por causa disso, sua carteira ADYA pode ser acessada usando qualquer impressão digital ou dados faciais que você enviar para este telefone. Certifique-se de que você é o único que pode acessar sua carteira. (PT-BR)",
     "EnabledText3": "Anyone who can access your phone with biometrics can access your ADEYA Wallet. (PT-BR)",
     "EnabledText3Bold": "Ensure only you have access to your wallet. (PT-BR)",
     "Warning": "Ensure only you have access to your wallet. (PT-BR)",
     "UseToUnlock": "Use biometrics to unlock wallet? (PT-BR)",
-    "NotEnabledText1":"Use a biometria do seu telefone para fazer login em vez do PIN da sua carteira.",
-    "NotEnabledText2":"Because of this, your ADEYA wallet may be accessed using any fingerprint or face data you upload to this phone. Make sure you are the only one who can access your wallet.",
+    'NotEnabledText2':"Se você deseja ativar esse recurso, ative a biometria nas configurações do dispositivo e retorne a esta tela.(PT-BR)",
+    'NotEnabledText1':"A biometria não está configurada neste dispositivo e, portanto, não pode ser ativada.(PT-BR)"
   },
   "Credentials": {
     "AddCredential": "Add Credential (PT-BR)",
