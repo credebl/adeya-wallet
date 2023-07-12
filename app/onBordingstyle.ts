@@ -50,6 +50,7 @@ export const styles = StyleSheet.create({
     fontSize: hp('2.5%'),
     textAlign: 'center',
     color: '#2289F7',
+    paddingTop: hp('2%'),
   },
   descriptiionText: {
     alignSelf: 'center',
