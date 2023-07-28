@@ -2,6 +2,7 @@ import { useTheme, testIdWithKey } from 'aries-bifold'
 import React, { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TouchableOpacity, DeviceEventEmitter } from 'react-native'
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { BCWalletEventTypes } from '../events/eventTypes'
@@ -16,7 +17,7 @@ const AddCredentialButton: React.FC = () => {
 
   const styles = StyleSheet.create({
     button: {
-      paddingHorizontal: 16,
+      marginRight: wp('3%'),
     },
   })
   return (
