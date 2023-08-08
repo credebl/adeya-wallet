@@ -150,7 +150,6 @@ const Splash: React.FC = () => {
       marginBottom: 30,
     },
   })
-
   const loadAuthAttempts = async (): Promise<LoginAttemptState | undefined> => {
     try {
       const attemptsData = await AsyncStorage.getItem(LocalStorageKeys.LoginAttempts)
@@ -166,7 +165,6 @@ const Splash: React.FC = () => {
       // todo (WK)
     }
   }
-
   useEffect(() => {
     const initOnboarding = async (): Promise<void> => {
       try {
@@ -332,6 +330,9 @@ const Splash: React.FC = () => {
     }
   }
   return (
+    // <SafeAreaView style={styles.container}>
+    //   <LoadingIndicator />
+    // </SafeAreaView>
     <SafeAreaView style={styles.screenContainer}>
       <ScrollView contentContainerStyle={styles.scrollContentContainer}>
         <View style={styles.progressContainer} testID={testIdWithKey('LoadingActivityIndicator')}>
