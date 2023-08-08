@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Helpers Build anoncreds proof request from template containing two requested attributes 1`] = `
+Object {
+  "anoncreds": Object {
+    "name": "Student full name",
+    "nonce": "1677766511505",
+    "requested_attributes": Object {
+      "referent_0": Object {
+        "name": "student_first_name",
+        "names": undefined,
+        "non_revoked": undefined,
+        "restrictions": Array [
+          Object {
+            "cred_def_id": "XUxBrVSALWHLeycAUhrNr9:3:CL:26293:student_card",
+          },
+        ],
+      },
+      "referent_1": Object {
+        "name": "student_last_name",
+        "names": undefined,
+        "non_revoked": undefined,
+        "restrictions": Array [
+          Object {
+            "cred_def_id": "XUxBrVSALWHLeycAUhrNr9:3:CL:26293:student_card",
+          },
+        ],
+      },
+    },
+    "requested_predicates": Object {},
+    "version": "0.0.1",
+  },
+}
+`;
+
+exports[`Helpers Build anoncreds proof request from template containing two requested attributes and predicate 1`] = `
+Object {
+  "anoncreds": Object {
+    "name": "Student full name and expiration date",
+    "nonce": "1677766511505",
+    "requested_attributes": Object {
+      "referent_0": Object {
+        "name": undefined,
+        "names": Array [
+          "student_first_name",
+          "student_last_name",
+        ],
+        "non_revoked": undefined,
+        "restrictions": Array [
+          Object {
+            "cred_def_id": "XUxBrVSALWHLeycAUhrNr9:3:CL:26293:student_card",
+          },
+        ],
+      },
+    },
+    "requested_predicates": Object {
+      "referent_1": Object {
+        "name": "expiry_date",
+        "non_revoked": undefined,
+        "p_type": ">=",
+        "p_value": 20240101,
+        "restrictions": Array [
+          Object {
+            "cred_def_id": "XUxBrVSALWHLeycAUhrNr9:3:CL:26293:student_card",
+          },
+        ],
+      },
+    },
+    "version": "0.0.1",
+  },
+}
+`;
