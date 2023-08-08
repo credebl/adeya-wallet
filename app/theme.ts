@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { SvgProps } from 'react-native-svg'
 

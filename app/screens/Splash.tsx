@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View, useWindowDimensions, Image } from 'react-native'
 import { Config } from 'react-native-config'
 import { SafeAreaView } from 'react-native-safe-area-context'
+// import Toast from 'react-native-toast-message'
 
 import indyLedgers from '../../configs/ledgers/indy'
 import InfoBox, { InfoBoxType } from '../components/misc/InfoBox'
@@ -111,13 +112,19 @@ const Splash: React.FC = () => {
     t('Init.SettingAgent'),
     t('Init.Finishing'),
   ]
-
+  // const styles = StyleSheet.create({
+  //   container: {
+  //     flex: 1,
+  //     justifyContent: 'center',
+  //     alignItems: 'center',
+  //     backgroundColor: ColorPallet.brand.primaryBackground,
+  //   },
+  // })
   const setStep = (stepIdx: number) => {
     setStepText(steps[stepIdx])
     const percent = Math.floor(((stepIdx + 1) / steps.length) * 100)
     setProgressPercent(percent)
   }
-
   const styles = StyleSheet.create({
     screenContainer: {
       backgroundColor: ColorPallet.brand.primaryBackground,
@@ -151,7 +158,6 @@ const Splash: React.FC = () => {
       marginBottom: 30,
     },
   })
-
   const loadAuthAttempts = async (): Promise<LoginAttemptState | undefined> => {
     try {
       const attemptsData = await AsyncStorage.getItem(LocalStorageKeys.LoginAttempts)
@@ -167,7 +173,6 @@ const Splash: React.FC = () => {
       // todo (WK)
     }
   }
-
   useEffect(() => {
     const initOnboarding = async (): Promise<void> => {
       try {
@@ -192,15 +197,15 @@ const Splash: React.FC = () => {
           })
         }
 
-        const migrationData = await AsyncStorage.getItem(LocalStorageKeys.Migration)
-        if (migrationData) {
-          const dataAsJSON = JSON.parse(migrationData) as MigrationState
+        // const migrationData = await AsyncStorage.getItem(LocalStorageKeys.Migration)
+        // if (migrationData) {
+        //   const dataAsJSON = JSON.parse(migrationData) as MigrationState
 
-          dispatch({
-            type: DispatchAction.MIGRATION_UPDATED,
-            payload: [dataAsJSON],
-          })
-        }
+        //   dispatch({
+        //     type: DispatchAction.MIGRATION_UPDATED,
+        //     payload: [dataAsJSON],
+        //   })
+        // }
 
         const toursData = await AsyncStorage.getItem(LocalStorageKeys.Tours)
         if (toursData) {
@@ -314,17 +319,17 @@ const Splash: React.FC = () => {
         })) as unknown as AdeyaAgent
 
         // If we haven't migrated to Aries Askar yet, we need to do this before we initialize the agent.
-        if (!didMigrateToAskar(store.migration)) {
-          newAgent.config.logger.debug('Agent not updated to Aries Askar, updating...')
+        // if (!didMigrateToAskar(store.migration)) {
+        //   newAgent.config.logger.debug('Agent not updated to Aries Askar, updating...')
 
-          await migrateToAskar(credentials.id, credentials.key, newAgent)
+        //   await migrateToAskar(credentials.id, credentials.key, newAgent)
 
-          newAgent.config.logger.debug('Successfully finished updating agent to Aries Askar')
-          // Store that we migrated to askar.
-          dispatch({
-            type: DispatchAction.DID_MIGRATE_TO_ASKAR,
-          })
-        }
+        //   newAgent.config.logger.debug('Successfully finished updating agent to Aries Askar')
+        //   // Store that we migrated to askar.
+        //   dispatch({
+        //     type: DispatchAction.DID_MIGRATE_TO_ASKAR,
+        //   })
+        // }
 
         setStep(6)
         setAgent(newAgent)
@@ -354,6 +359,9 @@ const Splash: React.FC = () => {
     }
   }
   return (
+    // <SafeAreaView style={styles.container}>
+    //   <LoadingIndicator />
+    // </SafeAreaView>
     <SafeAreaView style={styles.screenContainer}>
       <ScrollView contentContainerStyle={styles.scrollContentContainer}>
         <View style={styles.progressContainer} testID={testIdWithKey('LoadingActivityIndicator')}>
