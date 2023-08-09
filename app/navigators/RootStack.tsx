@@ -13,7 +13,9 @@ import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { useDeepLinks } from '../hooks/deep-links'
 import AttemptLockout from '../screens/AttemptLockout'
+import CreateWallet from '../screens/CreateWallet'
 import Developer from '../screens/Developer'
+import ImportWalletVerify from '../screens/ImportWalletConfirmation'
 import NameWallet from '../screens/NameWallet'
 import Onboarding from '../screens/Onboarding'
 import { createCarouselStyle } from '../screens/OnboardingPages'
@@ -157,6 +159,18 @@ const RootStack: React.FC = () => {
           {props => <PINEnter {...props} setAuthenticated={onAuthenticated} />}
         </Stack.Screen>
         <Stack.Screen
+          name={Screens.ImportWalletVerify}
+          options={() => ({
+            title: t('Screens.NameWallet'),
+            headerTintColor: OnboardingTheme.headerTintColor,
+            headerShown: true,
+            headerLeft: () => false,
+            rightLeft: () => false,
+          })}
+          component={ImportWalletVerify}
+        />
+
+        <Stack.Screen
           name={Screens.AttemptLockout}
           component={AttemptLockout}
           options={{ headerShown: true, headerLeft: () => null }}></Stack.Screen>
@@ -205,6 +219,7 @@ const RootStack: React.FC = () => {
     return (
       <Stack.Navigator initialRouteName={Screens.Splash} screenOptions={{ ...defaultStackOptions, headerShown: false }}>
         <Stack.Screen name={Screens.Splash} component={splash} />
+        <Stack.Screen name={Stacks.TabStack} component={TabStack} />
         <Stack.Screen
           name={Screens.Onboarding}
           options={() => ({
@@ -255,6 +270,28 @@ const RootStack: React.FC = () => {
             rightLeft: () => false,
           })}
           component={NameWallet}
+        />
+        <Stack.Screen
+          name={Screens.ImportWalletVerify}
+          options={() => ({
+            title: t('Screens.NameWallet'),
+            headerTintColor: OnboardingTheme.headerTintColor,
+            headerShown: true,
+            headerLeft: () => false,
+            rightLeft: () => false,
+          })}
+          component={ImportWalletVerify}
+        />
+        <Stack.Screen
+          name={Screens.WalletOptions}
+          options={() => ({
+            title: t('Screens.NameWallet'),
+            headerTintColor: OnboardingTheme.headerTintColor,
+            headerShown: true,
+            headerLeft: () => false,
+            rightLeft: () => false,
+          })}
+          component={CreateWallet}
         />
         <Stack.Screen
           name={Screens.UseBiometry}

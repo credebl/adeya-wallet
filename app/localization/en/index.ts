@@ -451,7 +451,9 @@ const translation = {
     "Build": "Build",
     "WhatAreContacts": "What are Contacts?",
     "ScanMyQR": "Scan my QR code",
-    "Developer": "Developer options"
+    "Developer": "Developer options",
+    "Backup": "backup wallet",
+    "Confirmation"  : 'Confirmation'
   },
   "TabStack": {
     "Home": "Home",
@@ -630,7 +632,20 @@ const translation = {
   },
   "Feedback": {
     "GiveFeedback": "Give Feedback",
-  }
+  },
+  "Backup" :{
+    "write_down": 'Write down your seed phrase',
+    "this_is_your_seed":
+      "This is your seed phrase. Write it down on a paper and keep it in a safe place. You'll be asked to re-enter this phrase (in order) on the next step.",
+    "continue": 'Continue',
+    "seed_phrase": 'Seed Phrase',
+    "confirm_seed_phrase": 'Confirm seed Phrase',
+    "select_each": 'Select each word in the order it was presented to you.',
+    "you_have_successfully": 'You have successfully selected the words.',
+    "complete_backup": 'Complete Backup',
+    "backup_wallet": 'Backup Wallet',
+  
+  } 
 }
 
 export default translation

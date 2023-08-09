@@ -6,12 +6,15 @@ import { DeviceEventEmitter } from 'react-native'
 import { EventTypes } from '../constants'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
+import ExportWallet from '../screens/ExportWallet'
+import ExportWalletConfirmation from '../screens/ExportWalletConfirmation'
 import Language from '../screens/Language'
 import Onboarding from '../screens/Onboarding'
 import { createCarouselStyle } from '../screens/OnboardingPages'
 import PINCreate from '../screens/PINCreate'
 import PINRecreate from '../screens/PINRecreate'
 import Settings from '../screens/Settings'
+import Success from '../screens/Success'
 import Tours from '../screens/Tours'
 import UseBiometry from '../screens/UseBiometry'
 import { Screens, SettingStackParams } from '../types/navigators'
@@ -85,6 +88,18 @@ const SettingStack: React.FC = () => {
         component={developer}
         options={{ title: t('Screens.Developer'), headerBackTestID: testIdWithKey('Back') }}
       />
+
+      <Stack.Screen
+        name={Screens.ExportWallet}
+        component={ExportWallet}
+        options={{ title: t('Screens.BackupWallet'), headerBackTestID: testIdWithKey('Back') }}
+      />
+      <Stack.Screen
+        name={Screens.ExportWalletConfirmation}
+        component={ExportWalletConfirmation}
+        options={{ title: t('Screens.Confirmation'), headerBackTestID: testIdWithKey('Back') }}
+      />
+      <Stack.Screen name={Screens.Success} component={Success} options={{ title: t('Screens.BackupWallet') }} />
       <Stack.Screen name={Screens.Onboarding} options={{ title: t('Screens.Onboarding') }}>
         {props => (
           <Onboarding
