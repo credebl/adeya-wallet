@@ -35,3 +35,7 @@ export const getCredentialIdentifiers = (credential: CredentialExchangeRecord) =
     schemaId: credential.metadata.get(AnonCredsCredentialMetadataKey)?.schemaId,
   }
 }
+
+export const isW3CCredential = (credential: CredentialExchangeRecord) => {
+  return credential && credential.credentials.find(c => c.credentialRecordType === 'w3c')
+}
