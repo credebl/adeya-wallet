@@ -168,8 +168,11 @@ export function getConnectionName(connection: ConnectionRecord | void): string |
   return connection?.alias || connection?.theirLabel
 }
 
-export function getCredentialConnectionLabel(credential?: CredentialExchangeRecord) {
+export function getCredentialConnectionLabel(credential?: CredentialExchangeRecord, connectionLabel?: string) {
   if (!credential) {
+    if (connectionLabel) {
+      return connectionLabel
+    }
     return ''
   }
 

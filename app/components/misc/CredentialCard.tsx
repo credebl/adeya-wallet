@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord } from '@aries-framework/core'
+import { CredentialExchangeRecord, W3cCredentialRecord } from '@aries-framework/core'
 import React from 'react'
 import { ViewStyle } from 'react-native'
 
@@ -12,7 +12,7 @@ import CredentialCard10 from './CredentialCard10'
 import CredentialCard11 from './CredentialCard11'
 
 interface CredentialCardProps {
-  credential?: CredentialExchangeRecord
+  credential?: CredentialExchangeRecord | W3cCredentialRecord
   credDefId?: string
   schemaId?: string
   credName?: string
@@ -21,6 +21,7 @@ interface CredentialCardProps {
   proof?: boolean
   displayItems?: (Attribute | Predicate)[]
   existsInWallet?: boolean
+  connectionLabel?: string
 }
 
 const CredentialCard: React.FC<CredentialCardProps> = ({
@@ -33,6 +34,7 @@ const CredentialCard: React.FC<CredentialCardProps> = ({
   existsInWallet,
   style = {},
   onPress = undefined,
+  connectionLabel = '',
 }) => {
   // add ability to reference credential by ID, allows us to get past react hook restrictions
   const { OCABundleResolver } = useConfiguration()
@@ -47,21 +49,17 @@ const CredentialCard: React.FC<CredentialCardProps> = ({
           credName={credName}
           credDefId={credDefId}
           schemaId={schemaId}
-          credential={credential}
+          credential={credential as CredentialExchangeRecord}
           proof
-          elevated></CredentialCard11>
+          elevated
+        />
       )
     }
 
-    if (credential) {
-      if (type === CardOverlayType.CardLayout10) {
-        return <CredentialCard10 credential={credential as CredentialExchangeRecord} style={style} onPress={onPress} />
-      } else {
-        return <CredentialCard11 credential={credential as CredentialExchangeRecord} style={style} onPress={onPress} />
-      }
-    } else {
+    if (credential instanceof W3cCredentialRecord || credential?.credentialAttributes?.length === 0) {
       return (
         <CredentialCard11
+          connectionLabel={connectionLabel}
           credDefId={credDefId}
           schemaId={schemaId}
           credName={credName}
@@ -70,6 +68,12 @@ const CredentialCard: React.FC<CredentialCardProps> = ({
           onPress={onPress}
         />
       )
+    } else if (credential instanceof CredentialExchangeRecord) {
+      if (type === CardOverlayType.CardLayout10) {
+        return <CredentialCard10 credential={credential} style={style} onPress={onPress} />
+      } else {
+        return <CredentialCard11 credential={credential} style={style} onPress={onPress} />
+      }
     }
   }
   return getCredOverlayType(OCABundleResolver.cardOverlayType)
