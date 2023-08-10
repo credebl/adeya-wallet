@@ -97,7 +97,7 @@ function ExportWalletConfirmation() {
 
       const date = new Date()
       const dformat = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
-      const WALLET_FILE_NAME = `PCM_Wallet_${dformat}`
+      const WALLET_FILE_NAME = `SSI_Wallet_${dformat}`
 
       await fs
         .mkdir(zipDirectory)
@@ -132,7 +132,7 @@ function ExportWalletConfirmation() {
         text1: 'Backup successfully',
       })
       setMatchPhrase(true)
-      navigation.navigate(Screens.Success as never)
+      navigation.navigate(Screens.Success, { encryptedFileLocation })
     } catch (e) {
       Toast.show({
         type: ToastType.Error,

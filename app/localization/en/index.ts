@@ -522,6 +522,11 @@ const translation = {
     "ProofRequesting": 'Proof Requesting',
     "NameWallet": "Name your wallet",
     "CredentialDetailsJSONLD" :'Credential Details JSONLD',
+    "BackupWallet":"Backup wallet",
+    "Confirmation"  : 'Confirmation',
+    "CreateWallet"  : 'Create Wallet',
+    "VerifyPhrase"  : 'Verify Phrase',
+    "Success"  : 'Success'
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",

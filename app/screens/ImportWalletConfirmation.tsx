@@ -18,8 +18,10 @@ import RNFS, { stat } from 'react-native-fs'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 
 import indyLedgers from '../../configs/ledgers/indy'
+import ButtonLoading from '../components/animated/ButtonLoading'
 import Button, { ButtonType } from '../components/buttons/Button'
 import { ToastType } from '../components/toast/BaseToast'
+import { testIdPrefix } from '../constants'
 import { useAuth } from '../contexts/auth'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
@@ -34,6 +36,7 @@ const ImportWalletVerify: React.FC = () => {
   const { getWalletCredentials } = useAuth()
   const [PassPhrase, setPassPharse] = useState('')
   const [encodeHash, setencodeHash] = useState('')
+  const [verify, setverify] = useState(false)
   const [selectedfilepath, setselectedfilepath] = useState('')
   const { setAgent } = useAgent()
   const { height } = Dimensions.get('window')
@@ -51,7 +54,7 @@ const ImportWalletVerify: React.FC = () => {
     textInputStyle: {
       borderRadius: 10,
       borderWidth: 2,
-      borderColor: ColorPallet.grayscale.darkGrey,
+      borderColor: ColorPallet.brand.primary,
       width: width - 40,
       paddingLeft: width / 20,
       textAlignVertical: 'top',
@@ -71,71 +74,75 @@ const ImportWalletVerify: React.FC = () => {
     detailText: {
       justifyContent: 'flex-start',
       fontSize: 25,
-      color: '#ffff',
+      color: ColorPallet.brand.primary,
     },
   })
   const initAgent = async (): Promise<void> => {
     try {
       const credentials = await getWalletCredentials()
-
+      //  if( encodeHash !== ''){
       if (!credentials?.id || !credentials.key) {
         // Cannot find wallet id/secret
         return
       }
-
-      const newAgent = new Agent({
-        config: {
-          label: store.preferences.walletName || 'Aries Bifold',
-          walletConfig: {
-            id: credentials.id,
-            key: credentials.key,
+      if (encodeHash !== '') {
+        const newAgent = new Agent({
+          config: {
+            label: store.preferences.walletName || 'Aries Bifold',
+            walletConfig: {
+              id: credentials.id,
+              key: credentials.key,
+            },
+            logger: new ConsoleLogger(LogLevel.trace),
+            autoUpdateStorageOnStartup: true,
           },
-          logger: new ConsoleLogger(LogLevel.trace),
-          autoUpdateStorageOnStartup: true,
-        },
-        dependencies: agentDependencies,
-        modules: getAgentModules({
-          indyNetworks: indyLedgers,
-          mediatorInvitationUrl: Config.MEDIATOR_URL,
-        }),
-      })
-      const wsTransport = new WsOutboundTransport()
-      const httpTransport = new HttpOutboundTransport()
+          dependencies: agentDependencies,
+          modules: getAgentModules({
+            indyNetworks: indyLedgers,
+            mediatorInvitationUrl: Config.MEDIATOR_URL,
+          }),
+        })
+        const wsTransport = new WsOutboundTransport()
+        const httpTransport = new HttpOutboundTransport()
 
-      newAgent.registerOutboundTransport(wsTransport)
-      newAgent.registerOutboundTransport(httpTransport)
+        newAgent.registerOutboundTransport(wsTransport)
+        newAgent.registerOutboundTransport(httpTransport)
 
-      const walletConfig = {
-        id: credentials.id,
-        key: credentials.key,
+        const walletConfig = {
+          id: credentials.id,
+          key: credentials.key,
+        }
+
+        const importConfig: WalletExportImportConfig = {
+          key: encodeHash,
+          path: selectedfilepath,
+        }
+        await newAgent.wallet.import(walletConfig, importConfig)
+
+        await newAgent.initialize()
+
+        await createLinkSecretIfRequired(newAgent)
+
+        setAgent(newAgent)
+        setverify(true)
+        Toast.show({
+          type: ToastType.Success,
+          text1: `Walllet imported successfully `,
+          visibilityTime: 2000,
+          position: 'bottom',
+        })
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: Stacks.TabStack }],
+          }),
+        )
+      } else {
+        Toast.show({
+          type: ToastType.Error,
+          text1: `Please enter pharse`,
+        })
       }
-
-      const importConfig: WalletExportImportConfig = {
-        key: encodeHash,
-        path: selectedfilepath,
-      }
-
-      await newAgent.wallet.import(walletConfig, importConfig)
-
-      await newAgent.initialize()
-
-      await createLinkSecretIfRequired(newAgent)
-
-      setAgent(newAgent)
-      Toast.show({
-        type: ToastType.Success,
-        text1: `Import successfully`,
-        visibilityTime: 2000,
-        position: 'bottom',
-      })
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: Stacks.TabStack }],
-        }),
-      )
-
-      // navigation.navigate(Stacks.TabStack)
     } catch (e: unknown) {
       Toast.show({
         type: ToastType.Error,
@@ -143,6 +150,7 @@ const ImportWalletVerify: React.FC = () => {
         visibilityTime: 2000,
         position: 'bottom',
       })
+      setverify(false)
     }
   }
 
@@ -151,15 +159,7 @@ const ImportWalletVerify: React.FC = () => {
     const symetric = await Encrypt768(myKeys[0], seed)
 
     setencodeHash(md5(symetric[1]))
-
-    if (encodeHash !== '') {
-      initAgent()
-    } else {
-      Toast.show({
-        type: ToastType.Error,
-        text1: `Please enter pharse`,
-      })
-    }
+    initAgent()
   }
 
   const handleSelect = async () => {
@@ -179,18 +179,6 @@ const ImportWalletVerify: React.FC = () => {
             text1: err,
           })
         })
-
-      // RNFetchBlob.fs
-      //   .stat(res.fileCopyUri)
-      //   .then((stats) => {
-      //     setselectedfilepath(stats.path)
-      //   })
-      //   .catch((err: string) => {
-      //     Toast.show({
-      //       type: ToastType.Error,
-      //       text1: err,
-      //     })
-      //   })
     } catch (error) {
       Toast.show({
         type: ToastType.Error,
@@ -203,10 +191,14 @@ const ImportWalletVerify: React.FC = () => {
     handleSelect()
   }, [])
 
+  const handleUserphrase = (text: string) => {
+    setPassPharse(text)
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.textView}>
-        <Text style={styles.detailText}>Enter your secret phrase here</Text>
+        <Text style={styles.detailText}>Enter your secret phrase here seperated</Text>
       </View>
       <View style={styles.textInputView}>
         <TextInput
@@ -214,7 +206,7 @@ const ImportWalletVerify: React.FC = () => {
           multiline
           autoCapitalize="none"
           autoFocus
-          onChangeText={text => setPassPharse(text)}
+          onChangeText={text => handleUserphrase(text)}
         />
       </View>
       <View style={{ marginTop: 'auto', margin: 20 }}>
@@ -222,8 +214,10 @@ const ImportWalletVerify: React.FC = () => {
           title={'Verify'}
           buttonType={ButtonType.Primary}
           accessibilityLabel={'okay'}
-          onPress={() => VerifyPharase(PassPhrase)}
-        />
+          disabled={verify}
+          onPress={() => VerifyPharase(PassPhrase)}>
+          {verify && <ButtonLoading />}
+        </Button>
       </View>
     </View>
   )

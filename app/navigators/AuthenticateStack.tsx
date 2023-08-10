@@ -30,7 +30,7 @@ const AuthenticateStack: React.FC<AuthenticateStackProps> = ({ setAuthenticated 
       <Stack.Screen
         name={Screens.ImportWalletVerify}
         component={ImportWalletVerify}
-        options={{ title: t('Screens.CreateWallet'), headerBackTestID: testIdWithKey('Back') }}
+        options={{ title: t('Screens.VerifyPhrase'), headerBackTestID: testIdWithKey('Back') }}
       />
       <Stack.Screen name={Screens.ImportSuccess} component={ImportSuccess} options={{ title: t('Screens.Success') }} />
       <Stack.Screen

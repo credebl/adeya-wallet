@@ -97,7 +97,7 @@ const SettingStack: React.FC = () => {
       <Stack.Screen
         name={Screens.ExportWalletConfirmation}
         component={ExportWalletConfirmation}
-        options={{ title: t('Screens.Confirmation'), headerBackTestID: testIdWithKey('Back') }}
+        options={{ title: t('Screens.Confirmation') }}
       />
       <Stack.Screen name={Screens.Success} component={Success} options={{ title: t('Screens.BackupWallet') }} />
       <Stack.Screen name={Screens.Onboarding} options={{ title: t('Screens.Onboarding') }}>

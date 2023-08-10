@@ -403,7 +403,9 @@ const translation = {
     "AppGuides": "App guides (PT-BR)",
     "WhatAreContacts": "O que são Contatos?",
     "ScanMyQR": "Scan my QR code (PT-BR)",
-    "Developer": "Developer options"
+    "Developer": "Developer options",
+    "Backup": "carteira de backup",
+    "Confirmation"  : 'Confirmação'
   },
   "TabStack": {
     "Home": "Home",
@@ -462,6 +464,11 @@ const translation = {
     "ConnectionInvitation": "Convite de conexão",
     "CreateConnectionInvitation": "Criar um convite de conexão",
     "NameWallet": "Name your wallet (PT-BR)",
+    "BackupWallet":"Carteira de backup",
+    "Confirmation"  : 'Confirmação',
+    "CreateWallet"  : 'Criar Carteira',
+    "VerifyPhrase"  : 'Verificar frase',
+    "Success"  : 'Sucesso'
   },
   "Loading": {
     "TakingTooLong": "Isso esta demorando mais que o normal. Você pode voltar para a home ou continuar esperando.",

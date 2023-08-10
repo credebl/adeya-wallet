@@ -15,10 +15,11 @@ const CreateWallet: React.FC = () => {
       height: '100%',
     },
     titletext: {
-      fontSize: 45,
-      fontWeight: 'bold',
+      fontSize: 32,
+      fontWeight: '500',
       alignSelf: 'center',
       color: ColorPallet.brand.primary,
+      marginTop: 20,
     },
     subcontainer: {},
   })

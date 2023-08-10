@@ -220,6 +220,13 @@ const RootStack: React.FC = () => {
       <Stack.Navigator initialRouteName={Screens.Splash} screenOptions={{ ...defaultStackOptions, headerShown: false }}>
         <Stack.Screen name={Screens.Splash} component={splash} />
         <Stack.Screen name={Stacks.TabStack} component={TabStack} />
+        <Stack.Screen name={Stacks.SettingStack} component={SettingStack} />
+        <Stack.Screen
+          name={Stacks.ConnectStack}
+          component={ConnectStack}
+          // below is part of the temporary gating of the new scan screen tabs feature
+          options={{ presentation: state.preferences.useConnectionInviterCapability ? 'card' : 'modal' }}
+        />
         <Stack.Screen
           name={Screens.Onboarding}
           options={() => ({
@@ -274,7 +281,7 @@ const RootStack: React.FC = () => {
         <Stack.Screen
           name={Screens.ImportWalletVerify}
           options={() => ({
-            title: t('Screens.NameWallet'),
+            title: t('Screens.VerifyPhrase'),
             headerTintColor: OnboardingTheme.headerTintColor,
             headerShown: true,
             headerLeft: () => false,
@@ -285,7 +292,7 @@ const RootStack: React.FC = () => {
         <Stack.Screen
           name={Screens.WalletOptions}
           options={() => ({
-            title: t('Screens.NameWallet'),
+            title: t('Screens.CreateWallet'),
             headerTintColor: OnboardingTheme.headerTintColor,
             headerShown: true,
             headerLeft: () => false,
@@ -309,6 +316,10 @@ const RootStack: React.FC = () => {
           component={Developer}
           options={{ ...defaultStackOptions, title: t('Screens.Developer'), headerBackTestID: testIdWithKey('Back') }}
         />
+        <Stack.Screen name={Stacks.ContactStack} component={ContactStack} />
+        <Stack.Screen name={Stacks.NotificationStack} component={NotificationStack} />
+        <Stack.Screen name={Stacks.ConnectionStack} component={DeliveryStack} />
+        <Stack.Screen name={Stacks.ProofRequestsStack} component={ProofRequestStack} />
       </Stack.Navigator>
     )
   }
