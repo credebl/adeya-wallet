@@ -54,17 +54,17 @@ export function keyGen768(seed) {
 
   // const rnd = crypto.randomBytes(32);
 
-  // const rnd = new Uint8Array(32);
+  // let rnd = new Uint8Array(32);
   // webcrypto.getRandomValues(rnd); // web api cryptographically strong random values
 
   // concatenate to form IND-CCA2 private key: sk + pk + h(pk) + rnd
-  for (const i = 0; i < pk.length; i++) {
+  for (let i = 0; i < pk.length; i++) {
     sk.push(pk[i])
   }
-  for (const i = 0; i < pkh.length; i++) {
+  for (let i = 0; i < pkh.length; i++) {
     sk.push(pkh[i])
   }
-  for (const i = 0; i < rnd.length; i++) {
+  for (let i = 0; i < rnd.length; i++) {
     sk.push(rnd[i])
   }
 
@@ -127,7 +127,7 @@ export function Encrypt768(pk, m) {
 // public-key encryption scheme underlying Kyber.
 function indcpaKeyGen(seedParam) {
   // random bytes for seed
-  // const rnd = new Uint8Array(32);
+  // let rnd = new Uint8Array(32);
   // webcrypto.getRandomValues(rnd); // web api cryptographically strong random values
   const rnd = seedParam
   // hash rnd with SHA3-512
@@ -143,31 +143,31 @@ function indcpaKeyGen(seedParam) {
 
   // sample secret s
   const s = new Array(paramsK)
-  const nonce = 0
-  for (const i = 0; i < paramsK; i++) {
+  let nonce = 0
+  for (let i = 0; i < paramsK; i++) {
     s[i] = sample(noiseSeed, nonce)
     nonce = nonce + 1
   }
 
   // sample noise e
   const e = new Array(paramsK)
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     e[i] = sample(noiseSeed, nonce)
     nonce = nonce + 1
   }
 
   // perform number theoretic transform on secret s
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     s[i] = ntt(s[i])
   }
 
   // perform number theoretic transform on error/noise e
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     e[i] = ntt(e[i])
   }
 
   // barrett reduction
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     s[i] = reduce(s[i])
   }
 
@@ -176,18 +176,18 @@ function indcpaKeyGen(seedParam) {
 
   // calculate A.s
   const pk = new Array(paramsK)
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     // montgomery reduction
     pk[i] = polyToMont(multiply(a[i], s))
   }
 
   // calculate addition of e
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     pk[i] = add(pk[i], e[i])
   }
 
   // barrett reduction
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     pk[i] = reduce(pk[i])
   }
 
@@ -197,15 +197,15 @@ function indcpaKeyGen(seedParam) {
   // PUBLIC KEY
   // turn polynomials into byte arrays
   keys[0] = []
-  const bytes = []
-  for (const i = 0; i < paramsK; i++) {
+  let bytes = []
+  for (let i = 0; i < paramsK; i++) {
     bytes = polyToBytes(pk[i])
-    for (const j = 0; j < bytes.length; j++) {
+    for (let j = 0; j < bytes.length; j++) {
       keys[0].push(bytes[j])
     }
   }
   // append public seed
-  for (const i = 0; i < publicSeed.length; i++) {
+  for (let i = 0; i < publicSeed.length; i++) {
     keys[0].push(publicSeed[i])
   }
 
@@ -213,9 +213,9 @@ function indcpaKeyGen(seedParam) {
   // turn polynomials into byte arrays
   keys[1] = []
   bytes = []
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     bytes = polyToBytes(s[i])
-    for (const j = 0; j < bytes.length; j++) {
+    for (let j = 0; j < bytes.length; j++) {
       keys[1].push(bytes[j])
     }
   }
@@ -227,9 +227,9 @@ function indcpaKeyGen(seedParam) {
 function indcpaEncrypt(pk1, msg, coins) {
   // DECODE PUBLIC KEY
   const pk = new Array(paramsK)
-  const start
-  const end
-  for (const i = 0; i < paramsK; i++) {
+  let start
+  let end
+  for (let i = 0; i < paramsK; i++) {
     start = i * 384
     end = (i + 1) * 384
     pk[i] = polyFromBytes(pk1.slice(start, end))
@@ -241,15 +241,15 @@ function indcpaEncrypt(pk1, msg, coins) {
 
   // sample random vector r
   const r = new Array(paramsK)
-  const nonce = 0
-  for (const i = 0; i < paramsK; i++) {
+  let nonce = 0
+  for (let i = 0; i < paramsK; i++) {
     r[i] = sample(coins, nonce)
     nonce = nonce + 1
   }
 
   // sample error vector e1
   const e1 = new Array(paramsK)
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     e1[i] = sample(coins, nonce)
     nonce = nonce + 1
   }
@@ -258,12 +258,12 @@ function indcpaEncrypt(pk1, msg, coins) {
   const e2 = sample(coins, nonce)
 
   // perform number theoretic transform on random vector r
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     r[i] = ntt(r[i])
   }
 
   // barrett reduction
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     r[i] = reduce(r[i])
   }
 
@@ -273,17 +273,17 @@ function indcpaEncrypt(pk1, msg, coins) {
 
   // calculate A.r
   const u = new Array(paramsK)
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     u[i] = multiply(at[i], r)
   }
 
   // perform inverse number theoretic transform on A.r
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     u[i] = nttInverse(u[i])
   }
 
   // calculate addition of e1
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     u[i] = add(u[i], e1[i])
   }
 
@@ -291,7 +291,7 @@ function indcpaEncrypt(pk1, msg, coins) {
   const m = polyFromMsg(msg)
 
   // calculate pk.r
-  const v = multiply(pk, r)
+  let v = multiply(pk, r)
 
   // perform inverse number theoretic transform on pk.r
   v = nttInverse(v)
@@ -303,7 +303,7 @@ function indcpaEncrypt(pk1, msg, coins) {
   v = add(v, m)
 
   // barrett reduction
-  for (const i = 0; i < paramsK; i++) {
+  for (let i = 0; i < paramsK; i++) {
     u[i] = reduce(u[i])
   }
 
@@ -320,11 +320,11 @@ function indcpaEncrypt(pk1, msg, coins) {
 
 // polyToBytes serializes a polynomial into an array of bytes.
 function polyToBytes(a) {
-  const t0, t1
+  let t0, t1
   const r = new Array(384)
   const a2 = subtract_q(a) // Returns: a - q if a >= q, else a (each coefficient of the polynomial)
   // for 0-127
-  for (const i = 0; i < paramsN / 2; i++) {
+  for (let i = 0; i < paramsN / 2; i++) {
     // get two coefficient entries in the polynomial
     t0 = uint16(a2[2 * i])
     t1 = uint16(a2[2 * i + 1])
@@ -341,7 +341,7 @@ function polyToBytes(a) {
 // and represents the inverse of polyToBytes.
 function polyFromBytes(a) {
   const r = new Array(384).fill(0)
-  for (const i = 0; i < paramsN / 2; i++) {
+  for (let i = 0; i < paramsN / 2; i++) {
     r[2 * i] = int16(((uint16(a[3 * i + 0]) >> 0) | (uint16(a[3 * i + 1]) << 8)) & 0xfff)
     r[2 * i + 1] = int16(((uint16(a[3 * i + 1]) >> 4) | (uint16(a[3 * i + 2]) << 4)) & 0xfff)
   }
@@ -351,9 +351,9 @@ function polyFromBytes(a) {
 // polyFromMsg converts a 32-byte message to a polynomial.
 function polyFromMsg(msg) {
   const r = new Array(384).fill(0) // each element is int16 (0-65535)
-  const mask // int16
-  for (const i = 0; i < paramsN / 8; i++) {
-    for (const j = 0; j < 8; j++) {
+  let mask // int16
+  for (let i = 0; i < paramsN / 8; i++) {
+    for (let j = 0; j < 8; j++) {
       mask = -1 * int16((msg[i] >> j) & 1)
       r[8 * i + j] = mask & int16((paramsQ + 1) / 2)
     }
@@ -368,12 +368,12 @@ function generateMatrixA(seed, transposed) {
   const a = new Array(3)
   const output = new Array(3 * 168)
   const xof = new SHAKE(128)
-  const ctr = 0
-  for (const i = 0; i < paramsK; i++) {
+  let ctr = 0
+  for (let i = 0; i < paramsK; i++) {
     a[i] = new Array(paramsK)
     const transpose = new Array(2)
 
-    for (const j = 0; j < paramsK; j++) {
+    for (let j = 0; j < paramsK; j++) {
       // set if transposed matrix or not
       transpose[0] = j
       transpose[1] = i
@@ -392,7 +392,7 @@ function generateMatrixA(seed, transposed) {
 
       // run rejection sampling on the output from above
       const outputlen = 3 * 168 // 504
-      const result = new Array(2)
+      let result = new Array(2)
       result = indcpaRejUniform(output.slice(0, 504), outputlen, paramsN)
       a[i][j] = result[0] // the result here is an NTT-representation
       ctr = result[1] // keeps track of index of output array from sampling function
@@ -402,12 +402,12 @@ function generateMatrixA(seed, transposed) {
 
         const outputn = output.slice(504, 672) // take last 168 bytes of byte array from xof
 
-        const result1 = new Array(2)
+        let result1 = new Array(2)
         result1 = indcpaRejUniform(outputn, 168, paramsN - ctr) // run sampling function again
         const missing = result1[0] // here is additional mod q polynomial coefficients
         const ctrn = result1[1] // how many coefficients were accepted and are in the output
         // starting at last position of output array from first sampling function until 256 is reached
-        for (const k = ctr; k < paramsN; k++) {
+        for (let k = ctr; k < paramsN; k++) {
           a[i][j][k] = missing[k - ctr] // fill rest of array with the additional coefficients until full
         }
         ctr = ctr + ctrn // update index
@@ -421,9 +421,9 @@ function generateMatrixA(seed, transposed) {
 // to generate uniform random integers modulo `Q`.
 function indcpaRejUniform(buf, bufl, len) {
   const r = new Array(384).fill(0)
-  const val0, val1 // d1, d2 in kyber documentation
-  const pos = 0 // i
-  const ctr = 0 // j
+  let val0, val1 // d1, d2 in kyber documentation
+  let pos = 0 // i
+  let ctr = 0 // j
 
   while (ctr < len && pos + 3 <= bufl) {
     // compute d1 and d2
@@ -480,14 +480,14 @@ function prf(l, key, nonce) {
 // according to a centered binomial distribution with parameter paramsETA,
 // given an array of uniformly random bytes.
 function byteopsCbd(buf) {
-  const t, d
-  const a, b
+  let t, d
+  let a, b
   const r = new Array(384).fill(0)
-  for (const i = 0; i < paramsN / 8; i++) {
+  for (let i = 0; i < paramsN / 8; i++) {
     t = byteopsLoad32(buf.slice(4 * i, buf.length)) >>> 0
     d = (t & 0x55555555) >>> 0
     d = (d + ((((t >> 1) >>> 0) & 0x55555555) >>> 0)) >>> 0
-    for (const j = 0; j < 8; j++) {
+    for (let j = 0; j < 8; j++) {
       a = int16((((d >> (4 * j + 0)) >>> 0) & 0x3) >>> 0)
       b = int16((((d >> (4 * j + paramsETA)) >>> 0) & 0x3) >>> 0)
       r[8 * i + j] = a - b
@@ -498,7 +498,7 @@ function byteopsCbd(buf) {
 
 // byteopsLoad32 returns a 32-bit unsigned integer loaded from byte x.
 function byteopsLoad32(x) {
-  const r
+  let r
   r = uint32(x[0])
   r = ((r | (uint32(x[1]) << 8)) >>> 0) >>> 0
   r = ((r | (uint32(x[2]) << 16)) >>> 0) >>> 0
@@ -509,14 +509,14 @@ function byteopsLoad32(x) {
 // ntt performs an inplace number-theoretic transform (NTT) in `Rq`.
 // The input is in standard order, the output is in bit-reversed order.
 function ntt(r) {
-  const j = 0
-  const k = 1
-  const zeta
-  const t
+  let j = 0
+  let k = 1
+  let zeta
+  let t
   // 128, 64, 32, 16, 8, 4, 2
-  for (const l = 128; l >= 2; l >>= 1) {
+  for (let l = 128; l >= 2; l >>= 1) {
     // 0,
-    for (const start = 0; start < 256; start = j + l) {
+    for (let start = 0; start < 256; start = j + l) {
       zeta = nttZetas[k]
       k = k + 1
       // for each element in the subsections (128, 64, 32, 16, 8, 4, 2) starting at an offset
@@ -541,7 +541,7 @@ function nttFqMul(a, b) {
 
 // reduce applies Barrett reduction to all coefficients of a polynomial.
 function reduce(r) {
-  for (const i = 0; i < paramsN; i++) {
+  for (let i = 0; i < paramsN; i++) {
     r[i] = barrett(r[i])
   }
   return r
@@ -552,7 +552,7 @@ function reduce(r) {
 // `a mod Q` in {0,...,Q}.
 function barrett(a) {
   const v = ((1 << 24) + paramsQ / 2) / paramsQ
-  const t = (v * a) >> 24
+  let t = (v * a) >> 24
   t = t * paramsQ
   return a - t
 }
@@ -561,7 +561,7 @@ function barrett(a) {
 // a 32-bit integer `a`, returns `a * R^-1 mod Q` where `R=2^16`.
 function byteopsMontgomeryReduce(a) {
   const u = int16(int32(a) * paramsQinv)
-  const t = u * paramsQ
+  let t = u * paramsQ
   t = a - t
   t >>= 16
   return int16(t)
@@ -570,9 +570,9 @@ function byteopsMontgomeryReduce(a) {
 // polyToMont performs the in-place conversion of all coefficients
 // of a polynomial from the normal domain to the Montgomery domain.
 function polyToMont(r) {
-  // const f = int16(((uint64(1) << 32) >>> 0) % uint64(paramsQ));
+  // let f = int16(((uint64(1) << 32) >>> 0) % uint64(paramsQ));
   const f = 1353 // if paramsQ changes then this needs to be updated
-  for (const i = 0; i < paramsN; i++) {
+  for (let i = 0; i < paramsN; i++) {
     r[i] = byteopsMontgomeryReduce(int32(r[i]) * int32(f))
   }
   return r
@@ -581,9 +581,9 @@ function polyToMont(r) {
 // pointwise-multiplies elements of polynomial-vectors
 // `a` and `b`, accumulates the results into `r`, and then multiplies by `2^-16`.
 function multiply(a, b) {
-  const r = polyBaseMulMontgomery(a[0], b[0])
-  const t
-  for (const i = 1; i < paramsK; i++) {
+  let r = polyBaseMulMontgomery(a[0], b[0])
+  let t
+  for (let i = 1; i < paramsK; i++) {
     t = polyBaseMulMontgomery(a[i], b[i])
     r = add(r, t)
   }
@@ -593,8 +593,8 @@ function multiply(a, b) {
 // polyBaseMulMontgomery performs the multiplication of two polynomials
 // in the number-theoretic transform (NTT) domain.
 function polyBaseMulMontgomery(a, b) {
-  const rx, ry
-  for (const i = 0; i < paramsN / 4; i++) {
+  let rx, ry
+  for (let i = 0; i < paramsN / 4; i++) {
     rx = nttBaseMul(a[4 * i + 0], a[4 * i + 1], b[4 * i + 0], b[4 * i + 1], nttZetas[64 + i])
     ry = nttBaseMul(a[4 * i + 2], a[4 * i + 3], b[4 * i + 2], b[4 * i + 3], -nttZetas[64 + i])
     a[4 * i + 0] = rx[0]
@@ -621,7 +621,7 @@ function nttBaseMul(a0, a1, b0, b1, zeta) {
 // adds two polynomials.
 function add(a, b) {
   const c = new Array(384)
-  for (const i = 0; i < paramsN; i++) {
+  for (let i = 0; i < paramsN; i++) {
     c[i] = a[i] + b[i]
   }
   return c
@@ -631,12 +631,12 @@ function add(a, b) {
 // in `Rq` and multiplication by Montgomery factor 2^16.
 // The input is in bit-reversed order, the output is in standard order.
 function nttInverse(r) {
-  const j = 0
-  const k = 0
-  const zeta
-  const t
-  for (const l = 2; l <= 128; l <<= 1) {
-    for (const start = 0; start < 256; start = j + l) {
+  let j = 0
+  let k = 0
+  let zeta
+  let t
+  for (let l = 2; l <= 128; l <<= 1) {
+    for (let start = 0; start < 256; start = j + l) {
       zeta = nttZetasInv[k]
       k = k + 1
       for (j = start; j < start + l; j++) {
@@ -655,12 +655,12 @@ function nttInverse(r) {
 
 // compress1 lossily compresses and serializes a vector of polynomials.
 function compress1(u) {
-  const rr = 0
+  let rr = 0
   const r = new Array(960)
   const t = new Array(4)
-  for (const i = 0; i < paramsK; i++) {
-    for (const j = 0; j < paramsN / 4; j++) {
-      for (const k = 0; k < 4; k++) {
+  for (let i = 0; i < paramsK; i++) {
+    for (let j = 0; j < paramsN / 4; j++) {
+      for (let k = 0; k < 4; k++) {
         // parse {0,...,3328} to {0,...,1023}
         t[k] = (((u[i][4 * j + k] << 10) + paramsQ / 2) / paramsQ) & 0b1111111111
       }
@@ -679,11 +679,11 @@ function compress1(u) {
 
 // compress2 lossily compresses and subsequently serializes a polynomial.
 function compress2(v) {
-  const rr = 0
+  let rr = 0
   const r = new Array(128)
   const t = new Array(8)
-  for (const i = 0; i < paramsN / 8; i++) {
-    for (const j = 0; j < 8; j++) {
+  for (let i = 0; i < paramsN / 8; i++) {
+    for (let j = 0; j < 8; j++) {
       t[j] = byte(((v[8 * i + j] << 4) + paramsQ / 2) / paramsQ) & 0b1111
     }
     r[rr + 0] = t[0] | (t[1] << 4)
@@ -699,7 +699,7 @@ function compress2(v) {
 // if a is 3329 then convert to 0
 // Returns:     a - q if a >= q, else a
 function subtract_q(r) {
-  for (const i = 0; i < paramsN; i++) {
+  for (let i = 0; i < paramsN; i++) {
     r[i] = r[i] - paramsQ // should result in a negative integer
     // push left most signed bit to right most position
     // javascript does bitwise operations in signed 32 bit
