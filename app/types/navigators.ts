@@ -95,7 +95,7 @@ export type ContactStackParams = {
   [Screens.ContactDetails]: { connectionId: string }
   [Screens.WhatAreContacts]: undefined
   [Screens.CredentialDetails]: { credentialId: string }
-  [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
+  [Screens.CredentialDetailsW3C]: { credential: CredentialExchangeRecord }
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean }
   [Screens.ProofRequest]: { proofId: string }

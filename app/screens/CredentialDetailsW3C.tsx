@@ -1,5 +1,6 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
+import { CredentialExchangeRecord, W3cCredentialRecord } from '@aries-framework/core'
 import { useAgent } from '@aries-framework/react-hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -46,6 +47,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const { OCABundleResolver } = useConfiguration()
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState<boolean>(false)
   const [tables, setTables] = useState<W3CCredentialAttributeField[]>([])
+  const [w3cCredential, setW3cCredential] = useState<W3cCredentialRecord>()
 
   const [overlay, setOverlay] = useState<CredentialOverlay<CardLayoutOverlay11>>({
     bundle: undefined,
@@ -54,7 +56,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     cardLayoutOverlay: undefined,
   })
 
-  const credentialConnectionLabel = credential.credential.issuerId
+  // const credentialConnectionLabel = credential.credential.issuerId
   const styles = StyleSheet.create({
     container: {
       backgroundColor: overlay.cardLayoutOverlay?.primaryBackgroundColor,
@@ -114,24 +116,48 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   }, [])
 
   useEffect(() => {
+    if (!w3cCredential) {
+      const updateCredential = async () => {
+        if (!agent) {
+          return
+        }
+        if (credential instanceof W3cCredentialRecord) {
+          return credential
+        } else if (credential instanceof CredentialExchangeRecord) {
+          const credentialRecordId = credential.credentials[0].credentialRecordId
+          const record = await agent.w3cCredentials.getCredentialRecordById(credentialRecordId)
+          return record
+        }
+      }
+
+      updateCredential().then(cred => setW3cCredential(cred))
+    }
+
+    if (!(w3cCredential instanceof W3cCredentialRecord)) {
+      return
+    }
+
     const params = {
-      identifiers: { schemaId: credential.credential.type[1], credentialDefinitionId: credential.credential.type[1] },
-      meta: {
-        alias: credentialConnectionLabel,
-        credConnectionId: credential.credential.issuerId,
-        credName: credential.credential.type[1],
+      identifiers: {
+        schemaId: w3cCredential.credential.type[1],
+        credentialDefinitionId: w3cCredential.credential.type[1],
       },
-      attributes: buildFieldsFromJSONLDCredential(credential.credential.credentialSubject),
+      meta: {
+        alias: w3cCredential.credential.issuerId,
+        credConnectionId: w3cCredential.credential.issuerId,
+        credName: w3cCredential.credential.type[1],
+      },
+      attributes: buildFieldsFromJSONLDCredential(w3cCredential.credential.credentialSubject),
       language: i18n.language,
     }
 
-    const jsonLdValues = formatCredentialSubject(credential.credential.credentialSubject)
+    const jsonLdValues = formatCredentialSubject(w3cCredential.credential.credentialSubject)
     setTables(jsonLdValues)
 
     OCABundleResolver.resolveAllBundles(params).then(bundle => {
       setOverlay({ ...overlay, ...bundle })
     })
-  }, [credential])
+  }, [w3cCredential])
 
   // const handleOnRemove = () => {
   //   setIsRemoveModalDisplayed(true)
@@ -247,7 +273,9 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const header = () => {
     return OCABundleResolver.cardOverlayType === CardOverlayType.CardLayout10 ? (
       <View>
-        {credential && <CredentialCard schemaId={credential.credential.context[1] as string} style={{ margin: 16 }} />}
+        {credential && (
+          <CredentialCard schemaId={w3cCredential?.credential.context[1] as string} style={{ margin: 16 }} />
+        )}
       </View>
     ) : (
       <View style={styles.container}>
@@ -261,20 +289,18 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const footer = () => {
     return (
       <View style={{ marginBottom: 50 }}>
-        {credentialConnectionLabel ? (
-          <View
-            style={{
-              backgroundColor: ColorPallet.brand.secondaryBackground,
-              marginTop: paddingVertical,
-              paddingHorizontal,
-              paddingVertical,
-            }}>
-            <Text testID={testIdWithKey('IssuerName')}>
-              <Text style={TextTheme.title}>{t('CredentialDetails.IssuedBy') + ' '}</Text>
-              <Text style={TextTheme.normal}>{credentialConnectionLabel}</Text>
-            </Text>
-          </View>
-        ) : null}
+        <View
+          style={{
+            backgroundColor: ColorPallet.brand.secondaryBackground,
+            marginTop: paddingVertical,
+            paddingHorizontal,
+            paddingVertical,
+          }}>
+          <Text testID={testIdWithKey('IssuerName')}>
+            <Text style={TextTheme.title}>{t('CredentialDetails.IssuedBy') + ' '}</Text>
+            <Text style={TextTheme.normal}>{w3cCredential?.credential.issuerId ?? ''}</Text>
+          </Text>
+        </View>
         {/* Will be added when credential delete for jsonld is supported */}
         {/* <RecordRemove onRemove={callOnRemove} /> */}
       </View>
@@ -283,13 +309,15 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
 
   return (
     <SafeAreaView style={{ flexGrow: 1 }} edges={['left', 'right']}>
-      <W3CCredentialRecord
-        tables={tables}
-        fields={overlay.presentationFields || []}
-        hideFieldValues
-        header={header}
-        footer={footer}
-      />
+      {w3cCredential && (
+        <W3CCredentialRecord
+          tables={tables}
+          fields={overlay.presentationFields || []}
+          hideFieldValues
+          header={header}
+          footer={footer}
+        />
+      )}
       <CommonRemoveModal
         usage={ModalUsage.CredentialRemove}
         visible={isRemoveModalDisplayed}
