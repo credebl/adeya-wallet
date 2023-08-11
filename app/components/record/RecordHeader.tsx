@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { useTheme } from '../../contexts/theme'
 
-const RecordHeader: React.FC = ({ children }) => {
+const RecordHeader: React.FC<PropsWithChildren> = ({ children }) => {
   const { ColorPallet } = useTheme()
   const styles = StyleSheet.create({
     container: {
