@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord } from '@aries-framework/core'
+import { CredentialExchangeRecord, W3cCredentialRecord } from '@aries-framework/core'
 import { NavigatorScreenParams } from '@react-navigation/core'
 
 export enum Screens {
@@ -44,6 +44,7 @@ export enum Screens {
   Success = 'Success',
   WalletOptions = 'Create Walllet',
   ImportSuccess = '',
+  CredentialDetailsW3C = 'Credential Details W3C',
 }
 
 export enum Stacks {
@@ -105,6 +106,7 @@ export type ContactStackParams = {
   [Screens.ContactDetails]: { connectionId: string }
   [Screens.WhatAreContacts]: undefined
   [Screens.CredentialDetails]: { credentialId: string }
+  [Screens.CredentialDetailsW3C]: { credential: CredentialExchangeRecord }
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean }
   [Screens.ProofRequest]: { proofId: string }
@@ -121,7 +123,7 @@ export type ProofRequestsStackParams = {
 export type CredentialStackParams = {
   [Screens.Credentials]: undefined
   [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
-  [Screens.CredentialDetailsJSONLD]: { credential: any }
+  [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
 }
 
 export type HomeStackParams = {
