@@ -10,7 +10,6 @@ import Toast from 'react-native-toast-message'
 
 import CredentialCard from '../components/misc/CredentialCard'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
-// import RecordRemove from '../components/record/RecordRemove'
 import W3CCredentialRecord from '../components/record/W3CCredentialRecord'
 import { ToastType } from '../components/toast/BaseToast'
 import { EventTypes } from '../constants'
@@ -56,7 +55,6 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     cardLayoutOverlay: undefined,
   })
 
-  // const credentialConnectionLabel = credential.credential.issuerId
   const styles = StyleSheet.create({
     container: {
       backgroundColor: overlay.cardLayoutOverlay?.primaryBackgroundColor,
@@ -159,10 +157,6 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     })
   }, [w3cCredential])
 
-  // const handleOnRemove = () => {
-  //   setIsRemoveModalDisplayed(true)
-  // }
-
   const handleSubmitRemove = async () => {
     try {
       if (!(agent && credential)) {
@@ -191,7 +185,6 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     setIsRemoveModalDisplayed(false)
   }
 
-  // const callOnRemove = useCallback(() => handleOnRemove(), [])
   const callSubmitRemove = useCallback(() => handleSubmitRemove(), [])
   const callCancelRemove = useCallback(() => handleCancelRemove(), [])
 
@@ -301,8 +294,6 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
             <Text style={TextTheme.normal}>{w3cCredential?.credential.issuerId ?? ''}</Text>
           </Text>
         </View>
-        {/* Will be added when credential delete for jsonld is supported */}
-        {/* <RecordRemove onRemove={callOnRemove} /> */}
       </View>
     )
   }
