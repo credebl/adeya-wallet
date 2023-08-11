@@ -30,6 +30,7 @@ interface CredentialCard11Props {
   credDefId?: string
   schemaId?: string
   proof?: boolean
+  connectionLabel?: string
 }
 
 const { width } = Dimensions.get('screen')
@@ -78,12 +79,13 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
   credDefId,
   schemaId,
   proof,
+  connectionLabel = '',
 }) => {
   const { i18n, t } = useTranslation()
   const { ColorPallet, TextTheme, ListItems } = useTheme()
   const { OCABundleResolver } = useConfiguration()
   const [isRevoked, setIsRevoked] = useState<boolean>(credential?.revocationNotification !== undefined)
-  const credentialConnectionLabel = getCredentialConnectionLabel(credential)
+  const credentialConnectionLabel = getCredentialConnectionLabel(credential, connectionLabel)
   const [isProofRevoked, setIsProofRevoked] = useState<boolean>(
     credential?.revocationNotification !== undefined && !!proof,
   )
@@ -197,7 +199,8 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
       identifiers: credential ? getCredentialIdentifiers(credential) : { schemaId, credentialDefinitionId: credDefId },
       attributes: proof ? [] : credential?.credentialAttributes,
       meta: {
-        credName: credName,
+        // Added the schema id for w3c credentials
+        credName: credName ?? schemaId,
         credConnectionId: credential?.connectionId,
         alias: credentialConnectionLabel,
       },
