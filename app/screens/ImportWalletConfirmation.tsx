@@ -78,6 +78,7 @@ const ImportWalletVerify: React.FC = () => {
     },
   })
   const initAgent = async (): Promise<void> => {
+    setverify(true)
     try {
       const credentials = await getWalletCredentials()
       //  if( encodeHash !== ''){
@@ -138,6 +139,7 @@ const ImportWalletVerify: React.FC = () => {
           }),
         )
       } else {
+        setverify(false)
         Toast.show({
           type: ToastType.Error,
           text1: `Please enter pharse`,
@@ -159,6 +161,7 @@ const ImportWalletVerify: React.FC = () => {
     const symetric = await Encrypt768(myKeys[0], seed)
 
     setencodeHash(md5(symetric[1]))
+
     initAgent()
   }
 
