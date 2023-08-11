@@ -92,3 +92,15 @@ export interface ProofCredentialPredicates {
 }
 
 export interface ProofCredentialItems extends ProofCredentialAttributes, ProofCredentialPredicates {}
+
+export type W3CCredentialAttribute = {
+  key: string
+  value: string
+}
+
+export type W3CCredentialAttributeField = {
+  title?: string
+  rows: W3CCredentialAttribute[]
+  depth: number
+  parent?: string
+}
