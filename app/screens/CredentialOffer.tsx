@@ -228,6 +228,29 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
     )
   }
 
+  const jsonLdHeader = () => {
+    return (
+      <>
+        <ConnectionImage connectionId={credential?.connectionId} />
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.headerText} testID={testIdWithKey('HeaderText')}>
+            <Text>{credentialConnectionLabel || t('ContactDetails.AContact')}</Text>{' '}
+            {t('CredentialOffer.IsOfferingYouACredential')}
+          </Text>
+        </View>
+        {!loading && credential && (
+          <View style={{ marginHorizontal: 15, marginBottom: 16 }}>
+            <CredentialCard
+              credential={credential}
+              connectionLabel={credentialConnectionLabel}
+              schemaId={jsonLdOffer?.credential.type[1]}
+            />
+          </View>
+        )}
+      </>
+    )
+  }
+
   const footer = () => {
     return (
       <View
