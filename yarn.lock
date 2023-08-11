@@ -1509,18 +1509,18 @@
   resolved "https://registry.npmjs.org/@hyperledger/anoncreds-shared/-/anoncreds-shared-0.1.0.tgz"
   integrity sha512-DisZFY4YbrugRCCv7AtYFUTsrGigHF1dVaiA36WrhRUgetwDzKgMiYGkxFQmCe0IJ0mDw4M7sbTJBXxfxij/+A==
 
-"@hyperledger/aries-askar-react-native@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.npmjs.org/@hyperledger/aries-askar-react-native/-/aries-askar-react-native-0.1.0.tgz"
-  integrity sha512-I2qJx5QqKQUILTh8gwJKbZutNgrtYhwWAA733pASe3FJ6FydRNOr+owx/W8Agna0G4HaJStjiJbU2qfZg3POzw==
+"@hyperledger/aries-askar-react-native@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@hyperledger/aries-askar-react-native/-/aries-askar-react-native-0.1.1.tgz#1108a9b815b53eae9d04341c17be2f2b7ff2d3be"
+  integrity sha512-e9E4CYf54J1RJetK9g64vHoIcVjlU8CnKB83/01aXliLY52Yrg2ad42MJFva29z8SghFFgpCXRGMUuQ9OiwBfA==
   dependencies:
-    "@hyperledger/aries-askar-shared" "0.1.0"
+    "@hyperledger/aries-askar-shared" "0.1.1"
     "@mapbox/node-pre-gyp" "^1.0.10"
 
-"@hyperledger/aries-askar-shared@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.npmjs.org/@hyperledger/aries-askar-shared/-/aries-askar-shared-0.1.0.tgz"
-  integrity sha512-eTq3pQ7qNoEqS3KJOB5OcsKmYJ01aPF4GSOMmNKc44xyifwNi53lBod5fDVyjo401hk/FpVHZ3nRik1BXw1PWA==
+"@hyperledger/aries-askar-shared@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@hyperledger/aries-askar-shared/-/aries-askar-shared-0.1.1.tgz#bdb34ad718e988db5a47d540fd22ba2c7a86a1d3"
+  integrity sha512-9jJSgqHt29JEuQ/tBzHmhWaSLyTyw/t7H+Ell/YSHtL9DE0KN0Ew/vuXoDqlt117+EBeQTDKG0hy0ov8K41rmw==
   dependencies:
     fast-text-encoding "^1.0.3"
 
