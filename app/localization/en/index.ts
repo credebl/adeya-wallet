@@ -519,7 +519,7 @@ const translation = {
     "CustomNotification": 'Custom Notification',
     "ProofRequesting": 'Proof Requesting',
     "NameWallet": "Name your wallet",
-    "CredentialDetailsJSONLD" :'Credential Details JSONLD',
+    "CredentialDetailsW3C" :'Credential Details W3C',
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",
