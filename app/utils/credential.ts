@@ -3,6 +3,8 @@ import { AnonCredsCredentialMetadataKey } from '@aries-framework/anoncreds/build
 import { CredentialExchangeRecord, CredentialState } from '@aries-framework/core'
 import { ImageSourcePropType } from 'react-native'
 
+import { Attribute, Field, W3CCredentialAttribute, W3CCredentialAttributeField } from '../types/record'
+
 import { luminanceForHexColor } from './luminance'
 
 export const isValidAnonCredsCredential = (credential: CredentialExchangeRecord) => {
@@ -34,4 +36,74 @@ export const getCredentialIdentifiers = (credential: CredentialExchangeRecord) =
     credentialDefinitionId: credential.metadata.get(AnonCredsCredentialMetadataKey)?.credentialDefinitionId,
     schemaId: credential.metadata.get(AnonCredsCredentialMetadataKey)?.schemaId,
   }
+}
+
+export const isW3CCredential = (credential: CredentialExchangeRecord) => {
+  return credential && credential.credentials.find(c => c.credentialRecordType === 'w3c')
+}
+
+export const sanitizeString = (str: string) => {
+  const result = str.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+  let words = result.split(' ')
+  words = words.map((word, index) => {
+    if (index === 0) {
+      return word.charAt(0).toUpperCase() + word.slice(1)
+    } else {
+      return word.charAt(0).toLowerCase() + word.slice(1)
+    }
+  })
+  return words.join(' ')
+}
+
+export const formatCredentialSubject = (
+  subject: any,
+  depth = 0,
+  parent?: string,
+  title?: string,
+): W3CCredentialAttributeField[] => {
+  const stringRows: W3CCredentialAttribute[] = []
+  const objectTables: W3CCredentialAttributeField[] = []
+
+  Object.keys(subject).forEach(key => {
+    if (key === 'id' || key === 'type') return // omit id and type
+
+    const value = subject[key]
+
+    if (!value) return // omit properties with no value
+
+    if (typeof value === 'string') {
+      stringRows.push({
+        key: sanitizeString(key),
+        value: value,
+      })
+      // FIXME: Handle arrays
+    } else if (typeof value === 'object' && value !== null) {
+      objectTables.push(
+        ...formatCredentialSubject(value as Record<string, unknown>, depth + 1, title, sanitizeString(key)),
+      )
+    }
+  })
+
+  const tableData = [{ title, rows: stringRows, depth, parent }, ...objectTables]
+  return tableData.filter(table => table.rows.length > 0)
+}
+
+export const buildFieldsFromJSONLDCredential = (credentialSubject: any): Array<Field> => {
+  const result = []
+  for (const property in credentialSubject) {
+    let encoding
+    let format
+
+    if (property === 'image') {
+      encoding = 'base64'
+      format = 'image/png'
+    }
+    result.push({
+      name: property,
+      value: credentialSubject[property],
+      encoding: encoding,
+      format: format,
+    })
+  }
+  return result.map(attr => new Attribute(attr)) || []
 }
