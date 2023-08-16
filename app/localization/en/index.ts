@@ -526,7 +526,7 @@ const translation = {
     "Confirmation"  : 'Confirmation',
     "CreateWallet"  : 'Create Wallet',
     "VerifyPhrase"  : 'Verify Phrase',
-    "Success"  : 'Success'
+    "Success"  : 'Success',
     "CredentialDetailsW3C" :'Credential Details W3C',
   },
   "Loading": {
