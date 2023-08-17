@@ -13,15 +13,14 @@ import md5 from 'md5'
 import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Dimensions, TextInput, Platform } from 'react-native'
 import { Config } from 'react-native-config'
-import DocumentPicker, { DocumentPickerResponse, pickSingle, types } from 'react-native-document-picker'
-import RNFS, { stat } from 'react-native-fs'
+import { DocumentPickerResponse, pickSingle, types } from 'react-native-document-picker'
+import { stat } from 'react-native-fs'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 
 import indyLedgers from '../../configs/ledgers/indy'
 import ButtonLoading from '../components/animated/ButtonLoading'
 import Button, { ButtonType } from '../components/buttons/Button'
 import { ToastType } from '../components/toast/BaseToast'
-import { testIdPrefix } from '../constants'
 import { useAuth } from '../contexts/auth'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
@@ -33,9 +32,8 @@ const ImportWalletVerify: React.FC = () => {
   const { ColorPallet } = useTheme()
   const [store] = useStore()
   const navigation = useNavigation()
-  const { getWalletCredentials } = useAuth()
   const [PassPhrase, setPassPharse] = useState('')
-  const [encodeHash, setencodeHash] = useState('')
+  const { getWalletCredentials } = useAuth()
   const [verify, setverify] = useState(false)
   const [selectedfilepath, setselectedfilepath] = useState('')
   const { setAgent } = useAgent()
@@ -77,16 +75,20 @@ const ImportWalletVerify: React.FC = () => {
       color: ColorPallet.brand.primary,
     },
   })
-  const initAgent = async (): Promise<void> => {
+
+  const initAgent = async (seed: string): Promise<void> => {
     setverify(true)
+    const credentials = await getWalletCredentials()
+    //  if( encodeHash !== ''){
+    if (!credentials?.id || !credentials.key) {
+      // Cannot find wallet id/secret
+      return
+    }
     try {
-      const credentials = await getWalletCredentials()
-      //  if( encodeHash !== ''){
-      if (!credentials?.id || !credentials.key) {
-        // Cannot find wallet id/secret
-        return
-      }
-      if (encodeHash !== '') {
+      if (seed !== '') {
+        const myKeys = await keyGen768(seed)
+        const symetric = await Encrypt768(myKeys[0], seed)
+        const encodeHash = md5(symetric[1])
         const newAgent = new Agent({
           config: {
             label: store.preferences.walletName || 'Aries Bifold',
@@ -148,23 +150,26 @@ const ImportWalletVerify: React.FC = () => {
     } catch (e: unknown) {
       Toast.show({
         type: ToastType.Error,
-        text1: `${e}incorrect phrase entered`,
-        visibilityTime: 2000,
+        text1: `${e} incorrect phrase entered`,
+        visibilityTime: 5000,
         position: 'bottom',
       })
       setverify(false)
     }
   }
-
   const VerifyPharase = async (seed: string) => {
-    const myKeys = await keyGen768(seed)
-    const symetric = await Encrypt768(myKeys[0], seed)
-
-    setencodeHash(md5(symetric[1]))
-
-    initAgent()
+    const result = seed.replaceAll(',', ' ')
+    if (result) {
+      initAgent(seed)
+    } else {
+      Toast.show({
+        type: ToastType.Error,
+        text1: `please enter phrase `,
+        visibilityTime: 2000,
+        position: 'bottom',
+      })
+    }
   }
-
   const handleSelect = async () => {
     try {
       const res: DocumentPickerResponse = await pickSingle({
@@ -201,7 +206,7 @@ const ImportWalletVerify: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.textView}>
-        <Text style={styles.detailText}>Enter your secret phrase here seperated</Text>
+        <Text style={styles.detailText}>Enter your secret phrase here</Text>
       </View>
       <View style={styles.textInputView}>
         <TextInput

@@ -1,5 +1,4 @@
 import AgentProvider from '@aries-framework/react-hooks'
-import { Buffer } from 'buffer'
 import * as React from 'react'
 import { useEffect, useMemo } from 'react'
 import { StatusBar } from 'react-native'
@@ -24,8 +23,6 @@ import { initLanguages, initStoredLanguage, translationResources } from './app/l
 import RootStack from './app/navigators/RootStack'
 import { theme } from './app/theme'
 
-// Assign Buffer to the global scope
-global.Buffer = Buffer
 initLanguages(translationResources)
 
 const App = () => {

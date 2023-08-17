@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     lineHeight: 20,
     textAlign: 'center',
+    color: ColorPallet.brand.primary,
   },
   successText: {
     fontSize: 14,

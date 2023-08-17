@@ -16,7 +16,7 @@ const ImportSuccess: React.FC = () => {
       flex: 1,
       alignSelf: 'center',
     },
-    labeltext: {
+    labelText: {
       alignSelf: 'center',
       padding: 20,
       fontSize: 20,
@@ -34,7 +34,7 @@ const ImportSuccess: React.FC = () => {
   return (
     <View style={styles.container}>
       <Assets.svg.BackupSuccess height={225} width={230} />
-      <Text style={(TextTheme.labelText, styles.labeltext)}>Wallet Restored successfully</Text>
+      <Text style={(TextTheme.labelText, styles.labelText)}>Wallet Restored successfully</Text>
     </View>
   )
 }

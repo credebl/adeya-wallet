@@ -14,18 +14,17 @@ const CreateWallet: React.FC = () => {
       flex: 1,
       height: '100%',
     },
-    titletext: {
+    titleText: {
       fontSize: 32,
       fontWeight: '500',
       alignSelf: 'center',
       color: ColorPallet.brand.primary,
       marginTop: 20,
     },
-    subcontainer: {},
   })
   return (
     <View style={styles.container}>
-      <Text style={(TextTheme.headingTwo, styles.titletext)}>Welcome</Text>
+      <Text style={(TextTheme.headingTwo, styles.titleText)}>Welcome</Text>
       <View style={{ marginTop: 'auto', margin: 20 }}>
         <Button
           title={'CREATE NEW WALLET'}
