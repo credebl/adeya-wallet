@@ -221,6 +221,10 @@ const RootStack: React.FC = () => {
         <Stack.Screen name={Screens.Splash} component={splash} />
         <Stack.Screen name={Stacks.TabStack} component={TabStack} />
         <Stack.Screen name={Stacks.SettingStack} component={SettingStack} />
+        <Stack.Screen name={Stacks.ContactStack} component={ContactStack} />
+        <Stack.Screen name={Stacks.NotificationStack} component={NotificationStack} />
+        <Stack.Screen name={Stacks.ConnectionStack} component={DeliveryStack} />
+        <Stack.Screen name={Stacks.ProofRequestsStack} component={ProofRequestStack} />
         <Stack.Screen
           name={Stacks.ConnectStack}
           component={ConnectStack}
@@ -316,10 +320,6 @@ const RootStack: React.FC = () => {
           component={Developer}
           options={{ ...defaultStackOptions, title: t('Screens.Developer'), headerBackTestID: testIdWithKey('Back') }}
         />
-        <Stack.Screen name={Stacks.ContactStack} component={ContactStack} />
-        <Stack.Screen name={Stacks.NotificationStack} component={NotificationStack} />
-        <Stack.Screen name={Stacks.ConnectionStack} component={DeliveryStack} />
-        <Stack.Screen name={Stacks.ProofRequestsStack} component={ProofRequestStack} />
       </Stack.Navigator>
     )
   }

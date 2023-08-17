@@ -9,9 +9,8 @@ import {
 import { useAgent } from '@aries-framework/react-hooks'
 import { agentDependencies } from '@aries-framework/react-native'
 import { CommonActions, useNavigation } from '@react-navigation/core'
-import md5 from 'md5'
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, TextInput, Platform } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, TextInput, Platform, BackHandler } from 'react-native'
 import { Config } from 'react-native-config'
 import { DocumentPickerResponse, pickSingle, types } from 'react-native-document-picker'
 import { stat } from 'react-native-fs'
@@ -26,7 +25,6 @@ import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { Stacks } from '../types/navigators'
 import { createLinkSecretIfRequired, getAgentModules } from '../utils/agent'
-import { Encrypt768, keyGen768 } from '../utils/crystals-kyber'
 
 const ImportWalletVerify: React.FC = () => {
   const { ColorPallet } = useTheme()
@@ -75,20 +73,27 @@ const ImportWalletVerify: React.FC = () => {
       color: ColorPallet.brand.primary,
     },
   })
+  useEffect(() => {
+    const handleBackButtonClick = () => {
+      navigation.goBack()
+      return true
+    }
+    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick)
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick)
+    }
+  }, [navigation])
 
   const initAgent = async (seed: string): Promise<void> => {
     setverify(true)
     const credentials = await getWalletCredentials()
-    //  if( encodeHash !== ''){
     if (!credentials?.id || !credentials.key) {
       // Cannot find wallet id/secret
       return
     }
     try {
       if (seed !== '') {
-        const myKeys = await keyGen768(seed)
-        const symetric = await Encrypt768(myKeys[0], seed)
-        const encodeHash = md5(symetric[1])
+        const encodeHash = seed
         const newAgent = new Agent({
           config: {
             label: store.preferences.walletName || 'Aries Bifold',

@@ -23,13 +23,20 @@ const Success: React.FC = () => {
       color: ColorPallet.brand.primary,
     },
   })
+
   useEffect(() => {
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: Stacks.TabStack }],
-      }),
-    )
+    const delay = 5000
+    const timeoutId = setTimeout(() => {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: Stacks.TabStack }],
+        }),
+      )
+    }, delay)
+    return () => {
+      clearTimeout(timeoutId)
+    }
   }, [])
   return (
     <View style={styles.container}>

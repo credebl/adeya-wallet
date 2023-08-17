@@ -235,6 +235,8 @@ const translation = {
     "EnabledText3Bold": "Ensure only you have access to your wallet.",
     "Warning": "Ensure only you have access to your wallet.",
     "UseToUnlock": "Use biometrics to unlock wallet?",
+    "UnlockPromptTitle": "Unlock wallet",
+    "UnlockPromptDescription": "Use biometrics to unlock your wallet",
     "NotEnabledText1": "Biometrics is not currently setup on this device and therefore cannot be enabled.",
     "NotEnabledText2": "If you wish to enable this feature turn biometrics on in the device settings and then return to this screen.",
       },
@@ -528,6 +530,7 @@ const translation = {
     "VerifyPhrase"  : 'Verify Phrase',
     "Success"  : 'Success',
     "CredentialDetailsW3C" :'Credential Details W3C',
+    
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",

@@ -1,21 +1,29 @@
 import { useAgent } from '@aries-framework/react-hooks'
 import { useNavigation, useRoute } from '@react-navigation/core'
-import md5 from 'md5'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, Text, TouchableOpacity, ScrollView, PermissionsAndroid, Platform, Share } from 'react-native'
-import RNFS, { exists, mkdir, unlink, DownloadDirectoryPath } from 'react-native-fs'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  PermissionsAndroid,
+  Platform,
+  Share,
+  Dimensions,
+  PixelRatio,
+  StyleSheet,
+} from 'react-native'
+import { exists, mkdir, unlink, DownloadDirectoryPath } from 'react-native-fs'
 import Toast from 'react-native-toast-message'
 import { zip } from 'react-native-zip-archive'
 import RNFetchBlob from 'rn-fetch-blob'
 
-import styles from '../WalletConfirmationstyle'
 import ButtonLoading from '../components/animated/ButtonLoading'
 import Button, { ButtonType } from '../components/buttons/Button'
 import { ToastType } from '../components/toast/BaseToast'
 import { useTheme } from '../contexts/theme'
 import { Screens } from '../types/navigators'
-import { Encrypt768, keyGen768 } from '../utils/crystals-kyber'
 
 interface PhraseData {
   id: number
@@ -32,6 +40,90 @@ function ExportWalletConfirmation() {
   const [nextPhraseIndex, setNextPhraseIndex] = useState(0)
   const [matchPhrase, setMatchPhrase] = useState(false)
   const { ColorPallet, TextTheme } = useTheme()
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
+  const { width } = Dimensions.get('window')
+  const widthBaseScale = SCREEN_WIDTH / 414
+  const heightBaseScale = SCREEN_HEIGHT / 896
+
+  const normalize = (size: number, based: 'width' | 'height' = 'width') => {
+    const newSize = based === 'height' ? size * heightBaseScale : size * widthBaseScale
+    return Math.round(PixelRatio.roundToNearestPixel(newSize))
+  }
+  const widthPixel = (size: number) => normalize(size, 'width')
+  const heightPixel = (size: number) => normalize(size, 'height')
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'space-around',
+      height: '100%',
+    },
+    scrollview: {
+      flex: 1,
+    },
+    titleText: {
+      fontSize: 26,
+      marginTop: 15,
+      textAlign: 'center',
+      color: '#7C7C7C',
+    },
+    detailText: {
+      fontSize: 18,
+      marginHorizontal: 30,
+      marginTop: 20,
+      lineHeight: 20,
+      textAlign: 'center',
+      color: ColorPallet.brand.primary,
+    },
+    successText: {
+      fontSize: 14,
+    },
+    successView: { justifyContent: 'center', alignItems: 'center' },
+    setPhraseView: {
+      width: width - 60,
+    },
+    addPhraseView: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      marginTop: heightPixel(50),
+    },
+    rowAddItemContainerView: {
+      width: widthPixel(150),
+      marginVertical: 10,
+      padding: 7,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    rowAddItemText: {
+      fontSize: 20,
+      color: '#000',
+    },
+    rowItemIndexText: {
+      width: 20,
+      textAlign: 'center',
+    },
+    rowItemPhraseText: {
+      fontSize: 20,
+    },
+    rowItemContainerView: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: 20,
+    },
+    rowAItemContainerView: {
+      flexDirection: 'row',
+      width: widthPixel(150),
+      margin: 10,
+      padding: 7,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 5,
+      borderWidth: 1.3,
+      backgroundColor: ColorPallet.brand.primaryBackground,
+    },
+  })
 
   useEffect(() => {
     const updatedArraySetPhraseData = Array(parms?.params?.phraseData.length).fill('')
@@ -40,9 +132,8 @@ function ExportWalletConfirmation() {
 
   const exportWallet = async (seed: string) => {
     setMatchPhrase(true)
-    const myKeys = await keyGen768(seed)
-    const symetric = await Encrypt768(myKeys[0], seed)
-    const encodeHash = md5(symetric[1])
+    const encodeHash = seed.replaceAll(',', ' ')
+
     try {
       const documentDirectory = DownloadDirectoryPath
       const zipDirectory = `${documentDirectory}/Wallet_Backup`
@@ -81,9 +172,8 @@ function ExportWalletConfirmation() {
     }
   }
   const exportWalletIOS = async (seed: string) => {
-    const myKeys = await keyGen768(seed)
-    const symetric = await Encrypt768(myKeys[0], seed)
-    const encodeHash = md5(symetric[1])
+    setMatchPhrase(true)
+    const encodeHash = seed.replaceAll(',', ' ')
     const { fs } = RNFetchBlob
     try {
       const documentDirectory = fs.dirs.DocumentDir

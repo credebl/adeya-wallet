@@ -128,7 +128,7 @@ const ExportWallet: React.FC = () => {
           title={'Continue'}
           accessibilityLabel={'Okay'}
           buttonType={ButtonType.Primary}
-          onPress={() => navigation.navigate(Screens.ExportWalletConfirmation as never)}
+          onPress={() => navigation.navigate(Screens.ExportWalletConfirmation, { phraseData })}
         />
       </View>
     </ScrollView>
