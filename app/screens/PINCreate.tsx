@@ -57,7 +57,7 @@ const PINCreate: React.FC<PINCreateProps> = ({ setAuthenticated }) => {
   const navigation = useNavigation<StackNavigationProp<AuthenticateStackParams>>()
   const [, dispatch] = useStore()
   const { t } = useTranslation()
-  const { PINSecurity, enableWalletNaming } = useConfiguration()
+  const { PINSecurity, enableWalletNaming, enableBackupWallet } = useConfiguration()
 
   const [PINOneValidations, setPINOneValidations] = useState<PINValidationsType[]>(
     PINCreationValidations(PIN, PINSecurity.rules),
@@ -98,6 +98,13 @@ const PINCreate: React.FC<PINCreateProps> = ({ setAuthenticated }) => {
           CommonActions.reset({
             index: 0,
             routes: [{ name: Screens.NameWallet }],
+          }),
+        )
+      } else if (enableBackupWallet) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: Screens.WalletOptions }],
           }),
         )
       } else {

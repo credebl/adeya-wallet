@@ -235,6 +235,8 @@ const translation = {
     "EnabledText3Bold": "Ensure only you have access to your wallet.",
     "Warning": "Ensure only you have access to your wallet.",
     "UseToUnlock": "Use biometrics to unlock wallet?",
+    "UnlockPromptTitle": "Unlock wallet",
+    "UnlockPromptDescription": "Use biometrics to unlock your wallet",
     "NotEnabledText1": "Biometrics is not currently setup on this device and therefore cannot be enabled.",
     "NotEnabledText2": "If you wish to enable this feature turn biometrics on in the device settings and then return to this screen.",
       },
@@ -451,7 +453,9 @@ const translation = {
     "Build": "Build",
     "WhatAreContacts": "What are Contacts?",
     "ScanMyQR": "Scan my QR code",
-    "Developer": "Developer options"
+    "Developer": "Developer options",
+    "Backup": "backup wallet",
+    "Confirmation"  : 'Confirmation'
   },
   "TabStack": {
     "Home": "Home",
@@ -519,7 +523,14 @@ const translation = {
     "CustomNotification": 'Custom Notification',
     "ProofRequesting": 'Proof Requesting',
     "NameWallet": "Name your wallet",
+    "CredentialDetailsJSONLD" :'Credential Details JSONLD',
+    "BackupWallet":"Backup wallet",
+    "Confirmation"  : 'Confirmation',
+    "CreateWallet"  : 'Create Wallet',
+    "VerifyPhrase"  : 'Verify Phrase',
+    "Success"  : 'Success',
     "CredentialDetailsW3C" :'Credential Details W3C',
+    
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",
@@ -630,7 +641,20 @@ const translation = {
   },
   "Feedback": {
     "GiveFeedback": "Give Feedback",
-  }
+  },
+  "Backup" :{
+    "write_down": 'Write down your seed phrase',
+    "this_is_your_seed":
+      "This is your seed phrase. Write it down on a paper and keep it in a safe place. You'll be asked to re-enter this phrase (in order) on the next step.",
+    "continue": 'Continue',
+    "seed_phrase": 'Seed Phrase',
+    "confirm_seed_phrase": 'Confirm seed Phrase',
+    "select_each": 'Select each word in the order it was presented to you.',
+    "you_have_successfully": 'You have successfully selected the words.',
+    "complete_backup": 'Complete Backup',
+    "backup_wallet": 'Backup Wallet',
+  
+  } 
 }
 
 export default translation
