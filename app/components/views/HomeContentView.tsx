@@ -1,8 +1,8 @@
-import { CredentialState, ProofState } from '@aries-framework/core'
+import { ConnectionRecord, ConnectionType, CredentialState, ProofState } from '@aries-framework/core'
 import { useConnections, useCredentialByState, useProofByState } from '@aries-framework/react-hooks'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, Text, Image, ScrollView } from 'react-native'
+import { View, Text, Image } from 'react-native'
 import { SvgProps } from 'react-native-svg'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -10,16 +10,12 @@ import { styles } from '../../HomeContentviewstyle'
 import contacts from '../../assets/img/contactsimage.svg'
 import credentialImage from '../../assets/img/credentialImage.svg'
 import request from '../../assets/img/requestsImage.svg'
-// import { useTheme } from '../../contexts/theme'
-import { defaultState } from '../../contexts/store'
-import { useNotifications } from '../../hooks/notifications'
+import { defaultState, useStore } from '../../contexts/store'
 import WebDisplay from '../../screens/WebDisplay'
 import { ColorPallet } from '../../theme'
 import { surveyMonkeyExitUrl, surveyMonkeyUrl } from '../../utils/constants'
 import { testIdWithKey } from '../../utils/testable'
 import Button, { ButtonType } from '../buttons/Button'
-// import { Button } from '../buttons'
-// import { ButtonType } from '../buttons/Button'
 
 interface HomeContentViewProps {
   children?: any
@@ -30,14 +26,17 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
     ...useCredentialByState(CredentialState.CredentialReceived),
     ...useCredentialByState(CredentialState.Done),
   ]
-  const notifications = useNotifications()
   // const { HomeTheme } = useTheme()
   const { t } = useTranslation()
+  const [store] = useStore()
   const [surveyVisible, setSurveyVisible] = useState(false)
-  const contactscount = useConnections?.length
   const requestcount = useProofByState(ProofState.RequestReceived)?.length
   const toggleSurveyVisibility = () => setSurveyVisible(!surveyVisible)
-
+  const { records } = useConnections()
+  let connections: ConnectionRecord[] = records
+  if (!store.preferences.developerModeEnabled) {
+    connections = records.filter(r => !r.connectionTypes.includes(ConnectionType.Mediator))
+  }
   const homebadge: {
     image: React.FC<SvgProps>
     title: string
@@ -46,7 +45,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
     {
       image: contacts,
       title: 'CONTACTS',
-      count: contactscount,
+      count: connections?.length,
     },
     {
       image: credentialImage,
@@ -65,7 +64,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
   }
 
   return (
-    <ScrollView style={[styles.feedbackContainer]}>
+    <View style={[styles.feedbackContainer]}>
       {defaultState.preferences.developerModeEnabled ? (
         <>
           <Button
@@ -89,11 +88,10 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
           />
         </>
       ) : null}
-      {notifications.total === 0 && (
-        <View style={[styles.messageContainer]}>
-          <Image source={require('../../assets/img/homeimage.png')} style={styles.homeImage} />
-        </View>
-      )}
+
+      <View style={[styles.messageContainer]}>
+        <Image source={require('../../assets/img/homeimage.png')} style={styles.homeImage} />
+      </View>
 
       <View style={styles.homebadgeview}>
         {homebadge.map(g => (
@@ -110,7 +108,7 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
         ))}
       </View>
       {children}
-    </ScrollView>
+    </View>
   )
 }
 
