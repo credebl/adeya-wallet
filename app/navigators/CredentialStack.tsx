@@ -6,7 +6,7 @@ import SettingsMenu from '../components/buttons/SettingsMenu'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import CredentialDetails from '../screens/CredentialDetails'
-import CredentialDetailsJSONLD from '../screens/CredentialDetails_JSONLD'
+import CredentialDetailsW3C from '../screens/CredentialDetailsW3C'
 import ListCredentials from '../screens/ListCredentials'
 import { CredentialStackParams, Screens } from '../types/navigators'
 
@@ -36,9 +36,9 @@ const CredentialStack: React.FC = () => {
         options={{ title: t('Screens.CredentialDetails') }}
       />
       <Stack.Screen
-        name={Screens.CredentialDetailsJSONLD}
-        component={CredentialDetailsJSONLD}
-        options={{ title: t('Screens.CredentialDetails') }}
+        name={Screens.CredentialDetailsW3C}
+        component={CredentialDetailsW3C}
+        options={{ title: t('Screens.CredentialDetailsW3C') }}
       />
     </Stack.Navigator>
   )

@@ -131,10 +131,7 @@ const UseBiometry: React.FC = () => {
           <View>
             <Text style={[TextTheme.normal]}>{t('Biometry.EnabledText1')}</Text>
             <Text></Text>
-            <Text style={[TextTheme.normal]}>
-              {t('Biometry.EnabledText2')}
-              <Text style={[TextTheme.normal, { fontWeight: 'bold' }]}> {t('Biometry.Warning')}</Text>
-            </Text>
+            <Text style={[TextTheme.normal]}>{t('Biometry.EnabledText2')}</Text>
           </View>
         ) : (
           <View>
