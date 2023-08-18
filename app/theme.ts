@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { SvgProps } from 'react-native-svg'
 
 import Arrow from './assets/icons/large-arrow.svg'
 import AppLockout from './assets/img/app-lockout.svg'
+import BackupSuccess from './assets/img/backup-success.svg'
 import Biometrics from './assets/img/biometrics.svg'
 import ContactBook from './assets/img/contact-book.svg'
 import CredentialDeclined from './assets/img/credential-declined.svg'
@@ -23,6 +23,7 @@ export interface ISVGAssets {
   logo: React.FC<SvgProps>
   proofRequestDeclined: React.FC<SvgProps>
   arrow: React.FC<SvgProps>
+  BackupSuccess: React.FC<SvgProps>
 }
 
 export interface IFontAttributes {
@@ -78,6 +79,7 @@ export interface IBrandColors {
   primary: string
   primaryDisabled: string
   secondary: string
+  labelText: string
   secondaryDisabled: string
   primaryLight: string
   highlight: string
@@ -195,6 +197,7 @@ const BrandColors: IBrandColors = {
   primary: '#1F4EAD',
   primaryDisabled: `rgba(31, 78, 173, ${lightOpacity})`,
   secondary: '#FFFFFFFF',
+  labelText: '#7C7C7C',
   // tabbackground:'#D3E4FA',
   secondaryDisabled: `rgba(31, 78, 173, ${lightOpacity})`,
   primaryLight: '#D9EAF7',
@@ -826,6 +829,7 @@ export const Assets = {
     logo: Logo,
     proofRequestDeclined: ProofRequestDeclined,
     arrow: Arrow,
+    BackupSuccess: BackupSuccess,
   },
   img: {
     logoPrimary: {
