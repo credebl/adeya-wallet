@@ -154,7 +154,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
         },
       ],
     },
-
     {
       header: {
         icon: 'settings',

@@ -32,7 +32,7 @@ const SettingStack: React.FC = () => {
   const [biometryUpdatePending, setBiometryUpdatePending] = useState<boolean>(false)
   const { t } = useTranslation()
   const { pages, terms, developer } = useConfiguration()
-  const defaultStackOptions = createDefaultStackOptions(theme)
+  const defaultStack¯Options = createDefaultStackOptions(theme)
   const OnboardingTheme = theme.OnboardingTheme
   const carousel = createCarouselStyle(OnboardingTheme)
 
