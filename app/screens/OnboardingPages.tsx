@@ -97,19 +97,18 @@ const OnboardingPages = (onTutorialCompleted: GenericFn): Array<Element> => {
               information without compromising your privacy.
             </Text>
           </View>
-
-          {!(store.onboarding.didCompleteTutorial && store.authentication.didAuthenticate) && (
-            <View style={styles.startedButtonconatiner}>
-              <Button
-                title="Get Started"
-                accessibilityLabel="Get Started"
-                testID={testIdWithKey('GetStarted')}
-                onPress={onTutorialCompleted}
-                buttonType={ButtonType.Primary}
-              />
-            </View>
-          )}
         </ScrollView>
+        {!(store.onboarding.didCompleteTutorial && store.authentication.didAuthenticate) && (
+          <View style={styles.startedButtonconatiner}>
+            <Button
+              title="Get Started"
+              accessibilityLabel="Get Started"
+              testID={testIdWithKey('GetStarted')}
+              onPress={onTutorialCompleted}
+              buttonType={ButtonType.Primary}
+            />
+          </View>
+        )}
       </>
     )
   }
