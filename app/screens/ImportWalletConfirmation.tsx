@@ -150,7 +150,6 @@ const ImportWalletVerify: React.FC = () => {
         dispatch({ type: DispatchAction.DID_AGREE_TO_TERMS })
         dispatch({ type: DispatchAction.DID_CREATE_PIN })
         dispatch({ type: DispatchAction.DID_NAME_WALLET })
-        dispatch({ type: DispatchAction.USE_BIOMETRY })
         navigation.navigate(Screens.UseBiometry as never)
       } else {
         setverify(false)

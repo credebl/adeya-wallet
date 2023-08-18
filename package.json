@@ -41,7 +41,6 @@
     "@react-navigation/stack": "^6.3.17",
     "axios": "^1.4.0",
     "bip39": "^3.1.0",
-    "buffer": "^6.0.3",
     "events": "^1.1.1",
     "expo-modules-core": "^1.2.7",
     "i18next": "^23.4.1",
