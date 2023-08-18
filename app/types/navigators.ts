@@ -36,6 +36,14 @@ export enum Screens {
   ProofDetails = 'Proof Details',
   ConnectionInvitation = 'Connection Invitation',
   NameWallet = 'Name Wallet',
+  CredentialDetailsJSONLD = 'Credential Details JSONLD',
+  ExportWallet = 'Passphrase',
+  ExportWalletConfirmation = 'Seed Phrase',
+  ImportWallet = 'Import Wallet',
+  ImportWalletVerify = 'Verify Phrase',
+  Success = 'Success',
+  WalletOptions = 'Create Walllet',
+  ImportSuccess = 'Import Success',
   CredentialDetailsW3C = 'Credential Details W3C',
 }
 
@@ -134,6 +142,12 @@ export type SettingStackParams = {
   [Screens.Terms]: undefined
   [Screens.Onboarding]: undefined
   [Screens.Developer]: undefined
+  [Screens.ExportWallet]: undefined
+  [Screens.ExportWalletConfirmation]: undefined
+  [Screens.Success]: undefined
+  [Screens.ImportWalletVerify]: undefined
+  [Screens.WalletOptions]: undefined
+  [Screens.ImportSuccess]: undefined
 }
 
 export type NotificationStackParams = {

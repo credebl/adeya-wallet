@@ -127,6 +127,21 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     {
       header: {
         icon: 'settings',
+        title: 'Security',
+      },
+      data: [
+        {
+          title: t('Backup.backup_wallet'),
+          accessibilityLabel: t('Settings.Backup'),
+          testID: testIdWithKey('Biometrics'),
+          onPress: () => navigation.navigate(Screens.ExportWallet as never),
+          value: undefined,
+        },
+      ],
+    },
+    {
+      header: {
+        icon: 'settings',
         title: t('Settings.AppSettings'),
       },
       data: [
