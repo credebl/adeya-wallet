@@ -42,6 +42,7 @@ export interface ConfigurationContext {
   proofRequestTemplates?: Array<ProofRequestTemplate>
   enableTours?: boolean
   enableWalletNaming?: boolean
+  enableBackupWallet?: boolean
 }
 
 export const ConfigurationContext = createContext<ConfigurationContext>(null as unknown as ConfigurationContext)
