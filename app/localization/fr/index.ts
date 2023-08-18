@@ -419,7 +419,9 @@ const translation = {
         "Build": "Créer",
         "WhatAreContacts": "Qu’est-ce qu’un Contact?",
         "ScanMyQR": "Scan my QR code (FR)",
-        "Developer": "Options de développeur"
+        "Developer": "Options de développeur",
+        "Backup": "portefeuille de sauvegarde",
+        "Confirmation"  : 'Confirmation'
     },
     "TabStack": {
         "Home": "Accueil",
@@ -486,7 +488,12 @@ const translation = {
         "RecreatePIN": 'Changer le NIP',
         "CustomNotification": 'Notification personnalisée',
         "ProofRequesting": 'Demande de preuve',
-        "NameWallet": "Name your wallet (FR)"
+        "NameWallet": "Name your wallet (FR)",
+        "BackupWallet":"Portefeuille de sauvegarde",
+        "Confirmation"  : 'Confirmation',
+        "CreateWallet"  : 'Créer un portefeuille',
+        "VerifyPhrase"  : 'Vérifier l\'expression',
+        "Success"  : 'Succès'
     },
     "Loading": {
         "TakingTooLong": "Cela prend plus de temps que d'habitude. Vous pouvez retourner à l'accueil ou continuer à attendre.",

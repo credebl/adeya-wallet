@@ -1,27 +1,14 @@
-/* eslint-disable import/no-unresolved */
-import { CredentialState, ProofState } from '@aries-framework/core'
-import { useCredentialByState, useConnections, useProofByState } from '@aries-framework/react-hooks'
-import React, { useState } from 'react'
+import { CredentialState } from '@aries-framework/core'
+import { useCredentialByState } from '@aries-framework/react-hooks'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, Text, Image, ScrollView } from 'react-native'
-import { SvgProps } from 'react-native-svg'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { StyleSheet, View, Text } from 'react-native'
 
-// import { styles } from '../HomeContentviewstyle'
-import { styles } from '../../HomeContentviewstyle'
-import Button, { ButtonType } from '../../components/buttons/Button'
-import { BCState, useStore } from '../../contexts/store'
+import { useTheme } from '../../contexts/theme'
 import { useNotifications } from '../../hooks/notifications'
-import WebDisplay from '../../screens/WebDisplay'
-import { ColorPallet } from '../../theme'
-import { surveyMonkeyExitUrl, surveyMonkeyUrl } from '../../utils/constants'
-import { testIdWithKey } from '../../utils/testable'
-import contacts from '../assets/img/contactsimage.svg'
-import credentialImage from '../assets/img/credentialImage.svg'
-import request from '../assets/img/requestsImage.svg'
-// import { surveyMonkeyUrl, surveyMonkeyExitUrl } from '../constants'
-// import { useNotifications } from '../hooks/notifications'
-// import WebDisplay from '../screens/WebDisplay
+
+const offset = 25
+
 interface HomeContentViewProps {
   children?: any
 }
@@ -31,94 +18,70 @@ const HomeContentView: React.FC<HomeContentViewProps> = ({ children }) => {
     ...useCredentialByState(CredentialState.CredentialReceived),
     ...useCredentialByState(CredentialState.Done),
   ]
-  const contactscount = useConnections?.length
-  const requestcount = useProofByState(ProofState.RequestReceived)?.length
-
   const notifications = useNotifications()
-
+  const { HomeTheme } = useTheme()
   const { t } = useTranslation()
-  const [surveyVisible, setSurveyVisible] = useState(false)
-  const [store] = useStore<BCState>()
+  const styles = StyleSheet.create({
+    container: {
+      paddingHorizontal: offset,
+      paddingBottom: offset * 3,
+    },
 
-  const toggleSurveyVisibility = () => setSurveyVisible(!surveyVisible)
-  const homebadge: {
-    image: React.FC<SvgProps>
-    title: string
-    count: number
-  }[] = [
-    {
-      image: contacts,
-      title: 'CONTACTS',
-      count: contactscount,
+    messageContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 35,
+      marginHorizontal: offset,
     },
-    {
-      image: credentialImage,
-      title: 'CREDENTIALS',
-      count: credentials?.length,
-    },
-    {
-      image: request,
-      title: 'REQUEST',
-      count: requestcount,
-    },
-  ]
-  const imageDisplayOptions = {
-    height: 28,
-    width: 28,
+  })
+
+  const displayMessage = (credentialCount: number) => {
+    if (typeof credentialCount === 'undefined' && credentialCount >= 0) {
+      throw new Error('Credential count cannot be undefined')
+    }
+
+    let credentialMsg
+
+    if (credentialCount === 1) {
+      credentialMsg = (
+        <Text>
+          {t('Home.YouHave')} <Text style={{ fontWeight: 'bold' }}>{credentialCount}</Text> {t('Home.Credential')}{' '}
+          {t('Home.InYourWallet')}
+        </Text>
+      )
+    } else if (credentialCount > 1) {
+      credentialMsg = (
+        <Text>
+          {t('Home.YouHave')} <Text style={{ fontWeight: 'bold' }}>{credentialCount}</Text> {t('Home.Credentials')}{' '}
+          {t('Home.InYourWallet')}
+        </Text>
+      )
+    } else {
+      credentialMsg = t('Home.NoCredentials')
+    }
+
+    return (
+      <>
+        {notifications.total === 0 && (
+          <View style={[styles.messageContainer]}>
+            <Text adjustsFontSizeToFit style={[HomeTheme.welcomeHeader, { marginTop: offset, marginBottom: 20 }]}>
+              {t('Home.Welcome')}
+            </Text>
+          </View>
+        )}
+        <View style={[styles.messageContainer]}>
+          <Text style={[HomeTheme.credentialMsg, { marginTop: offset, textAlign: 'center' }]}>{credentialMsg}</Text>
+        </View>
+      </>
+    )
   }
 
   return (
-    <ScrollView style={[styles.feedbackContainer]}>
-      {store.preferences.developerModeEnabled ? (
-        <>
-          <Button
-            title={t('Feedback.GiveFeedback')}
-            accessibilityLabel={t('Feedback.GiveFeedback')}
-            testID={testIdWithKey('GiveFeedback')}
-            onPress={toggleSurveyVisibility}
-            buttonType={ButtonType.Secondary}>
-            <Icon
-              name="message-draw"
-              style={[styles.feedbackIcon, { color: ColorPallet.brand.primary }]}
-              size={26}
-              color={ColorPallet.grayscale.white}
-            />
-          </Button>
-          <WebDisplay
-            destinationUrl={surveyMonkeyUrl}
-            exitUrl={surveyMonkeyExitUrl}
-            visible={surveyVisible}
-            onClose={toggleSurveyVisibility}
-          />
-        </>
-      ) : null}
-      {notifications.total === 0 && (
-        <View style={[styles.messageContainer]}>
-          <Image source={require('../assets/img/homeimage.png')} style={styles.homeImage} />
-        </View>
-      )}
-
-      <View style={styles.homebadgeview}>
-        {homebadge.map(g => (
-          <View style={styles.badgecontainer}>
-            <Text style={styles.badgeText}>{g.count}</Text>
-            <Image source={require('../assets/img/Line.png')} style={styles.line} />
-            <View style={styles.badgeview}>
-              <View style={styles.homebadge}>{g.image(imageDisplayOptions)}</View>
-            </View>
-            <View>
-              <Text style={styles.badgeText}>{g.title}</Text>
-            </View>
-          </View>
-        ))}
-      </View>
+    <View>
+      <View style={styles.container}>{displayMessage(credentials.length)}</View>
       {children}
-    </ScrollView>
+    </View>
   )
-}
-
-HomeContentView.defaultProps = {
-  children: null,
 }
 
 export default HomeContentView
