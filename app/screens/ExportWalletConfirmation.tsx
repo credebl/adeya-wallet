@@ -65,7 +65,7 @@ function ExportWalletConfirmation() {
       fontSize: 26,
       marginTop: 15,
       textAlign: 'center',
-      color: '#7C7C7C',
+      color: ColorPallet.brand.labelText,
     },
     detailText: {
       fontSize: 18,
@@ -98,7 +98,7 @@ function ExportWalletConfirmation() {
     },
     rowAddItemText: {
       fontSize: 20,
-      color: '#000',
+      color: ColorPallet.grayscale.black,
     },
     rowItemIndexText: {
       width: 20,
@@ -122,6 +122,9 @@ function ExportWalletConfirmation() {
       borderRadius: 5,
       borderWidth: 1.3,
       backgroundColor: ColorPallet.brand.primaryBackground,
+    },
+    backupButton: {
+      margin: 20,
     },
   })
 
@@ -334,7 +337,7 @@ function ExportWalletConfirmation() {
         </View>
       </ScrollView>
 
-      <View style={{ margin: 20 }}>
+      <View style={styles.backupButton}>
         <Button
           title={'COMPLETE BACKUP'}
           accessibilityLabel={'Okay'}

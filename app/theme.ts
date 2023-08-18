@@ -79,6 +79,7 @@ export interface IBrandColors {
   primary: string
   primaryDisabled: string
   secondary: string
+  labelText: string
   secondaryDisabled: string
   primaryLight: string
   highlight: string
@@ -196,6 +197,7 @@ const BrandColors: IBrandColors = {
   primary: '#1F4EAD',
   primaryDisabled: `rgba(31, 78, 173, ${lightOpacity})`,
   secondary: '#FFFFFFFF',
+  labelText: '#7C7C7C',
   // tabbackground:'#D3E4FA',
   secondaryDisabled: `rgba(31, 78, 173, ${lightOpacity})`,
   primaryLight: '#D9EAF7',

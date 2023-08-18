@@ -21,6 +21,7 @@ import ButtonLoading from '../components/animated/ButtonLoading'
 import Button, { ButtonType } from '../components/buttons/Button'
 import { ToastType } from '../components/toast/BaseToast'
 import { useAuth } from '../contexts/auth'
+import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { Stacks } from '../types/navigators'
@@ -28,7 +29,7 @@ import { createLinkSecretIfRequired, getAgentModules } from '../utils/agent'
 
 const ImportWalletVerify: React.FC = () => {
   const { ColorPallet } = useTheme()
-  const [store] = useStore()
+  const [store, dispatch] = useStore()
   const navigation = useNavigation()
   const [PassPhrase, setPassPharse] = useState('')
   const { getWalletCredentials } = useAuth()
@@ -71,6 +72,10 @@ const ImportWalletVerify: React.FC = () => {
       justifyContent: 'flex-start',
       fontSize: 25,
       color: ColorPallet.brand.primary,
+    },
+    verifyButton: {
+      marginTop: 'auto',
+      margin: 20,
     },
   })
   useEffect(() => {
@@ -125,6 +130,7 @@ const ImportWalletVerify: React.FC = () => {
           key: encodeHash,
           path: selectedfilepath,
         }
+
         await newAgent.wallet.import(walletConfig, importConfig)
 
         await newAgent.initialize()
@@ -139,6 +145,12 @@ const ImportWalletVerify: React.FC = () => {
           visibilityTime: 2000,
           position: 'bottom',
         })
+        dispatch({ type: DispatchAction.DID_COMPLETE_TUTORIAL })
+        dispatch({ type: DispatchAction.DID_AUTHENTICATE })
+        dispatch({ type: DispatchAction.DID_AGREE_TO_TERMS })
+        dispatch({ type: DispatchAction.DID_CREATE_PIN })
+        dispatch({ type: DispatchAction.DID_NAME_WALLET })
+        dispatch({ type: DispatchAction.USE_BIOMETRY })
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -222,7 +234,7 @@ const ImportWalletVerify: React.FC = () => {
           onChangeText={text => handleUserphrase(text)}
         />
       </View>
-      <View style={{ marginTop: 'auto', margin: 20 }}>
+      <View style={styles.verifyButton}>
         <Button
           title={'Verify'}
           buttonType={ButtonType.Primary}

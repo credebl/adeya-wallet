@@ -219,12 +219,6 @@ const RootStack: React.FC = () => {
     return (
       <Stack.Navigator initialRouteName={Screens.Splash} screenOptions={{ ...defaultStackOptions, headerShown: false }}>
         <Stack.Screen name={Screens.Splash} component={splash} />
-        <Stack.Screen name={Stacks.TabStack} component={TabStack} />
-        <Stack.Screen name={Stacks.SettingStack} component={SettingStack} />
-        <Stack.Screen name={Stacks.ContactStack} component={ContactStack} />
-        <Stack.Screen name={Stacks.NotificationStack} component={NotificationStack} />
-        <Stack.Screen name={Stacks.ConnectionStack} component={DeliveryStack} />
-        <Stack.Screen name={Stacks.ProofRequestsStack} component={ProofRequestStack} />
         <Stack.Screen
           name={Stacks.ConnectStack}
           component={ConnectStack}

@@ -21,18 +21,25 @@ const CreateWallet: React.FC = () => {
       color: ColorPallet.brand.primary,
       marginTop: 20,
     },
+    walletButtonview: {
+      marginTop: 'auto',
+      margin: 20,
+    },
+    restoreWalletview: {
+      marginTop: 20,
+    },
   })
   return (
     <View style={styles.container}>
       <Text style={(TextTheme.headingTwo, styles.titleText)}>Welcome</Text>
-      <View style={{ marginTop: 'auto', margin: 20 }}>
+      <View style={styles.walletButtonview}>
         <Button
           title={'CREATE NEW WALLET'}
           buttonType={ButtonType.Primary}
           accessibilityLabel={'okay'}
           onPress={() => navigation.navigate(Screens.UseBiometry as never)}
         />
-        <View style={{ marginTop: 20 }}>
+        <View style={styles.restoreWalletview}>
           <Button
             title={'RESTORE WALLET'}
             buttonType={ButtonType.Primary}
