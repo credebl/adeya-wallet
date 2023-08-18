@@ -8,7 +8,7 @@ import {
 } from '@aries-framework/core'
 import { useAgent } from '@aries-framework/react-hooks'
 import { agentDependencies } from '@aries-framework/react-native'
-import { CommonActions, useNavigation } from '@react-navigation/core'
+import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Dimensions, TextInput, Platform, BackHandler } from 'react-native'
 import { Config } from 'react-native-config'
@@ -24,7 +24,7 @@ import { useAuth } from '../contexts/auth'
 import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
-import { Stacks } from '../types/navigators'
+import { Screens } from '../types/navigators'
 import { createLinkSecretIfRequired, getAgentModules } from '../utils/agent'
 
 const ImportWalletVerify: React.FC = () => {
@@ -151,12 +151,7 @@ const ImportWalletVerify: React.FC = () => {
         dispatch({ type: DispatchAction.DID_CREATE_PIN })
         dispatch({ type: DispatchAction.DID_NAME_WALLET })
         dispatch({ type: DispatchAction.USE_BIOMETRY })
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: Stacks.TabStack }],
-          }),
-        )
+        navigation.navigate(Screens.UseBiometry as never)
       } else {
         setverify(false)
         Toast.show({
