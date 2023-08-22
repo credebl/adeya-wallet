@@ -21,6 +21,7 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
     label: {
       ...TextTheme.normal,
       marginBottom: 5,
+      fontWeight: '700',
     },
     textInput: {
       ...Inputs.textInput,

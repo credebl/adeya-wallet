@@ -27,6 +27,7 @@ interface BifoldErrorProps {
   bodyContent?: Element
   message?: string
   onCallToActionPressed?: GenericFn
+  onCallToActionProcced?: GenericFn
   onCallToActionLabel?: string
 }
 
@@ -37,6 +38,7 @@ const InfoBox: React.FC<BifoldErrorProps> = ({
   bodyContent,
   message,
   onCallToActionPressed,
+  onCallToActionProcced,
   onCallToActionLabel,
 }) => {
   const { t } = useTranslation()
@@ -84,6 +86,11 @@ const InfoBox: React.FC<BifoldErrorProps> = ({
       ...TextTheme.title,
       fontWeight: 'normal',
       color: ColorPallet.brand.link,
+    },
+    confirmationButton: {
+      paddingTop: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
     },
   })
   let iconName = 'info'
@@ -200,7 +207,7 @@ const InfoBox: React.FC<BifoldErrorProps> = ({
             </View>
           </TouchableOpacity>
         )}
-        {onCallToActionPressed && (
+        {onCallToActionLabel !== 'Yes' && (
           <View style={{ paddingTop: 10 }}>
             <Button
               title={onCallToActionLabel || t('Global.Okay')}
@@ -208,6 +215,22 @@ const InfoBox: React.FC<BifoldErrorProps> = ({
               testID={onCallToActionLabel ? testIdWithKey(onCallToActionLabel) : testIdWithKey('Okay')}
               buttonType={ButtonType.Primary}
               onPress={onCallToActionPressed}
+            />
+          </View>
+        )}
+        {onCallToActionLabel === 'Yes' && (
+          <View style={[styles.confirmationButton]}>
+            <Button
+              title={t('Global.No')}
+              accessibilityLabel={onCallToActionLabel || t('Global.No')}
+              buttonType={ButtonType.Secondary}
+              onPress={onCallToActionPressed}
+            />
+            <Button
+              title={onCallToActionLabel || t('Global.Yes')}
+              accessibilityLabel={onCallToActionLabel || t('Global.Yes')}
+              buttonType={ButtonType.Primary}
+              onPress={onCallToActionProcced}
             />
           </View>
         )}

@@ -172,7 +172,7 @@ const NotificationColors: INotificationColors = {
   info: '#FFFF',
   infoBorder: '#234CB4',
   infoIcon: '#244CB4',
-  infoText: '#046B99',
+  infoText: '#1F4EAD',
   warn: '#F9F1C6',
   warnBorder: '#FAEBCC',
   warnIcon: '#6C4A00',
