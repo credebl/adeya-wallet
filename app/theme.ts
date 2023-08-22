@@ -325,7 +325,7 @@ export const Inputs: IInputs = StyleSheet.create({
     backgroundColor: ColorPallet.brand.primaryBackground,
     color: ColorPallet.notification.infoText,
     borderWidth: 2,
-    borderColor: ColorPallet.brand.secondary,
+    borderColor: ColorPallet.brand.primary,
   },
   inputSelected: {
     borderColor: ColorPallet.brand.primary,

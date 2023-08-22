@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TextInput, TextInputProps } from 'react-native'
 
 import { useTheme } from '../../contexts/theme'
+import { ColorPallet } from '../../theme'
 
 interface Props extends TextInputProps {
   label: string
@@ -23,6 +24,7 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
     },
     textInput: {
       ...Inputs.textInput,
+      color: ColorPallet.brand.primary,
     },
     limitCounter: {
       color: TextTheme.normal.color,

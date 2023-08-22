@@ -54,6 +54,11 @@ const NameWallet: React.FC = () => {
     buttonContainer: {
       width: '100%',
     },
+    labelText: {
+      width: '100%',
+      marginBottom: 16,
+      color: ColorPallet.brand.primary,
+    },
   })
 
   const handleChangeText = (text: string) => {
@@ -80,7 +85,7 @@ const NameWallet: React.FC = () => {
         payload: [walletName],
       })
       dispatch({ type: DispatchAction.DID_NAME_WALLET })
-      navigation.navigate({ name: Screens.UseBiometry } as never)
+      navigation.navigate({ name: Screens.WalletOptions } as never)
     }
   }
 
@@ -93,7 +98,7 @@ const NameWallet: React.FC = () => {
       <View style={styles.screenContainer}>
         <View style={styles.contentContainer}>
           <Assets.svg.contactBook height={100} style={{ marginVertical: 20 }} />
-          <Text style={[TextTheme.normal, { width: '100%', marginBottom: 16 }]}>{t('NameWallet.ThisIsTheName')}</Text>
+          <Text style={[TextTheme.normal, styles.labelText]}>{t('NameWallet.ThisIsTheName')}</Text>
           <View style={{ width: '100%' }}>
             <LimitedTextInput
               defaultValue={walletName}

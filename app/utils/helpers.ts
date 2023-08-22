@@ -27,6 +27,7 @@ import { Buffer } from 'buffer'
 import moment from 'moment'
 import { ParsedUrl, parseUrl } from 'query-string'
 import { Dispatch, ReactNode, SetStateAction } from 'react'
+import { uniqueNamesGenerator, Config, names, adjectives } from 'unique-names-generator'
 
 import { domain } from '../constants'
 import { i18n } from '../localization/index'
@@ -639,9 +640,18 @@ export function getMessageEventRole(record: BasicMessageRecord) {
 }
 
 export function generateRandomWalletName() {
-  let name = 'My Wallet - '
-  for (let i = 0; i < 4; i++) {
-    name = name.concat(Math.floor(Math.random() * 10).toString())
+  let name: number | string = ''
+  const separator: string = '-'
+  const config: Config = {
+    dictionaries: [names, adjectives],
+    separator: '-',
   }
+  const characterName: string = uniqueNamesGenerator(config)
+  const length = 10
+  name = characterName.concat(separator).concat(
+    Math.round(Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))
+      .toString(36)
+      .slice(1),
+  )
   return name
 }
