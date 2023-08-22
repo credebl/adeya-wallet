@@ -46,4 +46,5 @@ export const defaultConfiguration: ConfigurationContext = {
   proofRequestTemplates: defaultProofRequestTemplates,
   enableTours: false,
   enableWalletNaming: true,
+  enableBackupWallet: true,
 }

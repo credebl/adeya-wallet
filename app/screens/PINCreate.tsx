@@ -57,7 +57,7 @@ const PINCreate: React.FC<PINCreateProps> = ({ setAuthenticated }) => {
   const navigation = useNavigation<StackNavigationProp<AuthenticateStackParams>>()
   const [, dispatch] = useStore()
   const { t } = useTranslation()
-  const { PINSecurity, enableWalletNaming } = useConfiguration()
+  const { PINSecurity, enableWalletNaming, enableBackupWallet } = useConfiguration()
 
   const [PINOneValidations, setPINOneValidations] = useState<PINValidationsType[]>(
     PINCreationValidations(PIN, PINSecurity.rules),

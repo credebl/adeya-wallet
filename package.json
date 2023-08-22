@@ -9,7 +9,7 @@
     "prettier": "prettier --ignore-path .gitignore '**/*.+(js|jsx|json|ts|tsx|md|yml|yaml)'",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "patch-package",
+    "postinstall": "npx rn-nodeify --install crypto,process,stream,events,module,util --hack && npx patch-package",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -29,7 +29,7 @@
     "@formatjs/intl-pluralrules": "^5.2.4",
     "@formatjs/intl-relativetimeformat": "^11.2.4",
     "@hyperledger/anoncreds-react-native": "^0.1.0",
-    "@hyperledger/aries-askar-react-native": "^0.1.0",
+    "@hyperledger/aries-askar-react-native": "^0.1.1",
     "@hyperledger/indy-vdr-react-native": "^0.1.0",
     "@react-native-async-storage/async-storage": "^1.19.1",
     "@react-native-community/masked-view": "^0.1.11",
@@ -40,6 +40,9 @@
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.17",
     "axios": "^1.4.0",
+    "bip39": "^3.1.0",
+    "events": "^1.1.1",
+    "expo-modules-core": "^1.2.7",
     "i18next": "^23.4.1",
     "lodash.flatten": "^4.4.0",
     "lodash.startcase": "^4.4.0",
@@ -56,7 +59,9 @@
     "react-native-collapsible": "^1.6.1",
     "react-native-config": "^1.5.1",
     "react-native-confirmation-code-field": "^7.3.1",
+    "react-native-crypto": "^2.2.0",
     "react-native-device-info": "^10.8.0",
+    "react-native-document-picker": "9.0.1",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.12.1",
     "react-native-get-random-values": "^1.9.0",
@@ -79,6 +84,14 @@
     "react-native-webview": "^13.3.1",
     "unique-names-generator": "^4.7.1",
     "uuid": "^9.0.0"
+    "react-native-zip-archive": "6.0.9",
+    "rn-fetch-blob": "^0.12.0",
+    "uuid": "^9.0.0",
+    "stream-browserify": "^1.0.0",
+    "readable-stream": "1.0.33",
+    "util": "^0.10.4",
+    "process": "^0.11.0",
+    "react-native-randombytes": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -116,5 +129,14 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "react-native": {
+    "crypto": "react-native-crypto",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify"
   }
 }

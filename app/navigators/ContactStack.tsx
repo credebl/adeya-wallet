@@ -8,6 +8,7 @@ import Chat from '../screens/Chat'
 import ConnectionInvitation from '../screens/ConnectionInvitation'
 import ContactDetails from '../screens/ContactDetails'
 import CredentialDetails from '../screens/CredentialDetails'
+import CredentialDetailsW3C from '../screens/CredentialDetailsW3C'
 import CredentialOffer from '../screens/CredentialOffer'
 import ListContacts from '../screens/ListContacts'
 import ProofDetails from '../screens/ProofDetails'
@@ -43,6 +44,11 @@ const ContactStack: React.FC = () => {
         name={Screens.CredentialDetails}
         component={CredentialDetails}
         options={{ title: t('Screens.CredentialDetails') }}
+      />
+      <Stack.Screen
+        name={Screens.CredentialDetailsW3C}
+        component={CredentialDetailsW3C}
+        options={{ title: t('Screens.CredentialDetailsW3C') }}
       />
       <Stack.Screen
         name={Screens.CredentialOffer}
