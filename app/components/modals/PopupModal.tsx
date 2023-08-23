@@ -12,7 +12,7 @@ interface PopupModalProps {
   message?: string
   bodyContent?: Element
   onCallToActionPressed?: GenericFn
-  onCallToActionProcced?: GenericFn
+  onCallToActionProceed?: GenericFn
   onCallToActionLabel: string
 }
 
@@ -24,7 +24,7 @@ const PopupModal: React.FC<PopupModalProps> = ({
   onCallToActionPressed,
   notificationType,
   onCallToActionLabel,
-  onCallToActionProcced,
+  onCallToActionProceed,
 }) => {
   const { ColorPallet } = useTheme()
   const styles = StyleSheet.create({
@@ -48,7 +48,7 @@ const PopupModal: React.FC<PopupModalProps> = ({
           bodyContent={bodyContent}
           onCallToActionLabel={onCallToActionLabel}
           onCallToActionPressed={onCallToActionPressed}
-          onCallToActionProcced={onCallToActionProcced}
+          onCallToActionProceed={onCallToActionProceed}
         />
       </View>
     </Modal>

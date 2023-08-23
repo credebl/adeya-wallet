@@ -27,7 +27,7 @@ interface BifoldErrorProps {
   bodyContent?: Element
   message?: string
   onCallToActionPressed?: GenericFn
-  onCallToActionProcced?: GenericFn
+  onCallToActionProceed?: GenericFn
   onCallToActionLabel?: string
 }
 
@@ -38,7 +38,7 @@ const InfoBox: React.FC<BifoldErrorProps> = ({
   bodyContent,
   message,
   onCallToActionPressed,
-  onCallToActionProcced,
+  onCallToActionProceed,
   onCallToActionLabel,
 }) => {
   const { t } = useTranslation()
@@ -230,7 +230,7 @@ const InfoBox: React.FC<BifoldErrorProps> = ({
               title={onCallToActionLabel || t('Global.Yes')}
               accessibilityLabel={onCallToActionLabel || t('Global.Yes')}
               buttonType={ButtonType.Primary}
-              onPress={onCallToActionProcced}
+              onPress={onCallToActionProceed}
             />
           </View>
         )}

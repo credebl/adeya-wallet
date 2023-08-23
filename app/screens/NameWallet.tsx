@@ -158,7 +158,7 @@ const NameWallet: React.FC = () => {
           notificationType={InfoBoxType.Info}
           onCallToActionLabel={'Yes'}
           onCallToActionPressed={handleDissmiss}
-          onCallToActionProcced={handleSuccess}
+          onCallToActionProceed={handleSuccess}
           title={successState.title}
           description={successState.description}
         />
