@@ -35,6 +35,8 @@ const translation = {
     "Off": "Off",
     "Close": "Close",
     "Remove": "Remove",
+    "Yes": "Yes",
+    "No": "No",
   },
   "Date": {
     "ShortFormat": "MMM D, YYYY",
@@ -522,7 +524,7 @@ const translation = {
     "RecreatePIN": 'Change PIN',
     "CustomNotification": 'Custom Notification',
     "ProofRequesting": 'Proof Requesting',
-    "NameWallet": "Name your wallet",
+    "NameWallet": "Wallet Name",
     "CredentialDetailsJSONLD" :'Credential Details JSONLD',
     "BackupWallet":"Backup wallet",
     "Confirmation"  : 'Confirmation',
@@ -568,8 +570,8 @@ const translation = {
     "Finishing": "Finishing..."
   },
   "NameWallet": {
-    "NameYourWallet": "Name your wallet",
-    "ThisIsTheName": "This is the name people see when connecting with you.",
+    "NameYourWallet": "Name of your wallet",
+    "ThisIsTheName": "This is how your name will be visible when others connect with you",
     "CharCountTitle": "Character count exceeded",
     "CharCountDescription": "You've exceeded the maximum character count of 50 characters. Please reduce your character count.",
     "EmptyNameTitle": "Wallet name can't be empty",
