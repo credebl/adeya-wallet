@@ -114,7 +114,7 @@ const NameWallet: React.FC = () => {
     })
     dispatch({ type: DispatchAction.DID_NAME_WALLET })
 
-    navigation.navigate({ name: Screens.UseBiometry } as never)
+    navigation.navigate({ name: Screens.WalletOptions } as never)
 
     setsuccessState(prev => ({ ...prev, visible: false }))
   }
