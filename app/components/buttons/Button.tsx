@@ -51,6 +51,7 @@ const Button: React.FC<PropsWithChildren<ButtonProps & React.RefAttributes<Touch
           buttonStyles[buttonType].color,
           disabled && (buttonType === ButtonType.Primary ? Buttons.primaryDisabled : Buttons.secondaryDisabled),
           isActive && buttonType === ButtonType.Secondary && { backgroundColor: Buttons.primary.backgroundColor },
+          accessibilityLabel === 'Yes' ? { width: 100 } : null,
         ]}
         disabled={disabled}
         activeOpacity={heavyOpacity}
