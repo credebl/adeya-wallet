@@ -172,7 +172,7 @@ const NotificationColors: INotificationColors = {
   info: '#FFFF',
   infoBorder: '#234CB4',
   infoIcon: '#244CB4',
-  infoText: '#046B99',
+  infoText: '#1F4EAD',
   warn: '#F9F1C6',
   warnBorder: '#FAEBCC',
   warnIcon: '#6C4A00',
@@ -328,7 +328,7 @@ export const Inputs: IInputs = StyleSheet.create({
     backgroundColor: ColorPallet.brand.primaryBackground,
     color: ColorPallet.notification.infoText,
     borderWidth: 2,
-    borderColor: ColorPallet.brand.secondary,
+    borderColor: ColorPallet.brand.primary,
   },
   inputSelected: {
     borderColor: ColorPallet.brand.primary,
