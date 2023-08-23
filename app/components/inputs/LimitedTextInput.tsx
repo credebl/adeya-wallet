@@ -71,6 +71,9 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
     handleChangeText(text)
     setCharacterCount(text.length)
   }
+  const handleEdit = () => {
+    setisEdit(true)
+  }
 
   const handleDismissError = () => {
     setErrorState(prev => ({ ...prev, visible: false }))
