@@ -532,7 +532,7 @@ const translation = {
     "VerifyPhrase"  : 'Verify Phrase',
     "Success"  : 'Success',
     "CredentialDetailsW3C" :'Credential Details W3C',
-    
+    "WalletName" :"Wallet Name"
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",
