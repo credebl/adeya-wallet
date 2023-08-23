@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
-import ButtonLoading from '../components/animated/ButtonLoading'
 import Button, { ButtonType } from '../components/buttons/Button'
 import LimitedTextInput from '../components/inputs/LimitedTextInput'
 import { InfoBoxType } from '../components/misc/InfoBox'
@@ -21,6 +20,11 @@ type ErrorState = {
   title: string
   description: string
 }
+type SuccessState = {
+  visible: boolean
+  title: string
+  description: string
+}
 
 const NameWallet: React.FC = () => {
   const { t } = useTranslation()
@@ -28,8 +32,12 @@ const NameWallet: React.FC = () => {
   const navigation = useNavigation()
   const [walletName, setWalletName] = useState(generateRandomWalletName())
   const [, dispatch] = useStore()
-  const [loading, setLoading] = useState(false)
   const [errorState, setErrorState] = useState<ErrorState>({
+    visible: false,
+    title: '',
+    description: '',
+  })
+  const [successState, setsuccessState] = useState<SuccessState>({
     visible: false,
     title: '',
     description: '',
@@ -54,6 +62,20 @@ const NameWallet: React.FC = () => {
     buttonContainer: {
       width: '100%',
     },
+    labelText: {
+      width: '100%',
+      marginBottom: 16,
+      color: ColorPallet.brand.primary,
+    },
+    svgAsset: {
+      marginVertical: 20,
+    },
+    inputView: {
+      width: '100%',
+    },
+    noteText: {
+      fontWeight: '400',
+    },
   })
 
   const handleChangeText = (text: string) => {
@@ -74,27 +96,38 @@ const NameWallet: React.FC = () => {
         visible: true,
       })
     } else {
-      setLoading(true)
-      dispatch({
-        type: DispatchAction.UPDATE_WALLET_NAME,
-        payload: [walletName],
+      setsuccessState({
+        title: 'Ready to proceed?',
+        description: 'The name will apply to any new connection',
+        visible: true,
       })
-      dispatch({ type: DispatchAction.DID_NAME_WALLET })
-      navigation.navigate({ name: Screens.UseBiometry } as never)
     }
   }
 
   const handleDismissError = () => {
     setErrorState(prev => ({ ...prev, visible: false }))
   }
+  const handleSuccess = () => {
+    dispatch({
+      type: DispatchAction.UPDATE_WALLET_NAME,
+      payload: [walletName],
+    })
+    dispatch({ type: DispatchAction.DID_NAME_WALLET })
 
+    navigation.navigate({ name: Screens.WalletOptions } as never)
+
+    setsuccessState(prev => ({ ...prev, visible: false }))
+  }
+  const handleDissmiss = () => {
+    setsuccessState(prev => ({ ...prev, visible: false }))
+  }
   return (
     <KeyboardView>
       <View style={styles.screenContainer}>
         <View style={styles.contentContainer}>
-          <Assets.svg.contactBook height={100} style={{ marginVertical: 20 }} />
-          <Text style={[TextTheme.normal, { width: '100%', marginBottom: 16 }]}>{t('NameWallet.ThisIsTheName')}</Text>
-          <View style={{ width: '100%' }}>
+          <Assets.svg.contactBook height={100} style={[styles.svgAsset]} />
+          <Text style={[TextTheme.normal, styles.labelText]}>{t('NameWallet.ThisIsTheName')}</Text>
+          <View style={styles.inputView}>
             <LimitedTextInput
               defaultValue={walletName}
               label={t('NameWallet.NameYourWallet')}
@@ -103,6 +136,10 @@ const NameWallet: React.FC = () => {
               accessibilityLabel={t('NameWallet.NameYourWallet')}
               testID={testIdWithKey('NameInput')}
             />
+
+            <Text style={[TextTheme.normal, styles.noteText]}>
+              Note: Feel free to customize the wallet name according to your preferences
+            </Text>
           </View>
         </View>
         <View style={styles.controlsContainer}>
@@ -112,13 +149,20 @@ const NameWallet: React.FC = () => {
               buttonType={ButtonType.Primary}
               testID={testIdWithKey('Continue')}
               accessibilityLabel={t('Global.Continue')}
-              onPress={handleContinuePressed}
-              disabled={loading}>
-              {loading && <ButtonLoading />}
-            </Button>
+              onPress={handleContinuePressed}></Button>
           </View>
         </View>
       </View>
+      {successState.visible && (
+        <PopupModal
+          notificationType={InfoBoxType.Info}
+          onCallToActionLabel={'Yes'}
+          onCallToActionPressed={handleDissmiss}
+          onCallToActionProceed={handleSuccess}
+          title={successState.title}
+          description={successState.description}
+        />
+      )}
       {errorState.visible && (
         <PopupModal
           notificationType={InfoBoxType.Info}
