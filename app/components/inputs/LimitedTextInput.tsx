@@ -35,7 +35,7 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
   })
   const styles = StyleSheet.create({
     container: {
-      marginVertical: 10,
+      marginVertical: 5,
     },
     label: {
       ...TextTheme.normal,
@@ -61,21 +61,19 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
       flexDirection: label === 'Wallet Name' ? 'row' : 'column',
       alignItems: 'center',
       flexGrow: 1,
-      paddingHorizontal: 25,
+      paddingHorizontal: label === 'Wallet Name' ? 20 : 0,
     },
     labelText: {
       alignItems: 'center',
       flexGrow: 1,
-      paddingHorizontal: 30,
+      paddingHorizontal: 40,
       fontWeight: 'bold',
       marginRight: 14,
       fontSize: 24,
       color: ColorPallet.brand.primary,
     },
     renameText: {
-      marginHorizontal: 5,
-      marginBottom: 'auto',
-      marginTop: 'auto',
+      marginHorizontal: widthPercentageToDP('1%'),
       fontSize: 21,
       flexShrink: 1,
     },
@@ -155,7 +153,7 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
             </TouchableOpacity>
           )
         ) : (
-          <Text style={[styles.limitCounter, { marginLeft: widthPercentageToDP('10%') }]}>
+          <Text style={[styles.limitCounter, { marginLeft: widthPercentageToDP('30%') }]}>
             {characterCount}/{limit}
           </Text>
         )}
