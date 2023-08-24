@@ -14,7 +14,7 @@ import {
   PixelRatio,
   StyleSheet,
 } from 'react-native'
-import { exists, mkdir, unlink, DownloadDirectoryPath } from 'react-native-fs'
+import { exists, mkdir, unlink } from 'react-native-fs'
 import Toast from 'react-native-toast-message'
 import { zip } from 'react-native-zip-archive'
 import RNFetchBlob from 'rn-fetch-blob'
@@ -138,7 +138,8 @@ function ExportWalletConfirmation() {
     const encodeHash = seed.replaceAll(',', ' ')
 
     try {
-      const documentDirectory = DownloadDirectoryPath
+      const { fs } = RNFetchBlob
+      const documentDirectory: string = fs.dirs.DocumentDir
       const zipDirectory = `${documentDirectory}/Wallet_Backup`
       const destFileExists = await exists(zipDirectory)
       if (destFileExists) {
@@ -166,7 +167,7 @@ function ExportWalletConfirmation() {
         text1: 'Backup successfully',
       })
       setMatchPhrase(true)
-      navigation.navigate(Screens.Success as never)
+      navigation.navigate(Screens.Success, { encryptedFileLocation })
     } catch (e) {
       Toast.show({
         type: ToastType.Error,
@@ -179,7 +180,7 @@ function ExportWalletConfirmation() {
     const encodeHash = seed.replaceAll(',', ' ')
     const { fs } = RNFetchBlob
     try {
-      const documentDirectory = fs.dirs.DocumentDir
+      const documentDirectory: string = fs.dirs.DocumentDir
 
       const zipDirectory = `${documentDirectory}/Wallet_Backup`
 
