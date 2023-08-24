@@ -1,4 +1,4 @@
-import { CommonActions, useNavigation } from '@react-navigation/core'
+import { CommonActions, useNavigation, useRoute, RouteProp } from '@react-navigation/core'
 import React, { useEffect } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 
@@ -6,9 +6,15 @@ import { useTheme } from '../contexts/theme'
 import { Assets, ColorPallet } from '../theme'
 import { Stacks } from '../types/navigators'
 
-const Success: React.FC = () => {
+interface SuccessProps {
+  encryptedFileLocation: string
+}
+
+const Success: React.FC<SuccessProps> = () => {
   const { TextTheme } = useTheme()
+  const params = useRoute<RouteProp<Record<string, SuccessProps>, string>>().params
   const navigation = useNavigation()
+
   const styles = StyleSheet.create({
     container: {
       justifyContent: 'center',
@@ -19,6 +25,12 @@ const Success: React.FC = () => {
     labelText: {
       alignSelf: 'center',
       padding: 20,
+      fontSize: 20,
+      color: ColorPallet.brand.primary,
+    },
+    namefiletext: {
+      alignSelf: 'center',
+      margin: 20,
       fontSize: 20,
       color: ColorPallet.brand.primary,
     },
@@ -38,10 +50,14 @@ const Success: React.FC = () => {
       clearTimeout(timeoutId)
     }
   }, [])
+
   return (
     <View style={styles.container}>
       <Assets.svg.BackupSuccess height={225} width={230} style={{ alignSelf: 'center', alignItems: 'center' }} />
-      <Text style={(TextTheme.labelText, styles.labelText)}>Exported successfully</Text>
+      <Text style={[TextTheme.labelText, styles.labelText]}>Exported successfully</Text>
+      <Text style={styles.namefiletext}>
+        {params?.encryptedFileLocation.substring(params?.encryptedFileLocation.lastIndexOf('/') + 1)}
+      </Text>
     </View>
   )
 }
