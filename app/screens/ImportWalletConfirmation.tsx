@@ -161,7 +161,7 @@ const ImportWalletVerify: React.FC = () => {
     } catch (e: unknown) {
       Toast.show({
         type: ToastType.Error,
-        text1: `${e} incorrect phrase entered`,
+        text1: `You've entered an invalid formatted phrase.`,
         visibilityTime: 5000,
         position: 'bottom',
       })
@@ -175,7 +175,7 @@ const ImportWalletVerify: React.FC = () => {
     } else {
       Toast.show({
         type: ToastType.Error,
-        text1: `please enter phrase `,
+        text1: `Please enter phrase `,
         visibilityTime: 2000,
         position: 'bottom',
       })
@@ -199,6 +199,7 @@ const ImportWalletVerify: React.FC = () => {
           })
         })
     } catch (error) {
+      navigation.goBack()
       Toast.show({
         type: ToastType.Error,
         text1: (error as Error).message || 'Unknown error',
@@ -241,4 +242,5 @@ const ImportWalletVerify: React.FC = () => {
     </View>
   )
 }
+
 export default ImportWalletVerify
