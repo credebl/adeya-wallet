@@ -1,7 +1,7 @@
 import { GenericFn } from './fn'
 
 export interface Setting {
-  title: string
+  title: string | JSX.Element
   value?: string
   onPress?: GenericFn
   accessibilityLabel?: string
