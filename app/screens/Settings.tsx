@@ -321,11 +321,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     testID?: string
     onPress?: GenericFn
   }> = ({ title, value, accessibilityLabel, testID, onPress }) => (
-    <ScrollView
-      horizontal
-      keyboardShouldPersistTaps="handled"
-      style={styles.section}
-      contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView keyboardShouldPersistTaps="handled" style={styles.section} contentContainerStyle={{ flexGrow: 1 }}>
       <TouchableOpacity
         accessible={true}
         accessibilityLabel={accessibilityLabel}

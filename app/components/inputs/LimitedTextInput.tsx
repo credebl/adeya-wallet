@@ -22,10 +22,10 @@ type ErrorState = {
 }
 const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...textInputProps }) => {
   const [focused, setFocused] = useState(false)
-  const [, dispatch] = useStore()
+  const [store, dispatch] = useStore()
   const [characterCount, setCharacterCount] = useState(0)
   const [isEdit, setisEdit] = useState(false)
-  const [saveText, setsaveText] = useState('')
+  const [saveText, setsaveText] = useState(store?.preferences?.walletName)
   const { t } = useTranslation()
   const { Inputs, TextTheme } = useTheme()
   const [errorState, setErrorState] = useState<ErrorState>({
@@ -50,6 +50,7 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
     textInputRename: {
       width: isEdit ? widthPercentageToDP('78%') : widthPercentageToDP('80%'),
       fontSize: 21,
+      color: ColorPallet.grayscale.darkGrey,
     },
     limitCounter: {
       color: TextTheme.normal.color,
@@ -96,7 +97,7 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
 
   const handleSave = () => {
     Keyboard.dismiss()
-
+    // handleChangeText(saveText)
     if (saveText.length < 1) {
       setErrorState({
         title: t('NameWallet.EmptyNameTitle'),
