@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, Text, StyleSheet, TextInput, TextInputProps, TouchableOpacity } from 'react-native'
-import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen'
+import { View, Text, StyleSheet, TextInput, TextInputProps, TouchableOpacity, Keyboard } from 'react-native'
+import { widthPercentageToDP } from 'react-native-responsive-screen'
 
 import { DispatchAction } from '../../contexts/reducers/store'
 import { useStore } from '../../contexts/store'
@@ -22,10 +22,10 @@ type ErrorState = {
 }
 const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...textInputProps }) => {
   const [focused, setFocused] = useState(false)
-  const [, dispatch] = useStore()
+  const [store, dispatch] = useStore()
   const [characterCount, setCharacterCount] = useState(0)
   const [isEdit, setisEdit] = useState(false)
-  const [saveText, setsaveText] = useState('')
+  const [saveText, setsaveText] = useState(store?.preferences?.walletName)
   const { t } = useTranslation()
   const { Inputs, TextTheme } = useTheme()
   const [errorState, setErrorState] = useState<ErrorState>({
@@ -48,9 +48,9 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
       width: widthPercentageToDP('90%'),
     },
     textInputRename: {
-      width: widthPercentageToDP('80%'),
-      marginTop: heightPercentageToDP('2%'),
+      width: isEdit ? widthPercentageToDP('78%') : widthPercentageToDP('80%'),
       fontSize: 21,
+      color: ColorPallet.grayscale.darkGrey,
     },
     limitCounter: {
       color: TextTheme.normal.color,
@@ -60,8 +60,7 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
       justifyContent: label === 'Wallet Name' ? 'flex-start' : 'flex-start',
       flexDirection: label === 'Wallet Name' ? 'row' : 'column',
       alignItems: 'center',
-      flexGrow: 1,
-      paddingHorizontal: label === 'Wallet Name' ? 20 : 0,
+      paddingHorizontal: label === 'Wallet Name' ? 0 : 0,
     },
     labelText: {
       alignItems: 'center',
@@ -73,9 +72,9 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
       color: ColorPallet.brand.primary,
     },
     renameText: {
-      marginHorizontal: widthPercentageToDP('1%'),
       fontSize: 21,
       flexShrink: 1,
+      marginRight: 100,
     },
   })
 
@@ -86,17 +85,19 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
   }, [textInputProps.defaultValue])
 
   const onChangeText = (text: string) => {
-    setCharacterCount(text.length)
+    if (label !== 'Wallet Name') {
+      handleChangeText(text)
+    }
     setsaveText(text)
-    handleChangeText(text)
+    setCharacterCount(text.length)
   }
   const handleEdit = () => {
     setisEdit(true)
   }
 
   const handleSave = () => {
-    handleChangeText(saveText)
-    setisEdit(false)
+    Keyboard.dismiss()
+    // handleChangeText(saveText)
     if (saveText.length < 1) {
       setErrorState({
         title: t('NameWallet.EmptyNameTitle'),
@@ -110,6 +111,7 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
         visible: true,
       })
     } else {
+      handleChangeText(saveText)
       dispatch({
         type: DispatchAction.UPDATE_WALLET_NAME,
         payload: [saveText],
@@ -122,12 +124,7 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
   }
   return (
     <View style={styles.container}>
-      {label === 'Wallet Name' ? (
-        <Text style={[TextTheme.headingFour, styles.labelText]}>{label}</Text>
-      ) : (
-        <Text style={styles.label}>{label}</Text>
-      )}
-
+      {label === 'Wallet Name' ? null : <Text style={styles.label}>{label}</Text>}
       <View style={styles.renameView}>
         <TextInput
           style={[

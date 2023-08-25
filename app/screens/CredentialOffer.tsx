@@ -72,6 +72,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
     headerText: {
       ...ListItems.recordAttributeLabel,
       flexShrink: 1,
+      fontWeight: 'bold',
     },
     footerButton: {
       paddingTop: 10,
@@ -156,9 +157,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
       if (!(agent && credential && assertConnectedNetwork())) {
         return
       }
-
       setAcceptModalVisible(true)
-
       await agent.credentials.acceptOffer({ credentialRecordId: credential.id })
     } catch (err: unknown) {
       setButtonsVisible(true)
@@ -191,7 +190,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
       <>
         <ConnectionImage connectionId={credential?.connectionId} />
         <View style={styles.headerTextContainer}>
-          <Text style={styles.headerText} testID={testIdWithKey('HeaderText')}>
+          <Text style={[styles.headerText]} testID={testIdWithKey('HeaderText')}>
             <Text>{credentialConnectionLabel || t('ContactDetails.AContact')}</Text>{' '}
             {t('CredentialOffer.IsOfferingYouACredential')}
           </Text>
