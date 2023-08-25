@@ -146,7 +146,7 @@ const translation = {
   "CameraDisclosure": {
     "AllowCameraUse": "Allow camera use",
     "CameraDisclosure": "The camera is used to scan QR codes that initiate a credential offer or credential request. No information about the images is stored, used for analytics, or shared.",
-    "ToContinueUsing": "To continue using the Aries Bifold scan feature, please allow camera permissions.",
+    "ToContinueUsing": "To continue using the Aries ADEYA scan feature, please allow camera permissions.",
     "Allow": "Allow",
     "OpenSettings": "Open settings",
   },
@@ -579,12 +579,12 @@ const translation = {
   },
   "NetInfo": {
     "NoInternetConnectionTitle": "No internet connection",
-    "NoInternetConnectionMessage": "You're unable to access services using Bifold or receive credentials until you're back online.\n\nPlease check your internet connection.",
+    "NoInternetConnectionMessage": "You're unable to access services using ADEYA or receive credentials until you're back online.\n\nPlease check your internet connection.",
     "LedgerConnectivityIssueTitle": "Wallet Services",
     "LedgerConnectivityIssueMessage": "A firewall may be preventing you from connecting to wallet related services.",
   },
   "Onboarding": {
-    "SkipA11y": "Skip introduction to Aries Bifold",
+    "SkipA11y": "Skip introduction to Aries ADEYA",
   },
   "Chat": {
     "OpenPresentation": "Open Presentation",
