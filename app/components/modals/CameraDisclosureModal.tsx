@@ -60,7 +60,7 @@ const CameraDisclosureModal: React.FC<CameraDisclosureModalProps> = ({ requestCa
 
   const onNotNowTouched = () => {
     setModalVisible(false)
-    navigation.navigate(Screens.Home)
+    navigation.goBack()
   }
 
   const onOpenSettingsDismissed = () => {

@@ -54,7 +54,8 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
   const [retrievedCredentials, setRetrievedCredentials] = useState<AnonCredsCredentialsForProofRequest>()
   const [proofItems, setProofItems] = useState<ProofCredentialItems[]>([])
   const [loading, setLoading] = useState<boolean>(true)
-  const [declineModalVisible, setDeclineModalVisible] = useState(false)
+  const [declineModalVisible, setDeclineModalVisible] = useState(true)
+  const [isDeclineEnable, setisDeclineEnable] = useState(false)
   const { ColorPallet, ListItems, TextTheme } = useTheme()
   const { RecordLoading } = useAnimatedComponents()
   const goalCode = useOutOfBandByConnectionId(proof?.connectionId ?? '')?.outOfBandInvitation.goalCode
@@ -279,6 +280,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
     try {
       if (agent && proof) {
         await agent.proofs.declineRequest({ proofRecordId: proof.id })
+        setisDeclineEnable(true)
         // sending a problem report fails if there is neither a connectionId nor a ~service decorator
         if (proof.connectionId) {
           await agent.proofs.sendProblemReport({ proofRecordId: proof.id, description: t('ProofRequest.Declined') })
@@ -392,6 +394,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
       <CommonRemoveModal
         usage={ModalUsage.ProofRequestDecline}
         visible={declineModalVisible}
+        disabled={isDeclineEnable}
         onSubmit={handleDeclineTouched}
         onCancel={toggleDeclineModalVisible}
       />
