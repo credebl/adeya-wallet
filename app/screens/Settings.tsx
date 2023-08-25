@@ -98,6 +98,9 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
 
     developerOptionCount.current = developerOptionCount.current + 1
   }
+  const handleChangeText = (text: string) => {
+    setWalletName(text)
+  }
 
   const settingsSections: SettingSection[] = [
     {
@@ -154,6 +157,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
         },
       ],
     },
+
     {
       header: {
         icon: 'settings',
@@ -319,22 +323,9 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
       </TouchableOpacity>
     </ScrollView>
   )
-  const handleChangeText = (text: string) => {
-    setWalletName(text)
-  }
+
   return (
     <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
-      <View style={{ flexDirection: 'row', backgroundColor: ColorPallet.brand.secondary }}>
-        <LimitedTextInput
-          defaultValue={walletName}
-          label={t('Screens.WalletName')}
-          limit={50}
-          handleChangeText={handleChangeText}
-          accessibilityLabel={'rename'}
-          testID={testIdWithKey('NameInput')}
-        />
-      </View>
-
       <SectionList
         keyboardShouldPersistTaps="handled"
         renderItem={({ item: { title, value, accessibilityLabel, testID, onPress } }) => (

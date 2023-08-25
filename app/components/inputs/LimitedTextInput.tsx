@@ -42,7 +42,6 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
       color: ColorPallet.brand.primary,
       width: widthPercentageToDP('90%'),
     },
-
     limitCounter: {
       color: TextTheme.normal.color,
       alignSelf: 'flex-end',
