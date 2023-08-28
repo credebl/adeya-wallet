@@ -72,7 +72,6 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
     headerText: {
       ...ListItems.recordAttributeLabel,
       flexShrink: 1,
-      // fontWeight: 'bold',
     },
     footerButton: {
       paddingTop: 10,
