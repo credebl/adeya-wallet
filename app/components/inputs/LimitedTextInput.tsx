@@ -104,7 +104,7 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
         description: t('NameWallet.EmptyNameDescription'),
         visible: true,
       })
-    } else if (saveText.length > 50) {
+    } else if (saveText.length > 25) {
       setErrorState({
         title: t('NameWallet.CharCountTitle'),
         description: t('NameWallet.CharCountDescription'),
