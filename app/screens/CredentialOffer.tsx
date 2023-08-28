@@ -72,10 +72,13 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
     headerText: {
       ...ListItems.recordAttributeLabel,
       flexShrink: 1,
-      fontWeight: 'bold',
+      // fontWeight: 'bold',
     },
     footerButton: {
       paddingTop: 10,
+    },
+    connectionLabel: {
+      fontWeight: 'bold',
     },
   })
 
@@ -191,7 +194,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
         <ConnectionImage connectionId={credential?.connectionId} />
         <View style={styles.headerTextContainer}>
           <Text style={[styles.headerText]} testID={testIdWithKey('HeaderText')}>
-            <Text>{credentialConnectionLabel || t('ContactDetails.AContact')}</Text>{' '}
+            <Text style={styles.connectionLabel}>{credentialConnectionLabel || t('ContactDetails.AContact')}</Text>{' '}
             {t('CredentialOffer.IsOfferingYouACredential')}
           </Text>
         </View>
