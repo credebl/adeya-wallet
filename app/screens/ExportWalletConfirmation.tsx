@@ -332,18 +332,6 @@ function ExportWalletConfirmation() {
               </View>
             </TouchableOpacity>
           ))}
-
-          {/* {phraseData?.map((item, index) => (
-            <TouchableOpacity
-              disabled={matchPhrase}
-              onPress={() => addPhrase(item, index)}
-              style={[styles.rowAddItemContainerView]}
-              key={index}>
-              <View>
-                <Text style={[styles.rowAddItemText]}>{item}</Text>
-              </View>
-            </TouchableOpacity>
-          ))} */}
         </View>
       </ScrollView>
 
