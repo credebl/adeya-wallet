@@ -1,4 +1,4 @@
-package com.adeyawallet;
+package id.credebl.adeya;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
