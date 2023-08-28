@@ -1,5 +1,6 @@
 import { useAgent } from '@aries-framework/react-hooks'
 import { useNavigation, useRoute } from '@react-navigation/core'
+import { shuffle } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -25,17 +26,12 @@ import { ToastType } from '../components/toast/BaseToast'
 import { useTheme } from '../contexts/theme'
 import { Screens } from '../types/navigators'
 
-interface PhraseData {
-  id: number
-  value: string
-}
-
 function ExportWalletConfirmation() {
   const { agent } = useAgent()
   const navigation = useNavigation()
   const parms = useRoute()
   const { t } = useTranslation()
-  const [phraseData, setPhraseData] = useState<PhraseData[]>([])
+  const [phraseData, setPhraseData] = useState<string[]>([])
   const [arraySetPhraseData, setArraySetPhraseData] = useState<string[]>([])
   const [nextPhraseIndex, setNextPhraseIndex] = useState(0)
   const [matchPhrase, setMatchPhrase] = useState(false)
@@ -129,17 +125,17 @@ function ExportWalletConfirmation() {
   })
 
   useEffect(() => {
-    const updatedArraySetPhraseData = Array(parms?.params?.phraseData.length).fill('')
-    setArraySetPhraseData(updatedArraySetPhraseData)
+    const shuffledPhraseData: string[] = shuffle(parms?.params?.phraseData)
+    setPhraseData(shuffledPhraseData)
+    setArraySetPhraseData(Array(shuffledPhraseData.length).fill(''))
   }, [])
-
   const exportWallet = async (seed: string) => {
     setMatchPhrase(true)
     const encodeHash = seed.replaceAll(',', ' ')
 
     try {
       const { fs } = RNFetchBlob
-      const documentDirectory: string = fs.dirs.DocumentDir
+      const documentDirectory: string = fs.dirs.DownloadDir
       const zipDirectory = `${documentDirectory}/Wallet_Backup`
       const destFileExists = await exists(zipDirectory)
       if (destFileExists) {
@@ -235,23 +231,22 @@ function ExportWalletConfirmation() {
     }
   }
 
-  const addPhrase = (item: string, index: number) => {
+  const addPhrase = (item: string) => {
     const updatedPhraseData = [...phraseData]
-    updatedPhraseData[index] = { id: index + 1, value: item }
-
+    updatedPhraseData[nextPhraseIndex] = item
     const updatedArraySetPhraseData = [...arraySetPhraseData]
-    updatedArraySetPhraseData[index] = item
-    setPhraseData(updatedPhraseData)
+    updatedArraySetPhraseData[nextPhraseIndex] = item
+
     setArraySetPhraseData(updatedArraySetPhraseData)
 
-    setNextPhraseIndex(index)
+    setNextPhraseIndex(nextPhraseIndex + 1)
   }
 
   const setPhrase = (item: string, index: number) => {
     const updatedArraySetPhraseData = [...arraySetPhraseData]
     updatedArraySetPhraseData[index] = ''
     setArraySetPhraseData(updatedArraySetPhraseData)
-    setNextPhraseIndex(index + 1)
+    setNextPhraseIndex(index)
   }
 
   const askPermission = async (sysPassPhrase: string) => {
@@ -278,12 +273,10 @@ function ExportWalletConfirmation() {
 
   const verifyPhrase = () => {
     const addedPassPhraseData = arraySetPhraseData.join(',')
-    const displayedPassphrase = phraseData.map(item => item.value).join(',')
-
+    const displayedPassphrase = parms?.params?.phraseData.map(item => item).join(',')
     if (displayedPassphrase.trim() !== '') {
       const sysPassPhrase = addedPassPhraseData.trim()
       const userPassphrase = displayedPassphrase.trim()
-
       if (sysPassPhrase === userPassphrase) {
         askPermission(sysPassPhrase)
       } else {
@@ -303,7 +296,7 @@ function ExportWalletConfirmation() {
       </View>
       <ScrollView>
         <View style={[styles.addPhraseView]}>
-          {arraySetPhraseData.map((item, index) => (
+          {arraySetPhraseData?.map((item, index) => (
             <TouchableOpacity onPress={() => setPhrase(item, index)} key={index} disabled={matchPhrase}>
               <View style={styles.rowItemContainerView}>
                 <View
@@ -323,11 +316,10 @@ function ExportWalletConfirmation() {
             </TouchableOpacity>
           ))}
           <View style={styles.setPhraseView} />
-
-          {parms?.params?.phraseData?.map((item: string[], index: number) => (
+          {phraseData.map((item, index) => (
             <TouchableOpacity
               disabled={matchPhrase}
-              onPress={() => addPhrase(item, index)}
+              onPress={() => addPhrase(item)}
               style={[styles.rowAddItemContainerView]}
               key={index}>
               <View>
