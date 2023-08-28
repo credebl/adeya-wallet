@@ -124,11 +124,6 @@ function ExportWalletConfirmation() {
     },
   })
 
-  // useEffect(() => {
-  //   const updatedArraySetPhraseData = Array(parms?.params?.phraseData.length).fill('')
-  //   setArraySetPhraseData(updatedArraySetPhraseData)
-  // }, [])
-
   useEffect(() => {
     const shuffledPhraseData: string[] = shuffle(parms?.params?.phraseData)
     setPhraseData(shuffledPhraseData)
@@ -244,7 +239,7 @@ function ExportWalletConfirmation() {
 
     setArraySetPhraseData(updatedArraySetPhraseData)
 
-    setNextPhraseIndex(nextPhraseIndex + 1) // Increment nextPhraseIndex
+    setNextPhraseIndex(nextPhraseIndex + 1)
   }
 
   const setPhrase = (item: string, index: number) => {
