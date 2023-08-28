@@ -573,7 +573,7 @@ const translation = {
     "NameYourWallet": "Name of your wallet",
     "ThisIsTheName": "This is how your name will be visible when others connect with you",
     "CharCountTitle": "Character count exceeded",
-    "CharCountDescription": "You've exceeded the maximum character count of 50 characters. Please reduce your character count.",
+    "CharCountDescription": "You've exceeded the maximum character count of 25 characters. Please reduce your character count.",
     "EmptyNameTitle": "Wallet name can't be empty",
     "EmptyNameDescription": "This is the name people see when connecting with you.\n\nPlease enter a wallet name.",
   },
