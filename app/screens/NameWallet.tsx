@@ -131,7 +131,7 @@ const NameWallet: React.FC = () => {
             <LimitedTextInput
               defaultValue={walletName}
               label={t('NameWallet.NameYourWallet')}
-              limit={50}
+              limit={25}
               handleChangeText={handleChangeText}
               accessibilityLabel={t('NameWallet.NameYourWallet')}
               testID={testIdWithKey('NameInput')}

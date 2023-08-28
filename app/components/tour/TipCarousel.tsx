@@ -51,7 +51,7 @@ const Tip: React.FC<TipProps> = memo(({ item, width, header }) => {
       paddingBottom: 3,
       fontSize: 26,
       fontWeight: 'bold',
-      color: 'white',
+      color: ColorPallet.brand.primary,
     },
     tipText: {
       fontSize: 26,
