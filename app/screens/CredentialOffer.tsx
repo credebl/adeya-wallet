@@ -10,7 +10,6 @@ import { DeviceEventEmitter, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Button, { ButtonType } from '../components/buttons/Button'
-import ConnectionAlert from '../components/misc/ConnectionAlert'
 import ConnectionImage from '../components/misc/ConnectionImage'
 import CredentialCard from '../components/misc/CredentialCard'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
@@ -239,7 +238,6 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
           backgroundColor: ColorPallet.brand.secondaryBackground,
         }}>
         {loading ? <RecordLoading /> : null}
-        <ConnectionAlert connectionID={credentialConnectionLabel} />
         <View style={styles.footerButton}>
           <Button
             title={t('Global.Accept')}
