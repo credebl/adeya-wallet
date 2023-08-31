@@ -22,6 +22,7 @@ const WhatAreContacts: React.FC<WhatAreContactsProps> = ({ navigation }) => {
     title: {
       ...TextTheme.headingTwo,
       marginBottom: 15,
+      color: ColorPallet.brand.primary,
     },
     pageContent: {
       marginTop: 30,
