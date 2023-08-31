@@ -10,7 +10,7 @@ import { useAgent } from '@aries-framework/react-hooks'
 import { agentDependencies } from '@aries-framework/react-native'
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, TextInput, Platform, BackHandler } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, TextInput, Platform, BackHandler, Keyboard } from 'react-native'
 import { Config } from 'react-native-config'
 import { DocumentPickerResponse, pickSingle, types } from 'react-native-document-picker'
 import { stat } from 'react-native-fs'
@@ -91,6 +91,7 @@ const ImportWalletVerify: React.FC = () => {
 
   const initAgent = async (seed: string): Promise<void> => {
     setverify(true)
+    Keyboard.dismiss()
     const credentials = await getWalletCredentials()
     if (!credentials?.id || !credentials.key) {
       // Cannot find wallet id/secret
