@@ -15,7 +15,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import Button, { ButtonType } from '../components/buttons/Button'
 import { CredentialCard } from '../components/misc'
-import ConnectionAlert from '../components/misc/ConnectionAlert'
 import ConnectionImage from '../components/misc/ConnectionImage'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
 import { EventTypes } from '../constants'
@@ -345,9 +344,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
   const proofPageFooter = () => {
     return (
       <View style={[styles.pageFooter, styles.pageMargin]}>
-        {!loading && proofConnectionLabel && goalCode !== 'aries.vc.verify.once' ? (
-          <ConnectionAlert connectionID={proofConnectionLabel} />
-        ) : null}
+        {!loading && proofConnectionLabel && goalCode !== 'aries.vc.verify.once' ? null : null}
         <View style={styles.footerButton}>
           <Button
             title={t('Global.Share')}
