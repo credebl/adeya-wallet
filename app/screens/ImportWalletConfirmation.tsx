@@ -171,7 +171,7 @@ const ImportWalletVerify: React.FC = () => {
   const VerifyPharase = async (seed: string) => {
     const result = seed.replaceAll(',', ' ')
     if (result) {
-      initAgent(seed)
+      initAgent(result)
     } else {
       Toast.show({
         type: ToastType.Error,
