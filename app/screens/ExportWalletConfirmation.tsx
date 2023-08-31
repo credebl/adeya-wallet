@@ -15,7 +15,7 @@ import {
   PixelRatio,
   StyleSheet,
 } from 'react-native'
-import { exists, mkdir, unlink } from 'react-native-fs'
+import { DownloadDirectoryPath, exists, mkdir, unlink } from 'react-native-fs'
 import Toast from 'react-native-toast-message'
 import { zip } from 'react-native-zip-archive'
 import RNFetchBlob from 'rn-fetch-blob'
@@ -35,6 +35,7 @@ function ExportWalletConfirmation() {
   const [arraySetPhraseData, setArraySetPhraseData] = useState<string[]>([])
   const [nextPhraseIndex, setNextPhraseIndex] = useState(0)
   const [matchPhrase, setMatchPhrase] = useState(false)
+
   const { ColorPallet, TextTheme } = useTheme()
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
   const { width } = Dimensions.get('window')
@@ -134,8 +135,7 @@ function ExportWalletConfirmation() {
     const encodeHash = seed.replaceAll(',', ' ')
 
     try {
-      const { fs } = RNFetchBlob
-      const documentDirectory: string = fs.dirs.DownloadDir
+      const documentDirectory: string = DownloadDirectoryPath
       const zipDirectory = `${documentDirectory}/Wallet_Backup`
       const destFileExists = await exists(zipDirectory)
       if (destFileExists) {
@@ -232,14 +232,18 @@ function ExportWalletConfirmation() {
   }
 
   const addPhrase = (item: string) => {
-    const updatedPhraseData = [...phraseData]
-    updatedPhraseData[nextPhraseIndex] = item
-    const updatedArraySetPhraseData = [...arraySetPhraseData]
-    updatedArraySetPhraseData[nextPhraseIndex] = item
+    if (nextPhraseIndex <= 7) {
+      const updatedPhraseData = [...phraseData]
+      updatedPhraseData[nextPhraseIndex] = item
 
-    setArraySetPhraseData(updatedArraySetPhraseData)
+      const updatedArraySetPhraseData = [...arraySetPhraseData]
+      updatedArraySetPhraseData[nextPhraseIndex] = item
 
-    setNextPhraseIndex(nextPhraseIndex + 1)
+      setArraySetPhraseData(updatedArraySetPhraseData)
+      setNextPhraseIndex(nextPhraseIndex + 1)
+    } else {
+      setNextPhraseIndex(0)
+    }
   }
 
   const setPhrase = (item: string, index: number) => {
