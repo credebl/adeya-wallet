@@ -228,7 +228,7 @@ const translation = {
         "EmptyList": "Your Contacts is empty! (FR)",
         "TypeHere": "Type Message Here (FR)",
         "PeopleAndOrganizations": "People and organizations you've interacted with are listed here. (FR)",
-        "WhatAreContacts": "What are Contacts? (FR)",
+        "WhatAreContacts": "What are Contacts (FR)",
         "AddContact": "Add Contact (FR)",
     },
     "ContactDetails": {
@@ -332,20 +332,7 @@ const translation = {
         "UseConnectionInviterCapability": "Utiliser la fonction d'invitation à la connexion ?",
         "OpenContact": "Contact ouvert",
     },
-    "ConnectionAlert": {
-        "AddedContacts": "Ajouté aux Contacts",
-        "WhatAreContacts": "Que sont les Contacts ?",
-        "NotificationBodyUpper": "Vous pouvez trouver ",
-        "NotificationBodyLower": " dans vos Contacts. Gérez vos Contacts dans les paramètres",
-        "PopupIntro": "L'ajout d'organisations en tant que Contact vous permettra de: ",
-        "PopupPoint1": "Obtenir des mises à jour des informations d'identification émises par cette organisation",
-        "PopupPoint2": "Obtenir de nouvelles informations d'identification",
-        "PopupPoint3": "Demandes de preuves accélérées",
-        "SettingsLink": "Réglages",
-        "SettingsInstruction": "Vous pouvez à tout moment supprimer des Contacts dans ",
-        "PrivacyMessage": "L'utilisation de vos informations d'identification n'est jamais partagée avec vos Contacts.",
-        "PopupExit": "J'ai compris"
-    },
+    
     "CredentialOffer": {
         "CredentialOffer": "Offre de justificatif",
         "ThisIsTakingLongerThanExpected": "Cela prend plus de temps que prévu. Revenez plus tard pour votre nouveau justificatif.",

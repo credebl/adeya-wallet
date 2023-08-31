@@ -211,7 +211,7 @@ const translation = {
     "EmptyList": "Your Contacts is empty! (PT-BR)",
     "TypeHere": "Type Message Here (PT-BR)",
     "PeopleAndOrganizations": "People and organizations you've interacted with are listed here. (PT-BR)",
-    "WhatAreContacts": "What are Contacts? (PT-BR)",
+    "WhatAreContacts": "What are Contacts(PT-BR)",
     "AddContact": "Add Contact (PT-BR)",
   },
   "ContactDetails": {
@@ -311,20 +311,6 @@ const translation = {
     "Toggle": "Alternar capacidade de convite de conexão",
     "UseConnectionInviterCapability": "Usar o recurso de convite de conexão?",
     "OpenContact": "Contato aberto",
-  },
-  "ConnectionAlert": {
-    "AddedContacts": "Adicionado aos Contatos",
-    "WhatAreContacts": "O que são Contatos?",
-    "NotificationBodyUpper": "Voce pode achar ",
-    "NotificationBodyLower": " em seus Contatos. Gerenciar seus Contatos em Configurações",
-    "PopupIntro": "Adicionar organizações como um Contato lhe permitirá que:",
-    "PopupPoint1": "Obtenha atualizações de credenciais emitidas por essa organização",
-    "PopupPoint2": "Receber novas ofertas de credenciais",
-    "PopupPoint3": "Localizar rapidamente requisições de prova",
-    "SettingsLink": "Configurações",
-    "SettingsInstruction": "Você sempre pode remover Contatos a qualquer momento em ",
-    "PrivacyMessage": "O uso de suas credenciais nunca é compartilhado com seus Contatos.",
-    "PopupExit": "Entendi"
   },
   "CredentialOffer": {
     "CredentialOffer": "Oferta de Credencial",
