@@ -246,7 +246,7 @@ const translation = {
     "EmptyList": "Your Contacts is empty!",
     "TypeHere": "Type Message Here",
     "PeopleAndOrganizations": "People and organizations you've interacted with are listed here.",
-    "WhatAreContacts": "What are Contacts?",
+    "WhatAreContacts": "What are Contacts",
     "AddContact": "Add Contact",
   },
   "ContactDetails": {
@@ -269,7 +269,7 @@ const translation = {
     "RemoveContactsBulletPoint4": "Request for information from this Contact or they request information from you",
   },
   "WhatAreContacts": {
-    "Title": "What are Contacts?",
+    "Title": "What are Contacts",
     "title": "What are Contacts",
     "Preamble": "Contacts are people or organizations you've interacted with.\n\nYou're connected over a secure and private line that no one but you or them can see. Nothing is shared without your permission.\n\nYou can:",
     "ListItemDirectMessage": "Direct message your Contacts",
@@ -353,7 +353,7 @@ const translation = {
   },
   "ConnectionAlert": {
     "AddedContacts": "Added to Contacts",
-    "WhatAreContacts": "What are Contacts?",
+    "WhatAreContacts": "What are Contacts",
     "NotificationBodyUpper": "You can find ",
     "NotificationBodyLower": " in your Contacts. Manage your Contacts in Settings",
     "PopupIntro": "Adding organizations as a Contact will allow you to:",
@@ -361,7 +361,6 @@ const translation = {
     "PopupPoint2": "Get offered new credentials",
     "PopupPoint3": "Fast-track proof requests",
     "SettingsLink": "Settings",
-    "SettingsInstruction": "You can always remove Contacts at anytime in ",
     "PrivacyMessage": "Use of your credentials is never shared with your Contacts.",
     "PopupExit": "Got it"
   },
@@ -453,7 +452,7 @@ const translation = {
     "Language": "Language",
     "AppGuides": "App guides",
     "Build": "Build",
-    "WhatAreContacts": "What are Contacts?",
+    "WhatAreContacts": "What are Contacts",
     "ScanMyQR": "Scan my QR code",
     "Developer": "Developer options",
     "Backup": "backup wallet",
