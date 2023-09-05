@@ -173,7 +173,7 @@ function ExportWalletConfirmation() {
     const encodeHash = seed.replaceAll(',', ' ')
     const { fs } = RNFetchBlob
     try {
-      const documentDirectory: string = fs.dirs.DocumentDir
+      const documentDirectory = fs.dirs.DocumentDir
 
       const zipDirectory = `${documentDirectory}/Wallet_Backup`
 
