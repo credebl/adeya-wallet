@@ -1,6 +1,6 @@
 import { useAgent } from '@aries-framework/react-hooks'
 import { useNavigation, useRoute } from '@react-navigation/core'
-import { shuffle } from 'lodash'
+import shuffle from 'lodash.shuffle'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -17,7 +17,6 @@ import {
 } from 'react-native'
 import { DownloadDirectoryPath, exists, mkdir, unlink } from 'react-native-fs'
 import Toast from 'react-native-toast-message'
-import { zip } from 'react-native-zip-archive'
 import RNFetchBlob from 'rn-fetch-blob'
 
 import ButtonLoading from '../components/animated/ButtonLoading'
@@ -136,19 +135,18 @@ function ExportWalletConfirmation() {
 
     try {
       const documentDirectory: string = DownloadDirectoryPath
-      const zipDirectory = `${documentDirectory}/Wallet_Backup`
-      const destFileExists = await exists(zipDirectory)
+      const backupDirectory = `${documentDirectory}/Wallet_Backup`
+      const destFileExists = await exists(backupDirectory)
       if (destFileExists) {
-        await unlink(zipDirectory)
+        await unlink(backupDirectory)
       }
       const date = new Date()
       const dformat = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
       const WALLET_FILE_NAME = `SSI_Wallet_${dformat}`
 
-      await mkdir(zipDirectory)
-      const destinationZipPath = `${documentDirectory}/${WALLET_FILE_NAME}.zip`
+      await mkdir(backupDirectory)
       const encryptedFileName = `${WALLET_FILE_NAME}.wallet`
-      const encryptedFileLocation = `${zipDirectory}/${encryptedFileName}`
+      const encryptedFileLocation = `${backupDirectory}/${encryptedFileName}`
 
       const exportConfig = {
         key: encodeHash,
@@ -157,7 +155,6 @@ function ExportWalletConfirmation() {
 
       await agent?.wallet.export(exportConfig)
 
-      await zip(zipDirectory, destinationZipPath)
       Toast.show({
         type: ToastType.Success,
         text1: 'Backup successfully',
@@ -176,7 +173,7 @@ function ExportWalletConfirmation() {
     const encodeHash = seed.replaceAll(',', ' ')
     const { fs } = RNFetchBlob
     try {
-      const documentDirectory: string = fs.dirs.DocumentDir
+      const documentDirectory = fs.dirs.DocumentDir
 
       const zipDirectory = `${documentDirectory}/Wallet_Backup`
 
@@ -189,16 +186,12 @@ function ExportWalletConfirmation() {
       const dformat = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
       const WALLET_FILE_NAME = `SSI_Wallet_${dformat}`
 
-      await fs
-        .mkdir(zipDirectory)
-        // .then(() => console.log('generated'))
-        .catch(err =>
-          Toast.show({
-            type: ToastType.Error,
-            text1: err,
-          }),
-        )
-      const destinationZipPath = `${documentDirectory}/${WALLET_FILE_NAME}.zip`
+      await fs.mkdir(zipDirectory).catch(err =>
+        Toast.show({
+          type: ToastType.Error,
+          text1: err,
+        }),
+      )
       const encryptedFileName = `${WALLET_FILE_NAME}.wallet`
       const encryptedFileLocation = `${zipDirectory}/${encryptedFileName}`
 
@@ -209,7 +202,6 @@ function ExportWalletConfirmation() {
 
       await agent?.wallet.export(exportConfig)
 
-      await zip(zipDirectory, destinationZipPath)
       if (Platform.OS === 'ios') {
         await Share.share({
           title: 'Share file',

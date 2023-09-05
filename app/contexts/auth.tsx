@@ -4,7 +4,13 @@ import '@hyperledger/aries-askar-react-native'
 import 'reflect-metadata'
 
 import { AskarWallet } from '@aries-framework/askar'
-import { ConsoleLogger, LogLevel, SigningProviderRegistry } from '@aries-framework/core'
+import {
+  ConsoleLogger,
+  LogLevel,
+  SigningProviderRegistry,
+  WalletConfig,
+  WalletExportImportConfig,
+} from '@aries-framework/core'
 import { agentDependencies } from '@aries-framework/react-native'
 import React, { PropsWithChildren, createContext, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -33,6 +39,7 @@ export interface AuthContext {
   setPIN: (PIN: string) => Promise<void>
   commitPIN: (useBiometry: boolean) => Promise<boolean>
   isBiometricsActive: () => Promise<boolean>
+  checkImportWallet: (walletConfig: WalletConfig, importConfig: WalletExportImportConfig) => Promise<boolean>
 }
 
 export const AuthContext = createContext<AuthContext>(null as unknown as AuthContext)
@@ -117,6 +124,25 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
   }
 
+  const checkImportWallet = async (
+    walletConfig: WalletConfig,
+    importConfig: WalletExportImportConfig,
+  ): Promise<boolean> => {
+    try {
+      // NOTE: a custom wallet is used to check if the wallet passphrase is correct and can be imported successfully.
+      const askarWallet = new AskarWallet(
+        new ConsoleLogger(LogLevel.off),
+        new agentDependencies.FileSystem(),
+        new SigningProviderRegistry([]),
+      )
+      await askarWallet.import(walletConfig, importConfig)
+
+      return true
+    } catch (e) {
+      return false
+    }
+  }
+
   const removeSavedWalletSecret = () => {
     setWalletSecret(undefined)
   }
@@ -135,6 +161,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         commitPIN,
         setPIN,
         isBiometricsActive,
+        checkImportWallet,
       }}>
       {children}
     </AuthContext.Provider>
