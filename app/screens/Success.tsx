@@ -55,9 +55,7 @@ const Success: React.FC<SuccessProps> = () => {
     <View style={styles.container}>
       <Assets.svg.BackupSuccess height={225} width={230} style={{ alignSelf: 'center', alignItems: 'center' }} />
       <Text style={[TextTheme.labelText, styles.labelText]}>Exported successfully</Text>
-      <Text style={styles.namefiletext}>
-        {params?.encryptedFileLocation.substring(params?.encryptedFileLocation.lastIndexOf('/') + 1)}
-      </Text>
+      <Text style={styles.namefiletext}>{params?.encryptedFileLocation}</Text>
     </View>
   )
 }

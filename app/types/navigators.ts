@@ -89,6 +89,7 @@ export type AuthenticateStackParams = {
   [Screens.EnterPIN]: { setAuthenticated: (status: boolean) => void } | undefined
   [Screens.UseBiometry]: undefined
   [Screens.NameWallet]: undefined
+  [Screens.ImportWalletVerify]: undefined
 }
 
 export type OnboardingStackParams = {
