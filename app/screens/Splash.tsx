@@ -16,18 +16,15 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View, useWindowDimensions, Image } from 'react-native'
 import { Config } from 'react-native-config'
 import { SafeAreaView } from 'react-native-safe-area-context'
-// import Toast from 'react-native-toast-message'
 
 import InfoBox, { InfoBoxType } from '../components/misc/InfoBox'
-// import { ToastType } from '../components/toast/BaseToast'
 import ProgressBar from '../components/tour/ProgressBar'
 import TipCarousel from '../components/tour/TipCarousel'
 import { LocalStorageKeys } from '../constants'
 import { useAuth } from '../contexts/auth'
 import { useConfiguration } from '../contexts/configuration'
 import { DispatchAction } from '../contexts/reducers/store'
-// import { Onboarding as OnboardingState } from '../types/state'
-import { BCDispatchAction, BCLocalStorageKeys, useStore } from '../contexts/store'
+import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { Screens, Stacks } from '../types/navigators'
 import {
@@ -113,19 +110,13 @@ const Splash: React.FC = () => {
     t('Init.SettingAgent'),
     t('Init.Finishing'),
   ]
-  // const styles = StyleSheet.create({
-  //   container: {
-  //     flex: 1,
-  //     justifyContent: 'center',
-  //     alignItems: 'center',
-  //     backgroundColor: ColorPallet.brand.primaryBackground,
-  //   },
-  // })
+
   const setStep = (stepIdx: number) => {
     setStepText(steps[stepIdx])
     const percent = Math.floor(((stepIdx + 1) / steps.length) * 100)
     setProgressPercent(percent)
   }
+
   const styles = StyleSheet.create({
     screenContainer: {
       backgroundColor: ColorPallet.brand.primaryBackground,
@@ -159,17 +150,7 @@ const Splash: React.FC = () => {
       marginBottom: 30,
     },
   })
-  const loadObjectFromStorage = async (key: string): Promise<undefined | any> => {
-    try {
-      const data = await AsyncStorage.getItem(key)
-      if (data) {
-        return JSON.parse(data)
-      }
-    } catch {
-      return null
-    }
-    return null
-  }
+
   const loadAuthAttempts = async (): Promise<LoginAttemptState | undefined> => {
     try {
       const attemptsData = await AsyncStorage.getItem(LocalStorageKeys.LoginAttempts)
@@ -185,25 +166,7 @@ const Splash: React.FC = () => {
       // todo (WK)
     }
   }
-  const loadPersonNotificationDismissed = async (): Promise<void> => {
-    const dismissed = await loadObjectFromStorage(BCLocalStorageKeys.PersonCredentialOfferDismissed)
-    if (dismissed) {
-      dispatch({
-        type: BCDispatchAction.PERSON_CREDENTIAL_OFFER_DISMISSED,
-        payload: [{ personCredentialOfferDismissed: dismissed.personCredentialOfferDismissed }],
-      })
-    }
-  }
 
-  const loadIASEnvironment = async (): Promise<void> => {
-    const environment = await loadObjectFromStorage(BCLocalStorageKeys.Environment)
-    if (environment) {
-      dispatch({
-        type: BCDispatchAction.UPDATE_ENVIRONMENT,
-        payload: [environment],
-      })
-    }
-  }
   useEffect(() => {
     const initOnboarding = async (): Promise<void> => {
       try {
@@ -216,11 +179,6 @@ const Splash: React.FC = () => {
         // load authentication attempts from storage
         const attemptData = await loadAuthAttempts()
 
-        // load BCID person credential notification dismissed state from storage
-        await loadPersonNotificationDismissed()
-
-        await loadIASEnvironment()
-
         setStep(2)
         const preferencesData = await AsyncStorage.getItem(LocalStorageKeys.Preferences)
 
@@ -232,16 +190,6 @@ const Splash: React.FC = () => {
             payload: [dataAsJSON],
           })
         }
-
-        // const migrationData = await AsyncStorage.getItem(LocalStorageKeys.Migration)
-        // if (migrationData) {
-        //   const dataAsJSON = JSON.parse(migrationData) as MigrationState
-
-        //   dispatch({
-        //     type: DispatchAction.MIGRATION_UPDATED,
-        //     payload: [dataAsJSON],
-        //   })
-        // }
 
         const toursData = await AsyncStorage.getItem(LocalStorageKeys.Tours)
         if (toursData) {
@@ -350,19 +298,6 @@ const Splash: React.FC = () => {
         newAgent.registerOutboundTransport(wsTransport)
         newAgent.registerOutboundTransport(httpTransport)
 
-        // If we haven't migrated to Aries Askar yet, we need to do this before we initialize the agent.
-        // if (!didMigrateToAskar(store.migration)) {
-        //   newAgent.config.logger.debug('Agent not updated to Aries Askar, updating...')
-
-        //   await migrateToAskar(credentials.id, credentials.key, newAgent)
-
-        //   newAgent.config.logger.debug('Successfully finished updating agent to Aries Askar')
-        //   // Store that we migrated to askar.
-        //   dispatch({
-        //     type: DispatchAction.DID_MIGRATE_TO_ASKAR,
-        //   })
-        // }
-
         setStep(6)
         await newAgent.initialize()
 
@@ -397,9 +332,6 @@ const Splash: React.FC = () => {
     }
   }
   return (
-    // <SafeAreaView style={styles.container}>
-    //   <LoadingIndicator />
-    // </SafeAreaView>
     <SafeAreaView style={styles.screenContainer}>
       <ScrollView contentContainerStyle={styles.scrollContentContainer}>
         <View style={styles.progressContainer} testID={testIdWithKey('LoadingActivityIndicator')}>
