@@ -10,9 +10,20 @@ import { useAgent } from '@aries-framework/react-hooks'
 import { agentDependencies } from '@aries-framework/react-native'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, TextInput, Platform, BackHandler, Keyboard } from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TextInput,
+  Platform,
+  BackHandler,
+  Keyboard,
+  ScrollView,
+} from 'react-native'
 import { Config } from 'react-native-config'
 import { DocumentPickerResponse, pickSingle, types } from 'react-native-document-picker'
+import { heightPercentageToDP } from 'react-native-responsive-screen'
 import * as RNFS from 'react-native-fs'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 
@@ -41,7 +52,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
+      height: '100%',
     },
     dottedBox: {
       marginTop: height / 20,
@@ -74,8 +85,9 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
       color: ColorPallet.brand.primary,
     },
     verifyButton: {
-      marginTop: 'auto',
+      marginTop: heightPercentageToDP('50%'),
       margin: 20,
+      flex: 2,
     },
   })
   useEffect(() => {
@@ -251,7 +263,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.textView}>
         <Text style={styles.detailText}>Enter your secret phrase here</Text>
       </View>
@@ -274,7 +286,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
           {verify && <ButtonLoading />}
         </Button>
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
