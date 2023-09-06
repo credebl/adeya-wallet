@@ -330,9 +330,6 @@ const Splash: React.FC = () => {
     }
   }
   return (
-    // <SafeAreaView style={styles.container}>
-    //   <LoadingIndicator />
-    // </SafeAreaView>
     <SafeAreaView style={styles.screenContainer}>
       <ScrollView contentContainerStyle={styles.scrollContentContainer}>
         <View style={styles.progressContainer} testID={testIdWithKey('LoadingActivityIndicator')}>
