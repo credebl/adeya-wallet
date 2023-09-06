@@ -71,7 +71,7 @@
     "react-native-inappbrowser-reborn": "^3.7.0",
     "react-native-keychain": "^8.1.2",
     "react-native-localize": "^3.0.2",
-    "react-native-permissions": "^3.8.4",
+    "react-native-permissions": "^3.9.0",
     "react-native-qrcode-svg": "^6.2.0",
     "react-native-randombytes": "^3.0.0",
     "react-native-reanimated": "^3.4.1",
