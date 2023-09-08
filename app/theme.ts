@@ -781,7 +781,7 @@ export const DialogTheme = {
 }
 
 const LoadingTheme = {
-  backgroundColor: ColorPallet.brand.primary,
+  backgroundColor: ColorPallet.brand.secondary,
 }
 
 const PINInputTheme = {
