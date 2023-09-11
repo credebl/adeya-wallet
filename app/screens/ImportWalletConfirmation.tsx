@@ -23,8 +23,8 @@ import {
 } from 'react-native'
 import { Config } from 'react-native-config'
 import { DocumentPickerResponse, pickSingle, types } from 'react-native-document-picker'
-import { heightPercentageToDP } from 'react-native-responsive-screen'
 import * as RNFS from 'react-native-fs'
+import { heightPercentageToDP } from 'react-native-responsive-screen'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 
 import indyLedgers from '../../configs/ledgers/indy'
@@ -35,7 +35,7 @@ import { useAuth } from '../contexts/auth'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { AuthenticateStackParams, Screens } from '../types/navigators'
-import { createLinkSecretIfRequired, getAgentModules } from '../utils/agent'
+import { getAgentModules } from '../utils/agent'
 
 type ImportWalletVerifyProps = StackScreenProps<AuthenticateStackParams, Screens.ImportWalletVerify>
 
@@ -186,8 +186,6 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
       await newAgent.wallet.initialize(walletConfig)
 
       await newAgent.initialize()
-
-      await createLinkSecretIfRequired(newAgent)
 
       setAgent(newAgent)
       setVerify(true)
