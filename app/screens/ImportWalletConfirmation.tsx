@@ -23,8 +23,8 @@ import {
 } from 'react-native'
 import { Config } from 'react-native-config'
 import { DocumentPickerResponse, pickSingle, types } from 'react-native-document-picker'
-import { heightPercentageToDP } from 'react-native-responsive-screen'
 import * as RNFS from 'react-native-fs'
+import { heightPercentageToDP } from 'react-native-responsive-screen'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 
 import indyLedgers from '../../configs/ledgers/indy'
