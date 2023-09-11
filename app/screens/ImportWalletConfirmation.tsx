@@ -35,7 +35,7 @@ import { useAuth } from '../contexts/auth'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { AuthenticateStackParams, Screens } from '../types/navigators'
-import { createLinkSecretIfRequired, getAgentModules } from '../utils/agent'
+import { getAgentModules } from '../utils/agent'
 
 type ImportWalletVerifyProps = StackScreenProps<AuthenticateStackParams, Screens.ImportWalletVerify>
 
@@ -186,8 +186,6 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
       await newAgent.wallet.initialize(walletConfig)
 
       await newAgent.initialize()
-
-      await createLinkSecretIfRequired(newAgent)
 
       setAgent(newAgent)
       setVerify(true)

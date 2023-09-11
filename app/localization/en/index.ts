@@ -110,6 +110,8 @@ const translation = {
     "Message1037": "There was a problem while removing the Contact.",
     "Title1038": "Unable to generate a proof request.",
     "Message1038": "There was a problem while generating a proof request.",
+    "Title2026": "Oops! Something went wrong",
+    "Message2026": "The app has encountered a problem. Try restarting the app.",
   },
 
   "ActivityLog": {
@@ -146,7 +148,7 @@ const translation = {
   "CameraDisclosure": {
     "AllowCameraUse": "Allow camera use",
     "CameraDisclosure": "The camera is used to scan QR codes that initiate a credential offer or credential request. No information about the images is stored, used for analytics, or shared.",
-    "ToContinueUsing": "To continue using the Aries ADEYA scan feature, please allow camera permissions.",
+    "ToContinueUsing": "To continue using the ADEYA scan feature, please allow camera permissions.",
     "Allow": "Allow",
     "OpenSettings": "Open settings",
   },
@@ -583,7 +585,7 @@ const translation = {
     "LedgerConnectivityIssueMessage": "A firewall may be preventing you from connecting to wallet related services.",
   },
   "Onboarding": {
-    "SkipA11y": "Skip introduction to Aries ADEYA",
+    "SkipA11y": "Skip introduction to ADEYA",
   },
   "Chat": {
     "OpenPresentation": "Open Presentation",
