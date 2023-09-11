@@ -149,6 +149,7 @@ export type SettingStackParams = {
   [Screens.ImportWalletVerify]: undefined
   [Screens.WalletOptions]: undefined
   [Screens.ImportSuccess]: undefined
+  [Screens.NameWallet]: undefined
 }
 
 export type NotificationStackParams = {
