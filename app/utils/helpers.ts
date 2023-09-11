@@ -27,7 +27,7 @@ import { Buffer } from 'buffer'
 import moment from 'moment'
 import queryString from 'query-string'
 import { Dispatch, ReactNode, SetStateAction } from 'react'
-import { uniqueNamesGenerator, Config, names, adjectives } from 'unique-names-generator'
+import { uniqueNamesGenerator, Config, names } from 'unique-names-generator'
 
 import { domain } from '../constants'
 import { i18n } from '../localization/index'
@@ -646,7 +646,7 @@ export function generateRandomWalletName() {
   let name: number | string = ''
   const separator: string = '-'
   const config: Config = {
-    dictionaries: [names, adjectives],
+    dictionaries: [names],
     separator: '-',
   }
   const characterName: string = uniqueNamesGenerator(config)
