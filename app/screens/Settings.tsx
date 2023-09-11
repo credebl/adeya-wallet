@@ -1,5 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack'
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   ScrollView,
@@ -14,7 +14,6 @@ import { getVersion, getBuildNumber } from 'react-native-device-info'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import LimitedTextInput from '../components/inputs/LimitedTextInput'
 import { useConfiguration } from '../contexts/configuration'
 import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
@@ -97,9 +96,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     }
 
     developerOptionCount.current = developerOptionCount.current + 1
-  }
-  const handleChangeText = (text: string) => {
-    setWalletName(text)
   }
 
   const settingsSections: SettingSection[] = [
