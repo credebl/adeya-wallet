@@ -1,5 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack'
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   ScrollView,
@@ -14,7 +14,6 @@ import { getVersion, getBuildNumber } from 'react-native-device-info'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import LimitedTextInput from '../components/inputs/LimitedTextInput'
 import { useConfiguration } from '../contexts/configuration'
 import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
@@ -35,7 +34,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   const developerOptionCount = useRef(0)
   const { SettingsTheme, TextTheme, ColorPallet, Assets } = useTheme()
   const { settings, enableTours } = useConfiguration()
-  const [walletName, setWalletName] = useState(store.preferences.walletName)
+
   const languages = [
     { id: Locales.en, value: t('Language.English') },
     { id: Locales.fr, value: t('Language.French') },
@@ -99,9 +98,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
 
     developerOptionCount.current = developerOptionCount.current + 1
   }
-  const handleChangeText = (text: string) => {
-    setWalletName(text)
-  }
 
   const settingsSections: SettingSection[] = [
     {
@@ -111,20 +107,11 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
       },
       data: [
         {
-          title: (
-            <LimitedTextInput
-              defaultValue={walletName}
-              label={t('Screens.WalletName')}
-              limit={50}
-              handleChangeText={handleChangeText}
-              accessibilityLabel={'rename'}
-              testID={testIdWithKey('NameInput')}
-            />
-          ),
-          accessibilityLabel: t('Settings.Backup'),
-          testID: testIdWithKey('Biometrics'),
-          onPress: () => {},
-          value: undefined,
+          title: store.preferences.walletName,
+          accessibilityLabel: t('Screens.NameWallet'),
+          testID: testIdWithKey('NameWallet'),
+          onPress: () => navigation.navigate(Screens.NameWallet as never),
+          value: 'Edit',
         },
       ],
     },
