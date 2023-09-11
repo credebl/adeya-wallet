@@ -1,3 +1,4 @@
+import { useAgent } from '@aries-framework/react-hooks'
 import { useNavigation } from '@react-navigation/core'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,8 +31,14 @@ const NameWallet: React.FC = () => {
   const { t } = useTranslation()
   const { ColorPallet, TextTheme, Assets } = useTheme()
   const navigation = useNavigation()
-  const [walletName, setWalletName] = useState(generateRandomWalletName())
-  const [, dispatch] = useStore()
+  const [store, dispatch] = useStore()
+  const { agent } = useAgent()
+  const [walletName, setWalletName] = useState(store.preferences.walletName ?? generateRandomWalletName())
+  const onBoardingComplete =
+    store.onboarding.didCompleteTutorial &&
+    store.onboarding.didAgreeToTerms &&
+    store.onboarding.didCreatePIN &&
+    store.onboarding.didConsiderBiometry
   const [errorState, setErrorState] = useState<ErrorState>({
     visible: false,
     title: '',
@@ -89,7 +96,7 @@ const NameWallet: React.FC = () => {
         description: t('NameWallet.EmptyNameDescription'),
         visible: true,
       })
-    } else if (walletName.length > 50) {
+    } else if (walletName.length > 25) {
       setErrorState({
         title: t('NameWallet.CharCountTitle'),
         description: t('NameWallet.CharCountDescription'),
@@ -112,10 +119,15 @@ const NameWallet: React.FC = () => {
       type: DispatchAction.UPDATE_WALLET_NAME,
       payload: [walletName],
     })
+    if (agent) {
+      agent.config.label = walletName
+    }
     dispatch({ type: DispatchAction.DID_NAME_WALLET })
-
-    navigation.navigate({ name: Screens.WalletOptions } as never)
-
+    if (onBoardingComplete) {
+      navigation.goBack()
+    } else {
+      navigation.navigate({ name: Screens.WalletOptions } as never)
+    }
     setsuccessState(prev => ({ ...prev, visible: false }))
   }
   const handleDissmiss = () => {
