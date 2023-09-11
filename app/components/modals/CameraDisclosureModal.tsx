@@ -2,11 +2,11 @@ import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, ScrollView, StyleSheet, Text, View, Linking } from 'react-native'
+import { ScrollView, StyleSheet, Text, View, Linking } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useTheme } from '../../contexts/theme'
-import { Screens, HomeStackParams } from '../../types/navigators'
+import { Screens, HomeStackParams, TabStacks } from '../../types/navigators'
 import { testIdWithKey } from '../../utils/testable'
 import Button, { ButtonType } from '../buttons/Button'
 
@@ -19,7 +19,6 @@ interface CameraDisclosureModalProps {
 const CameraDisclosureModal: React.FC<CameraDisclosureModalProps> = ({ requestCameraUse }) => {
   const { t } = useTranslation()
   const navigation = useNavigation<StackNavigationProp<HomeStackParams>>()
-  const [modalVisible, setModalVisible] = useState(true)
   const [showSettingsPopup, setShowSettingsPopup] = useState(false)
   const [requestInProgress, setRequestInProgress] = useState(false)
   const { ColorPallet, TextTheme } = useTheme()
@@ -53,14 +52,12 @@ const CameraDisclosureModal: React.FC<CameraDisclosureModalProps> = ({ requestCa
   }
 
   const onOpenSettingsTouched = async () => {
-    setModalVisible(false)
     await Linking.openSettings()
-    navigation.navigate(Screens.Home)
+    navigation.getParent()?.navigate(TabStacks.HomeStack, { screen: Screens.Home })
   }
 
   const onNotNowTouched = () => {
-    setModalVisible(false)
-    navigation.goBack()
+    navigation.getParent()?.navigate(TabStacks.HomeStack, { screen: Screens.Home })
   }
 
   const onOpenSettingsDismissed = () => {
@@ -68,7 +65,7 @@ const CameraDisclosureModal: React.FC<CameraDisclosureModalProps> = ({ requestCa
   }
 
   return (
-    <Modal visible={modalVisible} animationType={'slide'} transparent>
+    <SafeAreaView style={{ backgroundColor: ColorPallet.brand.modalPrimaryBackground }}>
       {showSettingsPopup && (
         <DismissiblePopupModal
           title={t('CameraDisclosure.AllowCameraUse')}
@@ -78,37 +75,35 @@ const CameraDisclosureModal: React.FC<CameraDisclosureModalProps> = ({ requestCa
           onDismissPressed={onOpenSettingsDismissed}
         />
       )}
-      <SafeAreaView style={{ backgroundColor: ColorPallet.brand.modalPrimaryBackground }}>
-        <ScrollView style={[styles.container]}>
-          <Text style={[TextTheme.modalHeadingOne]} testID={testIdWithKey('AllowCameraUse')}>
-            {t('CameraDisclosure.AllowCameraUse')}
-          </Text>
-          <Text style={[TextTheme.modalNormal, styles.messageText]}>{t('CameraDisclosure.CameraDisclosure')}</Text>
-          <Text style={[TextTheme.modalNormal, styles.messageText]}>{t('CameraDisclosure.ToContinueUsing')}</Text>
-        </ScrollView>
-        <View style={[styles.controlsContainer]}>
-          <View style={styles.buttonContainer}>
-            <Button
-              title={t('CameraDisclosure.Allow')}
-              accessibilityLabel={t('CameraDisclosure.Allow')}
-              testID={testIdWithKey('Allow')}
-              onPress={onAllowTouched}
-              buttonType={ButtonType.ModalPrimary}
-              disabled={requestInProgress}
-            />
-          </View>
-          <View style={styles.buttonContainer}>
-            <Button
-              title={t('Global.NotNow')}
-              accessibilityLabel={t('Global.NotNow')}
-              testID={testIdWithKey('NotNow')}
-              onPress={onNotNowTouched}
-              buttonType={ButtonType.ModalSecondary}
-            />
-          </View>
+      <ScrollView style={[styles.container]}>
+        <Text style={[TextTheme.modalHeadingOne]} testID={testIdWithKey('AllowCameraUse')}>
+          {t('CameraDisclosure.AllowCameraUse')}
+        </Text>
+        <Text style={[TextTheme.modalNormal, styles.messageText]}>{t('CameraDisclosure.CameraDisclosure')}</Text>
+        <Text style={[TextTheme.modalNormal, styles.messageText]}>{t('CameraDisclosure.ToContinueUsing')}</Text>
+      </ScrollView>
+      <View style={[styles.controlsContainer]}>
+        <View style={styles.buttonContainer}>
+          <Button
+            title={t('CameraDisclosure.Allow')}
+            accessibilityLabel={t('CameraDisclosure.Allow')}
+            testID={testIdWithKey('Allow')}
+            onPress={onAllowTouched}
+            buttonType={ButtonType.ModalPrimary}
+            disabled={requestInProgress}
+          />
         </View>
-      </SafeAreaView>
-    </Modal>
+        <View style={styles.buttonContainer}>
+          <Button
+            title={t('Global.NotNow')}
+            accessibilityLabel={t('Global.NotNow')}
+            testID={testIdWithKey('NotNow')}
+            onPress={onNotNowTouched}
+            buttonType={ButtonType.ModalSecondary}
+          />
+        </View>
+      </View>
+    </SafeAreaView>
   )
 }
 
