@@ -12,6 +12,7 @@ import ExportWalletConfirmation from '../screens/ExportWalletConfirmation'
 import ImportSuccess from '../screens/ImportSuccess'
 import ImportWalletVerify from '../screens/ImportWalletConfirmation'
 import Language from '../screens/Language'
+import NameWallet from '../screens/NameWallet'
 import Onboarding from '../screens/Onboarding'
 import { createCarouselStyle } from '../screens/OnboardingPages'
 import PINCreate from '../screens/PINCreate'
@@ -91,7 +92,11 @@ const SettingStack: React.FC = () => {
         component={developer}
         options={{ title: t('Screens.Developer'), headerBackTestID: testIdWithKey('Back') }}
       />
-
+      <Stack.Screen
+        name={Screens.NameWallet}
+        component={NameWallet}
+        options={{ title: t('Screens.NameWallet'), headerBackTestID: testIdWithKey('Back') }}
+      />
       <Stack.Screen
         name={Screens.ExportWallet}
         component={ExportWallet}
