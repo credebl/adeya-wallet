@@ -35,12 +35,15 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
 
   const handleInvitation = async (value: string): Promise<void> => {
     try {
+      setLoading(true)
       const connectionRecord = await connectFromInvitation(value, agent)
+      setLoading(false)
       navigation.getParent()?.navigate(Stacks.ConnectionStack, {
         screen: Screens.Connection,
         params: { connectionId: connectionRecord.id },
       })
     } catch (err: unknown) {
+      setLoading(false)
       try {
         // if scanned value is json -> pass into AFJ as is
         const json = getJson(value)
