@@ -35,11 +35,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   const { SettingsTheme, TextTheme, ColorPallet, Assets } = useTheme()
   const { settings, enableTours } = useConfiguration()
 
-  const languages = [
-    { id: Locales.en, value: t('Language.English') },
-    { id: Locales.fr, value: t('Language.French') },
-    { id: Locales.ptBr, value: t('Language.Portuguese') },
-  ]
+  const languages = [{ id: Locales.en, value: t('Language.English') }]
 
   const styles = StyleSheet.create({
     container: {
