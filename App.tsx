@@ -6,6 +6,7 @@ import SplashScreen from 'react-native-splash-screen'
 import Toast from 'react-native-toast-message'
 
 import { animatedComponents } from './app/animated-components'
+import PushNotifications from './app/components/PushNotifications'
 import ErrorModal from './app/components/modals/ErrorModal'
 import NetInfo from './app/components/network/NetInfo'
 import toastConfig from './app/components/toast/ToastConfig'
@@ -57,6 +58,7 @@ const App = () => {
                       <RootStack />
                     </TourProvider>
                     <Toast topOffset={15} config={toastConfig} />
+                    <PushNotifications />
                   </NetworkProvider>
                 </AuthProvider>
               </CommonUtilProvider>
