@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react'
+import React, { useState, forwardRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { CodeField, Cursor, useClearByFocusCell } from 'react-native-confirmation-code-field'
@@ -19,7 +19,7 @@ interface PINInputProps {
 // TODO:(jl) Would be great if someone can figure out the proper type for
 // ref below.
 const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwardRef(
-  ({ label, onPINChanged, testID, accessibilityLabel }, ref: React.Ref<TextInput>) => {
+  ({ label, onPINChanged, testID, accessibilityLabel, autoFocus = false }, ref: React.Ref<TextInput>) => {
     // const accessible = accessibilityLabel && accessibilityLabel !== '' ? true : false
     const [PIN, setPIN] = useState('')
     const [showPIN, setShowPIN] = useState(false)
@@ -31,6 +31,8 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
       value: PIN,
       setValue: onChangeText,
     })
+    const [isVisible, setIsVisible] = useState(true)
+
     const { t } = useTranslation()
     const { TextTheme, PINInputTheme } = useTheme()
     const cellHeight = 48
@@ -71,6 +73,18 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
         paddingHorizontal: 10,
       },
     })
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        setIsVisible(prevVisible => !prevVisible)
+      }, 800)
+
+      return () => {
+        clearInterval(intervalId)
+      }
+    }, [])
+    const BlinkingCursor = () => {
+      return isVisible
+    }
 
     return (
       <View style={style.container}>
@@ -92,7 +106,8 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
               if (symbol) {
                 child = showPIN ? symbol : '●'
               } else if (isFocused) {
-                child = <Cursor />
+                const cursorVisible = BlinkingCursor()
+                child = cursorVisible ? <Cursor /> : ''
               }
               return (
                 <View key={index} style={style.cell} onLayout={getCellOnLayoutHandler(index)}>
@@ -102,6 +117,7 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
                 </View>
               )
             }}
+            autoFocus={autoFocus}
             ref={ref}
           />
         </View>
