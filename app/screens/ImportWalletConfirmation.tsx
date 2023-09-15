@@ -22,7 +22,7 @@ import {
   ScrollView,
 } from 'react-native'
 import { Config } from 'react-native-config'
-import { DocumentPickerResponse, pickSingle, types } from 'react-native-document-picker'
+import { DocumentPickerResponse, isCancel, pickSingle, types } from 'react-native-document-picker'
 import * as RNFS from 'react-native-fs'
 import { heightPercentageToDP } from 'react-native-responsive-screen'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
@@ -166,7 +166,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
             id: credentials.id,
             key: credentials.key,
           },
-          logger: new ConsoleLogger(LogLevel.trace),
+          logger: new ConsoleLogger(LogLevel.off),
           autoUpdateStorageOnStartup: true,
         },
         dependencies: agentDependencies,
@@ -219,6 +219,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
       })
     }
   }
+
   const handleSelect = async () => {
     try {
       const res: DocumentPickerResponse = await pickSingle({
@@ -245,6 +246,12 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
         })
     } catch (error) {
       navigation.goBack()
+
+      // If user cancelled the document picker, do nothing
+      if (isCancel(error)) {
+        return
+      }
+
       Toast.show({
         type: ToastType.Error,
         text1: (error as Error).message || 'Unknown error',
