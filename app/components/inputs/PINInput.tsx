@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react'
+import React, { useState, forwardRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { CodeField, Cursor, useClearByFocusCell } from 'react-native-confirmation-code-field'
@@ -31,6 +31,8 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
       value: PIN,
       setValue: onChangeText,
     })
+    const [isVisible, setIsVisible] = useState(true)
+
     const { t } = useTranslation()
     const { TextTheme, PINInputTheme } = useTheme()
     const cellHeight = 48
@@ -71,6 +73,15 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
         paddingHorizontal: 10,
       },
     })
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        setIsVisible(prevVisible => !prevVisible)
+      }, 800)
+
+      return () => {
+        clearInterval(intervalId)
+      }
+    }, [])
 
     return (
       <View style={style.container}>
@@ -92,7 +103,7 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
               if (symbol) {
                 child = showPIN ? symbol : '●'
               } else if (isFocused) {
-                child = <Cursor />
+                child = isVisible ? <Cursor /> : ''
               }
               return (
                 <View key={index} style={style.cell} onLayout={getCellOnLayoutHandler(index)}>
