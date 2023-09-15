@@ -279,7 +279,7 @@ const Splash: React.FC = () => {
               id: credentials.id,
               key: credentials.key,
             },
-            logger: new ConsoleLogger(LogLevel.debug),
+            logger: new ConsoleLogger(LogLevel.off),
             mediatorPickupStrategy: MediatorPickupStrategy.Implicit,
             autoUpdateStorageOnStartup: true,
             autoAcceptConnections: true,
