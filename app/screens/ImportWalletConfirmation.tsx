@@ -261,7 +261,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} keyboardDismissMode="on-drag">
       <View style={styles.textView}>
         <Text style={styles.detailText}>Enter your secret phrase here</Text>
       </View>
