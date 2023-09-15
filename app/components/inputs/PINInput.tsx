@@ -82,9 +82,6 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
         clearInterval(intervalId)
       }
     }, [])
-    const BlinkingCursor = () => {
-      return isVisible
-    }
 
     return (
       <View style={style.container}>
@@ -106,8 +103,7 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
               if (symbol) {
                 child = showPIN ? symbol : '●'
               } else if (isFocused) {
-                const cursorVisible = BlinkingCursor()
-                child = cursorVisible ? <Cursor /> : ''
+                child = isVisible ? <Cursor /> : ''
               }
               return (
                 <View key={index} style={style.cell} onLayout={getCellOnLayoutHandler(index)}>
