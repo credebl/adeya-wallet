@@ -1,9 +1,11 @@
-import { Agent, ConnectionRecord } from '@aries-framework/core'
+import { ConnectionRecord } from '@aries-framework/core'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import messaging from '@react-native-firebase/messaging'
 import { Platform } from 'react-native'
 import { Config } from 'react-native-config'
 import { request, check, PERMISSIONS, RESULTS, PermissionStatus } from 'react-native-permissions'
+
+import { BifoldAgent } from './agent'
 
 const TOKEN_STORAGE_KEY = 'deviceToken'
 
@@ -27,21 +29,21 @@ const _foregroundHandler = (): (() => void) => {
  * Permissions Section
  */
 
-const _requestNotificationPermission = async (agent: Agent<any>): Promise<PermissionStatus> => {
+const _requestNotificationPermission = async (agent: BifoldAgent): Promise<PermissionStatus> => {
   agent.config.logger.info('Requesting push notification permission...')
   const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
   agent.config.logger.info(`push notification permission is now [${result}]`)
   return result
 }
 
-const _checkNotificationPermission = async (agent: Agent<any>): Promise<PermissionStatus> => {
+const _checkNotificationPermission = async (agent: BifoldAgent): Promise<PermissionStatus> => {
   agent.config.logger.info('Checking push notification permission...')
   const result = await check(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
   agent.config.logger.info(`push notification permission is [${result}]`)
   return result
 }
 
-const _requestPermission = async (agent: Agent<any>): Promise<void> => {
+const _requestPermission = async (agent: BifoldAgent): Promise<void> => {
   // IOS doesn't need the extra permission logic like android
   if (Platform.OS === 'ios') {
     await messaging().requestPermission()
@@ -49,6 +51,11 @@ const _requestPermission = async (agent: Agent<any>): Promise<void> => {
   }
 
   const checkPermission = await _checkNotificationPermission(agent)
+  if (checkPermission === RESULTS.UNAVAILABLE) {
+    agent.config.logger.warn(`push notification permission is not available on this device`)
+    return
+  }
+
   if (checkPermission !== RESULTS.GRANTED) {
     const request = await _requestNotificationPermission(agent)
     if (request !== RESULTS.GRANTED) {
@@ -61,7 +68,7 @@ const _requestPermission = async (agent: Agent<any>): Promise<void> => {
  * Helper Functions Section
  */
 
-const _getMediatorConnection = async (agent: Agent<any>): Promise<ConnectionRecord | undefined> => {
+const _getMediatorConnection = async (agent: BifoldAgent): Promise<ConnectionRecord | undefined> => {
   const connections = await agent.connections.getAll()
   for (const connection of connections) {
     if (connection.theirLabel === Config.MEDIATOR_LABEL) {
@@ -85,7 +92,7 @@ const isUserDenied = async (): Promise<boolean> => {
  * @param agent - The active aries agent
  * @returns {Promise<boolean>}
  */
-const isMediatorCapable = async (agent: Agent<any>): Promise<boolean | undefined> => {
+const isMediatorCapable = async (agent: BifoldAgent): Promise<boolean | undefined> => {
   if (!Config.MEDIATOR_LABEL || Config.MEDIATOR_USE_PUSH_NOTIFICATIONS === 'false') return false
 
   const mediator = await _getMediatorConnection(agent)
@@ -137,12 +144,10 @@ const isEnabled = async (): Promise<boolean> => {
  * @param blankDeviceToken - If true, will send an empty string as the device token to the mediator
  * @returns {Promise<void>}
  */
-const setDeviceInfo = async (agent: Agent<any>, blankDeviceToken = false): Promise<void> => {
+const setDeviceInfo = async (agent: BifoldAgent, blankDeviceToken = false): Promise<void> => {
   let token
   if (blankDeviceToken) token = ''
   else token = await messaging().getToken()
-
-  // console.log('token', token)
 
   const mediator = await _getMediatorConnection(agent)
   if (!mediator) return
@@ -151,6 +156,7 @@ const setDeviceInfo = async (agent: Agent<any>, blankDeviceToken = false): Promi
   try {
     await agent.modules.pushNotificationsFcm.setDeviceInfo(mediator.id, {
       deviceToken: token,
+      devicePlatform: Platform.OS,
     })
     if (blankDeviceToken) AsyncStorage.setItem(TOKEN_STORAGE_KEY, 'blank')
     else AsyncStorage.setItem(TOKEN_STORAGE_KEY, token)
@@ -165,7 +171,7 @@ const setDeviceInfo = async (agent: Agent<any>, blankDeviceToken = false): Promi
  * @prarm blankDeviceToken - If true, will setup the device token as blank (disabled)
  * @returns {Promise<void>}
  */
-const setup = async (agent: Agent<any>, blankDeviceToken = false): Promise<void> => {
+const setup = async (agent: BifoldAgent, blankDeviceToken = false): Promise<void> => {
   // FIXME: Currently set the token to blank (disabled) on initialization.
   setDeviceInfo(agent, blankDeviceToken)
   _backgroundHandler()

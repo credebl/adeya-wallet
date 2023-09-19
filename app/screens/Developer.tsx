@@ -173,6 +173,7 @@ const Settings: React.FC = () => {
   // }
 
   const getPushNotificationCapable = async () => {
+    console.log('first')
     if (!agent) return
     if ((await PushNotificationHelper.isMediatorCapable(agent)) === true) setPushNotificationCapable(true)
     else setPushNotificationCapable(false)
@@ -182,10 +183,9 @@ const Settings: React.FC = () => {
     setEnablePushNotifications(await PushNotificationHelper.isEnabled())
   }
 
-  const toggleDevPushNotificationsSwitch = () => {
+  const toggleDevPushNotificationsSwitch = async () => {
     if (!pushNotificationCapable || !agent) return
-    if (enablePushNotifications) PushNotificationHelper.setDeviceInfo(agent, true)
-    else PushNotificationHelper.setup(agent)
+    await PushNotificationHelper.setDeviceInfo(agent, !enablePushNotifications)
     setEnablePushNotifications(!enablePushNotifications)
   }
 
@@ -198,7 +198,7 @@ const Settings: React.FC = () => {
 
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']}>
-      <Modal
+      {/* <Modal
         visible={environmentModalVisible}
         transparent={false}
         animationType={'slide'}
@@ -206,7 +206,7 @@ const Settings: React.FC = () => {
           return
         }}>
         <IASEnvironmentScreen shouldDismissModal={shouldDismissModal} />
-      </Modal>
+      </Modal> */}
       <ScrollView style={styles.container}>
         <SectionRow
           title={t('Developer.DeveloperMode')}
@@ -222,7 +222,7 @@ const Settings: React.FC = () => {
         </SectionRow>
         <View style={[styles.sectionSeparator]}></View>
         <SectionHeader icon={'apartment'} title={'IAS'} />
-        <SectionRow
+        {/* <SectionRow
           title={t('Developer.Environment')}
           accessibilityLabel={t('Developer.Environment')}
           testID={testIdWithKey(t('Developer.Environment').toLowerCase())}
@@ -232,7 +232,7 @@ const Settings: React.FC = () => {
           <Text style={[TextTheme.headingFour, { fontWeight: 'normal', color: ColorPallet.brand.link }]}>
             {store.developer.environment.name}
           </Text>
-        </SectionRow>
+        </SectionRow> */}
         <View style={[styles.sectionSeparator]}></View>
         <SectionRow
           title={t('Verifier.UseVerifierCapability')}
