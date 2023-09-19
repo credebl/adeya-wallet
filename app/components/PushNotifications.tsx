@@ -1,10 +1,13 @@
 import { useAgent } from '@aries-framework/react-hooks'
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import PushNotificationsModal from '../components/modals/PushNotificationsModal'
 import { isMediatorCapable, isRegistered, setup, isUserDenied } from '../utils/PushNotificationHelper'
 
 const PushNotifications = () => {
   const { agent } = useAgent()
+  const { t } = useTranslation()
   const [infoModalVisible, setInfoModalVisible] = useState(false)
 
   const setupPushNotifications = async () => {
@@ -22,7 +25,13 @@ const PushNotifications = () => {
     initializeCapabilityRequest()
   }, [agent]) // Reload if agent becomes defined
 
-  return <PushNotificationsModal title="hiii" visible={infoModalVisible} onDone={setupPushNotifications} />
+  return (
+    <PushNotificationsModal
+      title={t('PushNotifications.Title')}
+      visible={infoModalVisible}
+      onDone={setupPushNotifications}
+    />
+  )
 }
 
 export default PushNotifications

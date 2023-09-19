@@ -655,7 +655,20 @@ const translation = {
     "complete_backup": 'Complete Backup',
     "backup_wallet": 'Backup Wallet',
   
-  } 
+  },
+  "PushNotifications": {
+    "BulletFour": "new messages",
+    "BulletOne": "new credential offers",
+    "BulletThree": "updates to your credentials",
+    "BulletTwo": "new proof requests",
+    "DeveloperTitle": "Push Notifications",
+    "HeadingOne": "It is recommended you allow this app to receive push notifications.",
+    "HeadingTwo": "Notifications will be sent to you when you receive:",
+    "NotAvailable": " (Not Available)",
+    "Title": "Notifications",
+    "PushNotifications": "Push Notifications",
+  }
+
 }
 
 export default translation

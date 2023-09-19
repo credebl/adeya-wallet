@@ -13,8 +13,6 @@ import { useStore } from '../contexts/store'
 import { AuthenticateStackParams, Screens } from '../types/navigators'
 import { testIdWithKey } from '../utils/testable'
 
-import PushNotifications from '../components/PushNotifications'
-
 const { width } = Dimensions.get('window')
 
 export interface OnboardingStyleSheet {
@@ -162,7 +160,6 @@ const Onboarding: React.FC<OnboardingProps> = ({
         next={next}
         previous={previous}
       />
-      <PushNotifications />
     </SafeAreaView>
   )
 }

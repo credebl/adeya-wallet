@@ -215,20 +215,20 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     }
   }
 
-  if (store.preferences.developerModeEnabled) {
-    const section = settingsSections.find(item => item.header.title === t('Settings.AppSettings'))
-    if (section) {
-      section.data = [
-        ...section.data,
-        {
-          title: t('Settings.Developer'),
-          accessibilityLabel: t('Settings.Developer'),
-          testID: testIdWithKey('DeveloperOptions'),
-          onPress: () => navigation.navigate(Screens.Developer),
-        },
-      ]
-    }
+  // if (store.preferences.developerModeEnabled) {
+  const section = settingsSections.find(item => item.header.title === t('Settings.AppSettings'))
+  if (section) {
+    section.data = [
+      ...section.data,
+      {
+        title: t('Settings.Developer'),
+        accessibilityLabel: t('Settings.Developer'),
+        testID: testIdWithKey('DeveloperOptions'),
+        onPress: () => navigation.navigate(Screens.Developer),
+      },
+    ]
   }
+  // }
 
   if (store.preferences.useVerifierCapability) {
     settingsSections.splice(1, 0, {

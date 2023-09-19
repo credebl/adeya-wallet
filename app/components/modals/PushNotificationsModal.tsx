@@ -74,12 +74,12 @@ const PushNotificationsModal: React.FC<PushNotificationsModalProps> = ({ title, 
               height: 50,
             }}
           />
-          <Text style={[TextTheme.modalNormal, styles.messageText]}>hi</Text>
-          {/* <Text style={[TextTheme.modalNormal, styles.messageText]}>{t('PushNotifications.HeadingTwo')}</Text>
+          <Text style={[TextTheme.modalNormal, styles.messageText]}>{t('PushNotifications.HeadingOne')}</Text>
+          <Text style={[TextTheme.modalNormal, styles.messageText]}>{t('PushNotifications.HeadingTwo')}</Text>
           <Text style={[TextTheme.modalNormal]}>{'    \u2022 ' + t('PushNotifications.BulletOne')} </Text>
           <Text style={[TextTheme.modalNormal]}>{'    \u2022 ' + t('PushNotifications.BulletTwo')} </Text>
           <Text style={[TextTheme.modalNormal]}>{'    \u2022 ' + t('PushNotifications.BulletThree')} </Text>
-          <Text style={[TextTheme.modalNormal]}>{'    \u2022 ' + t('PushNotifications.BulletFour')} </Text> */}
+          <Text style={[TextTheme.modalNormal]}>{'    \u2022 ' + t('PushNotifications.BulletFour')} </Text>
         </ScrollView>
         <View style={[styles.controlsContainer]}>
           <View style={styles.buttonContainer}>
