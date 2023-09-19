@@ -31,7 +31,7 @@ export const defaultState: State = {
     displayNotification: false,
   },
   preferences: {
-    developerModeEnabled: true,
+    developerModeEnabled: false,
     biometryPreferencesUpdated: false,
     useBiometry: false,
     useVerifierCapability: false,

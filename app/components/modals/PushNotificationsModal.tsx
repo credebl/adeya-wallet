@@ -6,6 +6,7 @@ import { Image, Modal, StyleSheet, Text, View, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useTheme } from '../../contexts/theme'
+import useTourImageDimensions from '../../hooks/tour-image-dimensions'
 import Button, { ButtonType } from '../buttons/Button'
 
 // import useTourImageDimensions from '../hooks/tour-image-dimensions'
@@ -27,7 +28,7 @@ const PushNotificationsModal: React.FC<PushNotificationsModalProps> = ({ title, 
   const { t } = useTranslation()
   const [modalVisible, setModalVisible] = useState<boolean>(true)
   const { ColorPallet, TextTheme } = useTheme()
-  //   const { imageWidth, imageHeight } = useTourImageDimensions()
+  const { imageWidth, imageHeight } = useTourImageDimensions()
 
   useEffect(() => {
     if (visible !== undefined) {
@@ -65,13 +66,13 @@ const PushNotificationsModal: React.FC<PushNotificationsModalProps> = ({ title, 
         <ScrollView style={[styles.container]}>
           <Text style={[TextTheme.modalTitle, { fontWeight: 'bold', textAlign: 'center' }]}>{title}</Text>
           <Image
-            source={require('../../assets/img/face-scan.png')}
+            source={require('../../assets/img/push-notifications.png')}
             resizeMode={'contain'}
             resizeMethod={'resize'}
             style={{
               alignSelf: 'center',
-              width: 50,
-              height: 50,
+              width: imageWidth,
+              height: imageHeight,
             }}
           />
           <Text style={[TextTheme.modalNormal, styles.messageText]}>{t('PushNotifications.HeadingOne')}</Text>

@@ -61,6 +61,4 @@ export interface State {
   tours: Tours
   deepLink: DeepLink
   loading: boolean
-  developer: Developer
-  dismissPersonCredentialOffer: DismissPersonCredentialOffer
 }

@@ -148,7 +148,6 @@ const setDeviceInfo = async (agent: BifoldAgent, blankDeviceToken = false): Prom
   let token
   if (blankDeviceToken) token = ''
   else token = await messaging().getToken()
-
   const mediator = await _getMediatorConnection(agent)
   if (!mediator) return
 

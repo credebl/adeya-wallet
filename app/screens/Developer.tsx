@@ -1,112 +1,48 @@
-import { useAgent } from '@aries-framework/react-hooks'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, StyleSheet, Switch, Text, Pressable, View, ScrollView } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import { View, Text, Pressable, Switch, StyleSheet } from 'react-native'
 
 import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
-import * as PushNotificationHelper from '../utils/PushNotificationHelper'
 import { testIdWithKey } from '../utils/testable'
 
-import IASEnvironmentScreen from './IASEnviornment'
-
-const Settings: React.FC = () => {
-  const { t } = useTranslation()
-  const { agent } = useAgent()
+const Developer: React.FC = () => {
   const [store, dispatch] = useStore()
-  const { SettingsTheme, TextTheme, ColorPallet } = useTheme()
-  const [environmentModalVisible, setEnvironmentModalVisible] = useState<boolean>(false)
-  const [devMode, setDevMode] = useState<boolean>(true)
-  const [useVerifierCapability, setUseVerifierCapability] = useState<boolean>(!!store.preferences.useVerifierCapability)
-  // const [acceptDevCredentials, setAcceptDevCredentials] = useState<boolean>(!!store.preferences.acceptDevCredentials)
+  const { t } = useTranslation()
+  const { ColorPallet, TextTheme } = useTheme()
+  const [useVerifierCapability, setUseVerifierCapability] = useState(!!store.preferences.useVerifierCapability)
   const [useConnectionInviterCapability, setConnectionInviterCapability] = useState(
     !!store.preferences.useConnectionInviterCapability,
   )
+
   const [useDevVerifierTemplates, setDevVerifierTemplates] = useState(!!store.preferences.useDevVerifierTemplates)
-  // const [enableWalletNaming, setEnableWalletNaming] = useState(!!store.preferences.enableWalletNaming)
-  // const [preventAutoLock, setPreventAutoLock] = useState(!!store.preferences.preventAutoLock)
-  const [enablePushNotifications, setEnablePushNotifications] = useState(false)
-  const [pushNotificationCapable, setPushNotificationCapable] = useState(true)
 
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: ColorPallet.brand.primaryBackground,
-      width: '100%',
+      marginTop: 50,
+      marginHorizontal: 20,
+      borderColor: ColorPallet.brand.primary,
+      borderWidth: 1,
+      borderRadius: 3,
     },
-    section: {
-      backgroundColor: SettingsTheme.groupBackground,
-      paddingHorizontal: 25,
-      paddingVertical: 24,
-    },
-    sectionHeader: {
+    settingContainer: {
       flexDirection: 'row',
-      alignItems: 'center',
-      paddingBottom: 0,
-    },
-    sectionSeparator: {
-      marginBottom: 10,
-    },
-    sectionRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      marginVertical: 10,
+      marginHorizontal: 10,
       justifyContent: 'space-between',
-    },
-    itemSeparator: {
-      borderBottomWidth: 1,
-      borderBottomColor: ColorPallet.brand.primaryBackground,
-      marginHorizontal: 25,
-    },
-    logo: {
-      height: 64,
-      width: '50%',
-      marginVertical: 16,
-    },
-    footer: {
-      marginVertical: 25,
       alignItems: 'center',
+    },
+    settingLabelText: {
+      ...TextTheme.normal,
+      marginRight: 10,
+      textAlign: 'left',
+      fontWeight: 'bold',
+    },
+    settingSwitchContainer: {
+      justifyContent: 'center',
     },
   })
-
-  const shouldDismissModal = () => {
-    setEnvironmentModalVisible(false)
-  }
-
-  const SectionHeader: React.FC<{ icon: string; title: string }> = ({ icon, title }) => (
-    <View style={[styles.section, styles.sectionHeader]}>
-      <Icon name={icon} size={24} style={{ marginRight: 10, color: TextTheme.normal.color }} />
-      <Text style={[TextTheme.headingThree, { flexShrink: 1 }]}>{title}</Text>
-    </View>
-  )
-
-  const SectionRow: React.FC<{
-    title: string
-    accessibilityLabel?: string
-    testID?: string
-    onPress?: () => void
-  }> = ({ title, accessibilityLabel, testID, onPress, children }) => (
-    <View style={[styles.section, { flexDirection: 'row' }]}>
-      <Text style={[TextTheme.headingFour, { flex: 1, fontWeight: 'normal', flexWrap: 'wrap' }]}>{title}</Text>
-      <Pressable
-        onPress={onPress}
-        accessible={true}
-        accessibilityLabel={accessibilityLabel}
-        testID={testID}
-        style={styles.sectionRow}>
-        {children}
-      </Pressable>
-    </View>
-  )
-
-  const toggleSwitch = () => {
-    dispatch({
-      type: DispatchAction.ENABLE_DEVELOPER_MODE,
-      payload: [!devMode],
-    })
-    setDevMode(!devMode)
-  }
 
   const toggleVerifierCapabilitySwitch = () => {
     // if verifier feature is switched off then also turn off the dev templates
@@ -123,14 +59,6 @@ const Settings: React.FC = () => {
     })
     setUseVerifierCapability(previousState => !previousState)
   }
-
-  // const toggleAcceptDevCredentialsSwitch = () => {
-  //   dispatch({
-  //     type: DispatchAction.ACCEPT_DEV_CREDENTIALS,
-  //     payload: [!acceptDevCredentials],
-  //   })
-  //   setAcceptDevCredentials(previousState => !previousState)
-  // }
 
   const toggleConnectionInviterCapabilitySwitch = () => {
     dispatch({
@@ -156,87 +84,21 @@ const Settings: React.FC = () => {
     setDevVerifierTemplates(previousState => !previousState)
   }
 
-  // const toggleWalletNamingSwitch = () => {
-  //   dispatch({
-  //     type: DispatchAction.ENABLE_WALLET_NAMING,
-  //     payload: [!enableWalletNaming],
-  //   })
-  //   setEnableWalletNaming(previousState => !previousState)
-  // }
-
-  // const togglePreventAutoLockSwitch = () => {
-  //   dispatch({
-  //     type: DispatchAction.PREVENT_AUTO_LOCK,
-  //     payload: [!preventAutoLock],
-  //   })
-  //   setPreventAutoLock(previousState => !previousState)
-  // }
-
-  const getPushNotificationCapable = async () => {
-    console.log('first')
-    if (!agent) return
-    if ((await PushNotificationHelper.isMediatorCapable(agent)) === true) setPushNotificationCapable(true)
-    else setPushNotificationCapable(false)
-  }
-
-  const initializePushNotificationsToggle = async () => {
-    setEnablePushNotifications(await PushNotificationHelper.isEnabled())
-  }
-
-  const toggleDevPushNotificationsSwitch = async () => {
-    if (!pushNotificationCapable || !agent) return
-    await PushNotificationHelper.setDeviceInfo(agent, !enablePushNotifications)
-    setEnablePushNotifications(!enablePushNotifications)
-  }
-
-  useEffect(() => {
-    if (agent) {
-      getPushNotificationCapable()
-      initializePushNotificationsToggle()
-    }
-  }, [agent])
-
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']}>
-      {/* <Modal
-        visible={environmentModalVisible}
-        transparent={false}
-        animationType={'slide'}
-        onRequestClose={() => {
-          return
-        }}>
-        <IASEnvironmentScreen shouldDismissModal={shouldDismissModal} />
-      </Modal> */}
-      <ScrollView style={styles.container}>
-        <SectionRow
-          title={t('Developer.DeveloperMode')}
-          accessibilityLabel={t('Developer.Toggle')}
-          testID={testIdWithKey('ToggleDeveloper')}>
-          <Switch
-            trackColor={{ false: ColorPallet.grayscale.lightGrey, true: ColorPallet.brand.primaryDisabled }}
-            thumbColor={devMode ? ColorPallet.brand.primary : ColorPallet.grayscale.mediumGrey}
-            ios_backgroundColor={ColorPallet.grayscale.lightGrey}
-            onValueChange={toggleSwitch}
-            value={devMode}
-          />
-        </SectionRow>
-        <View style={[styles.sectionSeparator]}></View>
-        <SectionHeader icon={'apartment'} title={'IAS'} />
-        {/* <SectionRow
-          title={t('Developer.Environment')}
-          accessibilityLabel={t('Developer.Environment')}
-          testID={testIdWithKey(t('Developer.Environment').toLowerCase())}
-          onPress={() => {
-            setEnvironmentModalVisible(true)
-          }}>
-          <Text style={[TextTheme.headingFour, { fontWeight: 'normal', color: ColorPallet.brand.link }]}>
-            {store.developer.environment.name}
+    <View style={styles.container}>
+      <Text style={[TextTheme.normal, { margin: 10 }]}>
+        Place content here you would like to make available to developers when developer mode is enabled.
+      </Text>
+      <View style={styles.settingContainer}>
+        <View style={{ flex: 1 }}>
+          <Text accessible={false} style={styles.settingLabelText}>
+            {t('Verifier.UseVerifierCapability')}
           </Text>
-        </SectionRow> */}
-        <View style={[styles.sectionSeparator]}></View>
-        <SectionRow
-          title={t('Verifier.UseVerifierCapability')}
+        </View>
+        <Pressable
+          style={styles.settingSwitchContainer}
           accessibilityLabel={t('Verifier.Toggle')}
+          accessibilityRole={'switch'}
           testID={testIdWithKey('ToggleVerifierCapability')}>
           <Switch
             trackColor={{ false: ColorPallet.grayscale.lightGrey, true: ColorPallet.brand.primaryDisabled }}
@@ -245,22 +107,16 @@ const Settings: React.FC = () => {
             onValueChange={toggleVerifierCapabilitySwitch}
             value={useVerifierCapability}
           />
-        </SectionRow>
-        <SectionRow
-          title={t('Verifier.AcceptDevCredentials')}
-          accessibilityLabel={t('Verifier.Toggle')}
-          testID={testIdWithKey('ToggleAcceptDevCredentials')}>
-          <Switch
-            trackColor={{ false: ColorPallet.grayscale.lightGrey, true: ColorPallet.brand.primaryDisabled }}
-            thumbColor={ColorPallet.grayscale.mediumGrey}
-            ios_backgroundColor={ColorPallet.grayscale.lightGrey}
-            // onValueChange={toggleAcceptDevCredentialsSwitch}
-            // value={acceptDevCredentials}
-          />
-        </SectionRow>
-        <SectionRow
-          title={t('Connection.UseConnectionInviterCapability')}
+        </Pressable>
+      </View>
+      <View style={styles.settingContainer}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.settingLabelText}>{t('Connection.UseConnectionInviterCapability')}</Text>
+        </View>
+        <Pressable
+          style={styles.settingSwitchContainer}
           accessibilityLabel={t('Connection.Toggle')}
+          accessibilityRole={'switch'}
           testID={testIdWithKey('ToggleConnectionInviterCapabilitySwitch')}>
           <Switch
             trackColor={{ false: ColorPallet.grayscale.lightGrey, true: ColorPallet.brand.primaryDisabled }}
@@ -269,10 +125,16 @@ const Settings: React.FC = () => {
             onValueChange={toggleConnectionInviterCapabilitySwitch}
             value={useConnectionInviterCapability}
           />
-        </SectionRow>
-        <SectionRow
-          title={t('Verifier.UseDevVerifierTemplates')}
+        </Pressable>
+      </View>
+      <View style={styles.settingContainer}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.settingLabelText}>{t('Verifier.UseDevVerifierTemplates')}</Text>
+        </View>
+        <Pressable
+          style={styles.settingSwitchContainer}
           accessibilityLabel={t('Verifier.ToggleDevTemplates')}
+          accessibilityRole={'switch'}
           testID={testIdWithKey('ToggleDevVerifierTemplatesSwitch')}>
           <Switch
             trackColor={{ false: ColorPallet.grayscale.lightGrey, true: ColorPallet.brand.primaryDisabled }}
@@ -281,54 +143,10 @@ const Settings: React.FC = () => {
             onValueChange={toggleDevVerifierTemplatesSwitch}
             value={useDevVerifierTemplates}
           />
-        </SectionRow>
-        {!store.onboarding.didCreatePIN && (
-          <SectionRow
-            title={t('NameWallet.EnableWalletNaming')}
-            accessibilityLabel={t('NameWallet.ToggleWalletNaming')}
-            testID={testIdWithKey('ToggleWalletNamingSwitch')}>
-            <Switch
-              trackColor={{ false: ColorPallet.grayscale.lightGrey, true: ColorPallet.brand.primaryDisabled }}
-              thumbColor={ColorPallet.brand.primary}
-              ios_backgroundColor={ColorPallet.grayscale.lightGrey}
-              // onValueChange={toggleWalletNamingSwitch}
-              // value={enableWalletNaming}
-            />
-          </SectionRow>
-        )}
-        <SectionRow
-          title={t('Settings.PreventAutoLock')}
-          accessibilityLabel={t('Settings.TogglePreventAutoLock')}
-          testID={testIdWithKey('TogglePreventAutoLockSwitch')}>
-          <Switch
-            trackColor={{ false: ColorPallet.grayscale.lightGrey, true: ColorPallet.brand.primaryDisabled }}
-            thumbColor={ColorPallet.grayscale.mediumGrey}
-            ios_backgroundColor={ColorPallet.grayscale.lightGrey}
-            // onValueChange={togglePreventAutoLockSwitch}
-            // value={preventAutoLock}
-          />
-        </SectionRow>
-        <SectionRow
-          title={
-            t('PushNotifications.PushNotifications') +
-            (pushNotificationCapable ? '' : t('PushNotifications.NotAvailable'))
-          }
-          accessibilityLabel={
-            t('PushNotifications.PushNotifications') +
-            (pushNotificationCapable ? '' : t('PushNotifications.NotAvailable'))
-          }
-          testID={testIdWithKey('PushNotificationsSwitch')}>
-          <Switch
-            trackColor={{ false: ColorPallet.grayscale.lightGrey, true: ColorPallet.brand.primaryDisabled }}
-            thumbColor={enablePushNotifications ? ColorPallet.brand.primary : ColorPallet.grayscale.mediumGrey}
-            ios_backgroundColor={ColorPallet.grayscale.lightGrey}
-            onValueChange={toggleDevPushNotificationsSwitch}
-            value={enablePushNotifications}
-          />
-        </SectionRow>
-      </ScrollView>
-    </SafeAreaView>
+        </Pressable>
+      </View>
+    </View>
   )
 }
 
-export default Settings
+export default Developer
