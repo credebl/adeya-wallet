@@ -78,7 +78,7 @@ export function getAgentModules({ indyNetworks, mediatorInvitationUrl }: GetAgen
     }),
     mediationRecipient: new MediationRecipientModule({
       mediatorInvitationUrl: mediatorInvitationUrl,
-      mediatorPickupStrategy: MediatorPickupStrategy.Implicit,
+      mediatorPickupStrategy: MediatorPickupStrategy.PickUpV2,
     }),
     pushNotificationsFcm: new PushNotificationsFcmModule(),
   }
