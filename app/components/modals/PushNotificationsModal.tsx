@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-// import { Button, ButtonType, useTheme } from
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Image, Modal, StyleSheet, Text, View, ScrollView } from 'react-native'
@@ -8,8 +7,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTheme } from '../../contexts/theme'
 import useTourImageDimensions from '../../hooks/tour-image-dimensions'
 import Button, { ButtonType } from '../buttons/Button'
-
-// import useTourImageDimensions from '../hooks/tour-image-dimensions'
 
 interface PushNotificationsModalProps {
   title: string
