@@ -1,4 +1,5 @@
 import { useAgent } from '@aries-framework/react-hooks'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -86,7 +87,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   })
   const getPushNotificationCapable = async () => {
     if (!agent) return
-    if ((await PushNotificationHelper.isMediatorCapable(agent)) === true) setPushNotificationCapable(true)
+    if ((await AsyncStorage.getItem('MEDIATOR_NOTIFICATION_SUPPORT')) === 'true') setPushNotificationCapable(true)
     else setPushNotificationCapable(false)
   }
 

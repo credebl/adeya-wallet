@@ -110,7 +110,10 @@ const isMediatorCapable = async (agent: BifoldAgent): Promise<boolean | undefine
     ],
   })
 
-  if (response.features && response.features?.length > 0) return true
+  if (response.features && response.features?.length > 0) {
+    AsyncStorage.setItem('MEDIATOR_NOTIFICATION_SUPPORT', 'true')
+    return true
+  } else AsyncStorage.setItem('MEDIATOR_NOTIFICATION_SUPPORT', 'false')
   return false
 }
 
@@ -148,9 +151,9 @@ const setDeviceInfo = async (agent: BifoldAgent, blankDeviceToken = false): Prom
   let token
   if (blankDeviceToken) token = ''
   else token = await messaging().getToken()
+  // console.log('token', token)
   const mediator = await _getMediatorConnection(agent)
   if (!mediator) return
-
   agent.config.logger.info(`Trying to send device info to mediator with connection [${mediator.id}]`)
   try {
     await agent.modules.pushNotificationsFcm.setDeviceInfo(mediator.id, {
