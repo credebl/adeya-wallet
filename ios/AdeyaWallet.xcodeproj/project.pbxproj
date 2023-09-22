@@ -507,12 +507,12 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = AdeyaWallet/AdeyaWallet.entitlements;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = Z5W7KRPGHZ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = AdeyaWallet/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Adeya SSI Wallet";
+				INFOPLIST_KEY_CFBundleDisplayName = "ADEYA Wallet";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -545,11 +545,11 @@
 				CODE_SIGN_ENTITLEMENTS = AdeyaWallet/AdeyaWallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = Z5W7KRPGHZ;
 				INFOPLIST_FILE = AdeyaWallet/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Adeya SSI Wallet";
+				INFOPLIST_KEY_CFBundleDisplayName = "ADEYA Wallet";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
