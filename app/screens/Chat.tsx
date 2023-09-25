@@ -26,6 +26,7 @@ import { useCredentialsByConnectionId } from '../hooks/credentials'
 import { useProofsByConnectionId } from '../hooks/proofs'
 import { Role } from '../types/chat'
 import { ContactStackParams, Screens, Stacks } from '../types/navigators'
+import { isW3CCredential } from '../utils/credential'
 import {
   getCredentialEventLabel,
   getCredentialEventRole,
@@ -129,7 +130,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
             const navMap: { [key in CredentialState]?: () => void } = {
               [CredentialState.Done]: () => {
                 navigation.getParent()?.navigate(Stacks.ContactStack, {
-                  screen: Screens.CredentialDetails,
+                  screen: isW3CCredential(record) ? Screens.CredentialDetailsW3C : Screens.CredentialDetails,
                   params: { credential: record },
                 })
               },

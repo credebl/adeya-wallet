@@ -119,13 +119,13 @@ const OnboardingPages = (onTutorialCompleted: GenericFn): Array<Element> => {
     return (
       <ScrollView style={styles.container}>
         <Text style={[defaultStyle.headerText, styles.headerText]}>Welcome!</Text>
-        <ImageBackground source={require('../assets/img/onBoardingfirst1.png')} style={styles.backgroundImage}>
+        <ImageBackground source={require('../assets/img/onBoardingfirst.png')} style={styles.backgroundImage}>
           <Image source={require('../assets/img/face-scan.png')} style={styles.Image} />
         </ImageBackground>
 
         <View style={styles.descriptiionText}>
           <Text style={[styles.bodyText]}>
-            Unlock the power of your digital identity with our all-in-one wallet! Let embark on a journey to take full
+            Unlock the power of your digital identity with our all-in-one wallet! Let's embark on a journey to take full
             control of your digital presence.
           </Text>
         </View>
@@ -146,7 +146,7 @@ const OnboardingPages = (onTutorialCompleted: GenericFn): Array<Element> => {
     {
       image: onBoardingOrganizeease,
       title: 'Organize with ease',
-      body: 'Organize and manage your digital credentials effortlessly within ADEYA.Say goodbye to paper documents and embrace the convenience of an identity wallet in your hand.',
+      body: 'Organize and manage your digital credentials effortlessly within ADEYA. Say goodbye to paper documents and embrace the convenience of an identity wallet in your hand.',
     },
   ]
 

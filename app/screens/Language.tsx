@@ -17,11 +17,7 @@ const Language = () => {
   const { t, i18n } = useTranslation()
   const { ColorPallet, TextTheme, SettingsTheme } = useTheme()
   // List of available languages into the localization directory
-  const languages = [
-    { id: Locales.en, value: t('Language.English', { lng: Locales.en }) },
-    { id: Locales.fr, value: t('Language.French', { lng: Locales.fr }) },
-    { id: Locales.ptBr, value: t('Language.Portuguese', { lng: Locales.ptBr }) },
-  ]
+  const languages = [{ id: Locales.en, value: t('Language.English', { lng: Locales.en }) }]
 
   const styles = StyleSheet.create({
     container: {

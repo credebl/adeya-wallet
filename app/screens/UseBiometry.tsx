@@ -1,3 +1,4 @@
+import { StackScreenProps } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -21,6 +22,7 @@ import { useAuth } from '../contexts/auth'
 import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
+import { AuthenticateStackParams, Screens } from '../types/navigators'
 import { statusBarStyleForColor, StatusBarStyles } from '../utils/luminance'
 import { testIdWithKey } from '../utils/testable'
 
@@ -31,7 +33,9 @@ enum UseBiometryUsage {
   ToggleOnOff,
 }
 
-const UseBiometry: React.FC = () => {
+type UseBiometryProps = StackScreenProps<AuthenticateStackParams, Screens.UseBiometry>
+
+const UseBiometry: React.FC<UseBiometryProps> = () => {
   const [store, dispatch] = useStore()
   const { t } = useTranslation()
   const { isBiometricsActive, commitPIN, disableBiometrics } = useAuth()
@@ -131,10 +135,7 @@ const UseBiometry: React.FC = () => {
           <View>
             <Text style={[TextTheme.normal]}>{t('Biometry.EnabledText1')}</Text>
             <Text></Text>
-            <Text style={[TextTheme.normal]}>
-              {t('Biometry.EnabledText2')}
-              <Text style={[TextTheme.normal, { fontWeight: 'bold' }]}> {t('Biometry.Warning')}</Text>
-            </Text>
+            <Text style={[TextTheme.normal]}>{t('Biometry.EnabledText2')}</Text>
           </View>
         ) : (
           <View>

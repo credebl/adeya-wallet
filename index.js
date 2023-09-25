@@ -1,6 +1,7 @@
+import './shim'
 import 'react-native-get-random-values'
 import 'react-native-gesture-handler'
-// remove these when updated to react-native 0.65.0
+
 import '@formatjs/intl-getcanonicallocales/polyfill'
 import '@formatjs/intl-locale/polyfill'
 import '@formatjs/intl-pluralrules/polyfill'
