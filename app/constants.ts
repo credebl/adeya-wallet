@@ -19,8 +19,6 @@ export enum LocalStorageKeys {
   RevokedCredentialsMessageDismissed = 'RevokedCredentialsMessageDismissed',
   Preferences = 'PreferencesState',
   Tours = 'ToursState',
-  PersonCredentialOfferDismissed = 'PersonCredentialOfferDismissed',
-  Environment = 'Environment',
 }
 
 export enum KeychainServices {

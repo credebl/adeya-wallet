@@ -27,12 +27,6 @@ enum LockoutDispatchAction {
 enum LoginAttemptDispatchAction {
   ATTEMPT_UPDATED = 'loginAttempt/loginAttemptUpdated',
 }
-// enum DeveloperDispatchAction {
-//   UPDATE_ENVIRONMENT = 'developer/updateEnvironment',
-// }
-// enum DismissPersonCredentialOfferDispatchAction {
-//   PERSON_CREDENTIAL_OFFER_DISMISSED = 'dismissPersonCredentialOffer/personCredentialOfferDismissed',
-// }
 
 enum PreferencesDispatchAction {
   ENABLE_DEVELOPER_MODE = 'preferences/enableDeveloperMode',
