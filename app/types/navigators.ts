@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord } from '@aries-framework/core'
+import { CredentialExchangeRecord, W3cCredentialRecord } from '@aries-framework/core'
 import { NavigatorScreenParams } from '@react-navigation/core'
 
 export enum Screens {
@@ -37,6 +37,14 @@ export enum Screens {
   ConnectionInvitation = 'Connection Invitation',
   NameWallet = 'Name Wallet',
   CredentialDetailsJSONLD = 'Credential Details JSONLD',
+  ExportWallet = 'Passphrase',
+  ExportWalletConfirmation = 'Seed Phrase',
+  ImportWallet = 'Import Wallet',
+  ImportWalletVerify = 'Verify Phrase',
+  Success = 'Success',
+  WalletOptions = 'Create Walllet',
+  ImportSuccess = 'Import Success',
+  CredentialDetailsW3C = 'Credential Details W3C',
 }
 
 export enum Stacks {
@@ -81,6 +89,7 @@ export type AuthenticateStackParams = {
   [Screens.EnterPIN]: { setAuthenticated: (status: boolean) => void } | undefined
   [Screens.UseBiometry]: undefined
   [Screens.NameWallet]: undefined
+  [Screens.ImportWalletVerify]: undefined
 }
 
 export type OnboardingStackParams = {
@@ -95,6 +104,7 @@ export type ContactStackParams = {
   [Screens.ContactDetails]: { connectionId: string }
   [Screens.WhatAreContacts]: undefined
   [Screens.CredentialDetails]: { credentialId: string }
+  [Screens.CredentialDetailsW3C]: { credential: CredentialExchangeRecord }
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean }
   [Screens.ProofRequest]: { proofId: string }
@@ -111,7 +121,7 @@ export type ProofRequestsStackParams = {
 export type CredentialStackParams = {
   [Screens.Credentials]: undefined
   [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
-  [Screens.CredentialDetailsJSONLD]: { credential: any }
+  [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
 }
 
 export type HomeStackParams = {
@@ -133,6 +143,13 @@ export type SettingStackParams = {
   [Screens.Terms]: undefined
   [Screens.Onboarding]: undefined
   [Screens.Developer]: undefined
+  [Screens.ExportWallet]: undefined
+  [Screens.ExportWalletConfirmation]: undefined
+  [Screens.Success]: undefined
+  [Screens.ImportWalletVerify]: undefined
+  [Screens.WalletOptions]: undefined
+  [Screens.ImportSuccess]: undefined
+  [Screens.NameWallet]: undefined
 }
 
 export type NotificationStackParams = {

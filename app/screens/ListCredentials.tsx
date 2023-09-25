@@ -1,10 +1,6 @@
-import {
-  CredentialExchangeRecord,
-  CredentialRecordBinding,
-  CredentialState,
-  W3cCredentialRecord,
-  W3cCredentialService,
-} from '@aries-framework/core'
+import type { W3cCredentialRecord } from '@aries-framework/core'
+
+import { CredentialExchangeRecord, CredentialState } from '@aries-framework/core'
 import { useAgent, useCredentialByState } from '@aries-framework/react-hooks'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -16,9 +12,10 @@ import CredentialCard from '../components/misc/CredentialCard'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import { CredentialStackParams, Screens } from '../types/navigators'
+import { isW3CCredential } from '../utils/credential'
 
-export interface ModifiedW3cCredentialRecord extends W3cCredentialRecord {
-  credentials: CredentialRecordBinding[]
+interface EnhancedW3CRecord extends W3cCredentialRecord {
+  connectionLabel?: string
 }
 
 const ListCredentials: React.FC = () => {
@@ -29,9 +26,7 @@ const ListCredentials: React.FC = () => {
     ...useCredentialByState(CredentialState.CredentialReceived),
     ...useCredentialByState(CredentialState.Done),
   ]
-  const [credentialList, setCredentialList] = useState<
-    (CredentialExchangeRecord | ModifiedW3cCredentialRecord)[] | undefined
-  >([])
+  const [credentialList, setCredentialList] = useState<(CredentialExchangeRecord | EnhancedW3CRecord)[] | undefined>([])
 
   const navigation = useNavigation<StackNavigationProp<CredentialStackParams>>()
   const { ColorPallet } = useTheme()
@@ -41,19 +36,20 @@ const ListCredentials: React.FC = () => {
       if (!agent) {
         return
       }
-      const w3cCredentialService = await agent.dependencyManager.resolve(W3cCredentialService)
 
       const updatedCredentials = await Promise.all(
         credentials.map(async credential => {
-          if (credential.credentials[0].credentialRecordType == 'w3c') {
+          if (isW3CCredential(credential)) {
             const credentialRecordId = credential.credentials[0].credentialRecordId
-
             try {
-              const record = await w3cCredentialService.getCredentialRecordById(agent.context, credentialRecordId)
-              return {
-                ...record,
-                credentials: credential.credentials,
-              } as ModifiedW3cCredentialRecord
+              const record = await agent.w3cCredentials.getCredentialRecordById(credentialRecordId)
+              if (!credential?.connectionId) {
+                throw new Error('Connection Id notfound')
+              }
+              const connection = await agent.connections.findById(credential?.connectionId)
+              const enhancedRecord = record as EnhancedW3CRecord
+              enhancedRecord.connectionLabel = connection?.theirLabel
+              return enhancedRecord
             } catch (e: unknown) {
               throw new Error(`${e}`)
             }
@@ -83,10 +79,9 @@ const ListCredentials: React.FC = () => {
                 marginTop: 15,
                 marginBottom: index === credentials.length - 1 ? 45 : 0,
               }}>
-              {credential.credentials[0].credentialRecordType == 'anoncreds' ||
-              credential.credentials[0].credentialRecordType == 'indy' ? (
+              {credential instanceof CredentialExchangeRecord ? (
                 <CredentialCard
-                  credential={credential as CredentialExchangeRecord}
+                  credential={credential}
                   onPress={() =>
                     navigation.navigate(Screens.CredentialDetails, {
                       credential: credential as CredentialExchangeRecord,
@@ -95,8 +90,10 @@ const ListCredentials: React.FC = () => {
                 />
               ) : (
                 <CredentialCard
-                  schemaId={(credential as ModifiedW3cCredentialRecord).credential.type[1] as string}
-                  onPress={() => navigation.navigate(Screens.CredentialDetailsJSONLD, { credential: credential })}
+                  schemaId={credential.credential.type[1]}
+                  connectionLabel={credential.connectionLabel}
+                  credential={credential}
+                  onPress={() => navigation.navigate(Screens.CredentialDetailsW3C, { credential: credential })}
                 />
               )}
             </View>

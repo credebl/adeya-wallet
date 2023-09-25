@@ -37,6 +37,7 @@ const LoadingIndicator: React.FC = () => {
       <Image
         source={Assets.img.logoPrimary.src}
         style={{ width: Assets.img.logoPrimary.width, height: Assets.img.logoPrimary.height }}
+        resizeMode="contain"
         testID={testIdWithKey('LoadingActivityIndicatorImage')}
       />
       <Animated.View style={[style.animation, { transform: [{ rotate: rotation }] }]}>

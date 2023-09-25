@@ -35,6 +35,8 @@ const translation = {
     "Off": "Off",
     "Close": "Close",
     "Remove": "Remove",
+    "Yes": "Yes",
+    "No": "No",
   },
   "Date": {
     "ShortFormat": "MMM D, YYYY",
@@ -71,8 +73,6 @@ const translation = {
 
   "Language": {
     "English": "English",
-    "French": "French",
-    "Portuguese": "Portuguese",
   },
   "Error": {
     "Unknown": "Unknown Error",
@@ -108,6 +108,8 @@ const translation = {
     "Message1037": "There was a problem while removing the Contact.",
     "Title1038": "Unable to generate a proof request.",
     "Message1038": "There was a problem while generating a proof request.",
+    "Title2026": "Oops! Something went wrong",
+    "Message2026": "The app has encountered a problem. Try restarting the app.",
   },
 
   "ActivityLog": {
@@ -134,7 +136,7 @@ const translation = {
     "Back": "Back",
     "Done": "Done",
   },
-  
+
   "Terms": {
     "TermsOfService": "Terms of Service",
     "TermsOfServiceText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel consectetur diam. Nunc sit amet elit est. Praesent libero elit, consectetur dapibus diam non, facilisis euismod velit. Etiam a ligula eget leo elementum tincidunt. Fusce et lorem turpis. Nunc tempus nisl consectetur eros vehicula venenatis. Suspendisse potenti. Aenean vitae aliquet augue. Maecenas lacinia nunc vitae blandit hendrerit. Sed congue risus quis magna convallis sollicitudin. Integer in ante vel orci ornare porta quis id libero. Proin mollis urna nec lectus fringilla, sit amet aliquam urna fringilla. Praesent pellentesque non augue et gravida. Donec congue urna ac massa consequat, lacinia condimentum dolor blandit. Nam ultrices tellus at risus dignissim, quis cursus mauris pellentesque. Donec at scelerisque ipsum. Praesent eu massa at tellus cursus ornare. Fusce vel faucibus dolor. Etiam blandit velit sed velit tempus feugiat. Donec condimentum pretium suscipit. Sed suscipit, leo molestie tempus maximus, turpis enim hendrerit nibh, semper sagittis turpis velit sed nisl. Aliquam eu ultrices velit. Aenean tristique mauris justo, eu commodo quam semper non. Curabitur ultricies auctor mi eu tempus. Sed bibendum eros sed neque semper fermentum. Nullam porta tortor ut ante congue molestie. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Curabitur sit amet aliquam nunc, malesuada auctor quam. Pellentesque vel lobortis risus, volutpat suscipit velit. Aenean ut erat sed metus interdum mattis. Nam consectetur ante eu felis rhoncus, et volutpat dolor tincidunt. Vivamus sit amet feugiat mi. Proin in dui ac metus vehicula fringilla eget id mauris. Maecenas et elit venenatis dolor pulvinar pulvinar in et leo. Aliquam scelerisque viverra sapien at bibendum. Curabitur et libero nec enim convallis porttitor sed a libero. In hac habitasse platea dictumst. Integer dignissim velit eu pharetra ultricies. Vestibulum at velit hendrerit, pretium purus eget, lobortis tellus. Maecenas non erat ut lacus scelerisque luctus et et tellus.",
@@ -144,8 +146,8 @@ const translation = {
   "CameraDisclosure": {
     "AllowCameraUse": "Allow camera use",
     "CameraDisclosure": "The camera is used to scan QR codes that initiate a credential offer or credential request. No information about the images is stored, used for analytics, or shared.",
-    "ToContinueUsing": "To continue using the Aries Bifold scan feature, please allow camera permissions.",
-    "Allow": "Allow",
+    "ToContinueUsing": "To continue using the ADEYA Wallet scan feature, please allow camera permissions in the settings.",
+    "Continue": "Continue",
     "OpenSettings": "Open settings",
   },
   "PINCreate": {
@@ -216,7 +218,7 @@ const translation = {
     "BiometricsChangedEnterPIN": "Please enter your wallet PIN.",
     "AttemptLockoutWarning": "Note: for your security, entering another incorrect PIN will temporarily lock the wallet."
   },
-  
+
   "AttemptLockout": {
     "Title": "Your wallet is temporarily locked",
     "Description": "You have had too many unsuccessful PIN attempts.",
@@ -225,7 +227,7 @@ const translation = {
     "Minutes": "minutes",
     "Seconds": "seconds",
   },
-  
+
   "Biometry": {
     "Toggle": "Toggle Biometrics",
     "EnabledText1": "Use your phone's biometrics to log in rather than your wallet's PIN.",
@@ -235,6 +237,8 @@ const translation = {
     "EnabledText3Bold": "Ensure only you have access to your wallet.",
     "Warning": "Ensure only you have access to your wallet.",
     "UseToUnlock": "Use biometrics to unlock wallet?",
+    "UnlockPromptTitle": "Unlock wallet",
+    "UnlockPromptDescription": "Use biometrics to unlock your wallet",
     "NotEnabledText1": "Biometrics is not currently setup on this device and therefore cannot be enabled.",
     "NotEnabledText2": "If you wish to enable this feature turn biometrics on in the device settings and then return to this screen.",
       },
@@ -242,7 +246,7 @@ const translation = {
     "EmptyList": "Your Contacts is empty!",
     "TypeHere": "Type Message Here",
     "PeopleAndOrganizations": "People and organizations you've interacted with are listed here.",
-    "WhatAreContacts": "What are Contacts?",
+    "WhatAreContacts": "What are Contacts",
     "AddContact": "Add Contact",
   },
   "ContactDetails": {
@@ -265,7 +269,7 @@ const translation = {
     "RemoveContactsBulletPoint4": "Request for information from this Contact or they request information from you",
   },
   "WhatAreContacts": {
-    "Title": "What are Contacts?",
+    "Title": "What are Contacts",
     "title": "What are Contacts",
     "Preamble": "Contacts are people or organizations you've interacted with.\n\nYou're connected over a secure and private line that no one but you or them can see. Nothing is shared without your permission.\n\nYou can:",
     "ListItemDirectMessage": "Direct message your Contacts",
@@ -349,7 +353,7 @@ const translation = {
   },
   "ConnectionAlert": {
     "AddedContacts": "Added to Contacts",
-    "WhatAreContacts": "What are Contacts?",
+    "WhatAreContacts": "What are Contacts",
     "NotificationBodyUpper": "You can find ",
     "NotificationBodyLower": " in your Contacts. Manage your Contacts in Settings",
     "PopupIntro": "Adding organizations as a Contact will allow you to:",
@@ -357,7 +361,6 @@ const translation = {
     "PopupPoint2": "Get offered new credentials",
     "PopupPoint3": "Fast-track proof requests",
     "SettingsLink": "Settings",
-    "SettingsInstruction": "You can always remove Contacts at anytime in ",
     "PrivacyMessage": "Use of your credentials is never shared with your Contacts.",
     "PopupExit": "Got it"
   },
@@ -449,9 +452,11 @@ const translation = {
     "Language": "Language",
     "AppGuides": "App guides",
     "Build": "Build",
-    "WhatAreContacts": "What are Contacts?",
+    "WhatAreContacts": "What are Contacts",
     "ScanMyQR": "Scan my QR code",
-    "Developer": "Developer options"
+    "Developer": "Developer options",
+    "Backup": "backup wallet",
+    "Confirmation"  : 'Confirmation'
   },
   "TabStack": {
     "Home": "Home",
@@ -518,8 +523,15 @@ const translation = {
     "RecreatePIN": 'Change PIN',
     "CustomNotification": 'Custom Notification',
     "ProofRequesting": 'Proof Requesting',
-    "NameWallet": "Name your wallet",
+    "NameWallet": "Wallet Name",
     "CredentialDetailsJSONLD" :'Credential Details JSONLD',
+    "BackupWallet":"Backup wallet",
+    "Confirmation"  : 'Confirmation',
+    "CreateWallet"  : 'Create Wallet',
+    "VerifyPhrase"  : 'Verify Phrase',
+    "Success"  : 'Success',
+    "CredentialDetailsW3C" :'Credential Details W3C',
+    "WalletName" :"Wallet Name"
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",
@@ -557,21 +569,21 @@ const translation = {
     "Finishing": "Finishing..."
   },
   "NameWallet": {
-    "NameYourWallet": "Name your wallet",
-    "ThisIsTheName": "This is the name people see when connecting with you.",
+    "NameYourWallet": "Name of your wallet",
+    "ThisIsTheName": "This is how your name will be visible when others connect with you",
     "CharCountTitle": "Character count exceeded",
-    "CharCountDescription": "You've exceeded the maximum character count of 50 characters. Please reduce your character count.",
+    "CharCountDescription": "You've exceeded the maximum character count of 25 characters. Please reduce your character count.",
     "EmptyNameTitle": "Wallet name can't be empty",
     "EmptyNameDescription": "This is the name people see when connecting with you.\n\nPlease enter a wallet name.",
   },
   "NetInfo": {
     "NoInternetConnectionTitle": "No internet connection",
-    "NoInternetConnectionMessage": "You're unable to access services using Bifold or receive credentials until you're back online.\n\nPlease check your internet connection.",
+    "NoInternetConnectionMessage": "You're unable to access services using ADEYA or receive credentials until you're back online.\n\nPlease check your internet connection.",
     "LedgerConnectivityIssueTitle": "Wallet Services",
     "LedgerConnectivityIssueMessage": "A firewall may be preventing you from connecting to wallet related services.",
   },
   "Onboarding": {
-    "SkipA11y": "Skip introduction to Aries Bifold",
+    "SkipA11y": "Skip introduction to ADEYA",
   },
   "Chat": {
     "OpenPresentation": "Open Presentation",
@@ -630,6 +642,19 @@ const translation = {
   },
   "Feedback": {
     "GiveFeedback": "Give Feedback",
+  },
+  "Backup" :{
+    "write_down": 'Write down your seed phrase',
+    "this_is_your_seed":
+      "This is your seed phrase. Write it down on a paper and keep it in a safe place. You'll be asked to re-enter this phrase (in order) on the next step.",
+    "continue": 'Continue',
+    "seed_phrase": 'Seed Phrase',
+    "confirm_seed_phrase": 'Confirm seed Phrase',
+    "select_each": 'Select each word in the order it was presented to you.',
+    "you_have_successfully": 'You have successfully selected the words.',
+    "complete_backup": 'Complete Backup',
+    "backup_wallet": 'Backup Wallet',
+
   }
 }
 
