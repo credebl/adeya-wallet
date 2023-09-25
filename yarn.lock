@@ -1743,7 +1743,7 @@
 
 "@digitalcredentials/jsonld@^5.2.1":
   version "5.2.2"
-  resolved "https://registry.yarnpkg.com/@digitalcredentials/jsonld/-/jsonld-5.2.2.tgz#d2bdefe25788ece77e900a9491c64c2187e3344c"
+  resolved "https://registry.npmjs.org/@digitalcredentials/jsonld/-/jsonld-5.2.2.tgz"
   integrity sha512-hz7YR3kv6+8UUdgMyTGl1o8NjVKKwnMry/Rh/rWeAvwL+NqgoUHorWzI3rM+PW+MPFyDC0ieXStClt9n9D9SGA==
   dependencies:
     "@digitalcredentials/http-client" "^1.0.0"
@@ -7913,7 +7913,7 @@ json5@^1.0.2:
 
 json5@^2.1.1, json5@^2.2.2, json5@^2.2.3:
   version "2.2.3"
-  resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.3.tgz#78cd6f1a19bdc12b73db5ad0c61efd66c1e29283"
+  resolved "https://registry.npmjs.org/json5/-/json5-2.2.3.tgz"
   integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
 
 jsonfile@^4.0.0:

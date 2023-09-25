@@ -65,6 +65,7 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
         params: { connectionId: connectionRecord?.id },
       })
     } catch (err: unknown) {
+      setLoading(false)
       try {
         // if scanned value is json -> pass into AFJ as is
         const json = getJson(value)

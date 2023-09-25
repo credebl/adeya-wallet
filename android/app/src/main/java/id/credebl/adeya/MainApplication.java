@@ -1,8 +1,18 @@
+<<<<<<< HEAD
+=======
+<<<<<<<< HEAD:android/app/src/main/java/com/adeyawallet/MainApplication.java
+>>>>>>> 7ae7072c (merge to main (#86))
 <<<<<<<< HEAD:android/app/src/main/java/id/credebl/adeya/MainApplication.java
 package id.credebl.adeya;
 ========
 package com.adeyawallet;
 >>>>>>>> 24cb4762 (feat: new app setup (#44)):android/app/src/main/java/com/adeyawallet/MainApplication.java
+<<<<<<< HEAD
+=======
+========
+package id.credebl.adeya;
+>>>>>>>> 7ae7072c (merge to main (#86)):android/app/src/main/java/id/credebl/adeya/MainApplication.java
+>>>>>>> 7ae7072c (merge to main (#86))
 
 import android.app.Application;
 import com.facebook.react.PackageList;
