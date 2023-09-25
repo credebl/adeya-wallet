@@ -10,12 +10,14 @@ import { useConfiguration } from '../contexts/configuration'
 import { useNetwork } from '../contexts/network'
 import { useTheme } from '../contexts/theme'
 import { Screens, Stacks, TabStackParams, TabStacks } from '../types/navigators'
+import { isTablet, orientation, Orientation } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
 import CredentialStack from './CredentialStack'
 import HomeStack from './HomeStack'
 
 const TabStack: React.FC = () => {
+  const { width, height } = useWindowDimensions()
   const { useCustomNotifications } = useConfiguration()
   const { total } = useCustomNotifications()
   const { t } = useTranslation()
@@ -29,6 +31,14 @@ const TabStack: React.FC = () => {
       flex: 1,
     },
   })
+
+  const leftMarginForDevice = (width: number, height: number) => {
+    if (isTablet(width, height)) {
+      return orientation(width, height) === Orientation.Portrait ? 130 : 170
+    }
+
+    return 0
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: ColorPallet.brand.primary }}>
@@ -62,12 +72,15 @@ const TabStack: React.FC = () => {
               </View>
             ),
             tabBarShowLabel: false,
-            tabBarBadge: total || undefined,
-            tabBarBadgeStyle: { backgroundColor: ColorPallet.semantic.error },
             tabBarAccessibilityLabel: `${t('TabStack.Home')} (${
               total === 1 ? t('Home.OneNotification') : t('Home.CountNotifications', { count: total || 0 })
             })`,
             tabBarTestID: testIdWithKey(t('TabStack.Home')),
+            tabBarBadge: total || undefined,
+            tabBarBadgeStyle: {
+              marginLeft: leftMarginForDevice(width, height),
+              backgroundColor: ColorPallet.semantic.error,
+            },
           }}
         />
         <Tab.Screen

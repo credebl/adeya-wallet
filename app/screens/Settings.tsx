@@ -34,11 +34,8 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   const developerOptionCount = useRef(0)
   const { SettingsTheme, TextTheme, ColorPallet, Assets } = useTheme()
   const { settings, enableTours } = useConfiguration()
-  const languages = [
-    { id: Locales.en, value: t('Language.English') },
-    { id: Locales.fr, value: t('Language.French') },
-    { id: Locales.ptBr, value: t('Language.Portuguese') },
-  ]
+
+  const languages = [{ id: Locales.en, value: t('Language.English') }]
 
   const styles = StyleSheet.create({
     container: {
@@ -47,7 +44,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     },
     section: {
       backgroundColor: SettingsTheme.groupBackground,
-      paddingVertical: 24,
+      paddingVertical: 15,
       flexGrow: 1,
     },
     sectionHeader: {
@@ -55,7 +52,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
       alignItems: 'center',
       paddingBottom: 0,
       marginBottom: -11,
-      paddingHorizontal: 25,
     },
     sectionSeparator: {
       marginBottom: 10,
@@ -65,7 +61,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
       alignItems: 'center',
       justifyContent: 'space-between',
       flexGrow: 1,
-      paddingHorizontal: 25,
+      paddingHorizontal: 30,
     },
     itemSeparator: {
       borderBottomWidth: 1,
@@ -102,6 +98,21 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   const settingsSections: SettingSection[] = [
     {
       header: {
+        icon: 'settings',
+        title: t('Screens.WalletName'),
+      },
+      data: [
+        {
+          title: store.preferences.walletName,
+          accessibilityLabel: t('Screens.NameWallet'),
+          testID: testIdWithKey('NameWallet'),
+          onPress: () => navigation.navigate(Screens.NameWallet as never),
+          value: 'Edit',
+        },
+      ],
+    },
+    {
+      header: {
         icon: 'apartment',
         title: t('Screens.Contacts'),
       },
@@ -124,6 +135,22 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
         },
       ],
     },
+    {
+      header: {
+        icon: 'settings',
+        title: 'Security',
+      },
+      data: [
+        {
+          title: t('Backup.backup_wallet'),
+          accessibilityLabel: t('Settings.Backup'),
+          testID: testIdWithKey('Biometrics'),
+          onPress: () => navigation.navigate(Screens.ExportWallet as never),
+          value: undefined,
+        },
+      ],
+    },
+
     {
       header: {
         icon: 'settings',
@@ -277,7 +304,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     testID?: string
     onPress?: GenericFn
   }> = ({ title, value, accessibilityLabel, testID, onPress }) => (
-    <ScrollView horizontal style={styles.section} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView keyboardShouldPersistTaps="handled" style={styles.section} contentContainerStyle={{ flexGrow: 1 }}>
       <TouchableOpacity
         accessible={true}
         accessibilityLabel={accessibilityLabel}
@@ -293,6 +320,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <SectionList
+        keyboardShouldPersistTaps="handled"
         renderItem={({ item: { title, value, accessibilityLabel, testID, onPress } }) => (
           <SectionRow
             title={title}

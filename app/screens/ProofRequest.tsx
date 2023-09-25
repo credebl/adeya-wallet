@@ -15,7 +15,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import Button, { ButtonType } from '../components/buttons/Button'
 import { CredentialCard } from '../components/misc'
-import ConnectionAlert from '../components/misc/ConnectionAlert'
 import ConnectionImage from '../components/misc/ConnectionImage'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
 import { EventTypes } from '../constants'
@@ -55,6 +54,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
   const [proofItems, setProofItems] = useState<ProofCredentialItems[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [declineModalVisible, setDeclineModalVisible] = useState(false)
+  const [isDeclineEnable, setisDeclineEnable] = useState(true)
   const { ColorPallet, ListItems, TextTheme } = useTheme()
   const { RecordLoading } = useAnimatedComponents()
   const goalCode = useOutOfBandByConnectionId(proof?.connectionId ?? '')?.outOfBandInvitation.goalCode
@@ -210,7 +210,10 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
       })
   }, [])
 
-  const toggleDeclineModalVisible = () => setDeclineModalVisible(!declineModalVisible)
+  const toggleDeclineModalVisible = () => {
+    setDeclineModalVisible(!declineModalVisible)
+    setisDeclineEnable(true)
+  }
 
   const hasAvailableCredentials = (credDefId?: string): boolean => {
     const fields: Fields = {
@@ -279,6 +282,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
     try {
       if (agent && proof) {
         await agent.proofs.declineRequest({ proofRecordId: proof.id })
+        setisDeclineEnable(false)
         // sending a problem report fails if there is neither a connectionId nor a ~service decorator
         if (proof.connectionId) {
           await agent.proofs.sendProblemReport({ proofRecordId: proof.id, description: t('ProofRequest.Declined') })
@@ -340,9 +344,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
   const proofPageFooter = () => {
     return (
       <View style={[styles.pageFooter, styles.pageMargin]}>
-        {!loading && proofConnectionLabel && goalCode !== 'aries.vc.verify.once' ? (
-          <ConnectionAlert connectionID={proofConnectionLabel} />
-        ) : null}
+        {!loading && proofConnectionLabel && goalCode !== 'aries.vc.verify.once' ? null : null}
         <View style={styles.footerButton}>
           <Button
             title={t('Global.Share')}
@@ -392,6 +394,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
       <CommonRemoveModal
         usage={ModalUsage.ProofRequestDecline}
         visible={declineModalVisible}
+        disabled={!isDeclineEnable}
         onSubmit={handleDeclineTouched}
         onCancel={toggleDeclineModalVisible}
       />

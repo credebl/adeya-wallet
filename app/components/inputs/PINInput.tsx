@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react'
+import React, { useState, forwardRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { CodeField, Cursor, useClearByFocusCell } from 'react-native-confirmation-code-field'
@@ -23,10 +23,16 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
     // const accessible = accessibilityLabel && accessibilityLabel !== '' ? true : false
     const [PIN, setPIN] = useState('')
     const [showPIN, setShowPIN] = useState(false)
+    const onChangeText = (value: string) => {
+      onPINChanged && onPINChanged(value)
+      setPIN(value)
+    }
     const [props, getCellOnLayoutHandler] = useClearByFocusCell({
       value: PIN,
-      setValue: setPIN,
+      setValue: onChangeText,
     })
+    const [isVisible, setIsVisible] = useState(true)
+
     const { t } = useTranslation()
     const { TextTheme, PINInputTheme } = useTheme()
     const cellHeight = 48
@@ -67,6 +73,15 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
         paddingHorizontal: 10,
       },
     })
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        setIsVisible(prevVisible => !prevVisible)
+      }, 800)
+
+      return () => {
+        clearInterval(intervalId)
+      }
+    }, [])
 
     return (
       <View style={style.container}>
@@ -79,10 +94,7 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
             accessible
             value={PIN}
             rootStyle={style.codeFieldRoot}
-            onChangeText={(value: string) => {
-              onPINChanged && onPINChanged(value)
-              setPIN(value)
-            }}
+            onChangeText={onChangeText}
             cellCount={minPINLength}
             keyboardType="numeric"
             textContentType="password"
@@ -91,7 +103,7 @@ const PINInput: React.FC<PINInputProps & React.RefAttributes<TextInput>> = forwa
               if (symbol) {
                 child = showPIN ? symbol : '●'
               } else if (isFocused) {
-                child = <Cursor />
+                child = isVisible ? <Cursor /> : ''
               }
               return (
                 <View key={index} style={style.cell} onLayout={getCellOnLayoutHandler(index)}>

@@ -20,6 +20,7 @@ interface CommonRemoveModalProps {
   onSubmit?: GenericFn
   onCancel?: GenericFn
   visible?: boolean
+  disabled?: boolean
 }
 
 interface RemoveProps {
@@ -81,7 +82,7 @@ const BulletPoint: React.FC<BulletPointProps> = ({ text, textStyle }) => {
   )
 }
 
-const CommonRemoveModal: React.FC<CommonRemoveModalProps> = ({ usage, visible, onSubmit, onCancel }) => {
+const CommonRemoveModal: React.FC<CommonRemoveModalProps> = ({ usage, visible, disabled, onSubmit, onCancel }) => {
   if (!usage) {
     throw new Error('usage cannot be undefined')
   }
@@ -325,6 +326,7 @@ const CommonRemoveModal: React.FC<CommonRemoveModalProps> = ({ usage, visible, o
               accessibilityLabel={titleForAccessibilityLabel()}
               testID={testIdForConformationButton()}
               onPress={onSubmit}
+              disabled={disabled}
               buttonType={
                 usage === ModalUsage.ContactRemoveWithCredentials ? ButtonType.ModalPrimary : ButtonType.ModalCritical
               }
