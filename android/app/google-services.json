@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "386865711438",
+    "project_id": "adeya-dev",
+    "storage_bucket": "adeya-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386865711438:android:0f47392fa853dd6acef61f",
+        "android_client_info": {
+          "package_name": "id.credebl.adeya"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp8evwDYBweWgsnMOnY35_Yqd6QjHWsFM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
