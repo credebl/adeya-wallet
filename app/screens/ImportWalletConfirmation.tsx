@@ -152,7 +152,6 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
       setVerify(false)
     }
   }
-
   const VerifyPharase = async (seed: string) => {
     const result = seed.replaceAll(',', ' ')
     if (result) {

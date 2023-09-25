@@ -13,13 +13,11 @@ interface Props extends TextInputProps {
   limit: number
   handleChangeText: (text: string) => void
 }
-
 type ErrorState = {
   visible: boolean
   title: string
   description: string
 }
-
 const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...textInputProps }) => {
   const [focused, setFocused] = useState(false)
   const [characterCount, setCharacterCount] = useState(0)
