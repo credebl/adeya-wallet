@@ -111,9 +111,9 @@ const isMediatorCapable = async (agent: BifoldAgent): Promise<boolean | undefine
   })
 
   if (response.features && response.features?.length > 0) {
-    AsyncStorage.setItem('MEDIATOR_NOTIFICATION_SUPPORT', 'true')
+    await AsyncStorage.setItem('MEDIATOR_NOTIFICATION_SUPPORT', 'true')
     return true
-  } else AsyncStorage.setItem('MEDIATOR_NOTIFICATION_SUPPORT', 'false')
+  } else await AsyncStorage.setItem('MEDIATOR_NOTIFICATION_SUPPORT', 'false')
   return false
 }
 
