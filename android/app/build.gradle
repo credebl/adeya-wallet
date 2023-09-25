@@ -99,7 +99,7 @@ android {
                 storePassword MYAPP_UPLOAD_STORE_PASSWORD
                 keyAlias MYAPP_UPLOAD_KEY_ALIAS
                 keyPassword MYAPP_UPLOAD_KEY_PASSWORD
-            } 
+            }
         }
     }
     buildTypes {
@@ -119,7 +119,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-      implementation platform('com.google.firebase:firebase-bom:32.2.3') 
+      implementation platform('com.google.firebase:firebase-bom:32.2.3')
 
     implementation 'net.java.dev.jna:jna:5.2.0'
 
