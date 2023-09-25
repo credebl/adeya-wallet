@@ -39,18 +39,6 @@ export interface Authentication {
 export interface DeepLink {
   activeDeepLink?: string
 }
-export interface IASEnvironment {
-  name: string
-  iasAgentInviteUrl: string
-  iasPortalUrl: string
-}
-export interface Developer {
-  environment: IASEnvironment
-}
-
-export interface DismissPersonCredentialOffer {
-  personCredentialOfferDismissed: boolean
-}
 
 export interface State {
   onboarding: Onboarding
