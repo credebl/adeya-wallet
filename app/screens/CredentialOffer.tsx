@@ -1,6 +1,7 @@
 // TODO: export this from @aries-framework/anoncreds
+import { AnonCredsCredentialOffer } from '@aries-framework/anoncreds'
 import { AnonCredsCredentialMetadataKey } from '@aries-framework/anoncreds/build/utils/metadata'
-import { CredentialPreviewAttribute } from '@aries-framework/core'
+import { CredentialPreviewAttribute, JsonLdFormatDataCredentialDetail } from '@aries-framework/core'
 import { useCredentialById } from '@aries-framework/react-hooks'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
@@ -9,11 +10,11 @@ import { DeviceEventEmitter, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Button, { ButtonType } from '../components/buttons/Button'
-import ConnectionAlert from '../components/misc/ConnectionAlert'
 import ConnectionImage from '../components/misc/ConnectionImage'
 import CredentialCard from '../components/misc/CredentialCard'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
 import Record from '../components/record/Record'
+import W3CCredentialRecord from '../components/record/W3CCredentialRecord'
 import { EventTypes } from '../constants'
 import { useAnimatedComponents } from '../contexts/animated-components'
 import { useConfiguration } from '../contexts/configuration'
@@ -22,9 +23,15 @@ import { useTheme } from '../contexts/theme'
 import { BifoldError } from '../types/error'
 import { TabStacks, NotificationStackParams, Screens } from '../types/navigators'
 import { CardLayoutOverlay11, CredentialOverlay } from '../types/oca'
+import { W3CCredentialAttributeField } from '../types/record'
 import { ModalUsage } from '../types/remove'
 import { useAppAgent } from '../utils/agent'
-import { getCredentialIdentifiers, isValidAnonCredsCredential } from '../utils/credential'
+import {
+  buildFieldsFromJSONLDCredential,
+  formatCredentialSubject,
+  getCredentialIdentifiers,
+  isValidAnonCredsCredential,
+} from '../utils/credential'
 import { getCredentialConnectionLabel } from '../utils/helpers'
 import { buildFieldsFromAnonCredsCredential } from '../utils/oca'
 import { testIdWithKey } from '../utils/testable'
@@ -52,6 +59,8 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
   const [declineModalVisible, setDeclineModalVisible] = useState(false)
   const [overlay, setOverlay] = useState<CredentialOverlay<CardLayoutOverlay11>>({ presentationFields: [] })
   const credential = useCredentialById(credentialId)
+  const [jsonLdOffer, setJsonLdOffer] = useState<JsonLdFormatDataCredentialDetail>()
+  const [tables, setTables] = useState<W3CCredentialAttributeField[]>([])
   const credentialConnectionLabel = getCredentialConnectionLabel(credential)
 
   const styles = StyleSheet.create({
@@ -65,6 +74,9 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
     },
     footerButton: {
       paddingTop: 10,
+    },
+    connectionLabel: {
+      fontWeight: 'bold',
     },
   })
 
@@ -94,13 +106,20 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
     const updateCredentialPreview = async () => {
       const { ...formatData } = await agent?.credentials.getFormatData(credential.id)
       const { offer, offerAttributes } = formatData
-      const offerData = offer?.anoncreds ?? offer?.indy
+      let offerData
 
-      if (offerData) {
+      if (offer?.anoncreds || offer?.indy) {
+        offerData = (offer?.anoncreds || offer?.indy) as AnonCredsCredentialOffer
         credential.metadata.add(AnonCredsCredentialMetadataKey, {
           schemaId: offerData.schema_id,
           credentialDefinitionId: offerData.cred_def_id,
         })
+      }
+
+      if (offer?.jsonld) {
+        setJsonLdOffer(offer?.jsonld)
+        const jsonLdValues = formatCredentialSubject(offer?.jsonld.credential.credentialSubject)
+        setTables(jsonLdValues)
       }
 
       if (offerAttributes) {
@@ -110,7 +129,9 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
 
     const resolvePresentationFields = async () => {
       const identifiers = getCredentialIdentifiers(credential)
-      const attributes = buildFieldsFromAnonCredsCredential(credential)
+      const attributes = jsonLdOffer
+        ? buildFieldsFromJSONLDCredential(jsonLdOffer.credential.credentialSubject)
+        : buildFieldsFromAnonCredsCredential(credential)
       const fields = await OCABundleResolver.presentationFields({ identifiers, attributes, language: i18n.language })
       return { fields }
     }
@@ -137,9 +158,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
       if (!(agent && credential && assertConnectedNetwork())) {
         return
       }
-
       setAcceptModalVisible(true)
-
       await agent.credentials.acceptOffer({ credentialRecordId: credential.id })
     } catch (err: unknown) {
       setButtonsVisible(true)
@@ -172,6 +191,25 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
       <>
         <ConnectionImage connectionId={credential?.connectionId} />
         <View style={styles.headerTextContainer}>
+          <Text style={[styles.headerText]} testID={testIdWithKey('HeaderText')}>
+            <Text style={styles.connectionLabel}>{credentialConnectionLabel || t('ContactDetails.AContact')}</Text>{' '}
+            {t('CredentialOffer.IsOfferingYouACredential')}
+          </Text>
+        </View>
+        {!loading && credential && (
+          <View style={{ marginHorizontal: 15, marginBottom: 16 }}>
+            <CredentialCard credential={credential} />
+          </View>
+        )}
+      </>
+    )
+  }
+
+  const jsonLdHeader = () => {
+    return (
+      <>
+        <ConnectionImage connectionId={credential?.connectionId} />
+        <View style={styles.headerTextContainer}>
           <Text style={styles.headerText} testID={testIdWithKey('HeaderText')}>
             <Text>{credentialConnectionLabel || t('ContactDetails.AContact')}</Text>{' '}
             {t('CredentialOffer.IsOfferingYouACredential')}
@@ -179,7 +217,11 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
         </View>
         {!loading && credential && (
           <View style={{ marginHorizontal: 15, marginBottom: 16 }}>
-            <CredentialCard credential={credential} />
+            <CredentialCard
+              credential={credential}
+              connectionLabel={credentialConnectionLabel}
+              schemaId={jsonLdOffer?.credential.type[1]}
+            />
           </View>
         )}
       </>
@@ -196,7 +238,6 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
           backgroundColor: ColorPallet.brand.secondaryBackground,
         }}>
         {loading ? <RecordLoading /> : null}
-        <ConnectionAlert connectionID={credentialConnectionLabel} />
         <View style={styles.footerButton}>
           <Button
             title={t('Global.Accept')}
@@ -223,7 +264,17 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
 
   return (
     <SafeAreaView style={{ flexGrow: 1 }} edges={['bottom', 'left', 'right']}>
-      <Record fields={overlay.presentationFields || []} header={header} footer={footer} />
+      {jsonLdOffer ? (
+        <W3CCredentialRecord
+          tables={tables}
+          fields={overlay.presentationFields || []}
+          hideFieldValues={false}
+          header={jsonLdHeader}
+          footer={footer}
+        />
+      ) : (
+        <Record fields={overlay.presentationFields || []} header={header} footer={footer} />
+      )}
       <CredentialOfferAccept visible={acceptModalVisible} credentialId={credentialId} />
       <CommonRemoveModal
         usage={ModalUsage.CredentialOfferDecline}
