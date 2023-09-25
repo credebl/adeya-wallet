@@ -100,13 +100,6 @@ const PINCreate: React.FC<PINCreateProps> = ({ setAuthenticated }) => {
             routes: [{ name: Screens.NameWallet }],
           }),
         )
-      } else {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: Screens.UseBiometry }],
-          }),
-        )
       }
     } catch (e) {
       // TODO:(jl)

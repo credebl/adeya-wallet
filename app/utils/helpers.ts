@@ -25,8 +25,9 @@ import {
 import { useConnectionById } from '@aries-framework/react-hooks'
 import { Buffer } from 'buffer'
 import moment from 'moment'
-import { ParsedUrl, parseUrl } from 'query-string'
+import queryString from 'query-string'
 import { Dispatch, ReactNode, SetStateAction } from 'react'
+import { uniqueNamesGenerator, Config, names } from 'unique-names-generator'
 
 import { domain } from '../constants'
 import { i18n } from '../localization/index'
@@ -39,6 +40,21 @@ import { parseCredDefFromId } from './cred-def'
 
 export { parsedCredDefName } from './cred-def'
 export { parsedSchema } from './schema'
+
+export enum Orientation {
+  Landscape = 'landscape',
+  Portrait = 'portrait',
+}
+
+export const orientation = (width: number, height: number) => {
+  return width > height ? Orientation.Landscape : Orientation.Portrait
+}
+
+export const isTablet = (width: number, height: number) => {
+  const aspectRatio = height / width
+
+  return aspectRatio < 1.6 // assume 4:3 for tablets
+}
 
 /**
  * Generates a numerical hash based on a given string
@@ -168,8 +184,11 @@ export function getConnectionName(connection: ConnectionRecord | void): string |
   return connection?.alias || connection?.theirLabel
 }
 
-export function getCredentialConnectionLabel(credential?: CredentialExchangeRecord) {
+export function getCredentialConnectionLabel(credential?: CredentialExchangeRecord, connectionLabel?: string) {
   if (!credential) {
+    if (connectionLabel) {
+      return connectionLabel
+    }
     return ''
   }
 
@@ -213,7 +232,7 @@ export function firstValidCredential(
 }
 
 export const getOobDeepLink = async (url: string, agent: Agent | undefined): Promise<any> => {
-  const queryParams = parseUrl(url).query
+  const queryParams = queryString.parseUrl(url).query
   const b64Message = queryParams['d_m'] ?? queryParams['c_i']
   const rawmessage = Buffer.from(b64Message as string, 'base64').toString()
   const message = JSON.parse(rawmessage)
@@ -516,9 +535,9 @@ export const createTempConnectionInvitation = async (agent: Agent | undefined, t
  * @param urlString string to parse
  * @returns ParsedUur object if success or undefined
  */
-export const getUrl = (urlString: string): ParsedUrl | undefined => {
+export const getUrl = (urlString: string): queryString.ParsedUrl | undefined => {
   try {
-    return parseUrl(urlString)
+    return queryString.parseUrl(urlString)
   } catch (e) {
     return undefined
   }
@@ -639,9 +658,18 @@ export function getMessageEventRole(record: BasicMessageRecord) {
 }
 
 export function generateRandomWalletName() {
-  let name = 'My Wallet - '
-  for (let i = 0; i < 4; i++) {
-    name = name.concat(Math.floor(Math.random() * 10).toString())
+  let name: number | string = ''
+  const separator: string = '-'
+  const config: Config = {
+    dictionaries: [names],
+    separator: '-',
   }
+  const characterName: string = uniqueNamesGenerator(config)
+  const length = 10
+  name = characterName.concat(separator).concat(
+    Math.round(Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))
+      .toString(36)
+      .slice(1),
+  )
   return name
 }
