@@ -26,7 +26,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>adeyawallet</string>
+			<string>id.credebl.adeya</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>didcomm</string>
