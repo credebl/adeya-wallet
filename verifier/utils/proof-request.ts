@@ -1,3 +1,4 @@
+import { AdeyaAgent } from '@adeya/ssi'
 import {
   AnonCredsRequestedAttribute,
   AnonCredsRequestedPredicate,
@@ -6,7 +7,6 @@ import {
 } from '@aries-framework/anoncreds'
 import { Agent, AgentMessage, AutoAcceptProof, ProofExchangeRecord } from '@aries-framework/core'
 
-import { BifoldAgent } from '../../app/utils/agent'
 import { ProofRequestTemplate, ProofRequestType } from '../types/proof-reqeust-template'
 
 const protocolVersion = 'v2'
@@ -97,7 +97,7 @@ export interface CreateProofRequestInvitationResult {
  * Create connectionless proof request invitation for provided template
  * */
 export const createConnectionlessProofRequestInvitation = async (
-  agent: BifoldAgent,
+  agent: AdeyaAgent,
   template: ProofRequestTemplate,
   customPredicateValues?: Record<string, Record<string, number>>,
 ): Promise<CreateProofRequestInvitationResult | undefined> => {
@@ -131,7 +131,7 @@ export interface SendProofRequestResult {
  * Build Proof Request for provided template and send it to provided connection
  * */
 export const sendProofRequest = async (
-  agent: BifoldAgent,
+  agent: AdeyaAgent,
   template: ProofRequestTemplate,
   connectionId: string,
   customPredicateValues?: Record<string, Record<string, number>>,

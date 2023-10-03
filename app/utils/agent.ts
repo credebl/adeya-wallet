@@ -1,3 +1,4 @@
+import { useAdeyaAgent } from '@adeya/ssi'
 import {
   AnonCredsModule,
   LegacyIndyCredentialFormatService,
@@ -10,7 +11,6 @@ import {
 import { AnonCredsRsModule } from '@aries-framework/anoncreds-rs'
 import { AskarModule } from '@aries-framework/askar'
 import {
-  Agent,
   AutoAcceptCredential,
   ConnectionsModule,
   CredentialsModule,
@@ -24,7 +24,6 @@ import {
 } from '@aries-framework/core'
 import { IndyVdrAnonCredsRegistry, IndyVdrModule, IndyVdrPoolConfig } from '@aries-framework/indy-vdr'
 import { PushNotificationsFcmModule } from '@aries-framework/push-notifications'
-import { useAgent } from '@aries-framework/react-hooks'
 import { anoncreds } from '@hyperledger/anoncreds-react-native'
 import { ariesAskar } from '@hyperledger/aries-askar-react-native'
 import { indyVdr } from '@hyperledger/indy-vdr-react-native'
@@ -33,8 +32,6 @@ interface GetAgentModulesOptions {
   indyNetworks: IndyVdrPoolConfig[]
   mediatorInvitationUrl?: string
 }
-
-export type BifoldAgent = Agent<ReturnType<typeof getAgentModules>>
 
 export function getAgentModules({ indyNetworks, mediatorInvitationUrl }: GetAgentModulesOptions) {
   const indyCredentialFormat = new LegacyIndyCredentialFormatService()
@@ -84,22 +81,10 @@ export function getAgentModules({ indyNetworks, mediatorInvitationUrl }: GetAgen
   }
 }
 
-interface MyAgentContextInterface {
-  loading: boolean
-  agent?: BifoldAgent
-  setAgent: (agent?: BifoldAgent) => void
-}
+// interface MyAgentContextInterface {
+//   loading: boolean
+//   agent?: AdeyaAgent
+//   setAgent: (agent?: AdeyaAgent) => void
+// }
 
-export const useAppAgent = useAgent as () => MyAgentContextInterface
-
-export const createLinkSecretIfRequired = async (agent: Agent) => {
-  // If we don't have any link secrets yet, we will create a
-  // default link secret that will be used for all anoncreds
-  // credential requests.
-  const linkSecretIds = await agent.modules.anoncreds.getLinkSecretIds()
-  if (linkSecretIds.length === 0) {
-    await agent.modules.anoncreds.createLinkSecret({
-      setAsDefault: true,
-    })
-  }
-}
+export const useAppAgent = useAdeyaAgent

@@ -2,7 +2,6 @@
 import type { OnboardingStyleSheet } from './screens/Onboarding'
 
 import { Agent } from '@aries-framework/core'
-import AgentProvider from '@aries-framework/react-hooks'
 
 import indyLedgers from '../configs/ledgers/indy'
 
@@ -57,7 +56,7 @@ export { createStyles } from './screens/OnboardingPages'
 export { statusBarStyleForColor, StatusBarStyles } from './utils/luminance'
 export { BifoldError } from './types/error'
 export { EventTypes } from './constants'
-export { createLinkSecretIfRequired, getAgentModules } from './utils/agent'
+export { getAgentModules } from './utils/agent'
 
 export type { AnimatedComponents } from './animated-components'
 export type {
@@ -94,7 +93,6 @@ export {
   indyLedgers,
   Agent,
   CommonUtilProvider,
-  AgentProvider,
   AuthProvider,
   NetworkProvider,
   TourProvider,

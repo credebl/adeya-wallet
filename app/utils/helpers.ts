@@ -1,3 +1,4 @@
+import { useConnectionById } from '@adeya/ssi'
 import {
   AnonCredsCredentialsForProofRequest,
   AnonCredsProofFormat,
@@ -16,14 +17,13 @@ import {
   BasicMessageRecord,
   ProofExchangeRecord,
   ProofState,
+  Buffer,
 } from '@aries-framework/core'
 import { BasicMessageRole } from '@aries-framework/core/build/modules/basic-messages/BasicMessageRole'
 import {
   GetCredentialsForRequestReturn,
   ProofFormatDataMessagePayload,
 } from '@aries-framework/core/build/modules/proofs/protocol/ProofProtocolOptions'
-import { useConnectionById } from '@aries-framework/react-hooks'
-import { Buffer } from 'buffer'
 import moment from 'moment'
 import queryString from 'query-string'
 import { Dispatch, ReactNode, SetStateAction } from 'react'

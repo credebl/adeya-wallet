@@ -1,3 +1,4 @@
+import { useAdeyaAgent } from '@adeya/ssi'
 import {
   Agent,
   ConsoleLogger,
@@ -6,7 +7,6 @@ import {
   HttpOutboundTransport,
   WsOutboundTransport,
 } from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
 import { agentDependencies } from '@aries-framework/react-native'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
@@ -46,7 +46,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
   const { getWalletCredentials, checkImportWallet } = useAuth()
   const [verify, setVerify] = useState(false)
   const [selectedFilePath, setSelectedFilePath] = useState('')
-  const { setAgent } = useAgent()
+  const { setAgent } = useAdeyaAgent()
   const { height } = Dimensions.get('window')
   const { width } = Dimensions.get('window')
 

@@ -1,12 +1,12 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
+import { useConnectionById, useCredentials, useProofById } from '@adeya/ssi'
 import {
   AnonCredsCredentialsForProofRequest,
   AnonCredsRequestedAttributeMatch,
   AnonCredsRequestedPredicateMatch,
 } from '@aries-framework/anoncreds'
 import { ProofExchangeRecord } from '@aries-framework/core'
-import { useConnectionById, useCredentials, useProofById } from '@aries-framework/react-hooks'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, FlatList, StyleSheet, Text, View } from 'react-native'

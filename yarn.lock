@@ -7,6 +7,19 @@
   resolved "https://registry.npmjs.org/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
+"@adeya/ssi@file:../adeya-sdk/packages/ssi/adeya-ssi-0.0.1-dev-6.tgz":
+  version "0.0.1-dev-6"
+  resolved "file:../adeya-sdk/packages/ssi/adeya-ssi-0.0.1-dev-6.tgz#d5417bb455e26333717c67c92dfa9633b1cec54f"
+  dependencies:
+    "@aries-framework/anoncreds" "0.4.1"
+    "@aries-framework/anoncreds-rs" "0.4.1"
+    "@aries-framework/askar" "0.4.1"
+    "@aries-framework/core" "0.4.1"
+    "@aries-framework/indy-vdr" "0.4.1"
+    "@aries-framework/push-notifications" "^0.6.0"
+    "@aries-framework/react-hooks" "0.5.0"
+    "@aries-framework/react-native" "0.4.1"
+
 "@ampproject/remapping@^2.2.0":
   version "2.2.1"
   resolved "https://registry.npmjs.org/@ampproject/remapping/-/remapping-2.2.1.tgz"
@@ -15,7 +28,7 @@
     "@jridgewell/gen-mapping" "^0.3.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@aries-framework/anoncreds-rs@^0.4.0":
+"@aries-framework/anoncreds-rs@0.4.1", "@aries-framework/anoncreds-rs@^0.4.0":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@aries-framework/anoncreds-rs/-/anoncreds-rs-0.4.1.tgz#7a4dfb30075df6b40ea3cab012478e8d2efbce41"
   integrity sha512-aacZV6Fm31Vzc9+nMltqNYHKMiBK9ZaiNhX9QTSEF5uBQOxA+BnJ9ZRfVPfGY3aLP7AkAbGeuE5pa/svNfP5dQ==
@@ -38,7 +51,7 @@
     class-validator "0.14.0"
     reflect-metadata "^0.1.13"
 
-"@aries-framework/askar@^0.4.0":
+"@aries-framework/askar@0.4.1", "@aries-framework/askar@^0.4.0":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@aries-framework/askar/-/askar-0.4.1.tgz#16c2664ad88de90702464f9099125f4f588a6c34"
   integrity sha512-GGdo/P/1F15maLfFJuv/VbNY9eKHQLfJ8bZ1sTyFt7e8EqGInxNqoO/4tzJFFYze0dU71NgpPTAcmoh8gmcQ7A==
@@ -83,7 +96,7 @@
     varint "^6.0.0"
     web-did-resolver "^2.0.21"
 
-"@aries-framework/indy-vdr@^0.4.0":
+"@aries-framework/indy-vdr@0.4.1", "@aries-framework/indy-vdr@^0.4.0":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@aries-framework/indy-vdr/-/indy-vdr-0.4.1.tgz#823ccc6148a9b63ee0462e05d83b3f65e86d6ef1"
   integrity sha512-qnWM0/8kZOw3j6Czci4sJULmfO5FVlTRmYQ9XKiJsaR9hqcQYs7fRbJdOdZG9NUfLxOnNd/0ZObCj8R7sz4WfQ==
@@ -101,14 +114,26 @@
     reflect-metadata "^0.1.13"
     tsyringe "^4.6.0"
 
-"@aries-framework/react-hooks@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.npmjs.org/@aries-framework/react-hooks/-/react-hooks-0.4.2.tgz"
-  integrity sha512-d+v0PGAaF4ge5VSgFsUUcEanLeqB0pQwWBeH/i2MIKVWvZe5Tfh232orehPaGn90w+RUXnIwF+sF8wD/pqfIdw==
+"@aries-framework/question-answer@^0.4.0":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@aries-framework/question-answer/-/question-answer-0.4.1.tgz#f9040ea06eb9cd731a376b71c4b5603c5926fb9f"
+  integrity sha512-6AZ2E5A1HVXQ2Ss2BZPxyMzncWTp6giCiGh2FURXNoHHXt46K6x1h8rDqNmNv4Hvp+/ciurG2CFlmL2sulFteg==
   dependencies:
+    "@aries-framework/core" "0.4.1"
+    class-transformer "0.5.1"
+    class-validator "0.14.0"
     rxjs "^7.2.0"
 
-"@aries-framework/react-native@^0.4.0":
+"@aries-framework/react-hooks@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@aries-framework/react-hooks/-/react-hooks-0.5.0.tgz#65d37f1c62ac487dc54c51f31bc34c4ad5119500"
+  integrity sha512-5T0sRKfEZGF1q4WjPrFfkB68DdmYNsGIt0QyG7dSe00KaNg0U5+Gdh3xIWgw2ryinvTgg3tvUhN5Zl2BMx/hag==
+  dependencies:
+    "@aries-framework/question-answer" "^0.4.0"
+    "@types/node-fetch" "^2"
+    rxjs "^7.2.0"
+
+"@aries-framework/react-native@0.4.1", "@aries-framework/react-native@^0.4.0":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@aries-framework/react-native/-/react-native-0.4.1.tgz#72e9bbf810161146b1a5b995cf2dd59b7e90fa95"
   integrity sha512-ieKz6jA6bOadhibNXghzAZMC6/mu6c06eS4zx4Ubw3vtYg0izuqcEKfKSfLMRAymL2eYch7JsW5VO3OAzPShIw==
@@ -1337,7 +1362,7 @@
 
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"
-  resolved "https://registry.npmjs.org/@egjs/hammerjs/-/hammerjs-2.0.17.tgz"
+  resolved "https://registry.yarnpkg.com/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
   integrity sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==
   dependencies:
     "@types/hammerjs" "^2.0.36"
@@ -2494,9 +2519,9 @@
     "@types/node" "*"
 
 "@types/hammerjs@^2.0.36":
-  version "2.0.41"
-  resolved "https://registry.npmjs.org/@types/hammerjs/-/hammerjs-2.0.41.tgz"
-  integrity sha512-ewXv/ceBaJprikMcxCmWU1FKyMAQ2X7a9Gtmzw8fcg2kIePI1crERDM818W+XYrxqdBBOdlf2rm137bU+BltCA==
+  version "2.0.42"
+  resolved "https://registry.yarnpkg.com/@types/hammerjs/-/hammerjs-2.0.42.tgz#d7a53edbc51b2c13a9a759c45d7b5e61243d7dba"
+  integrity sha512-Xxk14BrwHnGi0xlURPRb+Y0UNn2w3cTkeFm7pKMsYOaNgH/kabbJLhcBoNIodwsbTz7Z8KcWjtDvlGH0nc0U9w==
 
 "@types/hoist-non-react-statics@^3.3.1":
   version "3.3.1"
@@ -2567,6 +2592,14 @@
   version "4.14.196"
   resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.196.tgz"
   integrity sha512-22y3o88f4a94mKljsZcanlNWPzO0uBsBdzLAngf2tp533LzZcQzb6+eZPJ+vCTt+bqF2XnvT9gejTLsAcJAJyQ==
+
+"@types/node-fetch@^2":
+  version "2.6.6"
+  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.6.6.tgz#b72f3f4bc0c0afee1c0bc9cff68e041d01e3e779"
+  integrity sha512-95X8guJYhfqiuVVhRFxVQcf4hW/2bCuoPwDasMf/531STFoNoWTT7YDnWdXHEZKqAGUigmpG31r2FE70LwnzJw==
+  dependencies:
+    "@types/node" "*"
+    form-data "^4.0.0"
 
 "@types/node@*":
   version "20.4.5"
@@ -8252,9 +8285,9 @@ react-native-fs@^2.20.0:
     utf8 "^3.0.0"
 
 react-native-gesture-handler@^2.12.1:
-  version "2.12.1"
-  resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.12.1.tgz"
-  integrity sha512-deqh36bw82CFUV9EC4tTo2PP1i9HfCOORGS3Zmv71UYhEZEHkzZv18IZNPB+2Awzj45vLIidZxGYGFxHlDSQ5A==
+  version "2.13.1"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.13.1.tgz#bad89caacd62c4560b9953b02f85f37ee42d5d4c"
+  integrity sha512-hW454X7sjuiBN+lobqw63pmT3boAmTl5OP6zQLq83iEe4T6PcHZ9lxzgCrebtgmutY8cJfq9rM2dOUVh9WBcww==
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"

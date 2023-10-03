@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { AdeyaAgent } from '@adeya/ssi'
 import { AnonCredsProof, AnonCredsProofRequest } from '@aries-framework/anoncreds'
 import { Agent, ProofExchangeRecord, ProofState } from '@aries-framework/core'
 
-import { BifoldAgent } from '../../app/utils/agent'
 import { ProofMetadata } from '../types/metadata'
 import {
   CredentialSharedProofData,
@@ -130,7 +130,7 @@ export const groupSharedProofDataByCredential = (data: ParsedAnonCredsProof): Gr
 /*
  * Retrieve proof details from AFJ record
  * */
-export const getProofData = async (agent: BifoldAgent, recordId: string): Promise<ParsedAnonCredsProof | undefined> => {
+export const getProofData = async (agent: AdeyaAgent, recordId: string): Promise<ParsedAnonCredsProof | undefined> => {
   const data = await agent.proofs.getFormatData(recordId)
   if (data.request?.anoncreds && data.presentation?.anoncreds) {
     return parseAnonCredsProof(data.request.anoncreds, data.presentation.anoncreds)

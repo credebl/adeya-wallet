@@ -1,7 +1,7 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
+import { useAdeyaAgent } from '@adeya/ssi'
 import { CredentialExchangeRecord, W3cCredentialRecord } from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
@@ -40,7 +40,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   }
 
   const { credential } = route?.params
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   const { t, i18n } = useTranslation()
   const { TextTheme, ColorPallet } = useTheme()
   const { OCABundleResolver } = useConfiguration()

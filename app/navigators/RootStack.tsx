@@ -1,4 +1,4 @@
-import { useAgent } from '@aries-framework/react-hooks'
+import { useAdeyaAgent } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { createStackNavigator, StackCardStyleInterpolator, StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useRef, useState } from 'react'
@@ -37,7 +37,7 @@ import { createDefaultStackOptions } from './defaultStackOptions'
 const RootStack: React.FC = () => {
   const [state, dispatch] = useStore()
   const { removeSavedWalletSecret } = useAuth()
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   const appState = useRef(AppState.currentState)
   const [backgroundTime, setBackgroundTime] = useState<number | undefined>(undefined)
   const [prevAppStateVisible, setPrevAppStateVisible] = useState<string>('')
