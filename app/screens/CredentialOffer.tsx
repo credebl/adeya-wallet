@@ -1,4 +1,4 @@
-import { useCredentialById, AnonCredsCredentialOffer, AnonCredsCredentialMetadataKey } from '@adeya/ssi'
+import { useCredentialById, AnonCredsCredentialOffer, AnonCredsCredentialMetadataKey, useAdeyaAgent } from '@adeya/ssi'
 import { CredentialPreviewAttribute, JsonLdFormatDataCredentialDetail } from '@aries-framework/core'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
@@ -22,7 +22,6 @@ import { TabStacks, NotificationStackParams, Screens } from '../types/navigators
 import { CardLayoutOverlay11, CredentialOverlay } from '../types/oca'
 import { W3CCredentialAttributeField } from '../types/record'
 import { ModalUsage } from '../types/remove'
-import { useAppAgent } from '../utils/agent'
 import {
   buildFieldsFromJSONLDCredential,
   formatCredentialSubject,
@@ -44,7 +43,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
 
   const { credentialId } = route.params
 
-  const { agent } = useAppAgent()
+  const { agent } = useAdeyaAgent()
   const { t, i18n } = useTranslation()
   const { ListItems, ColorPallet } = useTheme()
   const { RecordLoading } = useAnimatedComponents()

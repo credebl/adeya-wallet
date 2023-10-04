@@ -1,4 +1,4 @@
-import { IndyVdrPoolConfig } from '@aries-framework/indy-vdr'
+import { IndyVdrPoolConfig } from '@adeya/ssi'
 
 import _ledgers from './ledgers.json'
 
