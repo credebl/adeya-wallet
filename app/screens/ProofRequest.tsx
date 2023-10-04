@@ -1,11 +1,13 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { useConnectionById, useCredentials, useProofById } from '@adeya/ssi'
 import {
+  useConnectionById,
+  useCredentials,
+  useProofById,
   AnonCredsCredentialsForProofRequest,
   AnonCredsRequestedAttributeMatch,
   AnonCredsRequestedPredicateMatch,
-} from '@aries-framework/anoncreds'
+} from '@adeya/ssi'
 import { ProofExchangeRecord } from '@aries-framework/core'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'

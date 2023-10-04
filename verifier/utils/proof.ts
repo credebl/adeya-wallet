@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { AdeyaAgent } from '@adeya/ssi'
-import { AnonCredsProof, AnonCredsProofRequest } from '@aries-framework/anoncreds'
-import { Agent, ProofExchangeRecord, ProofState } from '@aries-framework/core'
+import { AdeyaAgent, AnonCredsProof, AnonCredsProofRequest } from '@adeya/ssi'
+import { ProofExchangeRecord, ProofState } from '@aries-framework/core'
 
 import { ProofMetadata } from '../types/metadata'
 import {
@@ -158,7 +157,7 @@ export const isPresentationFailed = (record: ProofExchangeRecord) => {
 /*
  * Mark Proof record as viewed
  * */
-export const markProofAsViewed = async (agent: Agent, record: ProofExchangeRecord) => {
+export const markProofAsViewed = async (agent: AdeyaAgent, record: ProofExchangeRecord) => {
   record.metadata.set(ProofMetadata.customMetadata, { ...record.metadata.data.customMetadata, details_seen: true })
   return agent.proofs.update(record)
 }
@@ -166,7 +165,7 @@ export const markProofAsViewed = async (agent: Agent, record: ProofExchangeRecor
 /*
  * Add template reference to Proof Exchange record
  * */
-export const linkProofWithTemplate = async (agent: Agent, record: ProofExchangeRecord, templateId: string) => {
+export const linkProofWithTemplate = async (agent: AdeyaAgent, record: ProofExchangeRecord, templateId: string) => {
   record.metadata.set(ProofMetadata.customMetadata, {
     ...record.metadata.data.customMetadata,
     proof_request_template_id: templateId,

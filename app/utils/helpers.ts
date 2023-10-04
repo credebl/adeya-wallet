@@ -1,5 +1,5 @@
-import { useConnectionById } from '@adeya/ssi'
 import {
+  useConnectionById,
   AnonCredsCredentialsForProofRequest,
   AnonCredsProofFormat,
   AnonCredsProofFormatService,
@@ -8,7 +8,7 @@ import {
   AnonCredsRequestedPredicateMatch,
   LegacyIndyProofFormat,
   LegacyIndyProofFormatService,
-} from '@aries-framework/anoncreds'
+} from '@adeya/ssi'
 import {
   Agent,
   ConnectionRecord,

@@ -1,10 +1,10 @@
-import { AdeyaAgent } from '@adeya/ssi'
 import {
+  AdeyaAgent,
   AnonCredsRequestedAttribute,
   AnonCredsRequestedPredicate,
   LegacyIndyProofRequest,
   V1RequestPresentationMessage,
-} from '@aries-framework/anoncreds'
+} from '@adeya/ssi'
 import { Agent, AgentMessage, AutoAcceptProof, ProofExchangeRecord } from '@aries-framework/core'
 
 import { ProofRequestTemplate, ProofRequestType } from '../types/proof-reqeust-template'

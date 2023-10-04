@@ -1,5 +1,4 @@
-import { useAdeyaAgent } from '@adeya/ssi'
-import { V1RequestPresentationMessage } from '@aries-framework/anoncreds'
+import { useAdeyaAgent, V1RequestPresentationMessage } from '@adeya/ssi'
 import { CredentialExchangeRecord, ProofExchangeRecord, ProofState } from '@aries-framework/core'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'

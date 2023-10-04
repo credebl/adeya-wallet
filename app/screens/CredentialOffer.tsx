@@ -1,7 +1,4 @@
-// TODO: export this from @aries-framework/anoncreds
-import { useCredentialById } from '@adeya/ssi'
-import { AnonCredsCredentialOffer } from '@aries-framework/anoncreds'
-import { AnonCredsCredentialMetadataKey } from '@aries-framework/anoncreds/build/utils/metadata'
+import { useCredentialById, AnonCredsCredentialOffer, AnonCredsCredentialMetadataKey } from '@adeya/ssi'
 import { CredentialPreviewAttribute, JsonLdFormatDataCredentialDetail } from '@aries-framework/core'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'

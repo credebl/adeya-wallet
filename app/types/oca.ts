@@ -1,4 +1,3 @@
-// TODO: export this from @aries-framework/anoncreds
 import startCase from 'lodash.startcase'
 
 import { parseCredDefFromId } from '../utils/cred-def'
