@@ -1,7 +1,7 @@
 import type { W3cCredentialRecord } from '@aries-framework/core'
 
+import { useAdeyaAgent, useCredentialByState } from '@adeya/ssi'
 import { CredentialExchangeRecord, CredentialState } from '@aries-framework/core'
-import { useAgent, useCredentialByState } from '@aries-framework/react-hooks'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
@@ -20,7 +20,7 @@ interface EnhancedW3CRecord extends W3cCredentialRecord {
 
 const ListCredentials: React.FC = () => {
   const { t } = useTranslation()
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   const { credentialListOptions: CredentialListOptions, credentialEmptyList: CredentialEmptyList } = useConfiguration()
   const credentials = [
     ...useCredentialByState(CredentialState.CredentialReceived),

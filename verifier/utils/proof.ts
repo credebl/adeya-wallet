@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { AnonCredsProof, AnonCredsProofRequest } from '@aries-framework/anoncreds'
-import { Agent, ProofExchangeRecord, ProofState } from '@aries-framework/core'
+import { AdeyaAgent, AnonCredsProof, AnonCredsProofRequest } from '@adeya/ssi'
+import { ProofExchangeRecord, ProofState } from '@aries-framework/core'
 
-import { BifoldAgent } from '../../app/utils/agent'
 import { ProofMetadata } from '../types/metadata'
 import {
   CredentialSharedProofData,
@@ -130,7 +129,7 @@ export const groupSharedProofDataByCredential = (data: ParsedAnonCredsProof): Gr
 /*
  * Retrieve proof details from AFJ record
  * */
-export const getProofData = async (agent: BifoldAgent, recordId: string): Promise<ParsedAnonCredsProof | undefined> => {
+export const getProofData = async (agent: AdeyaAgent, recordId: string): Promise<ParsedAnonCredsProof | undefined> => {
   const data = await agent.proofs.getFormatData(recordId)
   if (data.request?.anoncreds && data.presentation?.anoncreds) {
     return parseAnonCredsProof(data.request.anoncreds, data.presentation.anoncreds)
@@ -158,7 +157,7 @@ export const isPresentationFailed = (record: ProofExchangeRecord) => {
 /*
  * Mark Proof record as viewed
  * */
-export const markProofAsViewed = async (agent: Agent, record: ProofExchangeRecord) => {
+export const markProofAsViewed = async (agent: AdeyaAgent, record: ProofExchangeRecord) => {
   record.metadata.set(ProofMetadata.customMetadata, { ...record.metadata.data.customMetadata, details_seen: true })
   return agent.proofs.update(record)
 }
@@ -166,7 +165,7 @@ export const markProofAsViewed = async (agent: Agent, record: ProofExchangeRecor
 /*
  * Add template reference to Proof Exchange record
  * */
-export const linkProofWithTemplate = async (agent: Agent, record: ProofExchangeRecord, templateId: string) => {
+export const linkProofWithTemplate = async (agent: AdeyaAgent, record: ProofExchangeRecord, templateId: string) => {
   record.metadata.set(ProofMetadata.customMetadata, {
     ...record.metadata.data.customMetadata,
     proof_request_template_id: templateId,

@@ -1,3 +1,4 @@
+import { useAdeyaAgent, useBasicMessagesByConnectionId, useConnectionById } from '@adeya/ssi'
 import {
   BasicMessageRecord,
   CredentialExchangeRecord,
@@ -5,7 +6,6 @@ import {
   ProofExchangeRecord,
   ProofState,
 } from '@aries-framework/core'
-import { useAgent, useBasicMessagesByConnectionId, useConnectionById } from '@aries-framework/react-hooks'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -45,7 +45,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
   const { connectionId } = route.params
   const [store] = useStore()
   const { t } = useTranslation()
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   const connection = useConnectionById(connectionId)
   const basicMessages = useBasicMessagesByConnectionId(connectionId)
   const credentials = useCredentialsByConnectionId(connectionId)

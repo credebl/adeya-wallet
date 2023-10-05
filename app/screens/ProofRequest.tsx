@@ -1,12 +1,15 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
 import {
+  useConnectionById,
+  useCredentials,
+  useProofById,
   AnonCredsCredentialsForProofRequest,
   AnonCredsRequestedAttributeMatch,
   AnonCredsRequestedPredicateMatch,
-} from '@aries-framework/anoncreds'
+  useAdeyaAgent,
+} from '@adeya/ssi'
 import { ProofExchangeRecord } from '@aries-framework/core'
-import { useConnectionById, useCredentials, useProofById } from '@aries-framework/react-hooks'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, FlatList, StyleSheet, Text, View } from 'react-native'
@@ -26,7 +29,6 @@ import { BifoldError } from '../types/error'
 import { NotificationStackParams, Screens, TabStacks } from '../types/navigators'
 import { ProofCredentialItems } from '../types/record'
 import { ModalUsage } from '../types/remove'
-import { useAppAgent } from '../utils/agent'
 import { mergeAttributesAndPredicates, processProofAttributes, processProofPredicates } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
@@ -42,7 +44,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
 
   // eslint-disable-next-line no-unsafe-optional-chaining
   const { proofId } = route?.params
-  const { agent } = useAppAgent()
+  const { agent } = useAdeyaAgent()
   const { t } = useTranslation()
   const { assertConnectedNetwork } = useNetwork()
   const fullCredentials = useCredentials().records

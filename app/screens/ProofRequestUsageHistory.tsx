@@ -1,5 +1,5 @@
+import { useConnectionById } from '@adeya/ssi'
 import { ProofExchangeRecord, ProofState } from '@aries-framework/core'
-import { useConnectionById } from '@aries-framework/react-hooks'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -1,4 +1,4 @@
-import { AnonCredsNonRevokedInterval, AnonCredsProofRequestRestriction } from '@aries-framework/anoncreds'
+import { AnonCredsNonRevokedInterval, AnonCredsProofRequestRestriction } from '@adeya/ssi'
 import { CredentialExchangeRecord } from '@aries-framework/core'
 
 export interface FieldParams {

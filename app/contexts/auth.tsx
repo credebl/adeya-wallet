@@ -1,17 +1,7 @@
-// NOTE: We need to import these to be able to use the AskarWallet in this file.
-import '@hyperledger/aries-askar-react-native'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'reflect-metadata'
 
-import { AskarWallet } from '@aries-framework/askar'
-import {
-  ConsoleLogger,
-  LogLevel,
-  SigningProviderRegistry,
-  WalletConfig,
-  WalletExportImportConfig,
-} from '@aries-framework/core'
-import { agentDependencies } from '@aries-framework/react-native'
+import { isWalletPinCorrect } from '@adeya/ssi'
 import React, { PropsWithChildren, createContext, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter } from 'react-native'
@@ -39,7 +29,6 @@ export interface AuthContext {
   setPIN: (PIN: string) => Promise<void>
   commitPIN: (useBiometry: boolean) => Promise<boolean>
   isBiometricsActive: () => Promise<boolean>
-  checkImportWallet: (walletConfig: WalletConfig, importConfig: WalletExportImportConfig) => Promise<boolean>
 }
 
 export const AuthContext = createContext<AuthContext>(null as unknown as AuthContext)
@@ -104,39 +93,17 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
       // NOTE: a custom wallet is used to check if the wallet key is correct. This is different from the wallet used in the rest of the app.
       // We create an AskarWallet instance and open the wallet with the given secret.
-      const askarWallet = new AskarWallet(
-        new ConsoleLogger(LogLevel.off),
-        new agentDependencies.FileSystem(),
-        new SigningProviderRegistry([]),
-      )
-      await askarWallet.open({
+      const response = await isWalletPinCorrect({
         id: secret.id,
         key: hash,
       })
 
-      await askarWallet.close()
+      if (!response) {
+        throw new Error('Invalid PIN')
+      }
 
       const fullSecret = await secretForPIN(PIN, secret.salt)
       setWalletSecret(fullSecret)
-      return true
-    } catch (e) {
-      return false
-    }
-  }
-
-  const checkImportWallet = async (
-    walletConfig: WalletConfig,
-    importConfig: WalletExportImportConfig,
-  ): Promise<boolean> => {
-    try {
-      // NOTE: a custom wallet is used to check if the wallet passphrase is correct and can be imported successfully.
-      const askarWallet = new AskarWallet(
-        new ConsoleLogger(LogLevel.off),
-        new agentDependencies.FileSystem(),
-        new SigningProviderRegistry([]),
-      )
-      await askarWallet.import(walletConfig, importConfig)
-
       return true
     } catch (e) {
       return false
@@ -161,7 +128,6 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         commitPIN,
         setPIN,
         isBiometricsActive,
-        checkImportWallet,
       }}>
       {children}
     </AuthContext.Provider>

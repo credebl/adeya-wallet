@@ -1,5 +1,5 @@
+import { useProofById } from '@adeya/ssi'
 import { ProofState } from '@aries-framework/core'
-import { useProofById } from '@aries-framework/react-hooks'
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'

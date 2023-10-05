@@ -1,5 +1,4 @@
-// TODO: export from @aries-framework/anoncreds
-import { AnonCredsCredentialMetadataKey } from '@aries-framework/anoncreds/build/utils/metadata'
+import { AnonCredsCredentialMetadataKey } from '@adeya/ssi'
 import { CredentialExchangeRecord as CredentialRecord } from '@aries-framework/core'
 
 export function parseSchemaFromId(schemaId?: string): { name: string; version: string } {
