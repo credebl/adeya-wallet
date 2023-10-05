@@ -5,7 +5,7 @@ import type {
   ProofExchangeRecord,
 } from '@aries-framework/core'
 
-import { useBasicMessagesByConnectionId } from '@aries-framework/react-hooks'
+import { useBasicMessagesByConnectionId } from '@adeya/ssi'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'

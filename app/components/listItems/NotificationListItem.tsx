@@ -1,6 +1,5 @@
-import { V1RequestPresentationMessage } from '@aries-framework/anoncreds'
+import { useAdeyaAgent, V1RequestPresentationMessage } from '@adeya/ssi'
 import { CredentialExchangeRecord, ProofExchangeRecord, ProofState } from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react'
@@ -58,7 +57,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
   const [, dispatch] = useStore()
   const { t } = useTranslation()
   const { ColorPallet, TextTheme } = useTheme()
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   const [declineModalVisible, setDeclineModalVisible] = useState(false)
   const [details, setDetails] = useState<DisplayDetails>({
     type: InfoBoxType.Info,

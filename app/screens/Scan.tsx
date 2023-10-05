@@ -1,6 +1,6 @@
 import type { BarCodeReadEvent } from 'react-native-camera'
 
-import { useAgent } from '@aries-framework/react-hooks'
+import { useAdeyaAgent } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -22,7 +22,7 @@ import { connectFromInvitation, getJson, getUrl, receiveMessageFromUrlRedirect }
 export type ScanProps = StackScreenProps<ConnectStackParams>
 
 const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   const { t } = useTranslation()
   const [store] = useStore()
   const [loading, setLoading] = useState<boolean>(true)
