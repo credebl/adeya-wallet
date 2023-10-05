@@ -1,3 +1,4 @@
+import { useCredentialByState } from '@adeya/ssi'
 import { CredentialState } from '@aries-framework/core'
 import { useCredentialByState } from '@aries-framework/react-hooks'
 import { useNavigation } from '@react-navigation/core'

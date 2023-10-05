@@ -1,7 +1,7 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
+import { useAdeyaAgent } from '@adeya/ssi'
 import { DidExchangeState } from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -27,7 +27,7 @@ const qrContainerSize = windowDimensions.width - 20
 const qrSize = qrContainerSize - 60
 
 const ConnectionInvitation: React.FC<ConnectionInvitationProps> = ({ navigation }) => {
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   if (!agent) {
     throw new Error('Unable to fetch agent from AFJ')
   }

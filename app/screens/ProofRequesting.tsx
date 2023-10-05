@@ -1,7 +1,7 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
+import { useAdeyaAgent, useProofById } from '@adeya/ssi'
 import { DidExchangeState } from '@aries-framework/core'
-import { useAgent, useProofById } from '@aries-framework/react-hooks'
 import { useIsFocused } from '@react-navigation/core'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -38,7 +38,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   // eslint-disable-next-line no-unsafe-optional-chaining
   const { templateId, predicateValues } = route?.params
 
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   if (!agent) {
     throw new Error('Unable to fetch agent from AFJ')
   }

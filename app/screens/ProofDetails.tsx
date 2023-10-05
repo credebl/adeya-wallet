@@ -1,7 +1,7 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
+import { useAdeyaAgent, useConnectionById, useProofById } from '@adeya/ssi'
 import { ProofExchangeRecord, ProofState } from '@aries-framework/core'
-import { useAgent, useConnectionById, useProofById } from '@aries-framework/react-hooks'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -243,7 +243,7 @@ const ProofDetails: React.FC<ProofDetailsProps> = ({ route, navigation }) => {
 
   const { recordId, isHistory, senderReview } = route?.params
   const record = useProofById(recordId)
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
 
   useEffect(() => {
     if (agent && record && !record.metadata?.data?.customMetadata?.details_seen) {

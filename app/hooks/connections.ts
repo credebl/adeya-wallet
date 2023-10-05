@@ -1,5 +1,5 @@
+import { useAdeyaAgent, useConnectionById, useConnections } from '@adeya/ssi'
 import { ConnectionRecord, OutOfBandRecord } from '@aries-framework/core'
-import { useAgent, useConnectionById, useConnections } from '@aries-framework/react-hooks'
 import { useMemo, useState } from 'react'
 
 export const useConnectionByOutOfBandId = (outOfBandId: string): ConnectionRecord | undefined => {
@@ -11,7 +11,7 @@ export const useConnectionByOutOfBandId = (outOfBandId: string): ConnectionRecor
 }
 
 export const useOutOfBandById = (oobId: string): OutOfBandRecord | undefined => {
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   const [oob, setOob] = useState<OutOfBandRecord | undefined>(undefined)
   if (!oob) {
     agent?.oob.findById(oobId).then(res => {

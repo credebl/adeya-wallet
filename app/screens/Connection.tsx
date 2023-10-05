@@ -1,4 +1,4 @@
-import { useConnectionById } from '@aries-framework/react-hooks'
+import { useConnectionById } from '@adeya/ssi'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'

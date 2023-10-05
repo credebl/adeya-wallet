@@ -1,8 +1,4 @@
-import {
-  AnonCredsNonRevokedInterval,
-  AnonCredsPredicateType,
-  AnonCredsProofRequestRestriction,
-} from '@aries-framework/anoncreds'
+import { AnonCredsNonRevokedInterval, AnonCredsPredicateType, AnonCredsProofRequestRestriction } from '@adeya/ssi'
 
 export interface AnonCredsRequestedPredicate {
   label?: string

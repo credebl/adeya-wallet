@@ -1,5 +1,5 @@
+import { useAdeyaAgent } from '@adeya/ssi'
 import { DidExchangeState } from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
 import { useNavigation } from '@react-navigation/core'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -41,7 +41,7 @@ const NewQRView: React.FC<Props> = ({ defaultToConnect, handleCodeScan, error, e
   const { t } = useTranslation()
   const invalidQrCodes = new Set<string>()
   const { ColorPallet, TextTheme } = useTheme()
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   const styles = StyleSheet.create({
     container: {
       flex: 1,
