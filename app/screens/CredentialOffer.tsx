@@ -1,8 +1,5 @@
-// TODO: export this from @aries-framework/anoncreds
-import { AnonCredsCredentialOffer } from '@aries-framework/anoncreds'
-import { AnonCredsCredentialMetadataKey } from '@aries-framework/anoncreds/build/utils/metadata'
+import { useCredentialById, AnonCredsCredentialOffer, AnonCredsCredentialMetadataKey, useAdeyaAgent } from '@adeya/ssi'
 import { CredentialPreviewAttribute, JsonLdFormatDataCredentialDetail } from '@aries-framework/core'
-import { useCredentialById } from '@aries-framework/react-hooks'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,7 +22,6 @@ import { TabStacks, NotificationStackParams, Screens } from '../types/navigators
 import { CardLayoutOverlay11, CredentialOverlay } from '../types/oca'
 import { W3CCredentialAttributeField } from '../types/record'
 import { ModalUsage } from '../types/remove'
-import { useAppAgent } from '../utils/agent'
 import {
   buildFieldsFromJSONLDCredential,
   formatCredentialSubject,
@@ -47,7 +43,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
 
   const { credentialId } = route.params
 
-  const { agent } = useAppAgent()
+  const { agent } = useAdeyaAgent()
   const { t, i18n } = useTranslation()
   const { ListItems, ColorPallet } = useTheme()
   const { RecordLoading } = useAnimatedComponents()

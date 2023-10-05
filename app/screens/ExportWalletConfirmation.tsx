@@ -1,4 +1,4 @@
-import { useAgent } from '@aries-framework/react-hooks'
+import { useAdeyaAgent } from '@adeya/ssi'
 import { useNavigation, useRoute } from '@react-navigation/core'
 import shuffle from 'lodash.shuffle'
 import React, { useEffect, useState } from 'react'
@@ -26,7 +26,7 @@ import { useTheme } from '../contexts/theme'
 import { Screens } from '../types/navigators'
 
 function ExportWalletConfirmation() {
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   const navigation = useNavigation()
   const parms = useRoute()
   const { t } = useTranslation()

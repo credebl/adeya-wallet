@@ -1,5 +1,5 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { useAgent } from '@aries-framework/react-hooks'
+import { useAdeyaAgent } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -180,7 +180,7 @@ const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, naviga
   const { i18n } = useTranslation()
   const { OCABundleResolver } = useConfiguration()
 
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   if (!agent) {
     throw new Error('Unable to fetch agent from AFJ')
   }

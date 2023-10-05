@@ -1,11 +1,10 @@
+import { AdeyaAgent } from '@adeya/ssi'
 import { ConnectionRecord } from '@aries-framework/core'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import messaging from '@react-native-firebase/messaging'
 import { Platform } from 'react-native'
 import { Config } from 'react-native-config'
 import { request, check, PERMISSIONS, RESULTS, PermissionStatus } from 'react-native-permissions'
-
-import { BifoldAgent } from './agent'
 
 const TOKEN_STORAGE_KEY = 'deviceToken'
 
@@ -29,21 +28,21 @@ const _foregroundHandler = (): (() => void) => {
  * Permissions Section
  */
 
-const _requestNotificationPermission = async (agent: BifoldAgent): Promise<PermissionStatus> => {
+const _requestNotificationPermission = async (agent: AdeyaAgent): Promise<PermissionStatus> => {
   agent.config.logger.info('Requesting push notification permission...')
   const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
   agent.config.logger.info(`push notification permission is now [${result}]`)
   return result
 }
 
-const _checkNotificationPermission = async (agent: BifoldAgent): Promise<PermissionStatus> => {
+const _checkNotificationPermission = async (agent: AdeyaAgent): Promise<PermissionStatus> => {
   agent.config.logger.info('Checking push notification permission...')
   const result = await check(PERMISSIONS.ANDROID.POST_NOTIFICATIONS)
   agent.config.logger.info(`push notification permission is [${result}]`)
   return result
 }
 
-const _requestPermission = async (agent: BifoldAgent): Promise<void> => {
+const _requestPermission = async (agent: AdeyaAgent): Promise<void> => {
   // IOS doesn't need the extra permission logic like android
   if (Platform.OS === 'ios') {
     await messaging().requestPermission()
@@ -68,7 +67,7 @@ const _requestPermission = async (agent: BifoldAgent): Promise<void> => {
  * Helper Functions Section
  */
 
-const _getMediatorConnection = async (agent: BifoldAgent): Promise<ConnectionRecord | undefined> => {
+const _getMediatorConnection = async (agent: AdeyaAgent): Promise<ConnectionRecord | undefined> => {
   const connections = await agent.connections.getAll()
   for (const connection of connections) {
     if (connection.theirLabel === Config.MEDIATOR_LABEL) {
@@ -92,7 +91,7 @@ const isUserDenied = async (): Promise<boolean> => {
  * @param agent - The active aries agent
  * @returns {Promise<boolean>}
  */
-const isMediatorCapable = async (agent: BifoldAgent): Promise<boolean | undefined> => {
+const isMediatorCapable = async (agent: AdeyaAgent): Promise<boolean | undefined> => {
   if (!Config.MEDIATOR_LABEL || Config.MEDIATOR_USE_PUSH_NOTIFICATIONS === 'false') return false
 
   const mediator = await _getMediatorConnection(agent)
@@ -147,7 +146,7 @@ const isEnabled = async (): Promise<boolean> => {
  * @param blankDeviceToken - If true, will send an empty string as the device token to the mediator
  * @returns {Promise<void>}
  */
-const setDeviceInfo = async (agent: BifoldAgent, blankDeviceToken = false): Promise<void> => {
+const setDeviceInfo = async (agent: AdeyaAgent, blankDeviceToken = false): Promise<void> => {
   let token
   if (blankDeviceToken) token = ''
   else token = await messaging().getToken()
@@ -173,7 +172,7 @@ const setDeviceInfo = async (agent: BifoldAgent, blankDeviceToken = false): Prom
  * @prarm blankDeviceToken - If true, will setup the device token as blank (disabled)
  * @returns {Promise<void>}
  */
-const setup = async (agent: BifoldAgent, blankDeviceToken = false): Promise<void> => {
+const setup = async (agent: AdeyaAgent, blankDeviceToken = false): Promise<void> => {
   // FIXME: Currently set the token to blank (disabled) on initialization.
   setDeviceInfo(agent, blankDeviceToken)
   _backgroundHandler()

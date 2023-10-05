@@ -1,4 +1,4 @@
-import { useAgent } from '@aries-framework/react-hooks'
+import { useAdeyaAgent } from '@adeya/ssi'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
@@ -170,7 +170,7 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
 }
 
 const SharedProofData: React.FC<SharedProofDataProps> = ({ recordId, onSharedProofDataLoad }: SharedProofDataProps) => {
-  const { agent } = useAgent()
+  const { agent } = useAdeyaAgent()
   const styles = StyleSheet.create({
     container: {
       flexGrow: 1,

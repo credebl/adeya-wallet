@@ -1,4 +1,4 @@
-import AgentProvider from '@aries-framework/react-hooks'
+import { AdeyaAgentProvider } from '@adeya/ssi'
 import * as React from 'react'
 import { useEffect, useMemo } from 'react'
 import { StatusBar } from 'react-native'
@@ -39,7 +39,7 @@ const App = () => {
 
   return (
     <StoreProvider>
-      <AgentProvider>
+      <AdeyaAgentProvider>
         <ThemeProvider value={theme}>
           <AnimatedComponentsProvider value={animatedComponents}>
             <ConfigurationProvider value={defaultConfiguration}>
@@ -65,7 +65,7 @@ const App = () => {
             </ConfigurationProvider>
           </AnimatedComponentsProvider>
         </ThemeProvider>
-      </AgentProvider>
+      </AdeyaAgentProvider>
     </StoreProvider>
   )
 }
