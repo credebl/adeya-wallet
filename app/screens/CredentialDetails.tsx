@@ -1,7 +1,6 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { useAdeyaAgent } from '@adeya/ssi'
-import { CredentialExchangeRecord } from '@aries-framework/core'
+import { useAdeyaAgent, CredentialExchangeRecord } from '@adeya/ssi'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'

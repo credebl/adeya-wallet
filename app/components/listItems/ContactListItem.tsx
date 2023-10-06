@@ -1,9 +1,4 @@
-import type {
-  BasicMessageRecord,
-  ConnectionRecord,
-  CredentialExchangeRecord,
-  ProofExchangeRecord,
-} from '@aries-framework/core'
+import type { BasicMessageRecord, ConnectionRecord, CredentialExchangeRecord, ProofExchangeRecord } from '@adeya/ssi'
 
 import { useBasicMessagesByConnectionId } from '@adeya/ssi'
 import { StackNavigationProp } from '@react-navigation/stack'

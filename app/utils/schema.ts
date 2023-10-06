@@ -1,5 +1,4 @@
-import { AnonCredsCredentialMetadataKey } from '@adeya/ssi'
-import { CredentialExchangeRecord as CredentialRecord } from '@aries-framework/core'
+import { AnonCredsCredentialMetadataKey, CredentialExchangeRecord as CredentialRecord } from '@adeya/ssi'
 
 export function parseSchemaFromId(schemaId?: string): { name: string; version: string } {
   let name = 'Credential'

@@ -1,5 +1,4 @@
-import { AdeyaAgent } from '@adeya/ssi'
-import { ConnectionRecord } from '@aries-framework/core'
+import { AdeyaAgent, ConnectionRecord } from '@adeya/ssi'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import messaging from '@react-native-firebase/messaging'
 import { Platform } from 'react-native'
