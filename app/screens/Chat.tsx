@@ -1,11 +1,13 @@
-import { useAdeyaAgent, useBasicMessagesByConnectionId, useConnectionById } from '@adeya/ssi'
 import {
+  useAdeyaAgent,
+  useBasicMessagesByConnectionId,
+  useConnectionById,
   BasicMessageRecord,
   CredentialExchangeRecord,
   CredentialState,
   ProofExchangeRecord,
   ProofState,
-} from '@aries-framework/core'
+} from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'

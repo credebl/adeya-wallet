@@ -1,5 +1,4 @@
-import { useCredentials } from '@adeya/ssi'
-import { CredentialExchangeRecord } from '@aries-framework/core'
+import { useCredentials, CredentialExchangeRecord } from '@adeya/ssi'
 import { useMemo } from 'react'
 
 export const useCredentialsByConnectionId = (connectionId: string): CredentialExchangeRecord[] => {

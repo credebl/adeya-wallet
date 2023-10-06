@@ -1,10 +1,11 @@
-import { useCredentialByState, useProofByState } from '@adeya/ssi'
 import {
+  useCredentialByState,
+  useProofByState,
   CredentialExchangeRecord as CredentialRecord,
   CredentialState,
   ProofExchangeRecord,
   ProofState,
-} from '@aries-framework/core'
+} from '@adeya/ssi'
 
 import { ProofCustomMetadata, ProofMetadata } from '../../verifier'
 import { CredentialMetadata, customMetadata } from '../types/metadata'

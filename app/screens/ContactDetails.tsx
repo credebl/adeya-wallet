@@ -1,5 +1,4 @@
-import { useAdeyaAgent, useConnectionById, useCredentialByState } from '@adeya/ssi'
-import { CredentialState } from '@aries-framework/core'
+import { useAdeyaAgent, useConnectionById, useCredentialByState, CredentialState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useState } from 'react'
