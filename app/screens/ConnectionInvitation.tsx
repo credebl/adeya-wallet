@@ -1,7 +1,6 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { useAdeyaAgent } from '@adeya/ssi'
-import { DidExchangeState } from '@aries-framework/core'
+import { useAdeyaAgent, DidExchangeState } from '@adeya/ssi'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'

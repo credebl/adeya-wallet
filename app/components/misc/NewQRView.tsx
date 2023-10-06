@@ -1,5 +1,4 @@
-import { useAdeyaAgent } from '@adeya/ssi'
-import { DidExchangeState } from '@aries-framework/core'
+import { useAdeyaAgent, DidExchangeState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'

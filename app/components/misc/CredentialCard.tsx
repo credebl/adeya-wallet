@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord, W3cCredentialRecord } from '@aries-framework/core'
+import { CredentialExchangeRecord, W3cCredentialRecord } from '@adeya/ssi'
 import React from 'react'
 import { ViewStyle } from 'react-native'
 

@@ -1,5 +1,4 @@
-import { useCredentialByState } from '@adeya/ssi'
-import { CredentialState } from '@aries-framework/core'
+import { useCredentialByState, CredentialState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
 

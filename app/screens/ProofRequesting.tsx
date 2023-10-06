@@ -1,7 +1,6 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { useAdeyaAgent, useProofById } from '@adeya/ssi'
-import { DidExchangeState } from '@aries-framework/core'
+import { useAdeyaAgent, useProofById, DidExchangeState } from '@adeya/ssi'
 import { useIsFocused } from '@react-navigation/core'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
