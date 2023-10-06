@@ -8,8 +8,8 @@ import {
   AnonCredsRequestedAttributeMatch,
   AnonCredsRequestedPredicateMatch,
   useAdeyaAgent,
+  ProofExchangeRecord,
 } from '@adeya/ssi'
-import { ProofExchangeRecord } from '@aries-framework/core'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, FlatList, StyleSheet, Text, View } from 'react-native'

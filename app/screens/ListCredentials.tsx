@@ -1,7 +1,6 @@
-import type { W3cCredentialRecord } from '@aries-framework/core'
+import type { W3cCredentialRecord } from '@adeya/ssi'
 
-import { useAdeyaAgent, useCredentialByState } from '@adeya/ssi'
-import { CredentialExchangeRecord, CredentialState } from '@aries-framework/core'
+import { useAdeyaAgent, useCredentialByState, CredentialExchangeRecord, CredentialState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'

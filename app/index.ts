@@ -1,8 +1,6 @@
 /* eslint-disable import/no-cycle */
 import type { OnboardingStyleSheet } from './screens/Onboarding'
 
-import { Agent } from '@aries-framework/core'
-
 import indyLedgers from '../configs/ledgers/indy'
 
 import * as components from './components'
@@ -90,7 +88,6 @@ export * from '../verifier'
 
 export {
   indyLedgers,
-  Agent,
   CommonUtilProvider,
   AuthProvider,
   NetworkProvider,

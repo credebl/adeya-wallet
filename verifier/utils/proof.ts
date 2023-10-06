@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { AdeyaAgent, AnonCredsProof, AnonCredsProofRequest } from '@adeya/ssi'
-import { ProofExchangeRecord, ProofState } from '@aries-framework/core'
+import { AdeyaAgent, AnonCredsProof, AnonCredsProofRequest, ProofExchangeRecord, ProofState } from '@adeya/ssi'
 
 import { ProofMetadata } from '../types/metadata'
 import {
