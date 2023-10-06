@@ -1,5 +1,11 @@
-import { useCredentialById, AnonCredsCredentialOffer, AnonCredsCredentialMetadataKey, useAdeyaAgent } from '@adeya/ssi'
-import { CredentialPreviewAttribute, JsonLdFormatDataCredentialDetail } from '@aries-framework/core'
+import {
+  useCredentialById,
+  AnonCredsCredentialOffer,
+  AnonCredsCredentialMetadataKey,
+  useAdeyaAgent,
+  CredentialPreviewAttribute,
+  JsonLdFormatDataCredentialDetail,
+} from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'

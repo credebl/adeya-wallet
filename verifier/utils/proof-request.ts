@@ -4,8 +4,10 @@ import {
   AnonCredsRequestedPredicate,
   LegacyIndyProofRequest,
   V1RequestPresentationMessage,
+  AgentMessage,
+  AutoAcceptProof,
+  ProofExchangeRecord,
 } from '@adeya/ssi'
-import { Agent, AgentMessage, AutoAcceptProof, ProofExchangeRecord } from '@aries-framework/core'
 
 import { ProofRequestTemplate, ProofRequestType } from '../types/proof-reqeust-template'
 
@@ -16,7 +18,7 @@ const domain = 'http://aries-mobile-agent.com'
  * Find Proof Request message in the storage by the given id
  * */
 export const findProofRequestMessage = async (
-  agent: Agent,
+  agent: AdeyaAgent,
   id: string,
 ): Promise<LegacyIndyProofRequest | undefined> => {
   const message = await agent.proofs.findRequestMessage(id)

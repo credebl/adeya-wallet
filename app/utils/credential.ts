@@ -1,5 +1,4 @@
-import { AnonCredsCredentialMetadataKey } from '@adeya/ssi'
-import { CredentialExchangeRecord, CredentialState } from '@aries-framework/core'
+import { AnonCredsCredentialMetadataKey, CredentialExchangeRecord, CredentialState } from '@adeya/ssi'
 import { ImageSourcePropType } from 'react-native'
 
 import { Attribute, Field, W3CCredentialAttribute, W3CCredentialAttributeField } from '../types/record'
