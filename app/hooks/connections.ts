@@ -1,5 +1,4 @@
-import { useAdeyaAgent, useConnectionById, useConnections } from '@adeya/ssi'
-import { ConnectionRecord, OutOfBandRecord } from '@aries-framework/core'
+import { useAdeyaAgent, useConnectionById, useConnections, ConnectionRecord, OutOfBandRecord } from '@adeya/ssi'
 import { useMemo, useState } from 'react'
 
 export const useConnectionByOutOfBandId = (outOfBandId: string): ConnectionRecord | undefined => {

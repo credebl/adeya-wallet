@@ -1,5 +1,4 @@
-import { useCredentialById } from '@adeya/ssi'
-import { CredentialState } from '@aries-framework/core'
+import { useCredentialById, CredentialState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'

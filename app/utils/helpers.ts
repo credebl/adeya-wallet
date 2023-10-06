@@ -8,9 +8,6 @@ import {
   AnonCredsRequestedPredicateMatch,
   LegacyIndyProofFormat,
   LegacyIndyProofFormatService,
-} from '@adeya/ssi'
-import {
-  Agent,
   ConnectionRecord,
   CredentialExchangeRecord,
   CredentialState,
@@ -18,8 +15,9 @@ import {
   ProofExchangeRecord,
   ProofState,
   Buffer,
-} from '@aries-framework/core'
-import { BasicMessageRole } from '@aries-framework/core/build/modules/basic-messages/BasicMessageRole'
+  AdeyaAgent,
+  BasicMessageRole,
+} from '@adeya/ssi'
 import {
   GetCredentialsForRequestReturn,
   ProofFormatDataMessagePayload,
@@ -231,7 +229,7 @@ export function firstValidCredential(
   return first
 }
 
-export const getOobDeepLink = async (url: string, agent: Agent | undefined): Promise<any> => {
+export const getOobDeepLink = async (url: string, agent: AdeyaAgent | undefined): Promise<any> => {
   const queryParams = queryString.parseUrl(url).query
   const b64Message = queryParams['d_m'] ?? queryParams['c_i']
   const rawmessage = Buffer.from(b64Message as string, 'base64').toString()
@@ -449,7 +447,7 @@ export const sortCredentialsForAutoSelect = (
  * @param agent an Agent instance
  * @returns payload from following the redirection
  */
-export const receiveMessageFromUrlRedirect = async (url: string, agent: Agent | undefined) => {
+export const receiveMessageFromUrlRedirect = async (url: string, agent: AdeyaAgent | undefined) => {
   const res = await fetch(url, {
     method: 'GET',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
@@ -465,7 +463,7 @@ export const receiveMessageFromUrlRedirect = async (url: string, agent: Agent | 
  * @param agent an Agent instance
  * @returns payload from following the redirection
  */
-export const receiveMessageFromDeepLink = async (url: string, agent: Agent | undefined) => {
+export const receiveMessageFromDeepLink = async (url: string, agent: AdeyaAgent | undefined) => {
   const res = await fetch(url, {
     method: 'GET',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
@@ -481,7 +479,7 @@ export const receiveMessageFromDeepLink = async (url: string, agent: Agent | und
  * @param agent an Agent instance
  * @returns a connection record from parsing and receiving the invitation
  */
-export const connectFromInvitation = async (uri: string, agent: Agent | undefined) => {
+export const connectFromInvitation = async (uri: string, agent: AdeyaAgent | undefined) => {
   const invitation = await agent?.oob.parseInvitation(uri)
 
   if (!invitation) {
@@ -504,7 +502,7 @@ export const connectFromInvitation = async (uri: string, agent: Agent | undefine
  * @param goalCode add goalCode to connection invitation
  * @returns a connection record
  */
-export const createConnectionInvitation = async (agent: Agent | undefined, goalCode?: string) => {
+export const createConnectionInvitation = async (agent: AdeyaAgent | undefined, goalCode?: string) => {
   const record = await agent?.oob.createInvitation({ goalCode })
   if (!record) {
     throw new Error('Could not create new invitation')
@@ -526,7 +524,7 @@ export const createConnectionInvitation = async (agent: Agent | undefined, goalC
  * @param type add goalCode to connection invitation
  * @returns a connection record
  */
-export const createTempConnectionInvitation = async (agent: Agent | undefined, type: 'issue' | 'verify') => {
+export const createTempConnectionInvitation = async (agent: AdeyaAgent | undefined, type: 'issue' | 'verify') => {
   return createConnectionInvitation(agent, `aries.vc.${type}.once`)
 }
 
