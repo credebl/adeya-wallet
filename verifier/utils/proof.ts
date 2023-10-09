@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { AdeyaAgent, AnonCredsProof, AnonCredsProofRequest, ProofExchangeRecord, ProofState } from '@adeya/ssi'
+import {
+  AdeyaAgent,
+  AnonCredsProof,
+  AnonCredsProofRequest,
+  ProofExchangeRecord,
+  ProofState,
+  getProofFormatData,
+  updateProofRecord,
+} from '@adeya/ssi'
 
 import { ProofMetadata } from '../types/metadata'
 import {
@@ -128,8 +136,8 @@ export const groupSharedProofDataByCredential = (data: ParsedAnonCredsProof): Gr
 /*
  * Retrieve proof details from AFJ record
  * */
-export const getProofData = async (agent: AdeyaAgent, recordId: string): Promise<ParsedAnonCredsProof | undefined> => {
-  const data = await agent.proofs.getFormatData(recordId)
+export const getProofData = async (agent: AdeyaAgent, recordId: string) => {
+  const data = await getProofFormatData(agent, recordId)
   if (data.request?.anoncreds && data.presentation?.anoncreds) {
     return parseAnonCredsProof(data.request.anoncreds, data.presentation.anoncreds)
   } else if (data.request?.indy && data.presentation?.indy) {
@@ -158,7 +166,7 @@ export const isPresentationFailed = (record: ProofExchangeRecord) => {
  * */
 export const markProofAsViewed = async (agent: AdeyaAgent, record: ProofExchangeRecord) => {
   record.metadata.set(ProofMetadata.customMetadata, { ...record.metadata.data.customMetadata, details_seen: true })
-  return agent.proofs.update(record)
+  return updateProofRecord(agent, record)
 }
 
 /*
@@ -169,5 +177,5 @@ export const linkProofWithTemplate = async (agent: AdeyaAgent, record: ProofExch
     ...record.metadata.data.customMetadata,
     proof_request_template_id: templateId,
   })
-  return agent.proofs.update(record)
+  return updateProofRecord(agent, record)
 }
