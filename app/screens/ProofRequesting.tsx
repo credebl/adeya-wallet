@@ -53,7 +53,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   const proofRecord = useProofById(proofRecordId ?? '')
   const template = useTemplate(templateId)
 
-  const goalCode = useOutOfBandByConnectionId(record?.id ?? '')?.outOfBandInvitation.goalCode
+  const goalCode = useOutOfBandByConnectionId(agent, record?.id ?? '')?.outOfBandInvitation.goalCode
 
   const styles = StyleSheet.create({
     container: {
@@ -114,7 +114,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
     try {
       setMessage(undefined)
       setGenerating(true)
-      const result = await createTempConnectionInvitation('verify')
+      const result = await createTempConnectionInvitation(agent, 'verify')
       if (result) {
         setConnectionRecordId(result.record.id)
         setMessage(result.invitationUrl)
@@ -151,9 +151,9 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
     const sendAsyncProof = async () => {
       if (record && record.state === DidExchangeState.Completed) {
         // send proof logic
-        const result = await sendProofRequest(template, record.id, predicateValues)
+        const result = await sendProofRequest(agent, template, record.id, predicateValues)
         if (result?.proofRecord) {
-          linkProofWithTemplate(result.proofRecord, templateId)
+          linkProofWithTemplate(agent, result.proofRecord, templateId)
         }
         setProofRecordId(result?.proofRecord.id)
       }
@@ -164,7 +164,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   useEffect(() => {
     if (proofRecord && (isPresentationReceived(proofRecord) || isPresentationFailed(proofRecord))) {
       if (goalCode?.endsWith('verify.once')) {
-        deleteConnectionById(record?.id ?? '')
+        deleteConnectionById(agent, record?.id ?? '')
       }
       navigation.navigate(Screens.ProofDetails, { recordId: proofRecord.id })
     }

@@ -9,6 +9,7 @@ import {
   getProofRequestAgentMessage,
   createProofRequest,
   requestProof,
+  createLegacyConnectionlessInvitation,
 } from '@adeya/ssi'
 
 import { ProofRequestTemplate, ProofRequestType } from '../types/proof-reqeust-template'
@@ -19,8 +20,8 @@ const domain = 'http://aries-mobile-agent.com'
 /*
  * Find Proof Request message in the storage by the given id
  * */
-export const findProofRequestMessage = async (id: string) => {
-  const message = await getProofRequestAgentMessage(id)
+export const findProofRequestMessage = async (agent: AdeyaAgent, id: string) => {
+  const message = await getProofRequestAgentMessage(agent, id)
   if (message && message instanceof V1RequestPresentationMessage && message.indyProofRequest) {
     return message.indyProofRequest
   } else {
@@ -106,12 +107,12 @@ export const createConnectionlessProofRequestInvitation = async (
   if (!proofFormats) {
     return undefined
   }
-  const { message: request, proofRecord } = await createProofRequest({
+  const { message: request, proofRecord } = await createProofRequest(agent, {
     protocolVersion,
     autoAcceptProof: AutoAcceptProof.Always,
     proofFormats,
   })
-  const { message: invitation, invitationUrl } = await agent.oob.createLegacyConnectionlessInvitation({
+  const { message: invitation, invitationUrl } = await createLegacyConnectionlessInvitation(agent, {
     recordId: proofRecord.id,
     message: request,
     domain,
@@ -132,6 +133,7 @@ export interface SendProofRequestResult {
  * Build Proof Request for provided template and send it to provided connection
  * */
 export const sendProofRequest = async (
+  agent: AdeyaAgent,
   template: ProofRequestTemplate,
   connectionId: string,
   customPredicateValues?: Record<string, Record<string, number>>,
@@ -140,7 +142,7 @@ export const sendProofRequest = async (
   if (!proofFormats) {
     return undefined
   }
-  const proofRecord = await requestProof({
+  const proofRecord = await requestProof(agent, {
     protocolVersion,
     connectionId,
     proofFormats,

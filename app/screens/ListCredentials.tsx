@@ -48,11 +48,11 @@ const ListCredentials: React.FC = () => {
           if (isW3CCredential(credential)) {
             const credentialRecordId = credential.credentials[0].credentialRecordId
             try {
-              const record = await getW3cCredentialRecordById(credentialRecordId)
+              const record = await getW3cCredentialRecordById(agent, credentialRecordId)
               if (!credential?.connectionId) {
                 throw new Error('Connection Id notfound')
               }
-              const connection = await findConnectionById(credential?.connectionId)
+              const connection = await findConnectionById(agent, credential?.connectionId)
               const enhancedRecord = record as EnhancedW3CRecord
               enhancedRecord.connectionLabel = connection?.theirLabel
               return enhancedRecord

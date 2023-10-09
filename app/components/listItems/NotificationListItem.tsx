@@ -137,7 +137,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
   const declineProofRequest = async () => {
     try {
       const proofId = (notification as ProofExchangeRecord).id
-      await declineProof({ proofRecordId: proofId })
+      await declineProof(agent, { proofRecordId: proofId })
     } catch (err: unknown) {
       const error = new BifoldError(t('Error.Title1028'), t('Error.Message1028'), (err as Error).message, 1028)
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
@@ -148,7 +148,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
 
   const dismissProofRequest = async () => {
     if (agent && notificationType === NotificationType.ProofRequest) {
-      markProofAsViewed(notification as ProofExchangeRecord)
+      markProofAsViewed(agent, notification as ProofExchangeRecord)
     }
   }
 
@@ -156,7 +156,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
     try {
       const credentialId = (notification as CredentialExchangeRecord).id
 
-      await declineCredential(credentialId)
+      await declineCredential(agent, credentialId)
     } catch (err: unknown) {
       const error = new BifoldError(t('Error.Title1028'), t('Error.Message1028'), (err as Error).message, 1028)
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
@@ -214,7 +214,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
           break
         case NotificationType.ProofRequest: {
           const proofId = (notification as ProofExchangeRecord).id
-          getProofRequestAgentMessage(proofId).then(message => {
+          getProofRequestAgentMessage(agent, proofId).then(message => {
             if (message instanceof V1RequestPresentationMessage && message.indyProofRequest) {
               resolve({
                 type: InfoBoxType.Info,

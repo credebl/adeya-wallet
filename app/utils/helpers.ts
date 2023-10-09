@@ -478,8 +478,8 @@ export const receiveMessageFromDeepLink = async (url: string, agent: AdeyaAgent 
  * @param uri a URI containing a base64 encoded connection invite in the query parameter
  * @returns a connection record from parsing and receiving the invitation
  */
-export const connectFromInvitation = async (uri: string) => {
-  return acceptInvitationFromUrl(uri)
+export const connectFromInvitation = async (agent: AdeyaAgent, uri: string) => {
+  return await acceptInvitationFromUrl(agent, uri)
 }
 
 /**
@@ -488,8 +488,8 @@ export const connectFromInvitation = async (uri: string) => {
  * @param goalCode add goalCode to connection invitation
  * @returns a connection record
  */
-export const createConnectionInvitation = async (goalCode?: string) => {
-  return createInvitation(domain, { goalCode })
+export const createConnectionInvitation = async (agent: AdeyaAgent, goalCode?: string) => {
+  return createInvitation(agent, domain, { goalCode })
 }
 
 /**
@@ -499,8 +499,8 @@ export const createConnectionInvitation = async (goalCode?: string) => {
  * @param type add goalCode to connection invitation
  * @returns a connection record
  */
-export const createTempConnectionInvitation = async (type: 'issue' | 'verify') => {
-  return createConnectionInvitation(`aries.vc.${type}.once`)
+export const createTempConnectionInvitation = async (agent: AdeyaAgent, type: 'issue' | 'verify') => {
+  return createConnectionInvitation(agent, `aries.vc.${type}.once`)
 }
 
 /**

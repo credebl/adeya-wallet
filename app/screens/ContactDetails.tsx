@@ -1,4 +1,10 @@
-import { useConnectionById, useCredentialByState, CredentialState, deleteConnectionById } from '@adeya/ssi'
+import {
+  useConnectionById,
+  useCredentialByState,
+  CredentialState,
+  deleteConnectionById,
+  useAdeyaAgent,
+} from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useState } from 'react'
@@ -22,6 +28,7 @@ type ContactDetailsProps = StackScreenProps<ContactStackParams, Screens.ContactD
 
 const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
   const { connectionId } = route?.params
+  const { agent } = useAdeyaAgent()
   const { t } = useTranslation()
   const navigation = useNavigation<StackNavigationProp<ContactStackParams>>()
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState<boolean>(false)
@@ -44,11 +51,11 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
 
   const handleSubmitRemove = async () => {
     try {
-      if (!connection) {
+      if (!(agent && connection)) {
         return
       }
 
-      await deleteConnectionById(connection.id)
+      await deleteConnectionById(agent, connection.id)
 
       navigation.navigate(Screens.Contacts)
 

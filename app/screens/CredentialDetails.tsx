@@ -158,7 +158,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     if (credential?.revocationNotification) {
       const meta = credential!.metadata.get(CredentialMetadata.customMetadata)
       credential.metadata.set(CredentialMetadata.customMetadata, { ...meta, revoked_seen: true })
-      updateCredentialExchangeRecord(credential)
+      updateCredentialExchangeRecord(agent, credential)
     }
   }, [isRevoked])
 
@@ -172,7 +172,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
         return
       }
 
-      await deleteCredentialExchangeRecordById(credential.id)
+      await deleteCredentialExchangeRecordById(agent, credential.id)
 
       navigation.pop()
 
@@ -198,7 +198,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     setIsRevokedMessageHidden(true)
     const meta = credential!.metadata.get(CredentialMetadata.customMetadata)
     credential.metadata.set(CredentialMetadata.customMetadata, { ...meta, revoked_detail_dismissed: true })
-    updateCredentialExchangeRecord(credential)
+    updateCredentialExchangeRecord(agent, credential)
   }
 
   const callOnRemove = useCallback(() => handleOnRemove(), [])

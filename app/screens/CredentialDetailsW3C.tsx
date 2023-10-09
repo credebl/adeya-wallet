@@ -129,7 +129,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
           return credential
         } else if (credential instanceof CredentialExchangeRecord) {
           const credentialRecordId = credential.credentials[0].credentialRecordId
-          const record = await getW3cCredentialRecordById(credentialRecordId)
+          const record = await getW3cCredentialRecordById(agent, credentialRecordId)
           return record
         }
       }
@@ -165,13 +165,13 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
 
   const handleSubmitRemove = async () => {
     try {
-      if (!credential) {
+      if (!(agent && credential)) {
         return
       }
-      const credentialList = await getAllCredentialExchangeRecords()
+      const credentialList = await getAllCredentialExchangeRecords(agent)
       const rec = credentialList.find(cred => cred.credentials[0]?.credentialRecordId === credential.id)
       if (rec) {
-        await deleteCredentialExchangeRecordById(rec.id)
+        await deleteCredentialExchangeRecordById(agent, rec.id)
       }
       Toast.show({
         type: ToastType.Success,

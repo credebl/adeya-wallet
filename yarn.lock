@@ -7,10 +7,10 @@
   resolved "https://registry.npmjs.org/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
-"@adeya/ssi@0.0.1-alpha.9":
-  version "0.0.1-alpha.9"
-  resolved "https://registry.yarnpkg.com/@adeya/ssi/-/ssi-0.0.1-alpha.9.tgz#816ff6e85ca8b458d18947eab599d66c72e55589"
-  integrity sha512-KfIccvKaswUBIEJijVNoMybIPIK9q7qJIS/OFyRNcXs4F/2JUp8p7NMikKKJd8FnhGu9RAGZgehHS3mYL8cyCg==
+"@adeya/ssi@0.0.1-alpha.10":
+  version "0.0.1-alpha.10"
+  resolved "https://registry.yarnpkg.com/@adeya/ssi/-/ssi-0.0.1-alpha.10.tgz#7cc9e12c9c72fc612e53f22c49d9f59a785f3914"
+  integrity sha512-c+TJA5X/X9JLUCDLERlFTnwYAAtqxg9iVcGnx9UWdE5MmMjB9d1qRYBddd1hTdxNqgKRnWIkpTylnbsO4BG6pg==
   dependencies:
     "@aries-framework/anoncreds" "0.4.2"
     "@aries-framework/anoncreds-rs" "0.4.2"
