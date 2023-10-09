@@ -1,6 +1,6 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { useAdeyaAgent, useProofById, DidExchangeState } from '@adeya/ssi'
+import { useAdeyaAgent, useProofById, DidExchangeState, deleteConnectionById } from '@adeya/ssi'
 import { useIsFocused } from '@react-navigation/core'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -53,7 +53,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   const proofRecord = useProofById(proofRecordId ?? '')
   const template = useTemplate(templateId)
 
-  const goalCode = useOutOfBandByConnectionId(record?.id ?? '')?.outOfBandInvitation.goalCode
+  const goalCode = useOutOfBandByConnectionId(agent, record?.id ?? '')?.outOfBandInvitation.goalCode
 
   const styles = StyleSheet.create({
     container: {
@@ -164,7 +164,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   useEffect(() => {
     if (proofRecord && (isPresentationReceived(proofRecord) || isPresentationFailed(proofRecord))) {
       if (goalCode?.endsWith('verify.once')) {
-        agent.connections.deleteById(record?.id ?? '')
+        deleteConnectionById(agent, record?.id ?? '')
       }
       navigation.navigate(Screens.ProofDetails, { recordId: proofRecord.id })
     }
