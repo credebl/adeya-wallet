@@ -189,7 +189,7 @@ const SharedProofData: React.FC<SharedProofDataProps> = ({ recordId, onSharedPro
   const [sharedData, setSharedData] = useState<GroupedSharedProofData | undefined>(undefined)
 
   useEffect(() => {
-    getProofData(agent, recordId)
+    getProofData(recordId)
       .then(data => {
         if (data) {
           const groupedSharedProofData = groupSharedProofDataByCredential(data)

@@ -17,11 +17,11 @@ import {
   Buffer,
   AdeyaAgent,
   BasicMessageRole,
-} from '@adeya/ssi'
-import {
   GetCredentialsForRequestReturn,
   ProofFormatDataMessagePayload,
-} from '@aries-framework/core/build/modules/proofs/protocol/ProofProtocolOptions'
+  acceptInvitationFromUrl,
+  createInvitation,
+} from '@adeya/ssi'
 import moment from 'moment'
 import queryString from 'query-string'
 import { Dispatch, ReactNode, SetStateAction } from 'react'
@@ -476,45 +476,20 @@ export const receiveMessageFromDeepLink = async (url: string, agent: AdeyaAgent 
 /**
  *
  * @param uri a URI containing a base64 encoded connection invite in the query parameter
- * @param agent an Agent instance
  * @returns a connection record from parsing and receiving the invitation
  */
-export const connectFromInvitation = async (uri: string, agent: AdeyaAgent | undefined) => {
-  const invitation = await agent?.oob.parseInvitation(uri)
-
-  if (!invitation) {
-    throw new Error('Could not parse invitation from URL')
-  }
-
-  const record = await agent?.oob.receiveInvitation(invitation)
-  const connectionRecord = record?.connectionRecord
-  if (!connectionRecord?.id) {
-    throw new Error('Connection does not have an ID')
-  }
-
-  return connectionRecord
+export const connectFromInvitation = async (agent: AdeyaAgent, uri: string) => {
+  return await acceptInvitationFromUrl(agent, uri)
 }
 
 /**
  * Create a new connection invitation
  *
- * @param agent an Agent instance
  * @param goalCode add goalCode to connection invitation
  * @returns a connection record
  */
-export const createConnectionInvitation = async (agent: AdeyaAgent | undefined, goalCode?: string) => {
-  const record = await agent?.oob.createInvitation({ goalCode })
-  if (!record) {
-    throw new Error('Could not create new invitation')
-  }
-
-  const invitationUrl = record.outOfBandInvitation.toUrl({ domain })
-
-  return {
-    record,
-    invitation: record.outOfBandInvitation,
-    invitationUrl,
-  }
+export const createConnectionInvitation = async (agent: AdeyaAgent, goalCode?: string) => {
+  return createInvitation(agent, domain, { goalCode })
 }
 
 /**
@@ -524,7 +499,7 @@ export const createConnectionInvitation = async (agent: AdeyaAgent | undefined, 
  * @param type add goalCode to connection invitation
  * @returns a connection record
  */
-export const createTempConnectionInvitation = async (agent: AdeyaAgent | undefined, type: 'issue' | 'verify') => {
+export const createTempConnectionInvitation = async (agent: AdeyaAgent, type: 'issue' | 'verify') => {
   return createConnectionInvitation(agent, `aries.vc.${type}.once`)
 }
 

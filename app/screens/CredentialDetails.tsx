@@ -1,6 +1,11 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { useAdeyaAgent, CredentialExchangeRecord } from '@adeya/ssi'
+import {
+  useAdeyaAgent,
+  CredentialExchangeRecord,
+  updateCredentialExchangeRecord,
+  deleteCredentialExchangeRecordById,
+} from '@adeya/ssi'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
@@ -153,7 +158,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     if (credential?.revocationNotification) {
       const meta = credential!.metadata.get(CredentialMetadata.customMetadata)
       credential.metadata.set(CredentialMetadata.customMetadata, { ...meta, revoked_seen: true })
-      agent?.credentials.update(credential)
+      updateCredentialExchangeRecord(agent, credential)
     }
   }, [isRevoked])
 
@@ -163,11 +168,11 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
 
   const handleSubmitRemove = async () => {
     try {
-      if (!(agent && credential)) {
+      if (!credential) {
         return
       }
 
-      await agent.credentials.deleteById(credential.id)
+      await deleteCredentialExchangeRecordById(agent, credential.id)
 
       navigation.pop()
 
@@ -193,7 +198,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     setIsRevokedMessageHidden(true)
     const meta = credential!.metadata.get(CredentialMetadata.customMetadata)
     credential.metadata.set(CredentialMetadata.customMetadata, { ...meta, revoked_detail_dismissed: true })
-    agent?.credentials.update(credential)
+    updateCredentialExchangeRecord(agent, credential)
   }
 
   const callOnRemove = useCallback(() => handleOnRemove(), [])
