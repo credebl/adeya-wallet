@@ -1,4 +1,11 @@
-import { useAdeyaAgent, useConnectionById, useConnections, ConnectionRecord, OutOfBandRecord } from '@adeya/ssi'
+import {
+  useConnectionById,
+  useConnections,
+  ConnectionRecord,
+  OutOfBandRecord,
+  findOutOfBandRecordById,
+  AdeyaAgent,
+} from '@adeya/ssi'
 import { useMemo, useState } from 'react'
 
 export const useConnectionByOutOfBandId = (outOfBandId: string): ConnectionRecord | undefined => {
@@ -9,11 +16,10 @@ export const useConnectionByOutOfBandId = (outOfBandId: string): ConnectionRecor
   )
 }
 
-export const useOutOfBandById = (oobId: string): OutOfBandRecord | undefined => {
-  const { agent } = useAdeyaAgent()
+export const useOutOfBandById = (agent: AdeyaAgent, oobId: string): OutOfBandRecord | undefined => {
   const [oob, setOob] = useState<OutOfBandRecord | undefined>(undefined)
   if (!oob) {
-    agent?.oob.findById(oobId).then(res => {
+    findOutOfBandRecordById(agent, oobId).then(res => {
       if (res) {
         setOob(res)
       }
@@ -22,7 +28,7 @@ export const useOutOfBandById = (oobId: string): OutOfBandRecord | undefined => 
   return oob
 }
 
-export const useOutOfBandByConnectionId = (connectionId: string): OutOfBandRecord | undefined => {
+export const useOutOfBandByConnectionId = (agent: AdeyaAgent, connectionId: string): OutOfBandRecord | undefined => {
   const connection = useConnectionById(connectionId)
-  return useOutOfBandById(connection?.outOfBandId ?? '')
+  return useOutOfBandById(agent, connection?.outOfBandId ?? '')
 }

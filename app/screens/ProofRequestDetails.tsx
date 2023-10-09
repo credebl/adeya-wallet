@@ -269,9 +269,9 @@ const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, naviga
 
     if (connectionId) {
       // Send to specific contact and redirect to the chat with him
-      sendProofRequest(agent, template, connectionId, customPredicateValues).then(result => {
+      sendProofRequest(template, connectionId, customPredicateValues).then(result => {
         if (result?.proofRecord) {
-          linkProofWithTemplate(agent, result.proofRecord, templateId)
+          linkProofWithTemplate(result.proofRecord, templateId)
         }
       })
 
@@ -280,7 +280,7 @@ const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, naviga
       // Else redirect to the screen with connectionless request
       navigation.navigate(Screens.ProofRequesting, { templateId, predicateValues: customPredicateValues })
     }
-  }, [agent, templateId, connectionId, customPredicateValues, invalidPredicate])
+  }, [templateId, connectionId, customPredicateValues, invalidPredicate])
 
   const showTemplateUsageHistory = useCallback(async () => {
     navigation.navigate(Screens.ProofRequestUsageHistory, { templateId })
