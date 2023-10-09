@@ -9,6 +9,7 @@ import {
   AnonCredsRequestedPredicateMatch,
   useAdeyaAgent,
   ProofExchangeRecord,
+  deleteConnectionById,
 } from '@adeya/ssi'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -270,7 +271,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
         proofFormats: automaticRequestedCreds.proofFormats,
       })
       if (proof.connectionId && goalCode && goalCode.endsWith('verify.once')) {
-        agent.connections.deleteById(proof.connectionId)
+        await deleteConnectionById(proof.connectionId)
       }
     } catch (err: unknown) {
       setPendingModalVisible(false)
@@ -289,7 +290,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
         if (proof.connectionId) {
           await agent.proofs.sendProblemReport({ proofRecordId: proof.id, description: t('ProofRequest.Declined') })
           if (goalCode && goalCode.endsWith('verify.once')) {
-            agent.connections.deleteById(proof.connectionId)
+            await deleteConnectionById(proof.connectionId)
           }
         }
       }

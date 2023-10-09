@@ -1,6 +1,12 @@
 import type { W3cCredentialRecord } from '@adeya/ssi'
 
-import { useAdeyaAgent, useCredentialByState, CredentialExchangeRecord, CredentialState } from '@adeya/ssi'
+import {
+  useAdeyaAgent,
+  useCredentialByState,
+  CredentialExchangeRecord,
+  CredentialState,
+  findConnectionById,
+} from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
@@ -45,7 +51,7 @@ const ListCredentials: React.FC = () => {
               if (!credential?.connectionId) {
                 throw new Error('Connection Id notfound')
               }
-              const connection = await agent.connections.findById(credential?.connectionId)
+              const connection = await findConnectionById(credential?.connectionId)
               const enhancedRecord = record as EnhancedW3CRecord
               enhancedRecord.connectionLabel = connection?.theirLabel
               return enhancedRecord

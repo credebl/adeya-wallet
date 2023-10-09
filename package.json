@@ -13,8 +13,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@adeya/ssi": "0.0.1-alpha.7",
-    "@aries-framework/core": "^0.4.0",
+    "@adeya/ssi": "0.0.1-alpha.9",
     "@formatjs/intl-datetimeformat": "^6.10.0",
     "@formatjs/intl-displaynames": "^6.5.0",
     "@formatjs/intl-getcanonicallocales": "^2.2.1",
