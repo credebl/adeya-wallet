@@ -10,6 +10,12 @@ import {
   useAdeyaAgent,
   ProofExchangeRecord,
   deleteConnectionById,
+  getProofFormatData,
+  getCredentialsForProofRequest,
+  selectCredentialsForProofRequest,
+  acceptProofRequest,
+  declineProofRequest,
+  sendProofProblemReport,
 } from '@adeya/ssi'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -137,10 +143,10 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
 
     const retrieveCredentialsForProof = async (proof: ProofExchangeRecord) => {
       try {
-        const format = await agent.proofs.getFormatData(proof.id)
+        const format = await getProofFormatData(proof.id)
         const hasAnonCreds = format.request?.anoncreds !== undefined
         const hasIndy = format.request?.indy !== undefined
-        const credentials = await agent.proofs.getCredentialsForRequest({
+        const credentials = await getCredentialsForProofRequest({
           proofRecordId: proof.id,
           proofFormats: {
             // FIXME: AFJ will try to use the format, even if the value is undefined (but the key is present)
@@ -249,13 +255,14 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
       if (!retrievedCredentials) {
         throw new Error(t('ProofRequest.RequestedCredentialsCouldNotBeFound'))
       }
-      const format = await agent.proofs.getFormatData(proof.id)
+
+      const format = await getProofFormatData(proof.id)
 
       const formatToUse = format.request?.anoncreds ? 'anoncreds' : 'indy'
 
       const automaticRequestedCreds =
         retrievedCredentials &&
-        (await agent.proofs.selectCredentialsForRequest({
+        (await selectCredentialsForProofRequest({
           proofRecordId: proof.id,
           proofFormats: {
             [formatToUse]: {},
@@ -266,7 +273,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
         throw new Error(t('ProofRequest.RequestedCredentialsCouldNotBeFound'))
       }
 
-      await agent.proofs.acceptRequest({
+      await acceptProofRequest({
         proofRecordId: proof.id,
         proofFormats: automaticRequestedCreds.proofFormats,
       })
@@ -283,12 +290,12 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
 
   const handleDeclineTouched = async () => {
     try {
-      if (agent && proof) {
-        await agent.proofs.declineRequest({ proofRecordId: proof.id })
+      if (proof) {
+        await declineProofRequest({ proofRecordId: proof.id })
         setisDeclineEnable(false)
         // sending a problem report fails if there is neither a connectionId nor a ~service decorator
         if (proof.connectionId) {
-          await agent.proofs.sendProblemReport({ proofRecordId: proof.id, description: t('ProofRequest.Declined') })
+          await sendProofProblemReport({ proofRecordId: proof.id, description: t('ProofRequest.Declined') })
           if (goalCode && goalCode.endsWith('verify.once')) {
             await deleteConnectionById(proof.connectionId)
           }

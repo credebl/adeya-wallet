@@ -114,7 +114,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
     try {
       setMessage(undefined)
       setGenerating(true)
-      const result = await createTempConnectionInvitation(agent, 'verify')
+      const result = await createTempConnectionInvitation('verify')
       if (result) {
         setConnectionRecordId(result.record.id)
         setMessage(result.invitationUrl)
@@ -151,9 +151,9 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
     const sendAsyncProof = async () => {
       if (record && record.state === DidExchangeState.Completed) {
         // send proof logic
-        const result = await sendProofRequest(agent, template, record.id, predicateValues)
+        const result = await sendProofRequest(template, record.id, predicateValues)
         if (result?.proofRecord) {
-          linkProofWithTemplate(agent, result.proofRecord, templateId)
+          linkProofWithTemplate(result.proofRecord, templateId)
         }
         setProofRecordId(result?.proofRecord.id)
       }

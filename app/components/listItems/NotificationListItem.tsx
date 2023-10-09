@@ -5,6 +5,8 @@ import {
   ProofExchangeRecord,
   ProofState,
   declineCredentialOffer as declineCredential,
+  declineProofRequest as declineProof,
+  getProofRequestAgentMessage,
 } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -135,9 +137,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
   const declineProofRequest = async () => {
     try {
       const proofId = (notification as ProofExchangeRecord).id
-      if (agent) {
-        await agent.proofs.declineRequest({ proofRecordId: proofId })
-      }
+      await declineProof({ proofRecordId: proofId })
     } catch (err: unknown) {
       const error = new BifoldError(t('Error.Title1028'), t('Error.Message1028'), (err as Error).message, 1028)
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
@@ -148,7 +148,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
 
   const dismissProofRequest = async () => {
     if (agent && notificationType === NotificationType.ProofRequest) {
-      markProofAsViewed(agent, notification as ProofExchangeRecord)
+      markProofAsViewed(notification as ProofExchangeRecord)
     }
   }
 
@@ -214,7 +214,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
           break
         case NotificationType.ProofRequest: {
           const proofId = (notification as ProofExchangeRecord).id
-          agent?.proofs.findRequestMessage(proofId).then(message => {
+          getProofRequestAgentMessage(proofId).then(message => {
             if (message instanceof V1RequestPresentationMessage && message.indyProofRequest) {
               resolve({
                 type: InfoBoxType.Info,
