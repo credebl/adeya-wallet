@@ -1,6 +1,13 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { useAdeyaAgent, CredentialExchangeRecord, W3cCredentialRecord } from '@adeya/ssi'
+import {
+  useAdeyaAgent,
+  CredentialExchangeRecord,
+  W3cCredentialRecord,
+  getW3cCredentialRecordById,
+  getAllCredentialExchangeRecords,
+  deleteCredentialExchangeRecordById,
+} from '@adeya/ssi'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
@@ -122,7 +129,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
           return credential
         } else if (credential instanceof CredentialExchangeRecord) {
           const credentialRecordId = credential.credentials[0].credentialRecordId
-          const record = await agent.w3cCredentials.getCredentialRecordById(credentialRecordId)
+          const record = await getW3cCredentialRecordById(credentialRecordId)
           return record
         }
       }
@@ -158,14 +165,13 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
 
   const handleSubmitRemove = async () => {
     try {
-      if (!(agent && credential)) {
+      if (!credential) {
         return
       }
-
-      const credentialList = await agent.credentials.getAll()
+      const credentialList = await getAllCredentialExchangeRecords()
       const rec = credentialList.find(cred => cred.credentials[0]?.credentialRecordId === credential.id)
       if (rec) {
-        await agent.credentials.deleteById(rec.id)
+        await deleteCredentialExchangeRecordById(rec.id)
       }
       Toast.show({
         type: ToastType.Success,

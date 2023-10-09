@@ -4,6 +4,7 @@ import {
   CredentialExchangeRecord,
   ProofExchangeRecord,
   ProofState,
+  declineCredentialOffer as declineCredential,
 } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -154,9 +155,8 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
   const declineCredentialOffer = async () => {
     try {
       const credentialId = (notification as CredentialExchangeRecord).id
-      if (agent) {
-        await agent.credentials.declineOffer(credentialId)
-      }
+
+      await declineCredential(credentialId)
     } catch (err: unknown) {
       const error = new BifoldError(t('Error.Title1028'), t('Error.Message1028'), (err as Error).message, 1028)
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
