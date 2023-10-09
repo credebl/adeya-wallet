@@ -5,6 +5,10 @@ import {
   useAdeyaAgent,
   CredentialPreviewAttribute,
   JsonLdFormatDataCredentialDetail,
+  getFormattedCredentialData,
+  acceptCredentialOffer,
+  declineCredentialOffer,
+  sendCredentialProblemReport,
 } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
@@ -106,7 +110,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
     }
 
     const updateCredentialPreview = async () => {
-      const { ...formatData } = await agent?.credentials.getFormatData(credential.id)
+      const { ...formatData } = await getFormattedCredentialData(agent, credential.id)
       const { offer, offerAttributes } = formatData
       let offerData
 
@@ -161,7 +165,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
         return
       }
       setAcceptModalVisible(true)
-      await agent.credentials.acceptOffer({ credentialRecordId: credential.id })
+      await acceptCredentialOffer(agent, { credentialRecordId: credential.id })
     } catch (err: unknown) {
       setButtonsVisible(true)
       const error = new BifoldError(t('Error.Title1024'), t('Error.Message1024'), (err as Error).message, 1024)
@@ -171,9 +175,9 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
 
   const handleDeclineTouched = async () => {
     try {
-      if (agent && credential) {
-        await agent.credentials.declineOffer(credential.id)
-        await agent.credentials.sendProblemReport({
+      if (credential) {
+        await declineCredentialOffer(agent, credential.id)
+        await sendCredentialProblemReport(agent, {
           credentialRecordId: credential.id,
           description: t('CredentialOffer.Declined'),
         })

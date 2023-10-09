@@ -1,4 +1,10 @@
-import { useAdeyaAgent, useConnectionById, useCredentialByState, CredentialState } from '@adeya/ssi'
+import {
+  useConnectionById,
+  useCredentialByState,
+  CredentialState,
+  deleteConnectionById,
+  useAdeyaAgent,
+} from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useState } from 'react'
@@ -49,7 +55,7 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
         return
       }
 
-      await agent.connections.deleteById(connection.id)
+      await deleteConnectionById(agent, connection.id)
 
       navigation.navigate(Screens.Contacts)
 
