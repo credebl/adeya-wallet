@@ -1,4 +1,4 @@
-import { useAdeyaAgent } from '@adeya/ssi'
+import { useAdeyaAgent, exportWallet as exportAdeyaWallet } from '@adeya/ssi'
 import { useNavigation, useRoute } from '@react-navigation/core'
 import shuffle from 'lodash.shuffle'
 import React, { useEffect, useState } from 'react'
@@ -153,7 +153,7 @@ function ExportWalletConfirmation() {
         path: encryptedFileLocation,
       }
 
-      await agent?.wallet.export(exportConfig)
+      await exportAdeyaWallet(agent, exportConfig)
 
       Toast.show({
         type: ToastType.Success,
@@ -200,7 +200,7 @@ function ExportWalletConfirmation() {
         path: encryptedFileLocation,
       }
 
-      await agent?.wallet.export(exportConfig)
+      await exportAdeyaWallet(agent, exportConfig)
 
       if (Platform.OS === 'ios') {
         await Share.share({
