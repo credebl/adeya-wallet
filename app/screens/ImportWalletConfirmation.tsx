@@ -1,11 +1,4 @@
-import {
-  importWalletWithAgent,
-  isWalletImportable,
-  useAdeyaAgent,
-  ConsoleLogger,
-  LogLevel,
-  InitConfig,
-} from '@adeya/ssi'
+import { importWalletWithAgent, useAdeyaAgent, ConsoleLogger, LogLevel, InitConfig } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import {
@@ -126,18 +119,9 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
         path: selectedFilePath,
       }
 
-      // TODO: Need to remove this logic in version of @aries-framework/askar@4.2
-      const response = await isWalletImportable(walletConfig, importConfig)
-      if (!response) {
-        throw new Error('Invalid passphrase')
-      }
-
       const agentConfig: InitConfig = {
         label: store.preferences.walletName,
-        walletConfig: {
-          id: credentials.id,
-          key: credentials.key,
-        },
+        walletConfig,
         logger: new ConsoleLogger(LogLevel.off),
         autoUpdateStorageOnStartup: true,
       }

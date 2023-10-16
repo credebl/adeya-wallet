@@ -7,6 +7,7 @@ import {
   CredentialState,
   ProofExchangeRecord,
   ProofState,
+  sendBasicMessage,
 } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -203,7 +204,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
 
   const onSend = useCallback(
     async (messages: IMessage[]) => {
-      await agent?.basicMessages.sendMessage(connectionId, messages[0].text)
+      await sendBasicMessage(agent, connectionId, messages[0].text)
     },
     [agent, connectionId],
   )

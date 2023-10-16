@@ -1,4 +1,4 @@
-import { AdeyaAgent, ConnectionRecord, getAllConnections } from '@adeya/ssi'
+import { AdeyaAgent, ConnectionRecord, getAllConnections, setPushNotificationDeviceInfo } from '@adeya/ssi'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import messaging from '@react-native-firebase/messaging'
 import { Platform } from 'react-native'
@@ -154,7 +154,7 @@ const setDeviceInfo = async (agent: AdeyaAgent, blankDeviceToken = false): Promi
   if (!mediator) return
   agent.config.logger.info(`Trying to send device info to mediator with connection [${mediator.id}]`)
   try {
-    await agent.modules.pushNotificationsFcm.setDeviceInfo(mediator.id, {
+    await setPushNotificationDeviceInfo(agent, mediator.id, {
       deviceToken: token,
       devicePlatform: Platform.OS,
     })
