@@ -1,4 +1,4 @@
-import { useAdeyaAgent, useConnectionById } from '@adeya/ssi'
+import { useConnectionById } from '@adeya/ssi'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
@@ -13,6 +13,7 @@ import { useTheme } from '../contexts/theme'
 import { useOutOfBandByConnectionId } from '../hooks/connections'
 import { useNotifications } from '../hooks/notifications'
 import { Screens, TabStacks, DeliveryStackParams } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { testIdWithKey } from '../utils/testable'
 
 type ConnectionProps = StackScreenProps<DeliveryStackParams, Screens.Connection>
@@ -40,7 +41,7 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
   const { notifications } = useNotifications()
   const { ColorPallet, TextTheme } = useTheme()
   const { ConnectionLoading } = useAnimatedComponents()
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const oobRecord = useOutOfBandByConnectionId(agent, connectionId ?? '')
   const goalCode = oobRecord?.outOfBandInvitation.goalCode
   const merge: MergeFunction = (current, next) => ({ ...current, ...next })

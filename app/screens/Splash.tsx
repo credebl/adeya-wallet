@@ -1,4 +1,4 @@
-import { initializeAgent, ConsoleLogger, LogLevel, InitConfig, useAdeyaAgent } from '@adeya/ssi'
+import { initializeAgent, ConsoleLogger, LogLevel, InitConfig, getAgentModules } from '@adeya/ssi'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/core'
 import { CommonActions } from '@react-navigation/native'
@@ -25,6 +25,7 @@ import {
   Onboarding as StoreOnboardingState,
   Tours as ToursState,
 } from '../types/state'
+import { AdeyaAgent, useAppAgent } from '../utils/agent'
 import { testIdWithKey } from '../utils/testable'
 
 enum InitErrorTypes {
@@ -78,7 +79,7 @@ const Splash: React.FC = () => {
   const [progressPercent, setProgressPercent] = useState(0)
   const [initOnboardingCount, setInitOnboardingCount] = useState(0)
   const [initAgentCount, setInitAgentCount] = useState(0)
-  const { setAgent } = useAdeyaAgent()
+  const { setAgent } = useAppAgent()
   const { t } = useTranslation()
   const [stepText, setStepText] = useState<string>(t('Init.Starting'))
   const [initError, setInitError] = useState<Error | null>(null)
@@ -275,11 +276,10 @@ const Splash: React.FC = () => {
           autoUpdateStorageOnStartup: true,
         }
 
-        const newAgent = await initializeAgent({
+        const newAgent = (await initializeAgent({
           agentConfig,
-          mediatorInvitationUrl: Config.MEDIATOR_URL,
-          indyNetworks: indyLedgers,
-        })
+          modules: getAgentModules(Config.MEDIATOR_URL, indyLedgers),
+        })) as unknown as AdeyaAgent
 
         setStep(6)
         setAgent(newAgent)

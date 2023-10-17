@@ -1,5 +1,4 @@
 import {
-  AdeyaAgent,
   AnonCredsRequestedAttribute,
   AnonCredsRequestedPredicate,
   V1RequestPresentationMessage,
@@ -12,6 +11,7 @@ import {
   createLegacyConnectionlessInvitation,
 } from '@adeya/ssi'
 
+import { AdeyaAgent } from '../../app/utils/agent'
 import { ProofRequestTemplate, ProofRequestType } from '../types/proof-reqeust-template'
 
 const protocolVersion = 'v2'

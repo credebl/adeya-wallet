@@ -1,4 +1,3 @@
-import { useAdeyaAgent } from '@adeya/ssi'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useRef, useState } from 'react'
@@ -26,6 +25,7 @@ import { GenericFn } from '../types/fn'
 import { Screens, SettingStackParams, Stacks } from '../types/navigators'
 import { SettingSection } from '../types/settings'
 import * as PushNotificationHelper from '../utils/PushNotificationHelper'
+import { useAppAgent } from '../utils/agent'
 import { testIdWithKey } from '../utils/testable'
 
 type SettingsProps = StackScreenProps<SettingStackParams>
@@ -35,7 +35,7 @@ const touchCountToEnableBiometrics = 9
 const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   const { t, i18n } = useTranslation()
   const [store, dispatch] = useStore()
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const developerOptionCount = useRef(0)
   const { SettingsTheme, TextTheme, ColorPallet, Assets } = useTheme()
   const { settings, enableTours } = useConfiguration()
