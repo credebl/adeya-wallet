@@ -1,4 +1,4 @@
-import { useAdeyaAgent, exportWallet as exportAdeyaWallet } from '@adeya/ssi'
+import { exportWallet as exportAdeyaWallet } from '@adeya/ssi'
 import { useNavigation, useRoute } from '@react-navigation/core'
 import shuffle from 'lodash.shuffle'
 import React, { useEffect, useState } from 'react'
@@ -24,9 +24,10 @@ import Button, { ButtonType } from '../components/buttons/Button'
 import { ToastType } from '../components/toast/BaseToast'
 import { useTheme } from '../contexts/theme'
 import { Screens } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 
 function ExportWalletConfirmation() {
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const navigation = useNavigation()
   const parms = useRoute()
   const { t } = useTranslation()

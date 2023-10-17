@@ -15,7 +15,6 @@ import {
   ProofExchangeRecord,
   ProofState,
   Buffer,
-  AdeyaAgent,
   BasicMessageRole,
   GetCredentialsForRequestReturn,
   ProofFormatDataMessagePayload,
@@ -34,6 +33,7 @@ import { Attribute, Predicate, ProofCredentialAttributes, ProofCredentialPredica
 import { ChildFn } from '../types/tour'
 
 export { parsedCredDefNameFromCredential } from './cred-def'
+import { AdeyaAgent } from './agent'
 import { parseCredDefFromId } from './cred-def'
 
 export { parsedCredDefName } from './cred-def'

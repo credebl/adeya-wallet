@@ -1,9 +1,11 @@
-import { AdeyaAgent, ConnectionRecord, getAllConnections, setPushNotificationDeviceInfo } from '@adeya/ssi'
+import { ConnectionRecord, getAllConnections, setPushNotificationDeviceInfo } from '@adeya/ssi'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import messaging from '@react-native-firebase/messaging'
 import { Platform } from 'react-native'
 import { Config } from 'react-native-config'
 import { request, check, PERMISSIONS, RESULTS, PermissionStatus } from 'react-native-permissions'
+
+import { AdeyaAgent } from './agent'
 
 const TOKEN_STORAGE_KEY = 'deviceToken'
 
