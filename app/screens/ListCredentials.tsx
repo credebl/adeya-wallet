@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, View } from 'react-native'
 
+import ScanButton from '../components/common/ScanButton'
 import CredentialCard from '../components/misc/CredentialCard'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
@@ -108,6 +109,9 @@ const ListCredentials: React.FC = () => {
         ListEmptyComponent={() => <CredentialEmptyList message={t('Credentials.EmptyList')} />}
       />
       <CredentialListOptions />
+      <View style={{ justifyContent: 'flex-end', marginTop: '100%' }}>
+        <ScanButton />
+      </View>
     </View>
   )
 }

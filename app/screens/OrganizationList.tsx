@@ -1,14 +1,18 @@
 import { useNavigation } from '@react-navigation/core'
-import React, { useState } from 'react'
-import { View, StyleSheet, Text, TextInput, FlatList, TouchableOpacity } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { View, Text, TextInput, FlatList, Animated, PanResponder, Platform } from 'react-native'
+import { ScaledSheet } from 'react-native-size-matters'
 
+import ScanButton from '../components/common/ScanButton'
 import OrganizationListItem from '../components/listItems/OrganizationListItem'
 import EmptyListOrganizations from '../components/misc/EmptyListOrganizations'
 import { useTheme } from '../contexts/theme'
+
 const OrganizationList: React.FC = () => {
   const [selectedLetter, setSelectedLetter] = useState('')
-  const [active, setactive] = useState(false)
   const [searchInput, setSearchInput] = useState('')
+  const [draggedLetter, setDraggedLetter] = useState('')
+
   const organizations = [
     {
       id: 2,
@@ -75,34 +79,177 @@ const OrganizationList: React.FC = () => {
       website: '',
       publicProfile: true,
     },
+    {
+      id: 7,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'Umbrella Corporation',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
+    {
+      id: 8,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'Umbrella Corporation',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
+    {
+      id: 9,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'Umbrella Corporation',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
+    {
+      id: 10,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'Umbrella Corporation',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
+    {
+      id: 11,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'Umbrella Corporation',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
+    {
+      id: 12,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'Corporation',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
+    {
+      id: 13,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'Umbrella Corporation',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
+    {
+      id: 14,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'loco Corporation',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
+    {
+      id: 15,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'Umbrella technology',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
+    {
+      id: 16,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'Iconic Solutions',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
+    {
+      id: 17,
+      createDateTime: '2023-10-06T06:07:46.443Z',
+      createdBy: 1,
+      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
+      lastChangedBy: 1,
+      name: 'Iconic Corporation',
+      description: 'Globex Tech',
+      orgSlug: 'globex-tech-pvt-ltd',
+      logoUrl: '',
+      website: '',
+      publicProfile: true,
+    },
   ]
   const { ColorPallet } = useTheme()
   const navigation = useNavigation()
 
-  const styles = StyleSheet.create({
+  const styles = ScaledSheet.create({
     container: {
       flex: 1,
       height: '100%',
-      margin: 20,
+      margin: '2.5%',
     },
     headerTextView: {
       justifyContent: 'center',
-      marginHorizontal: 40,
+      marginHorizontal: '10%',
       alignSelf: 'center',
     },
     titleText: {
-      fontSize: 20,
+      fontSize: 18,
       fontWeight: '400',
       alignSelf: 'center',
       color: ColorPallet.brand.primary,
-      marginTop: 5,
+      marginTop: '1.5625%',
     },
     headerText: {
       justifyContent: 'center',
       color: ColorPallet.brand.primary,
-      fontSize: 22,
+      fontSize: 20,
       fontWeight: '700',
-      marginTop: 10,
+      marginTop: '1.953125%',
     },
     inputText: {
       width: '100%',
@@ -110,31 +257,29 @@ const OrganizationList: React.FC = () => {
     Separator: {
       backgroundColor: ColorPallet.brand.primaryBackground,
       height: 1,
-      marginHorizontal: 16,
+      marginHorizontal: '4%',
     },
     searchBarView: {
       alignSelf: 'center',
       borderWidth: 1,
       width: '95%',
-      borderRadius: 10,
+      height: Platform.OS === 'ios' ? 30 : 40,
+      borderRadius: 5,
       marginTop: 5,
       borderColor: ColorPallet.brand.primary,
-      backgroundColor: ColorPallet.brand.primaryBackground,
+      backgroundColor: ColorPallet.grayscale.lightGrey,
     },
     listView: {
       marginTop: 0,
-      width: '170%',
+      width: '100%',
       height: 'auto',
     },
     selectedLetter: {
-      marginTop: 20,
       borderWidth: 1,
       width: 20,
-      borderRadius: 10,
+      borderRadius: Platform.OS === 'ios' ? 10 : 10,
       backgroundColor: '#012048',
-    },
-    orgConatiner: {
-      marginTop: 20,
+      color: ColorPallet.grayscale.white,
     },
     orgLabelTextactive: {
       alignSelf: 'center',
@@ -143,6 +288,14 @@ const OrganizationList: React.FC = () => {
     },
     orgLabelText: {
       color: ColorPallet.brand.primary,
+    },
+    alphabetView: {
+      marginLeft: 20,
+      borderWidth: 1,
+      height: '100%',
+      borderRadius: 5,
+      borderColor: '#E1EAFF',
+      backgroundColor: '#E1EAFF',
     },
   })
   const filteredOrganizations = organizations.filter(org => {
@@ -156,16 +309,35 @@ const OrganizationList: React.FC = () => {
     }
     return true
   })
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+  const alphabet: string[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
   organizations.sort((a, b) => a.name.localeCompare(b.name))
-  const handleSelected = item => {
-    setSelectedLetter(item)
-    setactive(true)
-  }
-  const handleSearchInputChange = text => {
+  const handleSearchInputChange = (text: string) => {
     setSearchInput(text)
   }
 
+  const handleSelected = (letter: string) => {
+    setDraggedLetter(letter)
+    setSelectedLetter(letter)
+  }
+  const panResponder = (letter: string) =>
+    useRef(
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+
+        onPanResponderGrant: () => {},
+        onPanResponderMove: (evt, gestureState) => {
+          if (gestureState.moveX > 0 && gestureState.moveY > 0) {
+            handleSelected(letter)
+          }
+        },
+        onPanResponderTerminationRequest: () => true,
+
+        onPanResponderRelease: () => {
+          setDraggedLetter('')
+        },
+      }),
+    ).current
   return (
     <View style={styles.container}>
       <View style={styles.headerTextView}>
@@ -175,15 +347,18 @@ const OrganizationList: React.FC = () => {
 
       <View style={styles.searchBarView}>
         <TextInput
-          style={{ marginHorizontal: 4 }}
+          scrollEnabled={false}
+          style={{ marginHorizontal: 4, marginTop: Platform.OS === 'ios' ? 5 : 0 }}
           placeholder="Search..."
           value={searchInput}
           onChangeText={text => handleSearchInputChange(text)}
         />
       </View>
-      <View style={[styles.listView, { flexDirection: 'row' }]}>
+      <View style={[styles.listView, { flexDirection: 'row', paddingRight: 'auto' }]}>
         <FlatList
           data={filteredOrganizations}
+          scrollEnabled={true}
+          showsVerticalScrollIndicator={false}
           SeparatorComponent={() => <View style={styles.Separator} />}
           keyExtractor={organizations => organizations.id}
           renderItem={({ item: organizations }) => (
@@ -191,20 +366,24 @@ const OrganizationList: React.FC = () => {
           )}
           ListEmptyComponent={() => <EmptyListOrganizations navigation={navigation} />}
         />
-        <FlatList
-          data={active ? selectedLetter : alphabet}
-          keyExtractor={item => item}
-          horizontal={false}
-          style={{ width: 1 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => handleSelected(item)}
-              style={active ? styles.selectedLetter : styles.orgConatiner}>
-              <Text style={active ? styles.orgLabelTextactive : styles.orgLabelText}>{item}</Text>
-            </TouchableOpacity>
-          )}
-        />
+        <Animated.View style={styles.alphabetView}>
+          {alphabet.map(item => (
+            <Text
+              {...panResponder(item).panHandlers}
+              style={[
+                {
+                  ...(selectedLetter === item
+                    ? { ...styles.selectedLetter, backgroundColor: draggedLetter === item ? 'red' : '#012048' }
+                    : {}),
+                },
+              ]}>
+              {item}
+            </Text>
+          ))}
+        </Animated.View>
       </View>
+      <View />
+      <ScanButton />
     </View>
   )
 }

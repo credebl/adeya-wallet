@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import SettingsMenu from '../components/buttons/SettingsMenu'
 import { useTheme } from '../contexts/theme'
-import OrganizationConnection from '../screens/OrganizationConnection'
+import OrganizationDetails from '../screens/OrganizationDetails'
 import OrganizationList from '../screens/OrganizationList'
 import { HomeStackParams, Screens } from '../types/navigators'
 
@@ -29,9 +29,9 @@ const OrganizationStack: React.FC = () => {
       />
       <Stack.Screen
         name={Screens.OrganizationsConnection}
-        component={OrganizationConnection}
+        component={OrganizationDetails}
         options={() => ({
-          title: t('Screens.OrganizationConnection'),
+          title: t('Screens.OrganizationDetails'),
           headerRight: () => null,
           headerLeft: () => <SettingsMenu />,
         })}

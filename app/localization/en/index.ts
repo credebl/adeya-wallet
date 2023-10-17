@@ -539,7 +539,7 @@ const translation = {
     "CredentialDetailsW3C" :'Credential Details W3C',
     "WalletName" :"Wallet Name",
     "Organization": "Explore",
-    "OrganizationConnection": "Connection"
+    "OrganizationDetails": "Organization Details"
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",

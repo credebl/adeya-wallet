@@ -7,9 +7,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { AttachTourStep } from '../components/tour/AttachTourStep'
 import { useConfiguration } from '../contexts/configuration'
-import { useNetwork } from '../contexts/network'
+// import { useNetwork } from '../contexts/network'
 import { useTheme } from '../contexts/theme'
-import { Screens, Stacks, TabStackParams, TabStacks } from '../types/navigators'
+import { TabStackParams, TabStacks } from '../types/navigators'
 import { isTablet, orientation, Orientation } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
@@ -23,7 +23,7 @@ const TabStack: React.FC = () => {
   const { total } = useCustomNotifications()
   const { t } = useTranslation()
   const Tab = createBottomTabNavigator<TabStackParams>()
-  const { assertConnectedNetwork } = useNetwork()
+  // const { assertConnectedNetwork } = useNetwork()
   const { ColorPallet, TabTheme } = useTheme()
   const { fontScale } = useWindowDimensions()
   const showLabels = fontScale * TabTheme.tabBarTextStyle.fontSize < 18
@@ -105,14 +105,9 @@ const TabStack: React.FC = () => {
             ),
             tabBarShowLabel: false,
             tabBarTestID: testIdWithKey(t('TabStack.Explore')),
-            tabBarBadge: total || undefined,
-            tabBarBadgeStyle: {
-              marginLeft: leftMarginForDevice(width, height),
-              backgroundColor: ColorPallet.semantic.error,
-            },
           }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           name={TabStacks.ConnectStack}
           options={{
             tabBarIconStyle: styles.tabBarIcon,
@@ -174,7 +169,7 @@ const TabStack: React.FC = () => {
             },
           })}>
           {() => <View />}
-        </Tab.Screen>
+        </Tab.Screen> */}
 
         <Tab.Screen
           name={TabStacks.CredentialStack}
