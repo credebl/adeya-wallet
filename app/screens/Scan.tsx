@@ -1,6 +1,5 @@
 import type { BarCodeReadEvent } from 'react-native-camera'
 
-import { useAdeyaAgent } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -17,12 +16,13 @@ import { useStore } from '../contexts/store'
 import { BifoldError, QrCodeScanError } from '../types/error'
 import { ConnectStackParams, Screens, Stacks } from '../types/navigators'
 import { PermissionContract } from '../types/permissions'
+import { useAppAgent } from '../utils/agent'
 import { connectFromInvitation, getJson, getUrl, receiveMessageFromUrlRedirect } from '../utils/helpers'
 
 export type ScanProps = StackScreenProps<ConnectStackParams>
 
 const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const { t } = useTranslation()
   const [store] = useStore()
   const [loading, setLoading] = useState<boolean>(true)

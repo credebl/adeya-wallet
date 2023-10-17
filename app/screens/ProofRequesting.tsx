@@ -1,6 +1,6 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { useAdeyaAgent, useProofById, DidExchangeState, deleteConnectionById } from '@adeya/ssi'
+import { useProofById, DidExchangeState, deleteConnectionById } from '@adeya/ssi'
 import { useIsFocused } from '@react-navigation/core'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -18,6 +18,7 @@ import { useConnectionByOutOfBandId, useOutOfBandByConnectionId } from '../hooks
 import { useTemplate } from '../hooks/proof-request-templates'
 import { BifoldError } from '../types/error'
 import { ProofRequestsStackParams, Screens } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { createTempConnectionInvitation } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
@@ -37,7 +38,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   // eslint-disable-next-line no-unsafe-optional-chaining
   const { templateId, predicateValues } = route?.params
 
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   if (!agent) {
     throw new Error('Unable to fetch agent from AFJ')
   }

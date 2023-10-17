@@ -1,7 +1,6 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
 import {
-  useAdeyaAgent,
   CredentialExchangeRecord,
   W3cCredentialRecord,
   getW3cCredentialRecordById,
@@ -26,6 +25,7 @@ import { ContactStackParams, CredentialStackParams, Screens } from '../types/nav
 import { CardLayoutOverlay11, CardOverlayType, CredentialOverlay } from '../types/oca'
 import { W3CCredentialAttributeField } from '../types/record'
 import { ModalUsage } from '../types/remove'
+import { useAppAgent } from '../utils/agent'
 import {
   buildFieldsFromJSONLDCredential,
   credentialTextColor,
@@ -46,7 +46,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   }
 
   const { credential } = route?.params
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const { t, i18n } = useTranslation()
   const { TextTheme, ColorPallet } = useTheme()
   const { OCABundleResolver } = useConfiguration()

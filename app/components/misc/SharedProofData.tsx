@@ -1,4 +1,3 @@
-import { useAdeyaAgent } from '@adeya/ssi'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
@@ -13,6 +12,7 @@ import { useConfiguration } from '../../contexts/configuration'
 import { useTheme } from '../../contexts/theme'
 import { CardLayoutOverlay11, CredentialOverlay } from '../../types/oca'
 import { Attribute, Field, Predicate } from '../../types/record'
+import { useAppAgent } from '../../utils/agent'
 import { toImageSource } from '../../utils/credential'
 import { buildFieldsFromSharedAnonCredsProof } from '../../utils/oca'
 import { testIdWithKey } from '../../utils/testable'
@@ -170,7 +170,7 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
 }
 
 const SharedProofData: React.FC<SharedProofDataProps> = ({ recordId, onSharedProofDataLoad }: SharedProofDataProps) => {
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const styles = StyleSheet.create({
     container: {
       flexGrow: 1,
