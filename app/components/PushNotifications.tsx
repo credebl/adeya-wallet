@@ -1,12 +1,12 @@
-import { useAdeyaAgent } from '@adeya/ssi'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import PushNotificationsModal from '../components/modals/PushNotificationsModal'
 import { isMediatorCapable, isRegistered, setup, isUserDenied } from '../utils/PushNotificationHelper'
+import { useAppAgent } from '../utils/agent'
 
 const PushNotifications = () => {
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const { t } = useTranslation()
   const [infoModalVisible, setInfoModalVisible] = useState(false)
 

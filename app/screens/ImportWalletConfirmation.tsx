@@ -1,4 +1,4 @@
-import { importWalletWithAgent, useAdeyaAgent, ConsoleLogger, LogLevel, InitConfig } from '@adeya/ssi'
+import { importWalletWithAgent, ConsoleLogger, LogLevel, InitConfig, getAgentModules } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import {
@@ -26,6 +26,7 @@ import { useAuth } from '../contexts/auth'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { AuthenticateStackParams, Screens } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 
 type ImportWalletVerifyProps = StackScreenProps<AuthenticateStackParams, Screens.ImportWalletVerify>
 
@@ -36,7 +37,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
   const { getWalletCredentials } = useAuth()
   const [verify, setVerify] = useState(false)
   const [selectedFilePath, setSelectedFilePath] = useState('')
-  const { setAgent } = useAdeyaAgent()
+  const { setAgent } = useAppAgent()
   const { height } = Dimensions.get('window')
   const { width } = Dimensions.get('window')
 
@@ -129,8 +130,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
       const agent = await importWalletWithAgent({
         agentConfig,
         importConfig,
-        indyNetworks: indyLedgers,
-        mediatorInvitationUrl: Config.MEDIATOR_URL!,
+        modules: getAgentModules(Config.MEDIATOR_URL!, indyLedgers),
       })
 
       setAgent(agent!)

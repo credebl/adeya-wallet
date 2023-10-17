@@ -1,5 +1,4 @@
 import {
-  useAdeyaAgent,
   V1RequestPresentationMessage,
   CredentialExchangeRecord,
   ProofExchangeRecord,
@@ -24,6 +23,7 @@ import { BifoldError } from '../../types/error'
 import { GenericFn } from '../../types/fn'
 import { HomeStackParams, Screens, Stacks } from '../../types/navigators'
 import { ModalUsage } from '../../types/remove'
+import { useAppAgent } from '../../utils/agent'
 import { parsedSchema } from '../../utils/helpers'
 import { testIdWithKey } from '../../utils/testable'
 import Button, { ButtonType } from '../buttons/Button'
@@ -65,7 +65,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
   const [, dispatch] = useStore()
   const { t } = useTranslation()
   const { ColorPallet, TextTheme } = useTheme()
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const [declineModalVisible, setDeclineModalVisible] = useState(false)
   const [details, setDetails] = useState<DisplayDetails>({
     type: InfoBoxType.Info,

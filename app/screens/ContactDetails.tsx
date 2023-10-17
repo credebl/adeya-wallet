@@ -1,10 +1,4 @@
-import {
-  useConnectionById,
-  useCredentialByState,
-  CredentialState,
-  deleteConnectionById,
-  useAdeyaAgent,
-} from '@adeya/ssi'
+import { useConnectionById, useCredentialByState, CredentialState, deleteConnectionById } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useState } from 'react'
@@ -22,13 +16,14 @@ import { BifoldError } from '../types/error'
 import { ContactStackParams, Screens, TabStacks } from '../types/navigators'
 import { Attribute } from '../types/record'
 import { ModalUsage } from '../types/remove'
+import { useAppAgent } from '../utils/agent'
 import { formatTime } from '../utils/helpers'
 
 type ContactDetailsProps = StackScreenProps<ContactStackParams, Screens.ContactDetails>
 
 const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
   const { connectionId } = route?.params
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const { t } = useTranslation()
   const navigation = useNavigation<StackNavigationProp<ContactStackParams>>()
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState<boolean>(false)

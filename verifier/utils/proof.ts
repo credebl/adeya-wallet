@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
-  AdeyaAgent,
   AnonCredsProof,
   AnonCredsProofRequest,
   ProofExchangeRecord,
@@ -9,6 +8,7 @@ import {
   updateProofRecord,
 } from '@adeya/ssi'
 
+import { AdeyaAgent } from '../../app/utils/agent'
 import { ProofMetadata } from '../types/metadata'
 import {
   CredentialSharedProofData,
