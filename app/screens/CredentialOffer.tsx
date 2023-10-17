@@ -2,7 +2,6 @@ import {
   useCredentialById,
   AnonCredsCredentialOffer,
   AnonCredsCredentialMetadataKey,
-  useAdeyaAgent,
   CredentialPreviewAttribute,
   JsonLdFormatDataCredentialDetail,
   getFormattedCredentialData,
@@ -32,6 +31,7 @@ import { TabStacks, NotificationStackParams, Screens } from '../types/navigators
 import { CardLayoutOverlay11, CredentialOverlay } from '../types/oca'
 import { W3CCredentialAttributeField } from '../types/record'
 import { ModalUsage } from '../types/remove'
+import { useAppAgent } from '../utils/agent'
 import {
   buildFieldsFromJSONLDCredential,
   formatCredentialSubject,
@@ -53,7 +53,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
 
   const { credentialId } = route.params
 
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const { t, i18n } = useTranslation()
   const { ListItems, ColorPallet } = useTheme()
   const { RecordLoading } = useAnimatedComponents()

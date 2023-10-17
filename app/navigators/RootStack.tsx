@@ -1,4 +1,3 @@
-import { useAdeyaAgent } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { createStackNavigator, StackCardStyleInterpolator, StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useRef, useState } from 'react'
@@ -22,6 +21,7 @@ import { createCarouselStyle } from '../screens/OnboardingPages'
 import PINCreate from '../screens/PINCreate'
 import PINEnter from '../screens/PINEnter'
 import { AuthenticateStackParams, Screens, Stacks } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { connectFromInvitation, getOobDeepLink } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
@@ -37,7 +37,7 @@ import { createDefaultStackOptions } from './defaultStackOptions'
 const RootStack: React.FC = () => {
   const [state, dispatch] = useStore()
   const { removeSavedWalletSecret } = useAuth()
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const appState = useRef(AppState.currentState)
   const [backgroundTime, setBackgroundTime] = useState<number | undefined>(undefined)
   const [prevAppStateVisible, setPrevAppStateVisible] = useState<string>('')

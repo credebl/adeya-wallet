@@ -4,9 +4,10 @@ import {
   ConnectionRecord,
   OutOfBandRecord,
   findOutOfBandRecordById,
-  AdeyaAgent,
 } from '@adeya/ssi'
 import { useMemo, useState } from 'react'
+
+import { AdeyaAgent } from '../utils/agent'
 
 export const useConnectionByOutOfBandId = (outOfBandId: string): ConnectionRecord | undefined => {
   const { records: connections } = useConnections()

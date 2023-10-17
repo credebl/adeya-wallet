@@ -1,5 +1,4 @@
 import {
-  useAdeyaAgent,
   useBasicMessagesByConnectionId,
   useConnectionById,
   BasicMessageRecord,
@@ -29,6 +28,7 @@ import { useCredentialsByConnectionId } from '../hooks/credentials'
 import { useProofsByConnectionId } from '../hooks/proofs'
 import { Role } from '../types/chat'
 import { ContactStackParams, Screens, Stacks } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { isW3CCredential } from '../utils/credential'
 import {
   getCredentialEventLabel,
@@ -48,7 +48,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
   const { connectionId } = route.params
   const [store] = useStore()
   const { t } = useTranslation()
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const connection = useConnectionById(connectionId)
   const basicMessages = useBasicMessagesByConnectionId(connectionId)
   const credentials = useCredentialsByConnectionId(connectionId)

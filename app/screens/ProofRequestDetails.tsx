@@ -1,5 +1,4 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { useAdeyaAgent } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -20,6 +19,7 @@ import { useTemplate } from '../hooks/proof-request-templates'
 import { Screens, ProofRequestsStackParams } from '../types/navigators'
 import { MetaOverlay, OverlayType } from '../types/oca'
 import { Attribute, Field, Predicate } from '../types/record'
+import { useAppAgent } from '../utils/agent'
 import { formatIfDate } from '../utils/helpers'
 import { buildFieldsFromAnonCredsProofRequestTemplate } from '../utils/oca'
 import { parseSchemaFromId } from '../utils/schema'
@@ -180,7 +180,7 @@ const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, naviga
   const { i18n } = useTranslation()
   const { OCABundleResolver } = useConfiguration()
 
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   if (!agent) {
     throw new Error('Unable to fetch agent from AFJ')
   }
@@ -269,9 +269,9 @@ const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, naviga
 
     if (connectionId) {
       // Send to specific contact and redirect to the chat with him
-      sendProofRequest(template, connectionId, customPredicateValues).then(result => {
+      sendProofRequest(agent, template, connectionId, customPredicateValues).then(result => {
         if (result?.proofRecord) {
-          linkProofWithTemplate(result.proofRecord, templateId)
+          linkProofWithTemplate(agent, result.proofRecord, templateId)
         }
       })
 
