@@ -1,7 +1,6 @@
 import type { W3cCredentialRecord } from '@adeya/ssi'
 
 import {
-  useAdeyaAgent,
   useCredentialByState,
   CredentialExchangeRecord,
   CredentialState,
@@ -18,6 +17,7 @@ import CredentialCard from '../components/misc/CredentialCard'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import { CredentialStackParams, Screens } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { isW3CCredential } from '../utils/credential'
 
 interface EnhancedW3CRecord extends W3cCredentialRecord {
@@ -26,7 +26,7 @@ interface EnhancedW3CRecord extends W3cCredentialRecord {
 
 const ListCredentials: React.FC = () => {
   const { t } = useTranslation()
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   const { credentialListOptions: CredentialListOptions, credentialEmptyList: CredentialEmptyList } = useConfiguration()
   const credentials = [
     ...useCredentialByState(CredentialState.CredentialReceived),

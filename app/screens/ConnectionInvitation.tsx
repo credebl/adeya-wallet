@@ -1,6 +1,6 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { useAdeyaAgent, DidExchangeState } from '@adeya/ssi'
+import { DidExchangeState } from '@adeya/ssi'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -15,6 +15,7 @@ import QRRenderer from '../components/misc/QRRenderer'
 import { useTheme } from '../contexts/theme'
 import { useConnectionByOutOfBandId } from '../hooks/connections'
 import { ContactStackParams, Screens } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { createConnectionInvitation } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
@@ -26,7 +27,7 @@ const qrContainerSize = windowDimensions.width - 20
 const qrSize = qrContainerSize - 60
 
 const ConnectionInvitation: React.FC<ConnectionInvitationProps> = ({ navigation }) => {
-  const { agent } = useAdeyaAgent()
+  const { agent } = useAppAgent()
   if (!agent) {
     throw new Error('Unable to fetch agent from AFJ')
   }
