@@ -5,6 +5,8 @@ import {
   updateCredentialExchangeRecord,
   deleteCredentialExchangeRecordById,
 } from '@adeya/ssi'
+import { BrandingOverlay } from '@hyperledger/aries-oca'
+import { BrandingOverlayType, CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
@@ -23,7 +25,6 @@ import { useTheme } from '../contexts/theme'
 import { BifoldError } from '../types/error'
 import { CredentialMetadata, customMetadata } from '../types/metadata'
 import { CredentialStackParams, Screens } from '../types/navigators'
-import { CardLayoutOverlay11, CardOverlayType, CredentialOverlay } from '../types/oca'
 import { ModalUsage } from '../types/remove'
 import { useAppAgent } from '../utils/agent'
 import {
@@ -60,26 +61,26 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     (credential!.metadata.get(CredentialMetadata.customMetadata) as customMetadata)?.revoked_detail_dismissed ?? false,
   )
 
-  const [overlay, setOverlay] = useState<CredentialOverlay<CardLayoutOverlay11>>({
+  const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay>>({
     bundle: undefined,
     presentationFields: [],
     metaOverlay: undefined,
-    cardLayoutOverlay: undefined,
+    brandingOverlay: undefined,
   })
 
   const credentialConnectionLabel = getCredentialConnectionLabel(credential)
 
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: overlay.cardLayoutOverlay?.primaryBackgroundColor,
+      backgroundColor: overlay.brandingOverlay?.primaryBackgroundColor,
       display: 'flex',
     },
     secondaryHeaderContainer: {
       height: 1.5 * logoHeight,
       backgroundColor:
-        (overlay.cardLayoutOverlay?.backgroundImage?.src
+        (overlay.brandingOverlay?.backgroundImage?.src
           ? 'rgba(0, 0, 0, 0)'
-          : overlay.cardLayoutOverlay?.secondaryBackgroundColor) ?? 'rgba(0, 0, 0, 0.24)',
+          : overlay.brandingOverlay?.secondaryBackgroundColor) ?? 'rgba(0, 0, 0, 0.24)',
     },
     primaryHeaderContainer: {
       paddingHorizontal,
@@ -104,7 +105,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
       shadowOpacity: 0.3,
     },
     textContainer: {
-      color: credentialTextColor(ColorPallet, overlay.cardLayoutOverlay?.primaryBackgroundColor),
+      color: credentialTextColor(ColorPallet, overlay.brandingOverlay?.primaryBackgroundColor),
       flexShrink: 1,
     },
   })
@@ -150,7 +151,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     }
 
     OCABundleResolver.resolveAllBundles(params).then(bundle => {
-      setOverlay({ ...overlay, ...bundle })
+      setOverlay({ ...overlay, ...(bundle as CredentialOverlay<BrandingOverlay>) })
     })
   }, [credential])
 
@@ -209,9 +210,9 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
   const CredentialCardLogo: React.FC = () => {
     return (
       <View style={styles.logoContainer}>
-        {overlay.cardLayoutOverlay?.logo?.src ? (
+        {overlay.brandingOverlay?.logo ? (
           <Image
-            source={toImageSource(overlay.cardLayoutOverlay?.logo.src)}
+            source={toImageSource(overlay.brandingOverlay?.logo)}
             style={{
               resizeMode: 'cover',
               width: logoHeight,
@@ -221,7 +222,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
           />
         ) : (
           <Text style={[TextTheme.title, { fontSize: 0.5 * logoHeight, color: '#000' }]}>
-            {(overlay.metaOverlay?.name ?? overlay.metaOverlay?.issuerName ?? 'C')?.charAt(0).toUpperCase()}
+            {(overlay.metaOverlay?.name ?? overlay.metaOverlay?.issuer ?? 'C')?.charAt(0).toUpperCase()}
           </Text>
         )}
       </View>
@@ -245,7 +246,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
               },
             ]}
             numberOfLines={1}>
-            {overlay.metaOverlay?.issuerName}
+            {overlay.metaOverlay?.issuer}
           </Text>
           <Text
             testID={testIdWithKey('CredentialName')}
@@ -266,9 +267,9 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
   const CredentialDetailSecondaryHeader: React.FC = () => {
     return (
       <>
-        {overlay.cardLayoutOverlay?.backgroundImage?.src ? (
+        {overlay.brandingOverlay?.backgroundImage ? (
           <ImageBackground
-            source={toImageSource(overlay.cardLayoutOverlay?.backgroundImage.src)}
+            source={toImageSource(overlay.brandingOverlay?.backgroundImage)}
             imageStyle={{
               resizeMode: 'cover',
             }}>
@@ -298,7 +299,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
   }
 
   const header = () => {
-    return OCABundleResolver.cardOverlayType === CardOverlayType.CardLayout10 ? (
+    return OCABundleResolver.getBrandingOverlayType() === BrandingOverlayType.Branding01 ? (
       <View>
         {isRevoked && !isRevokedMessageHidden ? (
           <View style={{ padding: paddingVertical, paddingBottom: 0 }}>
