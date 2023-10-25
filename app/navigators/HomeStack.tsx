@@ -3,6 +3,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import SettingsMenu from '../components/buttons/SettingsMenu'
+import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import Home from '../screens/Home'
 import ListNotifications from '../screens/ListNotifications'
@@ -14,6 +15,7 @@ const HomeStack: React.FC = () => {
   const Stack = createStackNavigator<HomeStackParams>()
   const theme = useTheme()
   const { t } = useTranslation()
+  const { scan } = useConfiguration()
   const defaultStackOptions = createDefaultStackOptions(theme)
 
   return (
@@ -34,6 +36,7 @@ const HomeStack: React.FC = () => {
           title: t('Screens.Notifications'),
         })}
       />
+      <Stack.Screen name={Screens.Scan} component={scan} />
     </Stack.Navigator>
   )
 }

@@ -15,6 +15,7 @@ import { createDefaultStackOptions } from './defaultStackOptions'
 const CredentialStack: React.FC = () => {
   const Stack = createStackNavigator<CredentialStackParams>()
   const theme = useTheme()
+  const { scan } = useConfiguration()
   const { t } = useTranslation()
   const { credentialListHeaderRight: CredentialListHeaderRight } = useConfiguration()
   const defaultStackOptions = createDefaultStackOptions(theme)
@@ -40,6 +41,7 @@ const CredentialStack: React.FC = () => {
         component={CredentialDetailsW3C}
         options={{ title: t('Screens.CredentialDetailsW3C') }}
       />
+      <Stack.Screen name={Screens.Scan} component={scan} />
     </Stack.Navigator>
   )
 }

@@ -1,5 +1,5 @@
 import { StackNavigationProp } from '@react-navigation/stack'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native'
 import { widthPercentageToDP } from 'react-native-responsive-screen'
@@ -26,9 +26,9 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
     avatarContainer: {
       alignItems: 'center',
       justifyContent: 'center',
-      width: 25,
-      height: 25,
-      borderRadius: 25,
+      width: 30,
+      height: 30,
+      borderRadius: 15,
       borderColor: ListItems.avatarCircle.borderColor,
       borderWidth: 1,
       marginRight: 16,
@@ -36,11 +36,15 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
     },
     avatarOrgPlaceholder: {
       ...TextTheme.headingFour,
-      textAlign: 'center',
     },
     avatarOrgImage: {
-      width: 25,
-      height: 25,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      borderColor: ListItems.avatarCircle.borderColor,
+      borderWidth: 1,
     },
     labelOrgText: {
       fontSize: 16,
@@ -56,32 +60,34 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
     },
     labelContainer: {
       flex: 1,
-      marginTop: 15,
+      marginTop: 10,
+      marginBottom: 10,
     },
   })
-  const navigateToConnection = () => {
-    navigation.navigate(Screens.OrganizationsConnection as never)
+  const navigateToConnection = (name: string, description: string, logoUrl: string) => {
+    navigation.navigate(Screens.OrganizationsConnection, { name, description, logoUrl })
   }
+  const orgnizationLabel = useMemo(() => organization.name, [organization])
+  const organaizationLabelAbbr = useMemo(() => orgnizationLabel?.charAt(0).toUpperCase(), [organization])
   return (
     <TouchableOpacity
-      onPress={navigateToConnection}
+      onPress={() => navigateToConnection(organization.name, organization.description, organization.logoUrl)}
       testID={testIdWithKey('Contact')}
       accessibilityLabel={t('ContactDetails.AContact')}>
       <View style={styles.container}>
         <View style={styles.avatarContainer}>
-          {/* {organization.logoUrl ? ( */}
-          <View>
-            {/* <Image style={styles.avatarImage} source={{ uri: organization.logoUrl }} /> */}
-            <Image style={styles.avatarOrgImage} source={require('../../assets/img/image.png')} />
-          </View>
-          {/* ) : (
-            <Text style={styles.avatarOrgPlaceholder}>{organaizationLabelAbbr}</Text> */}
-          {/* )} */}
+          {organization?.logoUrl ? (
+            <View>
+              <Image style={styles.avatarOrgImage} source={{ uri: organization?.logoUrl }} />
+            </View>
+          ) : (
+            <Text style={styles.avatarOrgPlaceholder}>{organaizationLabelAbbr}</Text>
+          )}
         </View>
         <View style={styles.labelContainer}>
           <View>
             <Text style={styles.labelOrgText} numberOfLines={1} ellipsizeMode={'tail'}>
-              {organization.name}
+              {organization?.name}
             </Text>
           </View>
         </View>

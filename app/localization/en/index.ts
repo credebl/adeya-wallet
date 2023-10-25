@@ -250,7 +250,7 @@ const translation = {
     "AddContact": "Add Contact",
   },
   "Organizations": {
-    "EmptyList": "Your Organizatiion is empty!",
+    "EmptyList": "Your Organization is empty!",
     "TypeHere": "Type Message Here",
     "PeopleAndOrganizations": "organizations are listed here.",
   },

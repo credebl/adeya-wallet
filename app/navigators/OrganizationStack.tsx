@@ -6,12 +6,13 @@ import SettingsMenu from '../components/buttons/SettingsMenu'
 import { useTheme } from '../contexts/theme'
 import OrganizationDetails from '../screens/OrganizationDetails'
 import OrganizationList from '../screens/OrganizationList'
-import { HomeStackParams, Screens } from '../types/navigators'
+import { OrganizationStackParams, Screens } from '../types/navigators'
+import { testIdWithKey } from '../utils/testable'
 
 import { createDefaultStackOptions } from './defaultStackOptions'
 
 const OrganizationStack: React.FC = () => {
-  const Stack = createStackNavigator<HomeStackParams>()
+  const Stack = createStackNavigator<OrganizationStackParams>()
   const theme = useTheme()
   const { t } = useTranslation()
   const defaultStackOptions = createDefaultStackOptions(theme)
@@ -33,7 +34,7 @@ const OrganizationStack: React.FC = () => {
         options={() => ({
           title: t('Screens.OrganizationDetails'),
           headerRight: () => null,
-          headerLeft: () => <SettingsMenu />,
+          headerBackTestID: testIdWithKey('Back'),
         })}
       />
     </Stack.Navigator>

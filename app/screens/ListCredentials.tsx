@@ -109,7 +109,7 @@ const ListCredentials: React.FC = () => {
         ListEmptyComponent={() => <CredentialEmptyList message={t('Credentials.EmptyList')} />}
       />
       <CredentialListOptions />
-      <View style={{ justifyContent: 'flex-end', marginTop: '100%' }}>
+      <View style={{ justifyContent: 'flex-end', marginTop: '90%' }}>
         <ScanButton />
       </View>
     </View>
