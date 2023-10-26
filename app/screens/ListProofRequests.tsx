@@ -1,3 +1,4 @@
+import { MetaOverlay, OverlayType } from '@hyperledger/aries-oca'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -12,7 +13,6 @@ import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { useTemplates } from '../hooks/proof-request-templates'
 import { ProofRequestsStackParams, Screens } from '../types/navigators'
-import { MetaOverlay, OverlayType } from '../types/oca'
 import { testIdWithKey } from '../utils/testable'
 
 interface ProofRequestsCardProps {

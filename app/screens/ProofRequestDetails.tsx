@@ -1,4 +1,4 @@
-/* eslint-disable no-unsafe-optional-chaining */
+import { MetaOverlay, OverlayType } from '@hyperledger/aries-oca'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -17,7 +17,6 @@ import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import { useTemplate } from '../hooks/proof-request-templates'
 import { Screens, ProofRequestsStackParams } from '../types/navigators'
-import { MetaOverlay, OverlayType } from '../types/oca'
 import { Attribute, Field, Predicate } from '../types/record'
 import { useAppAgent } from '../utils/agent'
 import { formatIfDate } from '../utils/helpers'
@@ -124,12 +123,20 @@ const ProofRequestAttributesCard: React.FC<ProofRequestAttributesCardParams> = (
 
   useEffect(() => {
     OCABundleResolver.resolve({ identifiers: { schemaId: data.schema }, language: i18n.language }).then(bundle => {
-      const metaOverlay = bundle?.metaOverlay || {
-        captureBase: '',
-        type: OverlayType.Meta10,
-        name: parseSchemaFromId(data.schema).name,
-        language: i18n.language,
-      }
+      const metaOverlay =
+        bundle?.metaOverlay ||
+        new MetaOverlay({
+          capture_base: '',
+          type: OverlayType.Meta10,
+          name: parseSchemaFromId(data.schema).name,
+          description: '',
+          language: i18n.language,
+          credential_help_text: '',
+          credential_support_url: '',
+          issuer: '',
+          issuer_description: '',
+          issuer_url: '',
+        })
       setMeta(metaOverlay)
     })
   }, [data.schema])
@@ -229,13 +236,20 @@ const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, naviga
     const attributes = template.payload.type === ProofRequestType.AnonCreds ? template.payload.data : []
 
     OCABundleResolver.resolve({ identifiers: { templateId }, language: i18n.language }).then(bundle => {
-      const metaOverlay = bundle?.metaOverlay || {
-        captureBase: '',
-        type: OverlayType.Meta10,
-        name: template.name,
-        description: template.description,
-        language: i18n.language,
-      }
+      const metaOverlay =
+        bundle?.metaOverlay ||
+        new MetaOverlay({
+          capture_base: '',
+          type: OverlayType.Meta10,
+          name: template.name,
+          description: template.description,
+          language: i18n.language,
+          credential_help_text: '',
+          credential_support_url: '',
+          issuer: '',
+          issuer_description: '',
+          issuer_url: '',
+        })
       setMeta(metaOverlay)
       setAttributes(attributes)
     })

@@ -9,6 +9,8 @@ import {
   declineCredentialOffer,
   sendCredentialProblemReport,
 } from '@adeya/ssi'
+import { BrandingOverlay } from '@hyperledger/aries-oca'
+import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,7 +30,6 @@ import { useNetwork } from '../contexts/network'
 import { useTheme } from '../contexts/theme'
 import { BifoldError } from '../types/error'
 import { TabStacks, NotificationStackParams, Screens } from '../types/navigators'
-import { CardLayoutOverlay11, CredentialOverlay } from '../types/oca'
 import { W3CCredentialAttributeField } from '../types/record'
 import { ModalUsage } from '../types/remove'
 import { useAppAgent } from '../utils/agent'
@@ -63,7 +64,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
   const [buttonsVisible, setButtonsVisible] = useState(true)
   const [acceptModalVisible, setAcceptModalVisible] = useState(false)
   const [declineModalVisible, setDeclineModalVisible] = useState(false)
-  const [overlay, setOverlay] = useState<CredentialOverlay<CardLayoutOverlay11>>({ presentationFields: [] })
+  const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay>>({ presentationFields: [] })
   const credential = useCredentialById(credentialId)
   const [jsonLdOffer, setJsonLdOffer] = useState<JsonLdFormatDataCredentialDetail>()
   const [tables, setTables] = useState<W3CCredentialAttributeField[]>([])
