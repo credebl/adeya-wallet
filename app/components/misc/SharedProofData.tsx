@@ -1,3 +1,5 @@
+import { BrandingOverlay } from '@hyperledger/aries-oca'
+import { Attribute, CredentialOverlay, Field, Predicate } from '@hyperledger/aries-oca/build/legacy'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
@@ -10,8 +12,6 @@ import {
 } from '../../../verifier'
 import { useConfiguration } from '../../contexts/configuration'
 import { useTheme } from '../../contexts/theme'
-import { CardLayoutOverlay11, CredentialOverlay } from '../../types/oca'
-import { Attribute, Field, Predicate } from '../../types/record'
 import { useAppAgent } from '../../utils/agent'
 import { toImageSource } from '../../utils/credential'
 import { buildFieldsFromSharedAnonCredsProof } from '../../utils/oca'
@@ -79,7 +79,7 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
     },
   })
 
-  const [overlay, setOverlay] = useState<CredentialOverlay<CardLayoutOverlay11> | undefined>(undefined)
+  const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay> | undefined>(undefined)
 
   useEffect(() => {
     const attributes = buildFieldsFromSharedAnonCredsProof(sharedData.data)
@@ -110,7 +110,7 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
     )
   }
 
-  const CardBody: React.FC<{ overlay: CredentialOverlay<CardLayoutOverlay11> }> = ({ overlay }) => {
+  const CardBody: React.FC<{ overlay: CredentialOverlay<BrandingOverlay> }> = ({ overlay }) => {
     return (
       <View style={styles.cardAttributes}>
         {overlay.presentationFields?.map(item => <CardField item={item} key={item.name || item.toString()} />)}
@@ -118,21 +118,21 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
     )
   }
 
-  const CardColor: React.FC<{ overlay: CredentialOverlay<CardLayoutOverlay11> }> = ({ overlay }) => {
+  const CardColor: React.FC<{ overlay: CredentialOverlay<BrandingOverlay> }> = ({ overlay }) => {
     return (
       <View
         testID={testIdWithKey('CardColor')}
-        style={[{ backgroundColor: overlay.cardLayoutOverlay?.primaryBackgroundColor }, styles.cardColorContainer]}
+        style={[{ backgroundColor: overlay.brandingOverlay?.primaryBackgroundColor }, styles.cardColorContainer]}
       />
     )
   }
 
-  const CardLogo: React.FC<{ overlay: CredentialOverlay<CardLayoutOverlay11> }> = ({ overlay }) => {
+  const CardLogo: React.FC<{ overlay: CredentialOverlay<BrandingOverlay> }> = ({ overlay }) => {
     return (
       <View style={styles.logoContainer}>
-        {overlay.cardLayoutOverlay?.logo?.src ? (
+        {overlay.brandingOverlay?.logo ? (
           <Image
-            source={toImageSource(overlay.cardLayoutOverlay?.logo.src)}
+            source={toImageSource(overlay.brandingOverlay?.logo)}
             style={{
               resizeMode: 'cover',
               width: logoHeight,
@@ -151,7 +151,7 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
                 color: ColorPallet.grayscale.black,
               },
             ]}>
-            {(overlay.metaOverlay?.issuerName ?? overlay.metaOverlay?.name ?? 'C')?.charAt(0).toUpperCase()}
+            {(overlay.metaOverlay?.issuer ?? overlay.metaOverlay?.name ?? 'C')?.charAt(0).toUpperCase()}
           </Text>
         )}
       </View>
@@ -189,7 +189,7 @@ const SharedProofData: React.FC<SharedProofDataProps> = ({ recordId, onSharedPro
   const [sharedData, setSharedData] = useState<GroupedSharedProofData | undefined>(undefined)
 
   useEffect(() => {
-    getProofData(recordId)
+    getProofData(agent, recordId)
       .then(data => {
         if (data) {
           const groupedSharedProofData = groupSharedProofDataByCredential(data)

@@ -41,7 +41,7 @@
     rxjs "^7.2.0"
     tsyringe "^4.8.0"
 
-"@aries-framework/anoncreds@0.4.2":
+"@aries-framework/anoncreds@0.4.2", "@aries-framework/anoncreds@^0.4.0":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@aries-framework/anoncreds/-/anoncreds-0.4.2.tgz#0d2bc7a40c8fac777c18325199939866d03c9ea3"
   integrity sha512-Jwn9TfzgOhuW6nxOs0DyzU1W/XL1XvyOt8zjhgz0ETDuwVJMtSTyN+1f4y5B0R7fuBYJ6KbdAwfeCRQT8BLa6g==
@@ -97,7 +97,7 @@
     varint "^6.0.0"
     web-did-resolver "^2.0.21"
 
-"@aries-framework/core@0.4.2":
+"@aries-framework/core@0.4.2", "@aries-framework/core@^0.4.0":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@aries-framework/core/-/core-0.4.2.tgz#f2118c732d6aff8d6557a15de14381e8782b54a1"
   integrity sha512-2qmDRkxD5vnPlcMjVTqu/Wxog9bUVU+tSr+7mgANgJ9q170FuoSuChU7WA5VCKEdmbRIM4BmvsnTlU8Y+iQ07A==
@@ -1592,6 +1592,16 @@
   integrity sha512-9jJSgqHt29JEuQ/tBzHmhWaSLyTyw/t7H+Ell/YSHtL9DE0KN0Ew/vuXoDqlt117+EBeQTDKG0hy0ov8K41rmw==
   dependencies:
     fast-text-encoding "^1.0.3"
+
+"@hyperledger/aries-oca@^1.0.0":
+  version "1.0.0-alpha.113"
+  resolved "https://registry.yarnpkg.com/@hyperledger/aries-oca/-/aries-oca-1.0.0-alpha.113.tgz#cfd30cd1cebf5d1c640827651ea6d897be46d200"
+  integrity sha512-bSy1Vh7uTEbR1e7ci4zziuuZHN1sbZTksYhxa5zlbGW4kTxZxbCEkNBnBIt4WDm0bEbcHy8205An24anPBccUw==
+  dependencies:
+    "@aries-framework/anoncreds" "^0.4.0"
+    "@aries-framework/core" "^0.4.0"
+    axios "^1.4.0"
+    lodash.startcase "^4.4.0"
 
 "@hyperledger/indy-vdr-react-native@^0.1.0":
   version "0.1.0"
