@@ -1,7 +1,9 @@
+import { BrandingOverlayType, RemoteOCABundleResolver } from '@hyperledger/aries-oca/build/legacy'
+import Config from 'react-native-config'
+
 import defaultIndyLedgers from '../configs/ledgers/indy'
 import { defaultProofRequestTemplates } from '../verifier'
 
-import * as bundle from './assets/oca-bundles.json'
 import EmptyList from './components/misc/EmptyList'
 import Record from './components/record/Record'
 import HomeContentView from './components/views/HomeContentView'
@@ -14,7 +16,6 @@ import Scan from './screens/Scan'
 import Splash from './screens/Splash'
 import Terms from './screens/Terms'
 import UseBiometry from './screens/UseBiometry'
-import * as oca from './types/oca'
 
 export const defaultConfiguration: ConfigurationContext = {
   pages: OnboardingPages,
@@ -25,8 +26,9 @@ export const defaultConfiguration: ConfigurationContext = {
   credentialListHeaderRight: () => null,
   credentialListOptions: () => null,
   credentialEmptyList: EmptyList,
-  OCABundleResolver: new oca.OCABundleResolver(bundle as unknown as Record<string, oca.Bundle>, {
-    cardOverlayType: oca.CardOverlayType.CardLayout11,
+  OCABundleResolver: new RemoteOCABundleResolver(Config.OCA_URL ?? '', {
+    brandingOverlayType: BrandingOverlayType.Branding10,
+    preLoad: true,
   }),
   scan: Scan,
   useBiometry: UseBiometry,
