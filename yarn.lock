@@ -1594,9 +1594,9 @@
     fast-text-encoding "^1.0.3"
 
 "@hyperledger/aries-oca@^1.0.0":
-  version "1.0.0-alpha.113"
-  resolved "https://registry.yarnpkg.com/@hyperledger/aries-oca/-/aries-oca-1.0.0-alpha.113.tgz#cfd30cd1cebf5d1c640827651ea6d897be46d200"
-  integrity sha512-bSy1Vh7uTEbR1e7ci4zziuuZHN1sbZTksYhxa5zlbGW4kTxZxbCEkNBnBIt4WDm0bEbcHy8205An24anPBccUw==
+  version "1.0.0-alpha.119"
+  resolved "https://registry.yarnpkg.com/@hyperledger/aries-oca/-/aries-oca-1.0.0-alpha.119.tgz#d359ba3ea348fecbe94753e58657551a71749e4c"
+  integrity sha512-VUNkboDdyzgZeU9Bcv4jZaKvM0Clk95YLUr7GeBQ/bKyKz7WHyTXppTkKF5XZYW0H7/KvJfx9iwbdr+RHU8Z9A==
   dependencies:
     "@aries-framework/anoncreds" "^0.4.0"
     "@aries-framework/core" "^0.4.0"
