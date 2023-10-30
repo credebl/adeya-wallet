@@ -2,23 +2,23 @@ import type { StackScreenProps } from '@react-navigation/stack'
 
 import {
   useConnectionById,
-  useCredentials,
   useProofById,
   AnonCredsCredentialsForProofRequest,
   AnonCredsRequestedAttributeMatch,
   AnonCredsRequestedPredicateMatch,
-  ProofExchangeRecord,
   deleteConnectionById,
   getProofFormatData,
-  getCredentialsForProofRequest,
   selectCredentialsForProofRequest,
   acceptProofRequest,
   declineProofRequest,
   sendProofProblemReport,
+  CredentialExchangeRecord,
 } from '@adeya/ssi'
+import moment from 'moment'
+
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeviceEventEmitter, FlatList, StyleSheet, Text, View } from 'react-native'
+import { DeviceEventEmitter, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
@@ -28,21 +28,30 @@ import ConnectionImage from '../components/misc/ConnectionImage'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
 import { EventTypes } from '../constants'
 import { useAnimatedComponents } from '../contexts/animated-components'
+import { useConfiguration } from '../contexts/configuration'
 import { useNetwork } from '../contexts/network'
 import { useTheme } from '../contexts/theme'
 import { useOutOfBandByConnectionId } from '../hooks/connections'
+import { useAllCredentialsForProof } from '../hooks/proofs'
 import { BifoldError } from '../types/error'
-import { NotificationStackParams, Screens, TabStacks } from '../types/navigators'
-import { ProofCredentialItems } from '../types/record'
+import { NotificationStackParams, Screens, Stacks, TabStacks } from '../types/navigators'
+import { ProofCredentialAttributes, ProofCredentialItems, ProofCredentialPredicates } from '../types/proof-items'
+import { Attribute, Predicate } from '../types/record'
 import { ModalUsage } from '../types/remove'
 import { useAppAgent } from '../utils/agent'
-import { mergeAttributesAndPredicates, processProofAttributes, processProofPredicates } from '../utils/helpers'
+import { evaluatePredicates } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
 import ProofRequestAccept from './ProofRequestAccept'
 
 type ProofRequestProps = StackScreenProps<NotificationStackParams, Screens.ProofRequest>
 type Fields = Record<string, AnonCredsRequestedAttributeMatch[] | AnonCredsRequestedPredicateMatch[]>
+
+interface CredentialListProps {
+  header?: JSX.Element
+  footer?: JSX.Element
+  items: ProofCredentialItems[]
+}
 
 const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
   if (!route?.params) {
@@ -54,19 +63,25 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
   const { agent } = useAppAgent()
   const { t } = useTranslation()
   const { assertConnectedNetwork } = useNetwork()
-  const fullCredentials = useCredentials().records
   const proof = useProofById(proofId)
   const connection = proof?.connectionId ? useConnectionById(proof.connectionId) : undefined
   const proofConnectionLabel = connection?.theirLabel ?? proof?.connectionId ?? ''
   const [pendingModalVisible, setPendingModalVisible] = useState(false)
+  const [revocationOffense, setRevocationOffense] = useState(false)
   const [retrievedCredentials, setRetrievedCredentials] = useState<AnonCredsCredentialsForProofRequest>()
-  const [proofItems, setProofItems] = useState<ProofCredentialItems[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [declineModalVisible, setDeclineModalVisible] = useState(false)
-  const [isDeclineEnable, setisDeclineEnable] = useState(true)
   const { ColorPallet, ListItems, TextTheme } = useTheme()
   const { RecordLoading } = useAnimatedComponents()
   const goalCode = useOutOfBandByConnectionId(agent, proof?.connectionId ?? '')?.outOfBandInvitation.goalCode
+  const { OCABundleResolver } = useConfiguration()
+  const [containsPI, setContainsPI] = useState(false)
+  const [activeCreds, setActiveCreds] = useState<ProofCredentialItems[]>([])
+  const [selectedCredentials, setSelectedCredentials] = useState<string[]>([])
+  const credProofPromise = useAllCredentialsForProof(proofId)
+
+  const hasMatchingCredDef = useMemo(() => activeCreds.some(cred => cred.credDefId !== undefined), [activeCreds])
+
 
   const styles = StyleSheet.create({
     pageContainer: {
@@ -134,116 +149,154 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
     }
   }, [])
 
-  useMemo(() => {
-    if (!(agent && proof)) {
-      return
-    }
-
-    setLoading(true)
-
-    const retrieveCredentialsForProof = async (proof: ProofExchangeRecord) => {
-      try {
-        const format = await getProofFormatData(agent, proof.id)
-        const hasAnonCreds = format.request?.anoncreds !== undefined
-        const hasIndy = format.request?.indy !== undefined
-        const credentials = await getCredentialsForProofRequest(agent, {
-          proofRecordId: proof.id,
-          proofFormats: {
-            // FIXME: AFJ will try to use the format, even if the value is undefined (but the key is present)
-            // We should ignore the key, if the value is undefined. For now this is a workaround.
-            ...(hasIndy
-              ? {
-                  indy: {
-                    // Setting `filterByNonRevocationRequirements` to `false` returns all
-                    // credentials even if they are revokable (and revoked). We need this to
-                    // be able to show why a proof cannot be satisfied. Otherwise we can only
-                    // show failure.
-                    filterByNonRevocationRequirements: false,
-                  },
-                }
-              : {}),
-
-            ...(hasAnonCreds
-              ? {
-                  anoncreds: {
-                    // Setting `filterByNonRevocationRequirements` to `false` returns all
-                    // credentials even if they are revokable (and revoked). We need this to
-                    // be able to show why a proof cannot be satisfied. Otherwise we can only
-                    // show failure.
-                    filterByNonRevocationRequirements: false,
-                  },
-                }
-              : {}),
-          },
-        })
-        if (!credentials) {
-          throw new Error(t('ProofRequest.RequestedCredentialsCouldNotBeFound'))
-        }
-
-        if (!format) {
-          throw new Error(t('ProofRequest.RequestedCredentialsCouldNotBeFound'))
-        }
-
-        return { format, credentials }
-      } catch (error: unknown) {
-        DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
+  const containsRevokedCreds = (
+    credExRecords: CredentialExchangeRecord[],
+    fields: {
+      [key: string]: Attribute[] & Predicate[]
+    },
+  ) => {
+    const revList = credExRecords.map(cred => {
+      return {
+        id: cred.credentials.map(item => item.credentialRecordId),
+        revocationDate: cred.revocationNotification?.revocationDate,
       }
-    }
+    })
 
-    retrieveCredentialsForProof(proof)
-      .then(retrieved => retrieved ?? { format: undefined, credentials: undefined })
-      .then(({ format, credentials }) => {
-        if (!(format && credentials && fullCredentials)) {
-          return
+    return revList.some(item => {
+      const revDate = moment(item.revocationDate)
+      return item.id.some(id => {
+        return Object.keys(fields).some(key => {
+          const dateIntervals = fields[key]
+            ?.filter(attr => attr.credentialId === id)
+            .map(attr => {
+              return {
+                to: attr.nonRevoked?.to !== undefined ? moment.unix(attr.nonRevoked.to) : undefined,
+                from: attr.nonRevoked?.from !== undefined ? moment.unix(attr.nonRevoked.from) : undefined,
+              }
+            })
+          return dateIntervals?.some(
+            inter =>
+              (inter.to !== undefined && inter.to > revDate) || (inter.from !== undefined && inter.from > revDate),
+          )
+        })
+      })
+    })
+  }
+
+  useEffect(() => {
+    setLoading(true)
+    credProofPromise
+      ?.then(value => {
+        if (value) {
+          const { groupedProof, retrievedCredentials, fullCredentials } = value
+          setLoading(false)
+          let credList: string[] = []
+          if (selectedCredentials.length > 0) {
+            credList = selectedCredentials
+          } else {
+            // we only want one of each satisfying credential
+            groupedProof.forEach(item => {
+              const credId = item.altCredentials?.[0]
+              if (credId && !credList.includes(credId)) {
+                credList.push(credId)
+              }
+            })
+          }
+
+          const formatCredentials = (
+            retrievedItems: Record<string, (AnonCredsRequestedAttributeMatch | AnonCredsRequestedPredicateMatch)[]>,
+            credList: string[],
+          ) => {
+            return Object.keys(retrievedItems)
+              .map(key => {
+                return {
+                  [key]: retrievedItems[key].filter(attr => credList.includes(attr.credentialId)),
+                }
+              })
+              .reduce((prev, curr) => {
+                return {
+                  ...prev,
+                  ...curr,
+                }
+              }, {})
+          }
+
+          const selectRetrievedCredentials: AnonCredsCredentialsForProofRequest | undefined = retrievedCredentials
+            ? {
+                ...retrievedCredentials,
+                attributes: formatCredentials(retrievedCredentials.attributes, credList) as Record<
+                  string,
+                  AnonCredsRequestedAttributeMatch[]
+                >,
+                predicates: formatCredentials(retrievedCredentials.predicates, credList) as Record<
+                  string,
+                  AnonCredsRequestedPredicateMatch[]
+                >,
+              }
+            : undefined
+          setRetrievedCredentials(selectRetrievedCredentials)
+
+          const activeCreds = groupedProof.filter(item => credList.includes(item.credId))
+          setActiveCreds(activeCreds)
+
+          const unpackCredToField = (
+            credentials: (ProofCredentialAttributes & ProofCredentialPredicates)[],
+          ): { [key: string]: Attribute[] & Predicate[] } => {
+            return credentials.reduce((prev, current) => {
+              return { ...prev, [current.credId]: current.attributes ?? current.predicates ?? [] }
+            }, {})
+          }
+
+          const records = fullCredentials.filter(record =>
+            record.credentials.some(cred => credList.includes(cred.credentialRecordId)),
+          )
+          const foundRevocationOffense = containsRevokedCreds(records, unpackCredToField(activeCreds))
+          setRevocationOffense(foundRevocationOffense)
         }
-
-        const proofFormat = credentials.proofFormats.anoncreds ?? credentials.proofFormats.indy
-        const reqCredIds = [
-          ...Object.keys(proofFormat?.attributes ?? {}).map(key => proofFormat?.attributes[key][0]?.credentialId),
-          ...Object.keys(proofFormat?.predicates ?? {}).map(key => proofFormat?.predicates[key][0]?.credentialId),
-        ]
-        const credentialRecords = fullCredentials.filter(record =>
-          reqCredIds.includes(record.credentials[0]?.credentialRecordId),
-        )
-        const attributes = processProofAttributes(format.request, credentials, credentialRecords)
-        const predicates = processProofPredicates(format.request, credentials, credentialRecords)
-        setRetrievedCredentials(proofFormat)
-
-        const groupedProof = Object.values(mergeAttributesAndPredicates(attributes, predicates))
-        setProofItems(groupedProof)
-        setLoading(false)
       })
       .catch((err: unknown) => {
-        const error = new BifoldError(t('Error.Title1026'), t('Error.Message1026'), (err as Error).message, 1026)
+        const error = new BifoldError(
+          t('Error.Title1026'),
+          t('Error.Message1026'),
+          (err as Error)?.message ?? err,
+          1026,
+        )
         DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
       })
-  }, [])
+  }, [selectedCredentials])
 
-  const toggleDeclineModalVisible = () => {
-    setDeclineModalVisible(!declineModalVisible)
-    setisDeclineEnable(true)
-  }
+  const toggleDeclineModalVisible = () => setDeclineModalVisible(!declineModalVisible)
 
-  const hasAvailableCredentials = (credDefId?: string): boolean => {
-    const fields: Fields = {
-      ...retrievedCredentials?.attributes,
-      ...retrievedCredentials?.predicates,
-    }
+  const getCredentialsFields = (): Fields => ({
+    ...retrievedCredentials?.attributes,
+    ...retrievedCredentials?.predicates,
+  })
 
-    if (credDefId) {
-      let credFound = false
-      Object.keys(fields).forEach(proofKey => {
-        const credDefsInAttrs = fields[proofKey].map(attr => attr.credentialInfo?.credentialDefinitionId)
-        if (credDefsInAttrs.includes(credDefId)) {
-          credFound = true
-          return
-        }
+  useEffect(() => {
+    // get oca bundle to see if we're presenting personally identifiable elements
+    activeCreds.some(async item => {
+      if (!item || !(item.credDefId || item.schemaId)) {
+        return false
+      }
+      const labels = (item.attributes ?? []).map(field => field.label ?? field.name ?? '')
+      const bundle = await OCABundleResolver.resolveAllBundles({
+        identifiers: { credentialDefinitionId: item.credDefId, schemaId: item.schemaId },
       })
-      return credFound
-    }
+      const flaggedAttributes: string[] = (bundle as any).bundle.bundle.flaggedAttributes.map((attr: any) => attr.name)
+      const foundPI = labels.some(label => flaggedAttributes.includes(label))
+      setContainsPI(foundPI)
+      return foundPI
+    })
+  }, [activeCreds])
+
+  const hasAvailableCredentials = useMemo(() => {
+    const fields = getCredentialsFields()
 
     return !!retrievedCredentials && Object.values(fields).every(c => c.length > 0)
-  }
+  }, [retrievedCredentials])
+
+  const hasSatisfiedPredicates = (fields: Fields, credId?: string) =>
+    activeCreds.flatMap(item => evaluatePredicates(fields, credId)(item)).every(p => p.satisfied)
 
   const handleAcceptPress = async () => {
     try {
@@ -293,6 +346,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
       if (proof) {
         await declineProofRequest(agent, { proofRecordId: proof.id })
         setisDeclineEnable(false)
+
         // sending a problem report fails if there is neither a connectionId nor a ~service decorator
         if (proof.connectionId) {
           await sendProofProblemReport(agent, { proofRecordId: proof.id, description: t('ProofRequest.Declined') })
@@ -323,7 +377,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
           <>
             <ConnectionImage connectionId={proof?.connectionId} />
             <View style={styles.headerTextContainer}>
-              {!hasAvailableCredentials() ? (
+              {!hasSatisfiedPredicates(getCredentialsFields()) ? (
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Icon
                     style={{ marginLeft: -2, marginRight: 10 }}
@@ -331,24 +385,80 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
                     color={ListItems.proofIcon.color}
                     size={ListItems.proofIcon.fontSize}
                   />
+
                   <Text style={styles.headerText} testID={testIdWithKey('HeaderText')}>
-                    <Text style={[TextTheme.title]}>{proofConnectionLabel || t('ContactDetails.AContact')}</Text>{' '}
-                    {t('ProofRequest.IsRequestingSomethingYouDontHaveAvailable')}:
+                    {t('ProofRequest.YouDoNotHaveDataPredicate')}{' '}
+                    <Text style={[TextTheme.title]}>{proofConnectionLabel || t('ContactDetails.AContact')}</Text>
                   </Text>
                 </View>
               ) : (
                 <Text style={styles.headerText} testID={testIdWithKey('HeaderText')}>
                   <Text style={[TextTheme.title]}>{proofConnectionLabel || t('ContactDetails.AContact')}</Text>{' '}
                   <Text>{t('ProofRequest.IsRequestingYouToShare')}</Text>
-                  <Text style={[TextTheme.title]}>{` ${proofItems.length} `}</Text>
-                  <Text>{proofItems.length > 1 ? t('ProofRequest.Credentials') : t('ProofRequest.Credential')}</Text>
+                  <Text style={[TextTheme.title]}>{` ${activeCreds?.length} `}</Text>
+                  <Text>{activeCreds?.length > 1 ? t('ProofRequest.Credentials') : t('ProofRequest.Credential')}</Text>
                 </Text>
               )}
+              {containsPI && (
+                <View
+                  style={{
+                    backgroundColor: ColorPallet.notification.warn,
+                    width: '100%',
+                    marginTop: 10,
+                    borderColor: ColorPallet.notification.warnBorder,
+                    borderWidth: 2,
+                    borderRadius: 4,
+                    flexDirection: 'row',
+                  }}>
+                  <Icon
+                    style={{ marginTop: 15, marginLeft: 10 }}
+                    name="warning"
+                    color={ColorPallet.notification.warnIcon}
+                    size={TextTheme.title.fontSize + 5}
+                  />
+                  <Text
+                    style={{
+                      ...TextTheme.title,
+                      color: ColorPallet.notification.warnText,
+                      flex: 1,
+                      flexWrap: 'wrap',
+                      margin: 10,
+                    }}>
+                    {t('ProofRequest.SensitiveInformation')}
+                  </Text>
+                </View>
+              )}
             </View>
+            {!hasAvailableCredentials && hasMatchingCredDef && (
+              <Text
+                style={{
+                  ...TextTheme.title,
+                }}>
+                {t('ProofRequest.FromYourWallet')}
+              </Text>
+            )}
           </>
         )}
       </View>
     )
+  }
+
+  const handleAltCredChange = (selectedCred: string, altCredentials: string[]) => {
+    const onCredChange = (cred: string) => {
+      const newSelectedCreds = (
+        selectedCredentials.length > 0 ? selectedCredentials : activeCreds.map(item => item.credId)
+      ).filter(id => !altCredentials.includes(id))
+      setSelectedCredentials([cred, ...newSelectedCreds])
+    }
+    navigation.getParent()?.navigate(Stacks.ProofRequestsStack, {
+      screen: Screens.ProofChangeCredential,
+      params: {
+        selectedCred,
+        altCredentials,
+        proofId,
+        onCredChange,
+      },
+    })
   }
 
   const proofPageFooter = () => {
@@ -362,7 +472,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
             testID={testIdWithKey('Share')}
             buttonType={ButtonType.Primary}
             onPress={handleAcceptPress}
-            disabled={!hasAvailableCredentials()}
+            disabled={!hasAvailableCredentials || !hasSatisfiedPredicates(getCredentialsFields()) || revocationOffense}
           />
         </View>
         <View style={styles.footerButton}>
@@ -377,37 +487,97 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
       </View>
     )
   }
+
+  const CredentialList = ({ header, footer, items }: CredentialListProps) => {
+    return (
+      <FlatList
+        data={items}
+        scrollEnabled={false}
+        ListHeaderComponent={header}
+        ListFooterComponent={footer}
+        renderItem={({ item }) => {
+          return (
+            <View>
+              {loading ? null : (
+                <View style={{ marginTop: 10, marginHorizontal: 20 }}>
+                  <CredentialCard
+                    credential={item.credExchangeRecord}
+                    credDefId={item.credDefId}
+                    schemaId={item.schemaId}
+                    displayItems={[
+                      ...(item.attributes ?? []),
+                      ...evaluatePredicates(getCredentialsFields(), item.credId)(item),
+                    ]}
+                    credName={item.credName}
+                    existsInWallet={item.credDefId !== undefined}
+                    satisfiedPredicates={hasSatisfiedPredicates(getCredentialsFields(), item.credId)}
+                    hasAltCredentials={item.altCredentials && item.altCredentials.length > 1}
+                    handleAltCredChange={
+                      item.altCredentials && item.altCredentials.length > 1
+                        ? () => {
+                            handleAltCredChange(item.credId, item.altCredentials ?? [item.credId])
+                          }
+                        : undefined
+                    }
+                    proof={true}></CredentialCard>
+                </View>
+              )}
+            </View>
+          )
+        }}
+      />
+    )
+  }
+
   return (
     <SafeAreaView style={styles.pageContainer} edges={['bottom', 'left', 'right']}>
-      <View style={styles.pageContent}>
-        <FlatList
-          data={proofItems}
-          ListHeaderComponent={proofPageHeader}
-          ListFooterComponent={proofPageFooter}
-          renderItem={({ item }) => {
-            return (
-              <View style={{ marginTop: 10, marginHorizontal: 20 }}>
-                <CredentialCard
-                  credential={item.credExchangeRecord}
-                  credDefId={item.credDefId}
-                  schemaId={item.schemaId}
-                  displayItems={[...(item.attributes ?? []), ...(item.predicates ?? [])]}
-                  credName={item.credName}
-                  existsInWallet={hasAvailableCredentials(item.credDefId)}
-                  proof></CredentialCard>
-              </View>
-            )
-          }}
+      <ScrollView>
+        <View style={styles.pageContent}>
+          <CredentialList
+            header={proofPageHeader()}
+            footer={hasAvailableCredentials ? proofPageFooter() : undefined}
+            items={activeCreds.filter(cred => cred.credDefId !== undefined) ?? []}
+          />
+          {!hasAvailableCredentials && (
+            <CredentialList
+              header={
+                <View style={styles.pageMargin}>
+                  {!loading && (
+                    <>
+                      {hasMatchingCredDef && (
+                        <View
+                          style={{
+                            width: 'auto',
+                            borderWidth: 1,
+                            borderColor: ColorPallet.grayscale.lightGrey,
+                            marginTop: 20,
+                          }}
+                        />
+                      )}
+                      <Text
+                        style={{
+                          ...TextTheme.title,
+                          marginTop: 10,
+                        }}>
+                        {t('ProofRequest.MissingCredentials')}
+                      </Text>
+                    </>
+                  )}
+                </View>
+              }
+              footer={proofPageFooter()}
+              items={activeCreds.filter(cred => cred.credDefId === undefined) ?? []}
+            />
+          )}
+        </View>
+        <ProofRequestAccept visible={pendingModalVisible} proofId={proofId} />
+        <CommonRemoveModal
+          usage={ModalUsage.ProofRequestDecline}
+          visible={declineModalVisible}
+          onSubmit={handleDeclineTouched}
+          onCancel={toggleDeclineModalVisible}
         />
-      </View>
-      <ProofRequestAccept visible={pendingModalVisible} proofId={proofId} />
-      <CommonRemoveModal
-        usage={ModalUsage.ProofRequestDecline}
-        visible={declineModalVisible}
-        disabled={!isDeclineEnable}
-        onSubmit={handleDeclineTouched}
-        onCancel={toggleDeclineModalVisible}
-      />
+      </ScrollView>
     </SafeAreaView>
   )
 }

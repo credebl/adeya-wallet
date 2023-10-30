@@ -108,6 +108,14 @@ const TabStack: React.FC = () => {
           }}
         />
         {/* <Tab.Screen
+            tabBarBadge: total || undefined,
+            tabBarBadgeStyle: {
+              marginLeft: leftMarginForDevice(width, height),
+              backgroundColor: ColorPallet.semantic.error,
+            },
+          }}
+        />
+        <Tab.Screen
           name={TabStacks.ConnectStack}
           options={{
             tabBarIconStyle: styles.tabBarIcon,
@@ -170,7 +178,6 @@ const TabStack: React.FC = () => {
           })}>
           {() => <View />}
         </Tab.Screen> */}
-
         <Tab.Screen
           name={TabStacks.CredentialStack}
           component={CredentialStack}

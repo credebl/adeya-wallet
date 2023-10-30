@@ -1,3 +1,4 @@
+
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { Fragment, useEffect, useState } from 'react'
 import { View, Text, TextInput, Platform, Image, ActivityIndicator } from 'react-native'
@@ -58,7 +59,6 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       alignSelf: 'center',
       color: ColorPallet.brand.primary,
       marginTop: '1.5625%',
-    },
     headerText: {
       justifyContent: 'center',
       color: ColorPallet.brand.primary,
@@ -96,6 +96,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       borderRadius: Platform.OS === 'ios' ? 10 : 10,
       backgroundColor: '#012048',
       color: ColorPallet.grayscale.white,
+
     },
     orgLabelTextactive: {
       alignSelf: 'center',
@@ -190,7 +191,6 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
           value={searchInput}
           onChangeText={text => handleSearchInputChange(text)}
         />
-      </View>
       {loading ? (
         <View style={{ justifyContent: 'center', flex: 1 }}>
           <ActivityIndicator style={{ width: 'auto' }} />

@@ -45,6 +45,7 @@ export enum Screens {
   WalletOptions = 'Create Walllet',
   ImportSuccess = 'Import Success',
   CredentialDetailsW3C = 'Credential Details W3C',
+  ProofChangeCredential = 'Choose a credential',
   Organizations = 'Explore',
   OrganizationsConnection = 'Organization Details',
 }
@@ -121,6 +122,12 @@ export type ProofRequestsStackParams = {
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean; senderReview?: boolean }
   [Screens.ProofRequestDetails]: { templateId: string; connectionId?: string }
   [Screens.ProofRequestUsageHistory]: { templateId: string }
+  [Screens.ProofChangeCredential]: {
+    selectedCred: string
+    altCredentials: string[]
+    proofId: string
+    onCredChange: (arg: string) => void
+  }
 }
 
 export type CredentialStackParams = {
@@ -128,6 +135,10 @@ export type CredentialStackParams = {
   [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
   [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
   [Screens.Scan]: undefined
+}
+export type OrganizationStackParams = {
+  [Screens.Organizations]: undefined
+  [Screens.OrganizationsConnection]: undefined
 }
 export type OrganizationStackParams = {
   [Screens.Organizations]: undefined

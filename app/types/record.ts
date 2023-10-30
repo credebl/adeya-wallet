@@ -1,4 +1,5 @@
-import { AnonCredsNonRevokedInterval, AnonCredsProofRequestRestriction, CredentialExchangeRecord } from '@adeya/ssi'
+
+import { AnonCredsNonRevokedInterval, AnonCredsProofRequestRestriction } from '@adeya/ssi'
 
 export interface FieldParams {
   name: string | null
@@ -73,24 +74,6 @@ export class Predicate extends Field {
     this.parameterizable = params.parameterizable
   }
 }
-
-export interface ProofCredentialAttributes {
-  credExchangeRecord?: CredentialExchangeRecord
-  credDefId?: string
-  schemaId?: string
-  credName: string
-  attributes?: Attribute[]
-}
-
-export interface ProofCredentialPredicates {
-  credExchangeRecord?: CredentialExchangeRecord
-  credDefId?: string
-  schemaId?: string
-  credName: string
-  predicates?: Predicate[]
-}
-
-export interface ProofCredentialItems extends ProofCredentialAttributes, ProofCredentialPredicates {}
 
 export type W3CCredentialAttribute = {
   key: string

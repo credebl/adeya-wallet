@@ -21,6 +21,9 @@ interface CredentialCardProps {
   displayItems?: (Attribute | Predicate)[]
   existsInWallet?: boolean
   connectionLabel?: string
+  satisfiedPredicates?: boolean
+  hasAltCredentials?: boolean
+  handleAltCredChange?: () => void
 }
 
 const CredentialCard: React.FC<CredentialCardProps> = ({
@@ -31,6 +34,9 @@ const CredentialCard: React.FC<CredentialCardProps> = ({
   displayItems,
   credName,
   existsInWallet,
+  satisfiedPredicates,
+  hasAltCredentials,
+  handleAltCredChange,
   style = {},
   onPress = undefined,
   connectionLabel = '',
@@ -45,10 +51,13 @@ const CredentialCard: React.FC<CredentialCardProps> = ({
           displayItems={displayItems}
           style={{ backgroundColor: ColorPallet.brand.secondaryBackground }}
           error={!existsInWallet}
+          predicateError={!satisfiedPredicates}
           credName={credName}
           credDefId={credDefId}
           schemaId={schemaId}
           credential={credential as CredentialExchangeRecord}
+          handleAltCredChange={handleAltCredChange}
+          hasAltCredentials={hasAltCredentials}
           proof
           elevated
         />
@@ -75,7 +84,7 @@ const CredentialCard: React.FC<CredentialCardProps> = ({
       }
     }
   }
-  return getCredOverlayType(OCABundleResolver.cardOverlayType)
+  return getCredOverlayType(OCABundleResolver.getBrandingOverlayType())
 }
 
 export default CredentialCard
