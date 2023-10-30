@@ -25,12 +25,15 @@ interface CredentialCard11Props {
   displayItems?: (Attribute | Predicate)[]
   revoked?: boolean
   error?: boolean
+  predicateError?: boolean
   elevated?: boolean
   credName?: string
   credDefId?: string
   schemaId?: string
   proof?: boolean
   connectionLabel?: string
+  hasAltCredentials?: boolean
+  handleAltCredChange?: () => void
 }
 
 const { width } = Dimensions.get('screen')
@@ -74,12 +77,15 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
   displayItems,
   onPress = undefined,
   error = false,
+  predicateError = false,
   elevated = false,
   credName,
   credDefId,
   schemaId,
   proof,
   connectionLabel = '',
+  hasAltCredentials,
+  handleAltCredChange,
 }) => {
   const { i18n, t } = useTranslation()
   const { ColorPallet, TextTheme, ListItems } = useTheme()
@@ -192,6 +198,22 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
       fontSize: 22,
       transform: [{ rotate: '-30deg' }],
     },
+    selectedCred: {
+      borderWidth: 5,
+      borderRadius: 15,
+      borderColor: ColorPallet.semantic.focus,
+    },
+    seperator: {
+      width: '100%',
+      height: 2,
+      marginVertical: 10,
+      backgroundColor: ColorPallet.grayscale.lightGrey,
+    },
+    credActionText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      textDecorationLine: 'underline',
+    },
   })
 
   useEffect(() => {
@@ -244,7 +266,7 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
                 color: '#000',
               },
             ]}>
-            {!error ? (
+            {!predicateError && !error ? (
               (overlay.metaOverlay?.name ?? overlay.metaOverlay?.issuer ?? 'C')?.charAt(0).toUpperCase()
             ) : (
               <Icon name={'warning'} size={30} style={styles.errorIcon} />
@@ -381,6 +403,25 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
             renderItem={({ item }) => {
               return renderCardAttribute(item as Attribute & Predicate)
             }}
+            ListFooterComponent={
+              hasAltCredentials ? (
+                <View>
+                  <View style={styles.seperator}></View>
+                  <View>
+                    <TouchableOpacity
+                      onPress={handleAltCredChange}
+                      testID={testIdWithKey('changeCredential')}
+                      style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <Text style={styles.credActionText}>{t('ProofRequest.ChangeCredential')}</Text>
+                      <Icon
+                        style={{ ...styles.credActionText, fontSize: styles.credActionText.fontSize + 5 }}
+                        name="chevron-right"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : null
+            }
           />
         </View>
       </View>
@@ -395,7 +436,7 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
           styles.secondaryBodyContainer,
           {
             backgroundColor:
-              error || isProofRevoked
+              error || predicateError || isProofRevoked
                 ? ColorPallet.notification.errorBorder
                 : styles.secondaryBodyContainer.backgroundColor,
           },
@@ -411,7 +452,7 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
             {null}
           </ImageBackground>
         ) : (
-          !(error || proof || getSecondaryBackgroundColor()) && (
+          !(error || predicateError || proof || getSecondaryBackgroundColor()) && (
             <View
               style={[
                 {
@@ -481,7 +522,12 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
   }
   return overlay.bundle ? (
     <View
-      style={[styles.container, style, { elevation: elevated ? 5 : 0, overflow: 'hidden' }]}
+      style={[
+        styles.container,
+        style,
+        { elevation: elevated ? 5 : 0, overflow: 'hidden' },
+        hasAltCredentials ? styles.selectedCred : undefined,
+      ]}
       onLayout={event => {
         setDimensions({ cardHeight: event.nativeEvent.layout.height, cardWidth: event.nativeEvent.layout.width })
       }}>
