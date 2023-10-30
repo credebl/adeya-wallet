@@ -248,9 +248,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
           const records = fullCredentials.filter(record =>
             record.credentials.some(cred => credList.includes(cred.credentialRecordId)),
           )
-          const foundRevocationOffense =
-            containsRevokedCreds(records, unpackCredToField(activeCreds)) ||
-            containsRevokedCreds(records, unpackCredToField(activeCreds))
+          const foundRevocationOffense = containsRevokedCreds(records, unpackCredToField(activeCreds))
           setRevocationOffense(foundRevocationOffense)
         }
       })
@@ -486,7 +484,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
     )
   }
 
-  const CredentialList: React.FC<CredentialListProps> = ({ header, footer, items }) => {
+  const CredentialList = ({ header, footer, items }: CredentialListProps) => {
     return (
       <FlatList
         data={items}

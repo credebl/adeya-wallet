@@ -346,11 +346,11 @@ export const evaluatePredicates =
     const credentialAttributes = getCredentialInfo(proofCredentialItems.credId, fields).map(ci => ci.attributes)
 
     return predicates.map((predicate: Predicate) => {
-      const { pType: pType, pValue: pValue, name: field } = predicate
+      const { pType, pValue, name: field } = predicate
       let satisfied = false
 
       if (field) {
-        const attribute = (credentialAttributes.find(attr => attr[field] != undefined) ?? {})[field]
+        const attribute = credentialAttributes.find(attr => attr[field] != undefined)?.[field]
 
         if (attribute && pValue) {
           satisfied = evaluateOperation(Number(attribute), Number(pValue), pType as AnonCredsPredicateType)
@@ -618,7 +618,7 @@ export const retrieveCredentialsForProof = async (
     const credentials = await getCredentialsForProofRequest(agent, {
       proofRecordId: proof.id,
       proofFormats: {
-        // FIXME: AFJ will try to use the format, even if the value is undefined (but the key is present)
+        // AFJ will try to use the format, even if the value is undefined (but the key is present)
         // We should ignore the key, if the value is undefined. For now this is a workaround.
         ...(hasIndy
           ? {
