@@ -175,4 +175,5 @@ export type DeliveryStackParams = {
   [Screens.OnTheWay]: { credentialId: string }
   [Screens.Declined]: { credentialId: string }
   [Screens.Chat]: { connectionId: string }
+  [Screens.ContactDetails]: { connectionId: string }
 }

@@ -37,7 +37,6 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
   const { connectionId, threadId } = route.params
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const connection = connectionId ? useConnectionById(connectionId) : undefined
-
   const { t } = useTranslation()
   const { notifications } = useNotifications()
   const { ColorPallet, TextTheme } = useTheme()
@@ -153,13 +152,14 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
       (!goalCode || (!goalCode.startsWith('aries.vc.verify') && !goalCode.startsWith('aries.vc.issue')))
     ) {
       // No goal code, we don't know what to expect next,
-      // navigate to the Contact Details screen.
-      navigation.navigate(Stacks.ContactStack, {
+      // navigate to the chat screen.
+      // navigation.navigate(Screens.Chat, { connectionId })
+      // dispatch({ isVisible: false })
+      // return
+      navigation.navigate(Stacks.ConnectionStack, {
         screen: Screens.ContactDetails,
         params: { connectionId: connectionId },
       })
-      dispatch({ isVisible: false })
-      return
     }
 
     if (state.notificationRecord && goalCode) {

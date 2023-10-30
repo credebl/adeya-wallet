@@ -15,6 +15,7 @@ import ProofDetails from '../screens/ProofDetails'
 import ProofRequest from '../screens/ProofRequest'
 import WhatAreContacts from '../screens/WhatAreContacts'
 import { ContactStackParams, Screens } from '../types/navigators'
+import { testIdWithKey } from '../utils/testable'
 
 import { createDefaultStackOptions } from './defaultStackOptions'
 
@@ -32,6 +33,7 @@ const ContactStack: React.FC = () => {
         component={ContactDetails}
         options={{
           title: t('Screens.ContactDetails'),
+          headerBackTestID: testIdWithKey('Back'),
         }}
       />
       <Stack.Screen name={Screens.Chat} component={Chat} />

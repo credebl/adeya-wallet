@@ -1,230 +1,46 @@
-import { useNavigation } from '@react-navigation/core'
-import React, { useRef, useState } from 'react'
-import { View, Text, TextInput, FlatList, Animated, PanResponder, Platform } from 'react-native'
+import { StackNavigationProp } from '@react-navigation/stack'
+import React, { Fragment, useEffect, useState } from 'react'
+import { View, Text, TextInput, Platform, Image, ActivityIndicator } from 'react-native'
 import { ScaledSheet } from 'react-native-size-matters'
+import Toast from 'react-native-toast-message'
 
+import AlphabetFlatList from '../components/common'
 import ScanButton from '../components/common/ScanButton'
 import OrganizationListItem from '../components/listItems/OrganizationListItem'
-import EmptyListOrganizations from '../components/misc/EmptyListOrganizations'
+import { ToastType } from '../components/toast/BaseToast'
 import { useTheme } from '../contexts/theme'
+import { OrganizationStackParams, Screens } from '../types/navigators'
+import { fetchOrganizationData } from '../utils/Organization'
 
-const OrganizationList: React.FC = () => {
-  const [selectedLetter, setSelectedLetter] = useState('')
+import { IContact } from './ContactItem'
+
+interface Organization {
+  id: number
+  createDateTime: string
+  createdBy: number
+  lastChangedDateTime: string
+  lastChangedBy: number
+  name: string
+  description: string
+  orgSlug: string
+  logoUrl: string
+  website: string
+  publicProfile: boolean
+}
+
+interface OrganizationData {
+  organizations: Organization[]
+}
+
+interface ListOrganizationProps {
+  navigation: StackNavigationProp<OrganizationStackParams, Screens.Organizations>
+}
+
+const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   const [searchInput, setSearchInput] = useState('')
-  const [draggedLetter, setDraggedLetter] = useState('')
-
-  const organizations = [
-    {
-      id: 2,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Globex Tech pvt ltd',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 3,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Globex Tech pvt ltd',
-      description: 'Globex Corporation',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 4,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Genco Pura Olive Oil Company',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 5,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Initech (Office Space)',
-      description: 'Veridian Dynamics',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 6,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Umbrella Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 7,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Umbrella Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 8,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Umbrella Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 9,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Umbrella Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 10,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Umbrella Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 11,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Umbrella Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 12,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 13,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Umbrella Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 14,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'loco Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 15,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Umbrella technology',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 16,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Iconic Solutions',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 17,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Iconic Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-  ]
+  const [loading, setLoading] = useState(true)
+  const [orgnizationdata, setorgnizationdata] = useState<OrganizationData>({ organizations: [] })
   const { ColorPallet } = useTheme()
-  const navigation = useNavigation()
 
   const styles = ScaledSheet.create({
     container: {
@@ -263,6 +79,7 @@ const OrganizationList: React.FC = () => {
       alignSelf: 'center',
       borderWidth: 1,
       width: '95%',
+      flexDirection: 'row',
       height: Platform.OS === 'ios' ? 30 : 40,
       borderRadius: 5,
       marginTop: 5,
@@ -296,56 +113,78 @@ const OrganizationList: React.FC = () => {
       borderRadius: 5,
       borderColor: '#E1EAFF',
       backgroundColor: '#E1EAFF',
+      position: 'relative',
+    },
+    alphabetLetter: {
+      position: 'relative',
+    },
+    highlightedLetter: {
+      position: 'absolute',
+      backgroundColor: '#012048',
+      borderRadius: Platform.OS === 'ios' ? 15 : 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 20,
+      height: 20,
+    },
+    highlightedText: {
+      color: 'white',
     },
   })
-  const filteredOrganizations = organizations.filter(org => {
-    const firstLetter = org.name.charAt(0).toUpperCase()
-    if (selectedLetter && firstLetter !== selectedLetter) {
-      return false
+  const fetchData = async () => {
+    try {
+      const response = await fetchOrganizationData()
+      setorgnizationdata(response?.data)
+    } catch (error) {
+      Toast.show({
+        type: ToastType.Error,
+        text1: 'Error fetching organization data',
+      })
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const filteredOrganizations = orgnizationdata.organizations.filter(org => {
     if (searchInput) {
       const orgName = org.name.toLowerCase()
       return orgName.includes(searchInput.toLowerCase())
     }
     return true
   })
-  const alphabet: string[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-  organizations.sort((a, b) => a.name.localeCompare(b.name))
   const handleSearchInputChange = (text: string) => {
     setSearchInput(text)
   }
+  const items: IContact[] = filteredOrganizations.map((item, index) => ({
+    id: index,
+    logoUrl: item.logoUrl,
+    name: item.name,
+    description: item.description,
+    OrgSlug: item.orgSlug,
+  }))
 
-  const handleSelected = (letter: string) => {
-    setDraggedLetter(letter)
-    setSelectedLetter(letter)
+  const data: { [key: string]: IContact[] } = {}
+
+  // Loop through the alphabet from 'A' to 'Z'
+  for (let letter = 'A'.charCodeAt(0); letter <= 'Z'.charCodeAt(0); letter++) {
+    const initialLetter = String.fromCharCode(letter)
+    data[initialLetter] = items.filter(item => item.name.charAt(0) === initialLetter)
   }
-  const panResponder = (letter: string) =>
-    useRef(
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: () => true,
+  const HEADER_HEIGHT = 50
 
-        onPanResponderGrant: () => {},
-        onPanResponderMove: (evt, gestureState) => {
-          if (gestureState.moveX > 0 && gestureState.moveY > 0) {
-            handleSelected(letter)
-          }
-        },
-        onPanResponderTerminationRequest: () => true,
-
-        onPanResponderRelease: () => {
-          setDraggedLetter('')
-        },
-      }),
-    ).current
   return (
     <View style={styles.container}>
       <View style={styles.headerTextView}>
-        <Text style={styles.titleText}>Select an organization to discover what credentials you can obtain.</Text>
+        <Text style={styles.titleText}>Select an organization to get credentials</Text>
       </View>
       <Text style={styles.headerText}>Organizations list</Text>
 
       <View style={styles.searchBarView}>
+        <Image source={require('../assets/img/search.png')} style={{ margin: 2 }} />
         <TextInput
           scrollEnabled={false}
           style={{ marginHorizontal: 4, marginTop: Platform.OS === 'ios' ? 5 : 0 }}
@@ -354,34 +193,22 @@ const OrganizationList: React.FC = () => {
           onChangeText={text => handleSearchInputChange(text)}
         />
       </View>
-      <View style={[styles.listView, { flexDirection: 'row', paddingRight: 'auto' }]}>
-        <FlatList
-          data={filteredOrganizations}
-          scrollEnabled={true}
-          showsVerticalScrollIndicator={false}
-          SeparatorComponent={() => <View style={styles.Separator} />}
-          keyExtractor={organizations => organizations.id}
-          renderItem={({ item: organizations }) => (
-            <OrganizationListItem organization={organizations} navigation={navigation} />
-          )}
-          ListEmptyComponent={() => <EmptyListOrganizations navigation={navigation} />}
-        />
-        <Animated.View style={styles.alphabetView}>
-          {alphabet.map(item => (
-            <Text
-              {...panResponder(item).panHandlers}
-              style={[
-                {
-                  ...(selectedLetter === item
-                    ? { ...styles.selectedLetter, backgroundColor: draggedLetter === item ? 'red' : '#012048' }
-                    : {}),
-                },
-              ]}>
-              {item}
-            </Text>
-          ))}
-        </Animated.View>
-      </View>
+      {loading ? (
+        <View style={{ justifyContent: 'center', flex: 1 }}>
+          <ActivityIndicator style={{ width: 'auto' }} />
+        </View>
+      ) : (
+        <Fragment>
+          <AlphabetFlatList
+            data={data}
+            itemHeight={70}
+            headerHeight={HEADER_HEIGHT}
+            renderItem={({ item: organizations }) => (
+              <OrganizationListItem organization={organizations} navigation={navigation} />
+            )}
+          />
+        </Fragment>
+      )}
       <View />
       <ScanButton />
     </View>
