@@ -249,6 +249,11 @@ const translation = {
     "WhatAreContacts": "What are Contacts",
     "AddContact": "Add Contact",
   },
+  "Organizations": {
+    "EmptyList": "Your Organizatiion is empty!",
+    "TypeHere": "Type Message Here",
+    "PeopleAndOrganizations": "organizations are listed here.",
+  },
   "ContactDetails": {
     "Created": "Created",
     "ConnectionState": "Connection State",
@@ -474,6 +479,7 @@ const translation = {
     "Home": "Home",
     "Scan": "Scan",
     "Credentials": "Credentials",
+    "Explore":"Explore"
   },
   "RootStack": {
     "Contacts": "Contacts",
@@ -545,6 +551,8 @@ const translation = {
     "CredentialDetailsW3C" :'Credential Details W3C',
     "WalletName" :"Wallet Name",
     "ProofChangeCredential": "Choose a credential",
+    "Organization": "Explore",
+    "OrganizationConnection": "Connection"
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",
