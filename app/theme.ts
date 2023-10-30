@@ -749,7 +749,6 @@ export const OnboardingTheme = {
   headerTintColor: ColorPallet.grayscale.white,
   headerText: {
     ...TextTheme.headingTwo,
-    // color: ColorPallet.notification.infoText,
     color: '#1F4EAD',
   },
   bodyText: {
