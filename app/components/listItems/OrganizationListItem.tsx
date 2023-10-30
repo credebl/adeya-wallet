@@ -64,14 +64,16 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
       marginBottom: 10,
     },
   })
-  const navigateToConnection = (name: string, description: string, logoUrl: string) => {
-    navigation.navigate(Screens.OrganizationsConnection, { name, description, logoUrl })
+  const navigateToConnection = (name: string, description: string, logoUrl: string, OrgSlug: string) => {
+    navigation.navigate(Screens.OrganizationsConnection, { name, description, logoUrl, OrgSlug })
   }
   const orgnizationLabel = useMemo(() => organization.name, [organization])
   const organaizationLabelAbbr = useMemo(() => orgnizationLabel?.charAt(0).toUpperCase(), [organization])
   return (
     <TouchableOpacity
-      onPress={() => navigateToConnection(organization.name, organization.description, organization.logoUrl)}
+      onPress={() =>
+        navigateToConnection(organization.name, organization.description, organization.logoUrl, organization.OrgSlug)
+      }
       testID={testIdWithKey('Contact')}
       accessibilityLabel={t('ContactDetails.AContact')}>
       <View style={styles.container}>

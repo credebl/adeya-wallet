@@ -20,10 +20,18 @@ interface OrgnizationDetailsProps {
   logoUrl: any
   OrgSlug: string
 }
+interface CredentialDetail {
+  tag: string
+  credentialDefinitionId: string
+  schemaLedgerId: string
+  revocable: boolean
+  createDateTime: string
+}
 const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
   const { ColorPallet, ListItems, TextTheme } = useTheme()
   const { agent } = useAppAgent()
   const [orgnizationDetailData, setorgnizationDetailData] = useState([])
+  const [credentialDetailData, setCredentialDetailData] = useState<CredentialDetail[]>([])
   const navigation = useNavigation()
   const { t } = useTranslation()
   const params = useRoute<RouteProp<Record<string, OrgnizationDetailsProps>, string>>().params
@@ -36,12 +44,11 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
 
     headerTextView: {
       justifyContent: 'center',
-      marginHorizontal: '10%',
       alignSelf: 'center',
     },
     titleText: {
       fontSize: 20,
-      fontWeight: '400',
+      fontWeight: '600',
       alignSelf: 'center',
       color: ColorPallet.brand.primary,
       marginTop: 5,
@@ -131,13 +138,23 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       fontSize: 17,
     },
     button: {
-      marginTop: '75%',
+      margin: 20,
+      marginTop: '70%',
+    },
+    credLabel: {
+      fontSize: 18,
+      fontWeight: '600',
+      width: '90%',
+    },
+    credContainer: {
+      flexDirection: 'row',
     },
   })
 
   const fetchData = async () => {
     const response = await fetchOrganizationDetail(params?.OrgSlug)
     setorgnizationDetailData(response?.data.org_agents)
+    setCredentialDetailData(response?.data.credential_definitions)
   }
 
   useEffect(() => {
@@ -186,7 +203,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       if (!agentInvitations || agentInvitations.length === 0) {
         Toast.show({
           type: ToastType.Error,
-          text1: 'No agent invitations found',
+          text1: 'No agent invitations available',
         })
         return
       }
@@ -196,7 +213,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       if (!lastArray || lastArray.length === 0) {
         Toast.show({
           type: ToastType.Error,
-          text1: 'No connection invitations found',
+          text1: 'No connection invitations available',
         })
         return
       }
@@ -206,7 +223,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       if (!lastItem || !lastItem.connectionInvitation) {
         Toast.show({
           type: ToastType.Error,
-          text1: 'No last connection invitation found',
+          text1: 'No last connection invitation available',
         })
         return
       }
@@ -216,7 +233,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
     } catch (error) {
       Toast.show({
         type: ToastType.Error,
-        text1: 'No agent invitations found',
+        text1: 'No agent invitations available',
       })
     }
   }
@@ -246,6 +263,18 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
             <Text style={styles.orgHeaderText}>About Organization</Text>
           </View>
           <Text style={styles.labeltext}>{params?.description}</Text>
+        </View>
+      </View>
+      <View style={styles.credentialContainner}>
+        <View>
+          <View style={styles.descriptionlabel}>
+            <Text style={styles.orgHeaderText}>Available Credentials</Text>
+          </View>
+          <View style={styles.credContainer}>
+            {credentialDetailData.map(item => (
+              <Text style={styles.labeltext}>{item?.tag}</Text>
+            ))}
+          </View>
         </View>
       </View>
 

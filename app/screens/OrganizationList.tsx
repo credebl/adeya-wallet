@@ -50,12 +50,11 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     },
     headerTextView: {
       justifyContent: 'center',
-      marginHorizontal: '10%',
       alignSelf: 'center',
     },
     titleText: {
-      fontSize: 18,
-      fontWeight: '400',
+      fontSize: 20,
+      fontWeight: '600',
       alignSelf: 'center',
       color: ColorPallet.brand.primary,
       marginTop: '1.5625%',
@@ -169,7 +168,6 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
 
   const data: { [key: string]: IContact[] } = {}
 
-  // Loop through the alphabet from 'A' to 'Z'
   for (let letter = 'A'.charCodeAt(0); letter <= 'Z'.charCodeAt(0); letter++) {
     const initialLetter = String.fromCharCode(letter)
     data[initialLetter] = items.filter(item => item.name.charAt(0) === initialLetter)

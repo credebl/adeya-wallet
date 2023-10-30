@@ -112,6 +112,7 @@ export type ContactStackParams = {
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean }
   [Screens.ProofRequest]: { proofId: string }
+  [Screens.Home]: undefined
 }
 
 export type ProofRequestsStackParams = {
@@ -126,6 +127,7 @@ export type CredentialStackParams = {
   [Screens.Credentials]: undefined
   [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
   [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
+  [Screens.Scan]: undefined
 }
 export type OrganizationStackParams = {
   [Screens.Organizations]: undefined

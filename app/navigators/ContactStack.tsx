@@ -3,6 +3,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import HeaderRightHome from '../components/buttons/HeaderHome'
+import SettingsMenu from '../components/buttons/SettingsMenu'
 import { useTheme } from '../contexts/theme'
 import Chat from '../screens/Chat'
 import ConnectionInvitation from '../screens/ConnectionInvitation'
@@ -10,6 +11,7 @@ import ContactDetails from '../screens/ContactDetails'
 import CredentialDetails from '../screens/CredentialDetails'
 import CredentialDetailsW3C from '../screens/CredentialDetailsW3C'
 import CredentialOffer from '../screens/CredentialOffer'
+import Home from '../screens/Home'
 import ListContacts from '../screens/ListContacts'
 import ProofDetails from '../screens/ProofDetails'
 import ProofRequest from '../screens/ProofRequest'
@@ -35,6 +37,15 @@ const ContactStack: React.FC = () => {
           title: t('Screens.ContactDetails'),
           headerBackTestID: testIdWithKey('Back'),
         }}
+      />
+      <Stack.Screen
+        name={Screens.Home}
+        component={Home}
+        options={() => ({
+          title: t('Screens.Home'),
+          headerRight: () => null,
+          headerLeft: () => <SettingsMenu />,
+        })}
       />
       <Stack.Screen name={Screens.Chat} component={Chat} />
       <Stack.Screen
