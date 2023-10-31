@@ -210,7 +210,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
 
       const lastArray = agentInvitations[0]
 
-      if (!lastArray || lastArray.length === 0) {
+      if (!lastArray?.connectionInvitation) {
         Toast.show({
           type: ToastType.Error,
           text1: 'No connection invitations available',
@@ -272,8 +272,10 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
               <Text style={styles.orgHeaderText}>Available Credentials</Text>
             </View>
             <View style={styles.credContainer}>
-              {credentialDetailData.map(item => (
-                <Text style={styles.labeltext}>{item?.tag}</Text>
+              {credentialDetailData.map((item, index) => (
+                <Text key={index} style={styles.labeltext}>
+                  {item?.tag}
+                </Text>
               ))}
             </View>
           </View>
