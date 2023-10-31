@@ -93,7 +93,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     selectedLetter: {
       borderWidth: 1,
       width: 20,
-      borderRadius: Platform.OS === 'ios' ? 10 : 10,
+      borderRadius: 10,
       backgroundColor: '#012048',
       color: ColorPallet.grayscale.white,
     },

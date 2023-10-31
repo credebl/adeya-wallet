@@ -273,9 +273,9 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
             </View>
             <View style={styles.credContainer}>
               {credentialDetailData.map((item, index) => (
-                <Text key={index} style={styles.labeltext}>
-                  {item?.tag}
-                </Text>
+                <View key={index}>
+                  <Text style={styles.labeltext}>{item?.tag}</Text>
+                </View>
               ))}
             </View>
           </View>
