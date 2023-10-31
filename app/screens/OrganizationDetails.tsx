@@ -210,7 +210,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
 
       const lastArray = agentInvitations[0]
 
-      if (!lastArray?.connectionInvitation) {
+      if (!lastArray || lastArray.length === 0) {
         Toast.show({
           type: ToastType.Error,
           text1: 'No connection invitations available',
@@ -220,7 +220,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
 
       const lastItem = lastArray[lastArray.length - 1]
 
-      if (!lastItem || !lastItem.connectionInvitation) {
+      if (!lastItem?.connectionInvitation) {
         Toast.show({
           type: ToastType.Error,
           text1: 'No last connection invitation available',
