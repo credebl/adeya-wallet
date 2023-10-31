@@ -30,7 +30,7 @@ interface CredentialDetail {
 const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
   const { ColorPallet, ListItems, TextTheme } = useTheme()
   const { agent } = useAppAgent()
-  const [orgnizationDetailData, setorgnizationDetailData] = useState([])
+  const [orgnizationDetailData, setOrgnizationDetailData] = useState([])
   const [credentialDetailData, setCredentialDetailData] = useState<CredentialDetail[]>([])
   const navigation = useNavigation()
   const { t } = useTranslation()
@@ -153,7 +153,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
 
   const fetchData = async () => {
     const response = await fetchOrganizationDetail(params?.OrgSlug)
-    setorgnizationDetailData(response?.data.org_agents)
+    setOrgnizationDetailData(response?.data.org_agents)
     setCredentialDetailData(response?.data.credential_definitions)
   }
 
