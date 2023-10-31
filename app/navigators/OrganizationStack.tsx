@@ -10,8 +10,6 @@ import Scan from '../screens/Scan'
 import { OrganizationStackParams, Screens } from '../types/navigators'
 import { testIdWithKey } from '../utils/testable'
 
-
-
 import { createDefaultStackOptions } from './defaultStackOptions'
 
 const OrganizationStack: React.FC = () => {
@@ -40,7 +38,7 @@ const OrganizationStack: React.FC = () => {
           headerBackTestID: testIdWithKey('Back'),
         })}
       />
-      
+      <Stack.Screen name={Screens.Scan} component={Scan} />
     </Stack.Navigator>
   )
 }

@@ -147,7 +147,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       width: '90%',
     },
     credContainer: {
-      flexDirection: 'row',
+      flexDirection: 'column',
     },
   })
 
@@ -161,7 +161,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
     fetchData()
   }, [])
 
-  const organaizationLabelAbbr = useMemo(() => params.name?.charAt(0).toUpperCase(), [params])
+  const organaizationLabelAbbr = useMemo(() => params?.name?.charAt(0).toUpperCase(), [params])
   const handleInvitation = async (value: string): Promise<void> => {
     try {
       const { connectionRecord } = await connectFromInvitation(agent, value)
@@ -265,19 +265,20 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
           <Text style={styles.labeltext}>{params?.description}</Text>
         </View>
       </View>
-      <View style={styles.credentialContainner}>
-        <View>
-          <View style={styles.descriptionlabel}>
-            <Text style={styles.orgHeaderText}>Available Credentials</Text>
-          </View>
-          <View style={styles.credContainer}>
-            {credentialDetailData.map(item => (
-              <Text style={styles.labeltext}>{item?.tag}</Text>
-            ))}
+      {credentialDetailData.length > 0 && (
+        <View style={styles.credentialContainner}>
+          <View>
+            <View style={styles.descriptionlabel}>
+              <Text style={styles.orgHeaderText}>Available Credentials</Text>
+            </View>
+            <View style={styles.credContainer}>
+              {credentialDetailData.map(item => (
+                <Text style={styles.labeltext}>{item?.tag}</Text>
+              ))}
+            </View>
           </View>
         </View>
-      </View>
-
+      )}
       <View style={styles.button}>
         <Button
           onPress={connectOrganization}

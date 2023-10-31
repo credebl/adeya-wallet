@@ -151,11 +151,6 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
       oobRecord &&
       (!goalCode || (!goalCode.startsWith('aries.vc.verify') && !goalCode.startsWith('aries.vc.issue')))
     ) {
-      // No goal code, we don't know what to expect next,
-      // navigate to the chat screen.
-      // navigation.navigate(Screens.Chat, { connectionId })
-      // dispatch({ isVisible: false })
-      // return
       navigation.navigate(Stacks.ConnectionStack, {
         screen: Screens.ContactDetails,
         params: { connectionId: connectionId },

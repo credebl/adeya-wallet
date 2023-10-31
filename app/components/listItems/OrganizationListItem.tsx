@@ -26,9 +26,9 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
     avatarContainer: {
       alignItems: 'center',
       justifyContent: 'center',
-      width: 25,
-      height: 25,
-      borderRadius: 25,
+      width: 30,
+      height: 30,
+      borderRadius: 15,
       borderColor: ListItems.avatarCircle.borderColor,
       borderWidth: 1,
       marginRight: 16,
@@ -38,8 +38,13 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
       ...TextTheme.headingFour,
     },
     avatarOrgImage: {
-      width: 25,
-      height: 25,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      borderColor: ListItems.avatarCircle.borderColor,
+      borderWidth: 1,
     },
     labelOrgText: {
       fontSize: 16,
@@ -59,8 +64,8 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
       marginBottom: 10,
     },
   })
-  const navigateToConnection = () => {
-    navigation.navigate(Screens.OrganizationsConnection as never)
+  const navigateToConnection = (name: string, description: string, logoUrl: string, OrgSlug: string) => {
+    navigation.navigate(Screens.OrganizationsConnection, { name, description, logoUrl, OrgSlug })
   }
   const orgnizationLabel = useMemo(() => organization.name, [organization])
   const organaizationLabelAbbr = useMemo(() => orgnizationLabel?.charAt(0).toUpperCase(), [organization])

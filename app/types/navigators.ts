@@ -140,11 +140,6 @@ export type OrganizationStackParams = {
   [Screens.Organizations]: undefined
   [Screens.OrganizationsConnection]: undefined
 }
-export type OrganizationStackParams = {
-  [Screens.Organizations]: undefined
-  [Screens.OrganizationsConnection]: undefined
-}
-
 export type HomeStackParams = {
   [Screens.Home]: undefined
   [Screens.Notifications]: undefined

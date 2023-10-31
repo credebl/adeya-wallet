@@ -1,8 +1,6 @@
 import { BrandingOverlayType, RemoteOCABundleResolver } from '@hyperledger/aries-oca/build/legacy'
 import { Config } from 'react-native-config'
 
-
-
 import defaultIndyLedgers from '../configs/ledgers/indy'
 import { defaultProofRequestTemplates } from '../verifier'
 

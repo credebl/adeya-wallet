@@ -1,6 +1,4 @@
-
 import { AnonCredsNonRevokedInterval, AnonCredsProofRequestRestriction } from '@adeya/ssi'
-
 export interface FieldParams {
   name: string | null
   format?: string

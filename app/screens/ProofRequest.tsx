@@ -14,8 +14,7 @@ import {
   sendProofProblemReport,
   CredentialExchangeRecord,
 } from '@adeya/ssi'
-import moment from 'moment'
-
+import { unix } from 'moment'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
@@ -81,8 +80,6 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
   const credProofPromise = useAllCredentialsForProof(proofId)
 
   const hasMatchingCredDef = useMemo(() => activeCreds.some(cred => cred.credDefId !== undefined), [activeCreds])
-
-
   const styles = StyleSheet.create({
     pageContainer: {
       flex: 1,
@@ -170,8 +167,8 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
             ?.filter(attr => attr.credentialId === id)
             .map(attr => {
               return {
-                to: attr.nonRevoked?.to !== undefined ? moment.unix(attr.nonRevoked.to) : undefined,
-                from: attr.nonRevoked?.from !== undefined ? moment.unix(attr.nonRevoked.from) : undefined,
+                to: attr.nonRevoked?.to !== undefined ? unix(attr.nonRevoked.to) : undefined,
+                from: attr.nonRevoked?.from !== undefined ? unix(attr.nonRevoked.from) : undefined,
               }
             })
           return dateIntervals?.some(

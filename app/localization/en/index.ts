@@ -551,9 +551,8 @@ const translation = {
     "CredentialDetailsW3C" :'Credential Details W3C',
     "WalletName" :"Wallet Name",
     "Organization": "Explore",
-    "OrganizationDetails": "Organization Details"
+    "OrganizationDetails": "Organization Details",
     "ProofChangeCredential": "Choose a credential",
-    "Organization": "Explore",
     "OrganizationConnection": "Connection"
   },
   "Loading": {

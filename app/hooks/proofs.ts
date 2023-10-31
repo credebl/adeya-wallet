@@ -1,4 +1,3 @@
-
 import { useProofs, ProofExchangeRecord, useCredentials, useProofById } from '@adeya/ssi'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
