@@ -17,7 +17,6 @@ export default StyleSheet.create({
     width: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 30,
   },
   sectionListItemWrapper: {
     width: 16,

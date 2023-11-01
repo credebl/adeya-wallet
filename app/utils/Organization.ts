@@ -1,10 +1,11 @@
+import { Config } from 'react-native-config'
 import Toast from 'react-native-toast-message'
 
 import { ToastType } from '../components/toast/BaseToast'
 
 export const fetchOrganizationData = async () => {
   try {
-    const response = await fetch('https://devapi.credebl.id/orgs/public-profile')
+    const response = await fetch(Config.PUBLIC_ORG)
     const result = await response.json()
     return result
   } catch (error) {
@@ -16,8 +17,7 @@ export const fetchOrganizationData = async () => {
 }
 export const fetchOrganizationDetail = async (orgName: string) => {
   try {
-    const url = `https://devapi.credebl.id/orgs/public-profiles/${orgName}`
-    const response = await fetch(url)
+    const response = await fetch(`${Config.PUBLIC_ORG}${orgName}`)
     const data = await response.json()
     return data
   } catch (error) {
@@ -27,5 +27,3 @@ export const fetchOrganizationDetail = async (orgName: string) => {
     })
   }
 }
-
-// export default { fetchOrganizationData, fetcexhOrganizationDetail }

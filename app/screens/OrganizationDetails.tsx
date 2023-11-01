@@ -17,7 +17,7 @@ import { testIdWithKey } from '../utils/testable'
 interface OrgnizationDetailsProps {
   name: string
   description: string
-  logoUrl: any
+  logoUrl: string
   OrgSlug: string
 }
 interface CredentialDetail {
@@ -241,7 +241,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.headerTextView}>
-        <Text style={styles.titleText}>Get credentials from selected organization.</Text>
+        <Text style={styles.titleText}>{t('Organizations.Title')}</Text>
       </View>
       <View style={{ margin: 3 }}>
         <View style={styles.orgNameContainner}>
@@ -255,7 +255,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
             </View>
 
             <Text style={styles.orgContainer} numberOfLines={4}>
-              {params?.name} bhcbncb cbncbbnc nbncbbcn nbcnbcnb bndbd
+              {params?.name}
             </Text>
           </View>
         </View>

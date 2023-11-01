@@ -62,7 +62,6 @@ function AlphabetFlatList<ItemT>(props: IProps<ItemT>) {
   const [containerHeight, setContainerHeight] = useState(windowHeight)
   const [itemLayout, setItemLayout] = useState([])
   const [titles, setTitles] = useState([])
-  // const [selectAlphabet, setSelectAlphabet] = useState('')
   const [initialNumToRender, setInitialNumToRender] = useState(0)
   const [pageY, setPageY] = useState(0)
 
@@ -96,7 +95,6 @@ function AlphabetFlatList<ItemT>(props: IProps<ItemT>) {
 
     setItemLayout(itemLayout)
     setTitles(titles)
-    // setSelectAlphabet(titles[0])
     setInitialNumToRender(initialNumToRender)
   }
   useEffect(() => {
@@ -140,7 +138,6 @@ function AlphabetFlatList<ItemT>(props: IProps<ItemT>) {
 
   const renderItem = (info: ListRenderItemInfo<string>) => (
     <View key={info.index}>
-      {/* {props.renderSectionHeader && props.renderSectionHeader({ title: info.item })} */}
       {props.data[info.item].map((itemValue, itemIndex, items) =>
         props.renderItem({
           item: itemValue,
@@ -161,6 +158,7 @@ function AlphabetFlatList<ItemT>(props: IProps<ItemT>) {
         keyExtractor={(item, index) => `${index}`}
         getItemLayout={getItemLayout}
         initialNumToRender={initialNumToRender}
+        showsHorizontalScrollIndicator={false}
         viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
       />
       <AlphabetListView

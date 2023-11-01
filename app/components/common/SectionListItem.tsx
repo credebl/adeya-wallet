@@ -1,6 +1,7 @@
 import * as React from 'react'
-import { FC } from 'react'
 import { View, Text } from 'react-native'
+
+import { ColorPallet } from '../../theme'
 
 import styles from './styles'
 
@@ -10,21 +11,21 @@ interface IProps {
   active: boolean
 }
 
-const SectionListItem: FC<IProps> = function (props) {
+const SectionListItem: React.FC<IProps> = props => {
   return (
-    <View style={[styles.sectionListItemContainer, { height: props.height }]}>
+    <View style={[styles.sectionListItemContainer]}>
       <View
         style={[
           styles.sectionListItemWrapper,
           {
-            backgroundColor: props.active ? '#1F4EAD' : 'transparent',
+            backgroundColor: props.active ? ColorPallet.brand.primary : 'transparent',
           },
         ]}>
         <Text
           style={[
             styles.sectionListItemText,
             {
-              color: props.active ? 'white' : '#333',
+              color: props.active ? ColorPallet.grayscale.white : ColorPallet.grayscale.black,
             },
           ]}>
           {props.title}

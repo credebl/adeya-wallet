@@ -1,48 +1,25 @@
 import { StackNavigationProp } from '@react-navigation/stack'
-import React, { Fragment, useEffect, useState } from 'react'
-import { View, Text, TextInput, Platform, Image, ActivityIndicator } from 'react-native'
-import { ScaledSheet } from 'react-native-size-matters'
-import Toast from 'react-native-toast-message'
+import React, { Fragment } from 'react'
+import { useTranslation } from 'react-i18next'
+import { View, Text, TextInput, Platform, Image, ActivityIndicator, StyleSheet } from 'react-native'
 
 import AlphabetFlatList from '../components/common'
 import ScanButton from '../components/common/ScanButton'
 import OrganizationListItem from '../components/listItems/OrganizationListItem'
-import { ToastType } from '../components/toast/BaseToast'
 import { useTheme } from '../contexts/theme'
 import { OrganizationStackParams, Screens } from '../types/navigators'
-import { fetchOrganizationData } from '../utils/Organization'
+import useOrganizationData from '../utils/organizationHelper'
 
 import { IContact } from './ContactItem'
-
-interface Organization {
-  id: number
-  createDateTime: string
-  createdBy: number
-  lastChangedDateTime: string
-  lastChangedBy: number
-  name: string
-  description: string
-  orgSlug: string
-  logoUrl: string
-  website: string
-  publicProfile: boolean
-}
-
-interface OrganizationData {
-  organizations: Organization[]
-}
-
 interface ListOrganizationProps {
   navigation: StackNavigationProp<OrganizationStackParams, Screens.Organizations>
 }
 
 const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
-  const [searchInput, setSearchInput] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [orgnizationdata, setorgnizationdata] = useState<OrganizationData>({ organizations: [] })
+  const { t } = useTranslation()
   const { ColorPallet } = useTheme()
-
-  const styles = ScaledSheet.create({
+  const { loading, searchInput, setSearchInput, filteredOrganizations } = useOrganizationData()
+  const styles = StyleSheet.create({
     container: {
       flex: 1,
       height: '100%',
@@ -83,7 +60,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       borderRadius: 5,
       marginTop: 5,
       borderColor: ColorPallet.brand.primary,
-      backgroundColor: '#B1B1B1',
+      backgroundColor: ColorPallet.brand.tabsearchBackground,
     },
     listView: {
       marginTop: 0,
@@ -94,7 +71,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       borderWidth: 1,
       width: 20,
       borderRadius: 10,
-      backgroundColor: '#012048',
+      backgroundColor: ColorPallet.brand.highlightedEclipse,
       color: ColorPallet.grayscale.white,
     },
     orgLabelTextactive: {
@@ -110,8 +87,8 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       borderWidth: 1,
       height: '100%',
       borderRadius: 5,
-      borderColor: '#E1EAFF',
-      backgroundColor: '#E1EAFF',
+      borderColor: ColorPallet.brand.modalOrgBackground,
+      backgroundColor: ColorPallet.brand.modalOrgBackground,
       position: 'relative',
     },
     alphabetLetter: {
@@ -119,7 +96,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     },
     highlightedLetter: {
       position: 'absolute',
-      backgroundColor: '#012048',
+      backgroundColor: ColorPallet.brand.highlightedEclipse,
       borderRadius: Platform.OS === 'ios' ? 15 : 10,
       alignItems: 'center',
       justifyContent: 'center',
@@ -129,36 +106,17 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     highlightedText: {
       color: 'white',
     },
+    inputView: {
+      marginHorizontal: 4,
+      marginTop: Platform.OS === 'ios' ? 5 : 0,
+    },
+    searchIcon: { marginTop: 5 },
   })
-  const fetchData = async () => {
-    try {
-      const response = await fetchOrganizationData()
-      setorgnizationdata(response?.data)
-    } catch (error) {
-      Toast.show({
-        type: ToastType.Error,
-        text1: 'Error fetching organization data',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
 
-  useEffect(() => {
-    fetchData()
-  }, [])
-
-  const filteredOrganizations = orgnizationdata.organizations.filter(org => {
-    if (searchInput) {
-      const orgName = org.name.toLowerCase()
-      return orgName.includes(searchInput.toLowerCase())
-    }
-    return true
-  })
   const handleSearchInputChange = (text: string) => {
     setSearchInput(text)
   }
-  const items: IContact[] = filteredOrganizations.map((item, index) => ({
+  const items: IContact[] = filteredOrganizations?.map((item, index) => ({
     id: index,
     logoUrl: item.logoUrl,
     name: item.name,
@@ -170,22 +128,22 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
 
   for (let letter = 'A'.charCodeAt(0); letter <= 'Z'.charCodeAt(0); letter++) {
     const initialLetter = String.fromCharCode(letter)
-    data[initialLetter] = items.filter(item => item.name.charAt(0) === initialLetter)
+    data[initialLetter] = items?.filter(item => item?.name.charAt(0) === initialLetter)
   }
   const HEADER_HEIGHT = 50
 
   return (
     <View style={styles.container}>
       <View style={styles.headerTextView}>
-        <Text style={styles.titleText}>Select an organization to get credentials</Text>
+        <Text style={styles.titleText}>{t('Organizations.Title')}</Text>
       </View>
       <Text style={styles.headerText}>Organizations list</Text>
 
       <View style={styles.searchBarView}>
-        <Image source={require('../assets/img/search.png')} style={{ margin: 2 }} />
+        <Image source={require('../assets/img/search.png')} style={styles.searchIcon} />
         <TextInput
           scrollEnabled={false}
-          style={{ marginHorizontal: 4, marginTop: Platform.OS === 'ios' ? 5 : 0 }}
+          style={styles.inputView}
           placeholder="Search..."
           value={searchInput}
           onChangeText={text => handleSearchInputChange(text)}

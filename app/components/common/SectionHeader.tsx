@@ -8,7 +8,7 @@ export interface IProps {
 
 export const sectionHeaderHeight = 10
 
-const SectionHeader: FC<IProps> = function () {
+const SectionHeader: FC<IProps> = () => {
   return <View />
 }
 

@@ -253,6 +253,8 @@ const translation = {
     "EmptyList": "Your Organization is empty!",
     "TypeHere": "Type Message Here",
     "PeopleAndOrganizations": "organizations are listed here.",
+    "Title" : "Select an organization to get credentials",
+    "TitleDetail": "Select an organization to get credential"
   },
   "ContactDetails": {
     "Created": "Created",
