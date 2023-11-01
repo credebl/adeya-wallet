@@ -48,7 +48,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
     },
     titleText: {
       fontSize: 20,
-      fontWeight: '600',
+      fontWeight: '400',
       alignSelf: 'center',
       color: ColorPallet.brand.primary,
       marginTop: 5,
@@ -93,10 +93,11 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       borderColor: ColorPallet.brand.primaryLight,
       alignSelf: 'center',
       justifyContent: 'center',
+      marginTop: 20,
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     orgDescriptionContainner: {
-      height: 'auto',
+      height: 100,
       width: '100%',
       margin: 10,
       flexShrink: 0,
@@ -108,7 +109,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     credentialContainner: {
-      height: 'auto',
+      height: 100,
       width: '100%',
       margin: 10,
       flexShrink: 0,
@@ -130,9 +131,9 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       ...TextTheme.headingFour,
     },
     orgContainer: {
-      justifyContent: 'center',
-      marginTop: 30,
+      marginTop: 20,
       marginLeft: 10,
+      marginRight: 5,
       fontWeight: '600',
       color: ColorPallet.brand.primary,
       fontSize: 17,
@@ -242,54 +243,61 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       <View style={styles.headerTextView}>
         <Text style={styles.titleText}>Get credentials from selected organization.</Text>
       </View>
-      <View style={styles.orgNameContainner}>
-        <View style={{ flexDirection: 'row' }}>
-          <View style={styles.avatarContainer}>
-            {params?.logoUrl ? (
-              <Image style={styles.avatarOrgImage} source={{ uri: params.logoUrl }} />
-            ) : (
-              <Text style={styles.avatarOrgPlaceholder}>{organaizationLabelAbbr}</Text>
-            )}
-          </View>
+      <View style={{ margin: 3 }}>
+        <View style={styles.orgNameContainner}>
+          <View style={{ flexDirection: 'row' }}>
+            <View style={styles.avatarContainer}>
+              {params?.logoUrl ? (
+                <Image style={styles.avatarOrgImage} source={{ uri: params.logoUrl }} />
+              ) : (
+                <Text style={styles.avatarOrgPlaceholder}>{organaizationLabelAbbr}</Text>
+              )}
+            </View>
 
-          <Text style={styles.orgContainer} numberOfLines={3}>
-            {params?.name}
-          </Text>
-        </View>
-      </View>
-      <View style={styles.orgDescriptionContainner}>
-        <View>
-          <View style={styles.descriptionlabel}>
-            <Text style={styles.orgHeaderText}>About Organization</Text>
+            <Text style={styles.orgContainer} numberOfLines={4}>
+              {params?.name} bhcbncb cbncbbnc nbncbbcn nbcnbcnb bndbd
+            </Text>
           </View>
-          <Text style={styles.labeltext}>{params?.description}</Text>
         </View>
-      </View>
-      {credentialDetailData.length > 0 && (
-        <View style={styles.credentialContainner}>
+
+        <View style={styles.orgDescriptionContainner}>
           <View>
             <View style={styles.descriptionlabel}>
-              <Text style={styles.orgHeaderText}>Available Credentials</Text>
+              <Text style={styles.orgHeaderText}>About Organization</Text>
             </View>
-            <View style={styles.credContainer}>
-              {credentialDetailData.map((item, index) => (
-                <View key={index}>
-                  <Text style={styles.labeltext}>{item?.tag}</Text>
-                </View>
-              ))}
-            </View>
+            <Text style={styles.labeltext} numberOfLines={4}>
+              {params?.description}
+            </Text>
           </View>
         </View>
-      )}
-      <View style={styles.button}>
-        <Button
-          onPress={connectOrganization}
-          title={'Connect'}
-          accessibilityLabel={'Connect'}
-          testID={testIdWithKey('Connect')}
-          buttonType={ButtonType.Primary}
-        />
+        {credentialDetailData.length > 0 && (
+          <View style={styles.credentialContainner}>
+            <View>
+              <View style={styles.descriptionlabel}>
+                <Text style={styles.orgHeaderText}>Available Credentials</Text>
+              </View>
+              <View style={styles.credContainer}>
+                {credentialDetailData.map((item, index) => (
+                  <View key={index}>
+                    <Text style={styles.labeltext}>{item?.tag}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+        )}
       </View>
+      {credentialDetailData.length > 0 && (
+        <View style={styles.button}>
+          <Button
+            onPress={connectOrganization}
+            title={'Connect'}
+            accessibilityLabel={'Connect'}
+            testID={testIdWithKey('Connect')}
+            buttonType={ButtonType.Primary}
+          />
+        </View>
+      )}
     </ScrollView>
   )
 }

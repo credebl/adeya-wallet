@@ -54,7 +54,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     },
     titleText: {
       fontSize: 20,
-      fontWeight: '600',
+      fontWeight: '400',
       alignSelf: 'center',
       color: ColorPallet.brand.primary,
       marginTop: '1.5625%',
@@ -62,9 +62,9 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     headerText: {
       justifyContent: 'center',
       color: ColorPallet.brand.primary,
-      fontSize: 20,
-      fontWeight: '700',
-      marginTop: '1.953125%',
+      fontSize: 18,
+      fontWeight: '600',
+      marginTop: 20,
     },
     inputText: {
       width: '100%',
@@ -83,7 +83,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       borderRadius: 5,
       marginTop: 5,
       borderColor: ColorPallet.brand.primary,
-      backgroundColor: ColorPallet.grayscale.lightGrey,
+      backgroundColor: '#B1B1B1',
     },
     listView: {
       marginTop: 0,

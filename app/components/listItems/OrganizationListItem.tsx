@@ -52,15 +52,13 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
       color: ColorPallet.brand.primary,
     },
     borderView: {
-      borderWidth: 0.8,
+      borderWidth: 0.5,
       borderColor: '#A3C1EE',
-      marginHorizontal: 20,
-      marginRight: 20,
-      marginVertical: 5,
+      marginHorizontal: 40,
     },
     labelContainer: {
       flex: 1,
-      marginTop: 10,
+      marginTop: 15,
       marginBottom: 10,
     },
   })
@@ -88,7 +86,7 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
         </View>
         <View style={styles.labelContainer}>
           <View>
-            <Text style={styles.labelOrgText} numberOfLines={1} ellipsizeMode={'tail'}>
+            <Text style={styles.labelOrgText} numberOfLines={4} ellipsizeMode={'tail'}>
               {organization?.name}
             </Text>
           </View>
