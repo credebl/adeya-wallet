@@ -1,12 +1,14 @@
 import { StyleSheet } from 'react-native'
 
+import { ColorPallet } from '../../theme'
+
 export default StyleSheet.create({
   container: {
     flex: 1,
   },
   sectionHeaderContainer: {
     justifyContent: 'center',
-    backgroundColor: '#F4F4F4',
+    backgroundColor: ColorPallet.brand.tabsearchBackground,
     paddingLeft: 15,
   },
   sectionHeaderTitle: {
@@ -28,6 +30,5 @@ export default StyleSheet.create({
   sectionListItemText: {
     fontSize: 10,
     textAlign: 'center',
-    fontFamily: 'PingFangSC-Regular',
   },
 })
