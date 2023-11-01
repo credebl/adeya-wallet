@@ -34,10 +34,11 @@ export const defaultState: State = {
     developerModeEnabled: false,
     biometryPreferencesUpdated: false,
     useBiometry: false,
-    useVerifierCapability: false,
+    useVerifierCapability: true,
     useConnectionInviterCapability: false,
-    useDevVerifierTemplates: false,
+    useDevVerifierTemplates: true,
     walletName: generateRandomWalletName(),
+    useDataRetention: true,
   },
   tours: {
     seenToursPrompt: false,

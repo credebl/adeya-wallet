@@ -46,6 +46,7 @@ export enum Screens {
   ImportSuccess = 'Import Success',
   CredentialDetailsW3C = 'Credential Details W3C',
   ProofChangeCredential = 'Choose a credential',
+  DataRetention = 'Data Retention',
 }
 
 export enum Stacks {
