@@ -85,6 +85,11 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
     setIsCredentialsRemoveModalDisplayed(false)
   }
 
+  // const handleGoToRename = () => {
+  //   navigation.navigate(Screens.RenameContact, { connectionId })
+  // }
+
+  // const callGoToRename = useCallback(() => handleGoToRename(), [])
   const callOnRemove = useCallback(() => handleOnRemove(), [])
   const callSubmitRemove = useCallback(() => handleSubmitRemove(), [])
   const callCancelRemove = useCallback(() => handleCancelRemove(), [])
