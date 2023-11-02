@@ -252,9 +252,11 @@ const translation = {
     "AddContact": "Add Contact",
   },
   "Organizations": {
-    "EmptyList": "Your Organizatiion is empty!",
+    "EmptyList": "Your Organization is empty!",
     "TypeHere": "Type Message Here",
     "PeopleAndOrganizations": "organizations are listed here.",
+    "Title" : "Select an organization to get credentials",
+    "TitleDetail": "Select an organization to get credential"
   },
   "ContactDetails": {
     "Created": "Created",
@@ -553,6 +555,8 @@ const translation = {
     "Success"  : 'Success',
     "CredentialDetailsW3C" :'Credential Details W3C',
     "WalletName" :"Wallet Name",
+    "Explore": "Explore",
+    "OrganizationDetails": "Organization Details",
     "ProofChangeCredential": "Choose a credential",
     "DataRetention": "Data retention",
     "Organization": "Explore",

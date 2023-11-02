@@ -1,9 +1,9 @@
 import { CredentialState, useConnectionById, useCredentialByState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeviceEventEmitter, View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { DeviceEventEmitter, BackHandler, View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
@@ -73,6 +73,16 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
     }
   }
 
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      navigation.navigate(Screens.Home as never)
+      return true
+    })
+
+    return () => {
+      backHandler.remove()
+    }
+  }, [])
   const handleCancelRemove = () => {
     setIsRemoveModalDisplayed(false)
   }

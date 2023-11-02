@@ -11,8 +11,9 @@ import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FlatList, View } from 'react-native'
+import { FlatList, StyleSheet, View } from 'react-native'
 
+import ScanButton from '../components/common/ScanButton'
 import CredentialCard from '../components/misc/CredentialCard'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
@@ -23,6 +24,13 @@ import { isW3CCredential } from '../utils/credential'
 interface EnhancedW3CRecord extends W3cCredentialRecord {
   connectionLabel?: string
 }
+
+const style = StyleSheet.create({
+  fabConatiner: {
+    justifyContent: 'flex-end',
+    marginTop: '90%',
+  },
+})
 
 const ListCredentials: React.FC = () => {
   const { t } = useTranslation()
@@ -108,6 +116,9 @@ const ListCredentials: React.FC = () => {
         ListEmptyComponent={() => <CredentialEmptyList message={t('Credentials.EmptyList')} />}
       />
       <CredentialListOptions />
+      <View style={style.fabConatiner}>
+        <ScanButton />
+      </View>
     </View>
   )
 }
