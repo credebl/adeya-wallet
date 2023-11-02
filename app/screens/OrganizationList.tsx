@@ -3,11 +3,11 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, Text, TextInput, Platform, Image, ActivityIndicator, StyleSheet } from 'react-native'
 
+import useOrganizationData from '../api/organizationHelper'
 import AlphabetFlatList from '../components/common'
 import ScanButton from '../components/common/ScanButton'
 import OrganizationListItem from '../components/listItems/OrganizationListItem'
 import { useTheme } from '../contexts/theme'
-import useOrganizationData from '../hooks/organizationHelper'
 import { OrganizationStackParams, Screens } from '../types/navigators'
 
 import { IContact } from './ContactItem'
@@ -27,7 +27,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   const { ColorPallet } = useTheme()
   const [searchInput, setSearchInput] = useState('')
   const [filteredOrganizations, setFilteredOrganizations] = useState<IOrganization[]>([])
-  const { loading, organizationData, fetchData } = useOrganizationData()
+  const { loading, organizationData } = useOrganizationData()
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -121,10 +121,6 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     },
     searchIcon: { marginTop: 5 },
   })
-
-  useEffect(() => {
-    fetchData()
-  }, [])
 
   useEffect(() => {
     return setFilteredOrganizations(

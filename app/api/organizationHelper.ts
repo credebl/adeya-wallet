@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Toast from 'react-native-toast-message'
 
 import { ToastType } from '../components/toast/BaseToast'
-import { fetchOrganizationData } from '../utils/Organization'
+
+import { fetchOrganizationData } from './Organization'
 
 export interface Organization {
   id: number
@@ -39,10 +40,13 @@ const useOrganizationData = () => {
     }
   }
 
+  useEffect(() => {
+    fetchData()
+  }, [])
+
   return {
     organizationData,
     loading,
-    fetchData,
   }
 }
 

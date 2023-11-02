@@ -2,7 +2,8 @@ import { Config } from 'react-native-config'
 import Toast from 'react-native-toast-message'
 
 import { ToastType } from '../components/toast/BaseToast'
-import { ORG_DETAILS, ORG_PROFILE } from '../constants'
+
+import { ORG_DETAILS, ORG_PROFILE } from './api-constants'
 
 export const fetchOrganizationData = async () => {
   try {

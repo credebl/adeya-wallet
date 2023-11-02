@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import Toast from 'react-native-toast-message'
 
 import { ToastType } from '../components/toast/BaseToast'
-import { fetchOrganizationDetail } from '../utils/Organization'
+
+import { fetchOrganizationDetail } from './Organization'
 
 export interface OrgnizationDetailsProps {
   name: string
