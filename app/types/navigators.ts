@@ -46,8 +46,8 @@ export enum Screens {
   ImportSuccess = 'Import Success',
   CredentialDetailsW3C = 'Credential Details W3C',
   ProofChangeCredential = 'Choose a credential',
-  Organizations = 'Explore',
-  OrganizationsConnection = 'Organization Details',
+  Explore = 'Explore',
+  ExploreConnection = 'Organization Details',
 }
 
 export enum Stacks {
@@ -113,6 +113,7 @@ export type ContactStackParams = {
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean }
   [Screens.ProofRequest]: { proofId: string }
+  [Screens.Home]: undefined
 }
 
 export type ProofRequestsStackParams = {
@@ -133,12 +134,12 @@ export type CredentialStackParams = {
   [Screens.Credentials]: undefined
   [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
   [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
+  [Screens.Scan]: undefined
 }
 export type OrganizationStackParams = {
-  [Screens.Organizations]: undefined
-  [Screens.OrganizationsConnection]: undefined
+  [Screens.Explore]: undefined
+  [Screens.ExploreConnection]: undefined
 }
-
 export type HomeStackParams = {
   [Screens.Home]: undefined
   [Screens.Notifications]: undefined
@@ -182,4 +183,5 @@ export type DeliveryStackParams = {
   [Screens.OnTheWay]: { credentialId: string }
   [Screens.Declined]: { credentialId: string }
   [Screens.Chat]: { connectionId: string }
+  [Screens.ContactDetails]: { connectionId: string }
 }

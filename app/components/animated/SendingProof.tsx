@@ -32,11 +32,9 @@ const SendingProof: React.FC = () => {
     width: 130,
   }
   const animatedCircleDisplayOptions = {
-    fill: ColorPallet.notification.infoText,
     height: 250,
     width: 250,
   }
-
   useEffect(() => {
     Animated.loop(Animated.timing(rotationAnim, timing)).start()
   }, [rotationAnim])

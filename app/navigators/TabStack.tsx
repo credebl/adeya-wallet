@@ -9,7 +9,7 @@ import { AttachTourStep } from '../components/tour/AttachTourStep'
 import { useConfiguration } from '../contexts/configuration'
 import { useNetwork } from '../contexts/network'
 import { useTheme } from '../contexts/theme'
-import { Screens, Stacks, TabStackParams, TabStacks } from '../types/navigators'
+import { Screens, TabStackParams, TabStacks } from '../types/navigators'
 import { isTablet, orientation, Orientation } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
@@ -23,9 +23,10 @@ const TabStack: React.FC = () => {
   const { total } = useCustomNotifications()
   const { t } = useTranslation()
   const Tab = createBottomTabNavigator<TabStackParams>()
-  const { assertConnectedNetwork } = useNetwork()
   const { ColorPallet, TabTheme } = useTheme()
   const { fontScale } = useWindowDimensions()
+  const { assertConnectedNetwork } = useNetwork()
+
   const showLabels = fontScale * TabTheme.tabBarTextStyle.fontSize < 18
   const styles = StyleSheet.create({
     tabBarIcon: {
@@ -104,78 +105,18 @@ const TabStack: React.FC = () => {
               </View>
             ),
             tabBarShowLabel: false,
+
             tabBarTestID: testIdWithKey(t('TabStack.Explore')),
-            tabBarBadge: total || undefined,
-            tabBarBadgeStyle: {
-              marginLeft: leftMarginForDevice(width, height),
-              backgroundColor: ColorPallet.semantic.error,
-            },
-          }}
-        />
-        <Tab.Screen
-          name={TabStacks.ConnectStack}
-          options={{
-            tabBarIconStyle: styles.tabBarIcon,
-            tabBarIcon: ({ focused }) => (
-              <View
-                style={{
-                  position: 'relative',
-                  flex: 1,
-                  width: 90,
-                }}>
-                <AttachTourStep index={0} fill>
-                  <View
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      width: 90,
-                      minHeight: 90,
-                      flexGrow: 1,
-                      margin: 'auto',
-                      justifyContent: 'flex-end',
-                      alignItems: 'center',
-                    }}>
-                    <View
-                      accessible={true}
-                      accessibilityRole={'button'}
-                      accessibilityLabel={t('TabStack.Scan')}
-                      style={{ ...TabTheme.focusTabIconStyle }}>
-                      <Icon
-                        accessible={false}
-                        name="qrcode-scan"
-                        color={TabTheme.tabBarButtonIconStyle.color}
-                        size={32}
-                        style={{ paddingLeft: 0.5, paddingTop: 0.5 }}
-                      />
-                    </View>
-                    <Text
-                      style={{
-                        ...TabTheme.tabBarTextStyle,
-                        color: focused ? TabTheme.tabBarActiveTintColor : TabTheme.tabBarInactiveTintColor,
-                        marginTop: 5,
-                      }}>
-                      {t('TabStack.Scan')}
-                    </Text>
-                  </View>
-                </AttachTourStep>
-              </View>
-            ),
-            tabBarShowLabel: false,
-            tabBarAccessibilityLabel: t('TabStack.Scan'),
-            tabBarTestID: testIdWithKey(t('TabStack.Scan')),
           }}
           listeners={({ navigation }) => ({
-            tabPress: e => {
-              e.preventDefault()
+            tabPress: () => {
               if (!assertConnectedNetwork()) {
                 return
               }
-              navigation.navigate(Stacks.ConnectStack, { screen: Screens.Scan })
+              navigation.navigate(Screens.Explore)
             },
-          })}>
-          {() => <View />}
-        </Tab.Screen>
-
+          })}
+        />
         <Tab.Screen
           name={TabStacks.CredentialStack}
           component={CredentialStack}

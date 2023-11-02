@@ -11,10 +11,9 @@ const EmptyListOrganizations: React.FC = () => {
     container: {
       flex: 1,
       height: '100%',
-      justifyContent: 'center',
       alignItems: 'center',
-      padding: 40,
       paddingTop: 100,
+      alignSelf: 'center',
       backgroundColor: ColorPallet.brand.primaryBackground,
     },
     text: {
