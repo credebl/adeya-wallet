@@ -123,7 +123,7 @@ const ContactListItem: React.FC<Props> = ({ contact, navigation }) => {
       createdAt: contact.createdAt,
     }
 
-    setMessage([...transformedMessages.sort((a: any, b: any) => b.createdAt - a.createdAt), connectedMessage][0])
+    setMessage([...transformedMessages.toSorted((a: any, b: any) => b.createdAt - a.createdAt), connectedMessage][0])
   }, [basicMessages, credentials, proofs])
 
   const navigateToContact = useCallback(() => {

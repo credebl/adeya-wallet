@@ -78,20 +78,19 @@ const ActionSlider: React.FC<Props> = ({ actions, onDismiss }) => {
             style={{ alignSelf: 'flex-end' }}>
             <Icon name="window-close" size={35} style={styles.drawerRowItem}></Icon>
           </TouchableOpacity>
-          {actions &&
-            actions.map(action => {
-              return (
-                <TouchableOpacity
-                  key={action.text}
-                  testID={testIdWithKey(action.text)}
-                  accessibilityLabel={testIdWithKey(action.text)}
-                  style={styles.drawerRow}
-                  onPress={action.onPress}>
-                  <action.icon />
-                  <Text style={{ ...styles.drawerRowItem, marginLeft: 5 }}>{action.text}</Text>
-                </TouchableOpacity>
-              )
-            })}
+          {actions?.map(action => {
+            return (
+              <TouchableOpacity
+                key={action.text}
+                testID={testIdWithKey(action.text)}
+                accessibilityLabel={testIdWithKey(action.text)}
+                style={styles.drawerRow}
+                onPress={action.onPress}>
+                <action.icon />
+                <Text style={{ ...styles.drawerRowItem, marginLeft: 5 }}>{action.text}</Text>
+              </TouchableOpacity>
+            )
+          })}
         </View>
       </View>
     </Modal>

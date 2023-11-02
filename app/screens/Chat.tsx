@@ -89,8 +89,8 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
   useEffect(() => {
     const transformedMessages: Array<ExtendedChatMessage> = basicMessages.map((record: BasicMessageRecord) => {
       const role = getMessageEventRole(record)
-      const linkRegex = /(?:https?:\/\/\S+)|(?:\S+@\S+)/gm
-      const mailRegex = /^[\w\d._-]+@\w+(?:\.\w+)+$/gm
+      const linkRegex = /(?:https?:\/\/\S{1,100})|(?:\S{1,100}@\S{1,100})/gm
+      const mailRegex = /^[\w.-]+@\w+(?:\.\w+)+$/gm
       const links = record.content.match(linkRegex) ?? []
       const handleLinkPress = (link: string) => {
         if (link.match(mailRegex)) {
@@ -115,7 +115,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
                 </>
               )
             }
-            return <Text key={i.toString()}>{split}</Text>
+            return <Text key={split}>{split}</Text>
           })}
         </Text>
       )
