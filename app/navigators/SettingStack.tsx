@@ -7,6 +7,7 @@ import { EventTypes } from '../constants'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import CreateWallet from '../screens/CreateWallet'
+import DataRetention from '../screens/DataRetention'
 import ExportWallet from '../screens/ExportWallet'
 import ExportWalletConfirmation from '../screens/ExportWalletConfirmation'
 import ImportSuccess from '../screens/ImportSuccess'
@@ -57,6 +58,11 @@ const SettingStack: React.FC = () => {
         name={Screens.Language}
         component={Language}
         options={{ title: t('Screens.Language'), headerBackTestID: testIdWithKey('Back') }}
+      />
+      <Stack.Screen
+        name={Screens.DataRetention}
+        component={DataRetention}
+        options={{ title: t('Screens.DataRetention'), headerBackTestID: testIdWithKey('Back') }}
       />
       <Stack.Screen
         name={Screens.Tours}
