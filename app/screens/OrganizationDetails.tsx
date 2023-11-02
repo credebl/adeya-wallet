@@ -1,5 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, Text, Image, ScrollView } from 'react-native'
 import Toast from 'react-native-toast-message'
@@ -7,9 +7,9 @@ import Toast from 'react-native-toast-message'
 import Button, { ButtonType } from '../components/buttons/Button'
 import { ToastType } from '../components/toast/BaseToast'
 import { useTheme } from '../contexts/theme'
+import useOrganizationDetailData from '../hooks/organizationDetailHelper'
 import { BifoldError } from '../types/error'
 import { Screens, Stacks } from '../types/navigators'
-import { fetchOrganizationDetail } from '../utils/Organization'
 import { useAppAgent } from '../utils/agent'
 import { connectFromInvitation, getJson, getUrl, receiveMessageFromUrlRedirect } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
@@ -20,21 +20,14 @@ interface OrgnizationDetailsProps {
   logoUrl: string
   OrgSlug: string
 }
-interface CredentialDetail {
-  tag: string
-  credentialDefinitionId: string
-  schemaLedgerId: string
-  revocable: boolean
-  createDateTime: string
-}
+
 const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
   const { ColorPallet, ListItems, TextTheme } = useTheme()
   const { agent } = useAppAgent()
-  const [orgnizationDetailData, setOrgnizationDetailData] = useState([])
-  const [credentialDetailData, setCredentialDetailData] = useState<CredentialDetail[]>([])
   const navigation = useNavigation()
   const { t } = useTranslation()
   const params = useRoute<RouteProp<Record<string, OrgnizationDetailsProps>, string>>().params
+  const { organizationDetailData, credentialDetailData } = useOrganizationDetailData(params?.OrgSlug)
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -125,7 +118,6 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       marginTop: 10,
       marginLeft: 20,
       fontSize: 16,
-      color: ColorPallet.brand.primary,
     },
     avatarOrgPlaceholder: {
       ...TextTheme.headingFour,
@@ -151,16 +143,6 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
       flexDirection: 'column',
     },
   })
-
-  const fetchData = async () => {
-    const response = await fetchOrganizationDetail(params?.OrgSlug)
-    setOrgnizationDetailData(response?.data.org_agents)
-    setCredentialDetailData(response?.data.credential_definitions)
-  }
-
-  useEffect(() => {
-    fetchData()
-  }, [])
 
   const organaizationLabelAbbr = useMemo(() => params?.name?.charAt(0).toUpperCase(), [params])
   const handleInvitation = async (value: string): Promise<void> => {
@@ -199,7 +181,7 @@ const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
   }
   const connectOrganization = async () => {
     try {
-      const agentInvitations = orgnizationDetailData.map(item => item?.agent_invitations)
+      const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
 
       if (!agentInvitations || agentInvitations.length === 0) {
         Toast.show({

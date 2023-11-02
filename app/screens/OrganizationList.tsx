@@ -1,5 +1,5 @@
 import { StackNavigationProp } from '@react-navigation/stack'
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, Text, TextInput, Platform, Image, ActivityIndicator, StyleSheet } from 'react-native'
 
@@ -7,18 +7,27 @@ import AlphabetFlatList from '../components/common'
 import ScanButton from '../components/common/ScanButton'
 import OrganizationListItem from '../components/listItems/OrganizationListItem'
 import { useTheme } from '../contexts/theme'
+import useOrganizationData from '../hooks/organizationHelper'
 import { OrganizationStackParams, Screens } from '../types/navigators'
-import useOrganizationData from '../utils/organizationHelper'
 
 import { IContact } from './ContactItem'
 interface ListOrganizationProps {
   navigation: StackNavigationProp<OrganizationStackParams, Screens.Explore>
 }
 
+interface IOrganization {
+  logoUrl: string
+  name: string
+  description: string
+  orgSlug: string
+}
+
 const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   const { t } = useTranslation()
   const { ColorPallet } = useTheme()
-  const { loading, searchInput, setSearchInput, filteredOrganizations } = useOrganizationData()
+  const [searchInput, setSearchInput] = useState('')
+  const [filteredOrganizations, setFilteredOrganizations] = useState<IOrganization[]>([])
+  const { loading, organizationData, fetchData } = useOrganizationData()
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -113,9 +122,25 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     searchIcon: { marginTop: 5 },
   })
 
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    return setFilteredOrganizations(
+      organizationData?.organizations.filter(org => {
+        if (searchInput) {
+          const orgName = org?.name.toLowerCase()
+          return orgName.includes(searchInput.toLowerCase())
+        }
+        return true
+      }),
+    )
+  }, [searchInput, organizationData])
   const handleSearchInputChange = (text: string) => {
     setSearchInput(text)
   }
+
   const items: IContact[] = filteredOrganizations?.map((item, index) => ({
     id: index,
     logoUrl: item.logoUrl,

@@ -131,8 +131,8 @@ function AlphabetFlatList<ItemT>(props: IProps<ItemT>) {
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged }])
 
   const getItemLayout = (data: any, index: number) => ({
-    length: itemLayout[index].length,
-    offset: itemLayout[index].offset,
+    length: itemLayout[index]?.length,
+    offset: itemLayout[index]?.offset,
     index,
   })
 

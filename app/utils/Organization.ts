@@ -2,10 +2,11 @@ import { Config } from 'react-native-config'
 import Toast from 'react-native-toast-message'
 
 import { ToastType } from '../components/toast/BaseToast'
+import { ORG_DETAILS, ORG_PROFILE } from '../constants'
 
 export const fetchOrganizationData = async () => {
   try {
-    const response = await fetch(`${Config.PUBLIC_ORG}`)
+    const response = await fetch(`${Config.PUBLIC_ORG}${ORG_PROFILE}`)
     const result = await response.json()
     return result
   } catch (error) {
@@ -17,7 +18,7 @@ export const fetchOrganizationData = async () => {
 }
 export const fetchOrganizationDetail = async (orgName: string) => {
   try {
-    const response = await fetch(`${Config.PUBLIC_ORG_DETAILS}${orgName}`)
+    const response = await fetch(`${Config.PUBLIC_ORG}${ORG_DETAILS}${orgName}`)
     const data = await response.json()
     return data
   } catch (error) {
