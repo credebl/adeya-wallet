@@ -47,6 +47,8 @@ export enum Screens {
   CredentialDetailsW3C = 'Credential Details W3C',
   ProofChangeCredential = 'Choose a credential',
   DataRetention = 'Data Retention',
+  Organizations = 'Explore',
+  OrganizationsConnection = 'Organization Details',
 }
 
 export enum Stacks {
@@ -65,6 +67,7 @@ export enum TabStacks {
   HomeStack = 'Tab Home Stack',
   ConnectStack = 'Tab Connect Stack',
   CredentialStack = 'Tab Credential Stack',
+  OrganizationStack = 'Tab OrganizationStack Stack',
 }
 
 export type RootStackParams = {
@@ -81,6 +84,7 @@ export type TabStackParams = {
   [TabStacks.HomeStack]: NavigatorScreenParams<HomeStackParams>
   [TabStacks.ConnectStack]: NavigatorScreenParams<ConnectStackParams>
   [TabStacks.CredentialStack]: NavigatorScreenParams<CredentialStackParams>
+  [TabStacks.OrganizationStack]: NavigatorScreenParams<OrganizationStackParams>
 }
 
 export type AuthenticateStackParams = {
@@ -130,6 +134,10 @@ export type CredentialStackParams = {
   [Screens.Credentials]: undefined
   [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
   [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
+}
+export type OrganizationStackParams = {
+  [Screens.Organizations]: undefined
+  [Screens.OrganizationsConnection]: undefined
 }
 
 export type HomeStackParams = {

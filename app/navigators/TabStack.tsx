@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Text, useWindowDimensions, View, StyleSheet } from 'react-native'
+import { Text, useWindowDimensions, View, StyleSheet, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -15,6 +15,7 @@ import { testIdWithKey } from '../utils/testable'
 
 import CredentialStack from './CredentialStack'
 import HomeStack from './HomeStack'
+import OrganizationStack from './OrganizationStack'
 
 const TabStack: React.FC = () => {
   const { width, height } = useWindowDimensions()
@@ -76,6 +77,34 @@ const TabStack: React.FC = () => {
               total === 1 ? t('Home.OneNotification') : t('Home.CountNotifications', { count: total || 0 })
             })`,
             tabBarTestID: testIdWithKey(t('TabStack.Home')),
+            tabBarBadge: total || undefined,
+            tabBarBadgeStyle: {
+              marginLeft: leftMarginForDevice(width, height),
+              backgroundColor: ColorPallet.semantic.error,
+            },
+          }}
+        />
+        <Tab.Screen
+          name={TabStacks.OrganizationStack}
+          component={OrganizationStack}
+          options={{
+            tabBarIconStyle: styles.tabBarIcon,
+            tabBarIcon: ({ focused }) => (
+              <View style={{ ...TabTheme.tabBarContainerStyle, justifyContent: showLabels ? 'flex-end' : 'center' }}>
+                <Image source={require('../assets/img/Explore.png')} height={30} width={80} />
+                {showLabels && (
+                  <Text
+                    style={{
+                      ...TabTheme.tabBarTextStyle,
+                      color: focused ? TabTheme.tabBarActiveTintColor : TabTheme.tabBarInactiveTintColor,
+                    }}>
+                    {t('TabStack.Explore')}
+                  </Text>
+                )}
+              </View>
+            ),
+            tabBarShowLabel: false,
+            tabBarTestID: testIdWithKey(t('TabStack.Explore')),
             tabBarBadge: total || undefined,
             tabBarBadgeStyle: {
               marginLeft: leftMarginForDevice(width, height),
@@ -146,6 +175,7 @@ const TabStack: React.FC = () => {
           })}>
           {() => <View />}
         </Tab.Screen>
+
         <Tab.Screen
           name={TabStacks.CredentialStack}
           component={CredentialStack}
