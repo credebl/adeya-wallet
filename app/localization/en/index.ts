@@ -552,7 +552,7 @@ const translation = {
     "Success"  : 'Success',
     "CredentialDetailsW3C" :'Credential Details W3C',
     "WalletName" :"Wallet Name",
-    "Organization": "Explore",
+    "Explore": "Explore",
     "OrganizationDetails": "Organization Details",
     "ProofChangeCredential": "Choose a credential",
     "OrganizationConnection": "Connection"

@@ -46,8 +46,8 @@ export enum Screens {
   ImportSuccess = 'Import Success',
   CredentialDetailsW3C = 'Credential Details W3C',
   ProofChangeCredential = 'Choose a credential',
-  Organizations = 'Explore',
-  OrganizationsConnection = 'Organization Details',
+  Explore = 'Explore',
+  ExploreConnection = 'Organization Details',
 }
 
 export enum Stacks {
@@ -137,8 +137,8 @@ export type CredentialStackParams = {
   [Screens.Scan]: undefined
 }
 export type OrganizationStackParams = {
-  [Screens.Organizations]: undefined
-  [Screens.OrganizationsConnection]: undefined
+  [Screens.Explore]: undefined
+  [Screens.ExploreConnection]: undefined
 }
 export type HomeStackParams = {
   [Screens.Home]: undefined

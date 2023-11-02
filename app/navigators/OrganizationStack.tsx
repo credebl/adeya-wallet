@@ -21,16 +21,16 @@ const OrganizationStack: React.FC = () => {
   return (
     <Stack.Navigator screenOptions={{ ...defaultStackOptions }}>
       <Stack.Screen
-        name={Screens.Organizations}
+        name={Screens.Explore}
         component={OrganizationList}
         options={() => ({
-          title: t('Screens.Organization'),
+          title: t('Screens.Explore'),
           headerRight: () => null,
           headerLeft: () => <SettingsMenu />,
         })}
       />
       <Stack.Screen
-        name={Screens.OrganizationsConnection}
+        name={Screens.ExploreConnection}
         component={OrganizationDetails}
         options={() => ({
           title: t('Screens.OrganizationDetails'),

@@ -113,7 +113,7 @@ const TabStack: React.FC = () => {
               if (!assertConnectedNetwork()) {
                 return
               }
-              navigation.navigate(Screens.Organizations)
+              navigation.navigate(Screens.Explore)
             },
           })}
         />

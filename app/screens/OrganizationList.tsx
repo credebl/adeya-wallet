@@ -12,7 +12,7 @@ import useOrganizationData from '../utils/organizationHelper'
 
 import { IContact } from './ContactItem'
 interface ListOrganizationProps {
-  navigation: StackNavigationProp<OrganizationStackParams, Screens.Organizations>
+  navigation: StackNavigationProp<OrganizationStackParams, Screens.Explore>
 }
 
 const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {

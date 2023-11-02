@@ -10,7 +10,7 @@ import { testIdWithKey } from '../../utils/testable'
 
 interface Props {
   organization: any
-  navigation: StackNavigationProp<OrganizationStackParams, Screens.Organizations>
+  navigation: StackNavigationProp<OrganizationStackParams, Screens.Explore>
 }
 
 const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => {
@@ -63,7 +63,7 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
     },
   })
   const navigateToConnection = (name: string, description: string, logoUrl: string, OrgSlug: string) => {
-    navigation.navigate(Screens.OrganizationsConnection, { name, description, logoUrl, OrgSlug })
+    navigation.navigate(Screens.ExploreConnection, { name, description, logoUrl, OrgSlug })
   }
   const orgnizationLabel = useMemo(() => organization.name, [organization])
   const organaizationLabelAbbr = useMemo(() => orgnizationLabel?.charAt(0).toUpperCase(), [organization])
