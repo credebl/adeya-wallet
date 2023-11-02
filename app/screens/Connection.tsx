@@ -12,7 +12,7 @@ import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import { useOutOfBandByConnectionId } from '../hooks/connections'
 import { useNotifications } from '../hooks/notifications'
-import { Screens, TabStacks, DeliveryStackParams } from '../types/navigators'
+import { Screens, TabStacks, DeliveryStackParams, Stacks } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
 import { testIdWithKey } from '../utils/testable'
 
@@ -151,11 +151,10 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
       oobRecord &&
       (!goalCode || (!goalCode.startsWith('aries.vc.verify') && !goalCode.startsWith('aries.vc.issue')))
     ) {
-      // No goal code, we don't know what to expect next,
-      // navigate to the chat screen.
-      navigation.navigate(Screens.Chat, { connectionId })
-      dispatch({ isVisible: false })
-      return
+      navigation.navigate(Stacks.ConnectionStack, {
+        screen: Screens.ContactDetails,
+        params: { connectionId: connectionId },
+      })
     }
 
     if (state.notificationRecord && goalCode) {

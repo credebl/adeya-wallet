@@ -99,6 +99,9 @@ export interface IBrandColors {
   tabBarInactive: string
   unorderedList: string
   unorderedListModal: string
+  modalOrgBackground: string
+  highlightedEclipse: string
+  tabsearchBackground: string
 }
 
 export interface ISemanticColors {
@@ -217,6 +220,9 @@ const BrandColors: IBrandColors = {
   headerText: GrayscaleColors.white,
   buttonText: GrayscaleColors.white,
   tabBarInactive: GrayscaleColors.white,
+  modalOrgBackground: '#E1EAFF',
+  highlightedEclipse: '#012048',
+  tabsearchBackground: '#F4F4F4',
 }
 export const ColorPallet: IColorPallet = {
   brand: BrandColors,

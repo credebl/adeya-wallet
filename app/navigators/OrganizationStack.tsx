@@ -4,14 +4,16 @@ import { useTranslation } from 'react-i18next'
 
 import SettingsMenu from '../components/buttons/SettingsMenu'
 import { useTheme } from '../contexts/theme'
-import OrganizationConnection from '../screens/OrganizationConnection'
+import OrganizationDetails from '../screens/OrganizationDetails'
 import OrganizationList from '../screens/OrganizationList'
-import { HomeStackParams, Screens } from '../types/navigators'
+import Scan from '../screens/Scan'
+import { OrganizationStackParams, Screens } from '../types/navigators'
+import { testIdWithKey } from '../utils/testable'
 
 import { createDefaultStackOptions } from './defaultStackOptions'
 
 const OrganizationStack: React.FC = () => {
-  const Stack = createStackNavigator<HomeStackParams>()
+  const Stack = createStackNavigator<OrganizationStackParams>()
   const theme = useTheme()
   const { t } = useTranslation()
   const defaultStackOptions = createDefaultStackOptions(theme)
@@ -19,23 +21,24 @@ const OrganizationStack: React.FC = () => {
   return (
     <Stack.Navigator screenOptions={{ ...defaultStackOptions }}>
       <Stack.Screen
-        name={Screens.Organizations}
+        name={Screens.Explore}
         component={OrganizationList}
         options={() => ({
-          title: t('Screens.Organization'),
+          title: t('Screens.Explore'),
           headerRight: () => null,
           headerLeft: () => <SettingsMenu />,
         })}
       />
       <Stack.Screen
-        name={Screens.OrganizationsConnection}
-        component={OrganizationConnection}
+        name={Screens.ExploreConnection}
+        component={OrganizationDetails}
         options={() => ({
-          title: t('Screens.OrganizationConnection'),
+          title: t('Screens.OrganizationDetails'),
           headerRight: () => null,
-          headerLeft: () => <SettingsMenu />,
+          headerBackTestID: testIdWithKey('Back'),
         })}
       />
+      <Stack.Screen name={Screens.Scan} component={Scan} />
     </Stack.Navigator>
   )
 }
