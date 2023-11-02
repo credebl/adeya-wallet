@@ -90,7 +90,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
     const transformedMessages: Array<ExtendedChatMessage> = basicMessages.map((record: BasicMessageRecord) => {
       const role = getMessageEventRole(record)
       // eslint-disable-next-line
-      const linkRegex = /(?:https?\:\/\/\w+(?:\.\w+)+\S*)|(?:[\w\d\.\_\-]+@\w+(?:\.\w+)+)/gm
+      const linkRegex = /(?:https?:\/\/[\w.-]+)|(?:[\w.-]+@[\w.-]+)/gm
       // eslint-disable-next-line
       const mailRegex = /^[\w\d\.\_\-]+@\w+(?:\.\w+)+$/gm
       const links = record.content.match(linkRegex) ?? []
