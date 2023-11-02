@@ -32,7 +32,6 @@ const ConnectionLoading: React.FC = () => {
     width: 130,
   }
   const animatedCircleDisplayOptions = {
-    fill: ColorPallet.notification.infoText,
     height: 250,
     width: 250,
   }
