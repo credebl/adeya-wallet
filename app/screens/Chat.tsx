@@ -30,7 +30,7 @@ import { useCredentialsByConnectionId } from '../hooks/credentials'
 import { useProofsByConnectionId } from '../hooks/proofs'
 import { ColorPallet } from '../theme'
 import { Role } from '../types/chat'
-import { BasicMessageMetadata, basicMessageCustomMetadata } from '../types/metadata'
+import { BasicMessageMetadata, BasicMessageCustomMetadata } from '../types/metadata'
 import { ContactStackParams, Screens, Stacks } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
 import { isW3CCredential } from '../utils/credential'
@@ -77,7 +77,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
   // when chat is open, mark messages as seen
   useEffect(() => {
     basicMessages.forEach(msg => {
-      const meta = msg.metadata.get(BasicMessageMetadata.customMetadata) as basicMessageCustomMetadata
+      const meta = msg.metadata.get(BasicMessageMetadata.customMetadata) as BasicMessageCustomMetadata
       if (agent && !meta?.seen) {
         msg.metadata.set(BasicMessageMetadata.customMetadata, { ...meta, seen: true })
         const basicMessageRepository = agent.context.dependencyManager.resolve(BasicMessageRepository)
@@ -89,7 +89,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
   useEffect(() => {
     const transformedMessages: Array<ExtendedChatMessage> = basicMessages.map((record: BasicMessageRecord) => {
       const role = getMessageEventRole(record)
-      const linkRegex = /(?:https?:\/\/[\w.-]+)|(?:[\w.-]+@[\w.-]+)/gm
+      const linkRegex = /(?:https?:\/\/\S+)|(?:\S+@\S+)/gm
       const mailRegex = /^[\w\d._-]+@\w+(?:\.\w+)+$/gm
       const links = record.content.match(linkRegex) ?? []
       const handleLinkPress = (link: string) => {
@@ -283,7 +283,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
               setShowActionSlider(false)
               onSendRequest()
             },
-            icon: () => <Assets.svg.iconInfoSentDark height={30} width={30} />,
+            icon: () => <Assets.svg.IconInfoSentDark height={30} width={30} />,
           },
         ]
       : undefined

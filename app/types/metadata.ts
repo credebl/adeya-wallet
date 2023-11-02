@@ -11,6 +11,6 @@ export enum BasicMessageMetadata {
   customMetadata = 'customMetadata',
 }
 
-export interface basicMessageCustomMetadata {
+export interface BasicMessageCustomMetadata {
   seen?: boolean
 }

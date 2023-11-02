@@ -107,6 +107,99 @@ export const hashToRGBA = (hash: number) => {
   return color
 }
 
+function getFormattedTimeForChatFormat(
+  chatFormat: boolean,
+  lessThanAMinuteAgo: boolean,
+  lessThanAnHourAgo: boolean,
+  sameDay: boolean,
+  momentTime: moment.Moment,
+  millisecondsAgo: number,
+  hoursFormat: string,
+): string | null {
+  if (!chatFormat) return null
+  if (lessThanAMinuteAgo) {
+    return i18n.t('Date.JustNow')
+  }
+  if (lessThanAnHourAgo) {
+    const minutesAgo = Math.floor(millisecondsAgo / 1000 / 60)
+    return minutesAgo === 1 ? `1 ${i18n.t('Date.MinuteAgo')}` : `${minutesAgo} ${i18n.t('Date.MinutesAgo')}`
+  }
+  if (sameDay) {
+    return momentTime.format(hoursFormat)
+  }
+  return null
+}
+
+function getFormattedTimeForSameDay(
+  sameDay: boolean,
+  trim: boolean,
+  momentTime: moment.Moment,
+  hoursFormat: string,
+): string | null {
+  if (sameDay && trim) {
+    return momentTime.format(hoursFormat)
+  }
+  return null
+}
+
+function getFormattedTimeForFormat(format: string | undefined, momentTime: moment.Moment): string | null {
+  if (format) {
+    return momentTime.format(format)
+  }
+  return null
+}
+
+function getFormattedTimeForDefault(
+  shortMonth: boolean | undefined,
+  momentTime: moment.Moment,
+  sameYear: boolean,
+  trim: boolean,
+  isNonEnglish: boolean,
+  includeHour: boolean,
+  hoursFormat: string,
+): string {
+  let formatString = i18n.t('Date.ShortFormat')
+  if (!shortMonth) {
+    formatString = i18n.t('Date.LongFormat')
+  }
+  if (formatString === 'Date.ShortFormat' || formatString === 'Date.LongFormat' || formatString === undefined) {
+    formatString = 'MMM D'
+  }
+  let formattedTime =
+    trim && sameYear
+      ? momentTime.format(formatString)
+      : isNonEnglish
+      ? `${momentTime.format(formatString)} ${momentTime.format('YYYY')}`
+      : `${momentTime.format(formatString)}, ${momentTime.format('YYYY')}`
+  if (includeHour) {
+    formattedTime = `${formattedTime}, ${momentTime.format(hoursFormat)}`
+  }
+  return formattedTime
+}
+
+function getFormattedTimeWithCustomMonth(
+  customMonthFormat: string | undefined,
+  momentTime: moment.Moment,
+  monthKey: string,
+  formattedTime: string,
+): string {
+  if (!customMonthFormat) return formattedTime
+  let monthReplacement = ''
+  const monthReplacementKey = momentTime.format(customMonthFormat)
+  if (customMonthFormat.length === 3) {
+    monthReplacement = i18n.t(`Date.MonthShort.${monthKey}`)
+  } else if (customMonthFormat.length > 3) {
+    monthReplacement = i18n.t(`Date.MonthLong.${monthKey}`)
+  }
+  if (monthReplacement === `Date.MonthLong.${monthKey}` || monthReplacement === `Date.MonthShort.${monthKey}`) {
+    monthReplacement = monthReplacementKey
+  }
+  if (monthReplacement) {
+    formattedTime = formattedTime.replace(monthReplacementKey, monthReplacement)
+  }
+  return formattedTime
+}
+
 /**
  *
  * @param time
@@ -123,16 +216,13 @@ export function formatTime(
   time: Date,
   params?: { shortMonth?: boolean; format?: string; includeHour?: boolean; chatFormat?: boolean; trim?: boolean },
 ): string {
-  const getMonthKey = 'MMMM'
   const momentTime = moment(time)
-  const monthKey = momentTime.format(getMonthKey)
-  const customMonthFormatRe = /M+/
+  const monthKey = momentTime.format('MMMM')
   const shortMonth = params?.shortMonth
   const format = params?.format
-  const includeHour = params?.includeHour
-  const chatFormat = params?.chatFormat
-  const trim = params?.trim
-  const shortDateFormatMaskLength = 3
+  const includeHour = Boolean(params?.includeHour)
+  const chatFormat = Boolean(params?.chatFormat)
+  const trim = Boolean(params?.trim)
   const millisecondsAgo = moment().diff(momentTime)
   const lessThanAMinuteAgo = millisecondsAgo / 1000 / 60 < 1
   const lessThanAnHourAgo = millisecondsAgo / 1000 / 60 / 60 < 1
@@ -142,75 +232,36 @@ export function formatTime(
   const isPortuguese = i18n.resolvedLanguage === 'pt-BR'
   const isNonEnglish = i18n.resolvedLanguage === 'fr' || isPortuguese
   const hoursFormat = isPortuguese ? 'HH:mm' : 'h:mm a'
-  // for the shortened approach eg. in chat bubbles
-  if (chatFormat) {
-    if (lessThanAMinuteAgo) {
-      return i18n.t('Date.JustNow')
-    }
-    if (lessThanAnHourAgo) {
-      const minutesAgo = Math.floor(millisecondsAgo / 1000 / 60)
-      return minutesAgo === 1 ? `1 ${i18n.t('Date.MinuteAgo')}` : `${minutesAgo} ${i18n.t('Date.MinutesAgo')}`
-    }
-    if (sameDay) {
-      return momentTime.format(hoursFormat)
-    }
-  }
 
-  let formatString = i18n.t('Date.ShortFormat')
-  let formattedTime = ''
-  // if sameDay and abbreviated
-  if (sameDay && trim) {
-    return momentTime.format(hoursFormat)
-  }
+  let formattedTime = getFormattedTimeForChatFormat(
+    chatFormat,
+    lessThanAMinuteAgo,
+    lessThanAnHourAgo,
+    sameDay,
+    momentTime,
+    millisecondsAgo,
+    hoursFormat,
+  )
+  if (formattedTime) return formattedTime
 
-  if (format) {
-    formatString = format
-    formattedTime = momentTime.format(format)
-  } else {
-    if (!shortMonth) {
-      formatString = i18n.t('Date.LongFormat')
-    }
+  formattedTime = getFormattedTimeForSameDay(sameDay, trim, momentTime, hoursFormat)
+  if (formattedTime) return formattedTime
 
-    // if translation fails
-    if (formatString === 'Date.ShortFormat' || formatString === 'Date.LongFormat' || formatString === undefined) {
-      formatString = 'MMM D'
-    }
+  formattedTime = getFormattedTimeForFormat(format, momentTime)
+  if (formattedTime) return formattedTime
 
-    // if trim is true, don't include the year for same year times
-    formattedTime =
-      trim && sameYear
-        ? momentTime.format(formatString)
-        : // if non-english, don't include comma between year and month
-        isNonEnglish
-        ? `${momentTime.format(formatString)} ${momentTime.format('YYYY')}`
-        : `${momentTime.format(formatString)}, ${momentTime.format('YYYY')}`
-    if (includeHour) {
-      formattedTime = `${formattedTime}, ${momentTime.format(hoursFormat)}`
-    }
-  }
+  formattedTime = getFormattedTimeForDefault(
+    shortMonth,
+    momentTime,
+    sameYear,
+    trim,
+    isNonEnglish,
+    includeHour,
+    hoursFormat,
+  )
 
-  const customMonthFormat = formatString?.match(customMonthFormatRe)?.[0]
-
-  if (customMonthFormat) {
-    let monthReplacement = ''
-    const monthReplacementKey = momentTime.format(customMonthFormat)
-    if (customMonthFormat.length === shortDateFormatMaskLength) {
-      // then we know we're dealing with a short date format: 'MMM'
-      monthReplacement = i18n.t(`Date.MonthShort.${monthKey}`)
-    } else if (customMonthFormat.length > shortDateFormatMaskLength) {
-      // then we know we're working with a long date format: 'MMMM'
-      monthReplacement = i18n.t(`Date.MonthLong.${monthKey}`)
-    }
-    // if translation doesn't work
-    if (monthReplacement === `Date.MonthLong.${monthKey}` || monthReplacement === `Date.MonthShort.${monthKey}`) {
-      monthReplacement = monthReplacementKey
-    }
-
-    if (monthReplacement) {
-      formattedTime = formattedTime.replace(monthReplacementKey, monthReplacement)
-    }
-  }
-  return formattedTime
+  const customMonthFormat = formattedTime?.match(/M+/)?.[0]
+  return getFormattedTimeWithCustomMonth(customMonthFormat, momentTime, monthKey, formattedTime)
 }
 
 export function formatIfDate(format: string | undefined, value: string | number | null) {

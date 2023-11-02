@@ -27,7 +27,7 @@ export interface ISVGAssets {
   arrow: React.FC<SvgProps>
   BackupSuccess: React.FC<SvgProps>
   iconProofRequestDark: React.FC<SvgProps>
-  iconInfoSentDark: React.FC<SvgProps>
+  IconInfoSentDark: React.FC<SvgProps>
 }
 
 export interface IFontAttributes {
@@ -841,7 +841,7 @@ export const Assets = {
     arrow: Arrow,
     BackupSuccess: BackupSuccess,
     iconProofRequestDark: IconProofRequestDark,
-    iconInfoSentDark: IconInfoSentDark,
+    IconInfoSentDark: IconInfoSentDark,
   },
   img: {
     logoPrimary: {
