@@ -123,11 +123,9 @@ const RecordField: React.FC<RecordFieldProps> = ({
         {fieldValue ? (
           fieldValue(field)
         ) : (
-          <>
-            <View style={styles.valueText}>
-              <AttributeValue field={field as Attribute} shown={shown} />
-            </View>
-          </>
+          <View style={styles.valueText}>
+            <AttributeValue field={field as Attribute} shown={shown} />
+          </View>
         )}
       </View>
       {<View style={[styles.border, hideBottomBorder && { borderBottomWidth: 0 }]} />}

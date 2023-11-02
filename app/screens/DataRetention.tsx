@@ -46,42 +46,34 @@ const DataRetention: React.FC = () => {
     setUseDataRetention(state)
   }
 
+  const renderBouncyCheckbox = (accessibilityLabel: string, onPress: () => void, isChecked: boolean) => (
+    <BouncyCheckbox
+      accessibilityLabel={accessibilityLabel}
+      disableText
+      fillColor={ColorPallet.brand.secondaryBackground}
+      unfillColor={ColorPallet.brand.secondaryBackground}
+      size={36}
+      innerIconStyle={{ borderColor: ColorPallet.brand.primary, borderWidth: 2 }}
+      ImageComponent={() => <Icon name="circle" size={18} color={ColorPallet.brand.primary}></Icon>}
+      onPress={onPress}
+      isChecked={isChecked}
+      disableBuiltInState
+      testID={testIdWithKey('dataRetentionOn')}
+    />
+  )
+
   return (
     <SafeAreaView style={[styles.container]}>
       <View style={[styles.section, styles.sectionRow]}>
         <Text style={[TextTheme.title]}>{t('Global.On')}</Text>
-        <BouncyCheckbox
-          accessibilityLabel={t('Global.On')}
-          disableText
-          fillColor={ColorPallet.brand.secondaryBackground}
-          unfillColor={ColorPallet.brand.secondaryBackground}
-          size={36}
-          innerIconStyle={{ borderColor: ColorPallet.brand.primary, borderWidth: 2 }}
-          ImageComponent={() => <Icon name="circle" size={18} color={ColorPallet.brand.primary}></Icon>}
-          onPress={() => updateDataRetention(true)}
-          isChecked={useDataRetention}
-          disableBuiltInState
-          testID={testIdWithKey('dataRetentionOn')}
-        />
+        {renderBouncyCheckbox(t('Global.On'), () => updateDataRetention(true), useDataRetention)}
       </View>
       <View style={{ backgroundColor: SettingsTheme.groupBackground }}>
         <View style={[styles.itemSeparator]}></View>
       </View>
       <View style={[styles.section, styles.sectionRow]}>
         <Text style={[TextTheme.title]}>{t('Global.Off')}</Text>
-        <BouncyCheckbox
-          accessibilityLabel={t('Global.Off')}
-          disableText
-          fillColor={ColorPallet.brand.secondaryBackground}
-          unfillColor={ColorPallet.brand.secondaryBackground}
-          size={36}
-          innerIconStyle={{ borderColor: ColorPallet.brand.primary, borderWidth: 2 }}
-          ImageComponent={() => <Icon name="circle" size={18} color={ColorPallet.brand.primary}></Icon>}
-          onPress={() => updateDataRetention(false)}
-          isChecked={!useDataRetention}
-          disableBuiltInState
-          testID={testIdWithKey('dataRetentionOff')}
-        />
+        {renderBouncyCheckbox(t('Global.Off'), () => updateDataRetention(false), !useDataRetention)}
       </View>
     </SafeAreaView>
   )

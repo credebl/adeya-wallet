@@ -89,10 +89,8 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
   useEffect(() => {
     const transformedMessages: Array<ExtendedChatMessage> = basicMessages.map((record: BasicMessageRecord) => {
       const role = getMessageEventRole(record)
-      // eslint-disable-next-line
       const linkRegex = /(?:https?:\/\/[\w.-]+)|(?:[\w.-]+@[\w.-]+)/gm
-      // eslint-disable-next-line
-      const mailRegex = /^[\w\d\.\_\-]+@\w+(?:\.\w+)+$/gm
+      const mailRegex = /^[\w\d._-]+@\w+(?:\.\w+)+$/gm
       const links = record.content.match(linkRegex) ?? []
       const handleLinkPress = (link: string) => {
         if (link.match(mailRegex)) {
@@ -117,7 +115,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
                 </>
               )
             }
-            return <Text>{split}</Text>
+            return <Text key={i.toString()}>{split}</Text>
           })}
         </Text>
       )
@@ -257,8 +255,8 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
 
     setMessages(
       connectedMessage
-        ? [...transformedMessages.sort((a: any, b: any) => b.createdAt - a.createdAt), connectedMessage]
-        : transformedMessages.sort((a: any, b: any) => b.createdAt - a.createdAt),
+        ? [...transformedMessages.toSorted((a: any, b: any) => b.createdAt - a.createdAt), connectedMessage]
+        : transformedMessages.toSorted((a: any, b: any) => b.createdAt - a.createdAt),
     )
   }, [basicMessages, credentials, proofs, theirLabel])
 

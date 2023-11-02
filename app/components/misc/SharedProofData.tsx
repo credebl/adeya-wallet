@@ -82,7 +82,7 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
   const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay> | undefined>(undefined)
 
   const attributeTypes = overlay?.bundle?.captureBase.attributes
-  const attributeFormats: Record<string, string | undefined> = (overlay?.bundle as any)?.bundle.attributes
+  const attributeFormats: Record<string, string | undefined> = overlay?.bundle?.bundle.attributes
     .map((attr: any) => {
       return { name: attr.name, format: attr.format }
     })
