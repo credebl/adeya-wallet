@@ -1,93 +1,41 @@
-import { useNavigation } from '@react-navigation/core'
-import React, { useState } from 'react'
-import { View, StyleSheet, Text, TextInput, FlatList, TouchableOpacity } from 'react-native'
+import { StackNavigationProp } from '@react-navigation/stack'
+import React, { Fragment, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { View, Text, TextInput, Platform, Image, ActivityIndicator, StyleSheet } from 'react-native'
 
+import useOrganizationData from '../api/organizationHelper'
+import AlphabetFlatList from '../components/common'
+import ScanButton from '../components/common/ScanButton'
 import OrganizationListItem from '../components/listItems/OrganizationListItem'
-import EmptyListOrganizations from '../components/misc/EmptyListOrganizations'
 import { useTheme } from '../contexts/theme'
-const OrganizationList: React.FC = () => {
-  const [selectedLetter, setSelectedLetter] = useState('')
-  const [active, setactive] = useState(false)
-  const [searchInput, setSearchInput] = useState('')
-  const organizations = [
-    {
-      id: 2,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Globex Tech pvt ltd',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 3,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Globex Tech pvt ltd',
-      description: 'Globex Corporation',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 4,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Genco Pura Olive Oil Company',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 5,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Initech (Office Space)',
-      description: 'Veridian Dynamics',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-    {
-      id: 6,
-      createDateTime: '2023-10-06T06:07:46.443Z',
-      createdBy: 1,
-      lastChangedDateTime: '2023-10-06T06:07:46.443Z',
-      lastChangedBy: 1,
-      name: 'Umbrella Corporation',
-      description: 'Globex Tech',
-      orgSlug: 'globex-tech-pvt-ltd',
-      logoUrl: '',
-      website: '',
-      publicProfile: true,
-    },
-  ]
-  const { ColorPallet } = useTheme()
-  const navigation = useNavigation()
+import { OrganizationStackParams, Screens } from '../types/navigators'
 
+import { IContact } from './ContactItem'
+interface ListOrganizationProps {
+  navigation: StackNavigationProp<OrganizationStackParams, Screens.Explore>
+}
+
+interface IOrganization {
+  logoUrl: string
+  name: string
+  description: string
+  orgSlug: string
+}
+
+const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
+  const { t } = useTranslation()
+  const { ColorPallet } = useTheme()
+  const [searchInput, setSearchInput] = useState('')
+  const [filteredOrganizations, setFilteredOrganizations] = useState<IOrganization[]>([])
+  const { loading, organizationData } = useOrganizationData()
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       height: '100%',
-      margin: 20,
+      margin: '2.5%',
     },
     headerTextView: {
       justifyContent: 'center',
-      marginHorizontal: 40,
       alignSelf: 'center',
     },
     titleText: {
@@ -95,14 +43,14 @@ const OrganizationList: React.FC = () => {
       fontWeight: '400',
       alignSelf: 'center',
       color: ColorPallet.brand.primary,
-      marginTop: 5,
+      marginTop: '1.5625%',
     },
     headerText: {
       justifyContent: 'center',
       color: ColorPallet.brand.primary,
-      fontSize: 22,
-      fontWeight: '700',
-      marginTop: 10,
+      fontSize: 18,
+      fontWeight: '600',
+      marginTop: 20,
     },
     inputText: {
       width: '100%',
@@ -110,31 +58,30 @@ const OrganizationList: React.FC = () => {
     Separator: {
       backgroundColor: ColorPallet.brand.primaryBackground,
       height: 1,
-      marginHorizontal: 16,
+      marginHorizontal: '4%',
     },
     searchBarView: {
       alignSelf: 'center',
       borderWidth: 1,
       width: '95%',
-      borderRadius: 10,
+      flexDirection: 'row',
+      height: Platform.OS === 'ios' ? 30 : 40,
+      borderRadius: 5,
       marginTop: 5,
       borderColor: ColorPallet.brand.primary,
-      backgroundColor: ColorPallet.brand.primaryBackground,
+      backgroundColor: ColorPallet.brand.tabsearchBackground,
     },
     listView: {
       marginTop: 0,
-      width: '170%',
+      width: '100%',
       height: 'auto',
     },
     selectedLetter: {
-      marginTop: 20,
       borderWidth: 1,
       width: 20,
       borderRadius: 10,
-      backgroundColor: '#012048',
-    },
-    orgConatiner: {
-      marginTop: 20,
+      backgroundColor: ColorPallet.brand.highlightedEclipse,
+      color: ColorPallet.grayscale.white,
     },
     orgLabelTextactive: {
       alignSelf: 'center',
@@ -144,67 +91,103 @@ const OrganizationList: React.FC = () => {
     orgLabelText: {
       color: ColorPallet.brand.primary,
     },
+    alphabetView: {
+      marginLeft: 20,
+      borderWidth: 1,
+      height: '100%',
+      borderRadius: 5,
+      borderColor: ColorPallet.brand.modalOrgBackground,
+      backgroundColor: ColorPallet.brand.modalOrgBackground,
+      position: 'relative',
+    },
+    alphabetLetter: {
+      position: 'relative',
+    },
+    highlightedLetter: {
+      position: 'absolute',
+      backgroundColor: ColorPallet.brand.highlightedEclipse,
+      borderRadius: Platform.OS === 'ios' ? 15 : 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 20,
+      height: 20,
+    },
+    highlightedText: {
+      color: 'white',
+    },
+    inputView: {
+      marginHorizontal: 4,
+      marginTop: Platform.OS === 'ios' ? 5 : 0,
+    },
+    searchIcon: { marginTop: 5 },
   })
-  const filteredOrganizations = organizations.filter(org => {
-    const firstLetter = org.name.charAt(0).toUpperCase()
-    if (selectedLetter && firstLetter !== selectedLetter) {
-      return false
-    }
-    if (searchInput) {
-      const orgName = org.name.toLowerCase()
-      return orgName.includes(searchInput.toLowerCase())
-    }
-    return true
-  })
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-  organizations.sort((a, b) => a.name.localeCompare(b.name))
-  const handleSelected = item => {
-    setSelectedLetter(item)
-    setactive(true)
-  }
-  const handleSearchInputChange = text => {
+
+  useEffect(() => {
+    return setFilteredOrganizations(
+      organizationData?.organizations.filter(org => {
+        if (searchInput) {
+          const orgName = org?.name.toLowerCase()
+          return orgName.includes(searchInput.toLowerCase())
+        }
+        return true
+      }),
+    )
+  }, [searchInput, organizationData])
+  const handleSearchInputChange = (text: string) => {
     setSearchInput(text)
   }
+
+  const items: IContact[] = filteredOrganizations?.map((item, index) => ({
+    id: index,
+    logoUrl: item.logoUrl,
+    name: item.name,
+    description: item.description,
+    OrgSlug: item.orgSlug,
+  }))
+
+  const data: { [key: string]: IContact[] } = {}
+
+  for (let letter = 'A'.charCodeAt(0); letter <= 'Z'.charCodeAt(0); letter++) {
+    const initialLetter = String.fromCharCode(letter)
+    data[initialLetter] = items?.filter(item => item?.name.charAt(0) === initialLetter)
+  }
+  const HEADER_HEIGHT = 50
 
   return (
     <View style={styles.container}>
       <View style={styles.headerTextView}>
-        <Text style={styles.titleText}>Select an organization to discover what credentials you can obtain.</Text>
+        <Text style={styles.titleText}>{t('Organizations.Title')}</Text>
       </View>
       <Text style={styles.headerText}>Organizations list</Text>
 
       <View style={styles.searchBarView}>
+        <Image source={require('../assets/img/search.png')} style={styles.searchIcon} />
         <TextInput
-          style={{ marginHorizontal: 4 }}
+          scrollEnabled={false}
+          style={styles.inputView}
           placeholder="Search..."
           value={searchInput}
           onChangeText={text => handleSearchInputChange(text)}
         />
       </View>
-      <View style={[styles.listView, { flexDirection: 'row' }]}>
-        <FlatList
-          data={filteredOrganizations}
-          SeparatorComponent={() => <View style={styles.Separator} />}
-          keyExtractor={organizations => organizations.id}
-          renderItem={({ item: organizations }) => (
-            <OrganizationListItem organization={organizations} navigation={navigation} />
-          )}
-          ListEmptyComponent={() => <EmptyListOrganizations navigation={navigation} />}
-        />
-        <FlatList
-          data={active ? selectedLetter : alphabet}
-          keyExtractor={item => item}
-          horizontal={false}
-          style={{ width: 1 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => handleSelected(item)}
-              style={active ? styles.selectedLetter : styles.orgConatiner}>
-              <Text style={active ? styles.orgLabelTextactive : styles.orgLabelText}>{item}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
+      {loading ? (
+        <View style={{ justifyContent: 'center', flex: 1 }}>
+          <ActivityIndicator style={{ width: 'auto' }} />
+        </View>
+      ) : (
+        <Fragment>
+          <AlphabetFlatList
+            data={data}
+            itemHeight={70}
+            headerHeight={HEADER_HEIGHT}
+            renderItem={({ item: organizations }) => (
+              <OrganizationListItem organization={organizations} navigation={navigation} />
+            )}
+          />
+        </Fragment>
+      )}
+      <View />
+      <ScanButton />
     </View>
   )
 }
