@@ -2,7 +2,7 @@ import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { Attribute, CredentialOverlay, Field, Predicate } from '@hyperledger/aries-oca/build/legacy'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
+import { useWindowDimensions, Image, StyleSheet, Text, View } from 'react-native'
 
 import {
   GroupedSharedProofData,
@@ -14,6 +14,7 @@ import { useConfiguration } from '../../contexts/configuration'
 import { useTheme } from '../../contexts/theme'
 import { useAppAgent } from '../../utils/agent'
 import { toImageSource } from '../../utils/credential'
+import { formatIfDate, pTypeToText } from '../../utils/helpers'
 import { buildFieldsFromSharedAnonCredsProof } from '../../utils/oca'
 import { testIdWithKey } from '../../utils/testable'
 import LoadingIndicator from '../animated/LoadingIndicator'
@@ -24,16 +25,14 @@ interface SharedProofDataProps {
   onSharedProofDataLoad?: (sharedProofData: GroupedSharedProofDataItem[]) => void
 }
 
-const { width } = Dimensions.get('screen')
-const logoHeight = width * 0.12
-const padding = width * 0.05
-const borderRadius = 10
-
 const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ sharedData }) => {
   const { ColorPallet, TextTheme } = useTheme()
   const { OCABundleResolver } = useConfiguration()
   const { i18n } = useTranslation()
-
+  const { width } = useWindowDimensions()
+  const logoHeight = width * 0.12
+  const padding = width * 0.05
+  const borderRadius = 10
   const styles = StyleSheet.create({
     container: {
       marginBottom: 20,
@@ -61,6 +60,7 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
       elevation: 5,
     },
     cardAttributes: {
+      width: '65%',
       paddingTop: 20,
       paddingBottom: 10,
     },
@@ -81,6 +81,15 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
 
   const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay> | undefined>(undefined)
 
+  const attributeTypes = overlay?.bundle?.captureBase.attributes
+  const attributeFormats: Record<string, string | undefined> = overlay?.bundle?.bundle.attributes
+    .map((attr: any) => {
+      return { name: attr.name, format: attr.format }
+    })
+    .reduce((prev: { [key: string]: string }, curr: { name: string; format?: string }) => {
+      return { ...prev, [curr.name]: curr.format }
+    }, {})
+
   useEffect(() => {
     const attributes = buildFieldsFromSharedAnonCredsProof(sharedData.data)
     const params = {
@@ -92,19 +101,26 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
       attributes,
     }
     OCABundleResolver.resolveAllBundles(params).then(bundle => {
-      setOverlay(bundle)
+      setOverlay(bundle as CredentialOverlay<BrandingOverlay>)
     })
   }, [sharedData])
 
   const CardField: React.FC<{ item: Field }> = ({ item }) => {
+    const { t } = useTranslation()
+    let parsedPredicate: Predicate | undefined = undefined
+    if (item instanceof Predicate) {
+      parsedPredicate = pTypeToText(item, t, attributeTypes) as Predicate
+      parsedPredicate.pValue = formatIfDate(attributeFormats[item.name ?? ''], parsedPredicate.pValue)
+    } else {
+      ;(item as Attribute).value = formatIfDate(attributeFormats[item.name ?? ''], (item as Attribute).value)
+    }
+
     return (
-      <View key={item.name} style={styles.attributeContainer}>
+      <View key={item.name} style={[styles.attributeContainer]}>
         <Text style={styles.attributeName}>{item.label || item.name}</Text>
-        {item instanceof Attribute && <AttributeValue style={styles.attributeValue} field={item} shown={true} />}
+        {!parsedPredicate && <AttributeValue style={styles.attributeValue} field={item as Attribute} shown={true} />}
         {item instanceof Predicate && (
-          <Text style={styles.attributeValue}>
-            {item.pType} {item.pValue}
-          </Text>
+          <Text style={styles.attributeValue}>{`${parsedPredicate?.pType} ${parsedPredicate?.pValue}`}</Text>
         )}
       </View>
     )

@@ -1,9 +1,11 @@
+import { deleteConnectionById, ProofState, useProofByState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { createStackNavigator, StackCardStyleInterpolator, StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AppState } from 'react-native'
 
+import { ProofCustomMetadata, ProofMetadata } from '../../verifier'
 import { walletTimeout } from '../constants'
 import { useAuth } from '../contexts/auth'
 import { useConfiguration } from '../contexts/configuration'
@@ -49,6 +51,18 @@ const RootStack: React.FC = () => {
   const OnboardingTheme = theme.OnboardingTheme
   const { pages, terms, splash, useBiometry, enableWalletNaming } = useConfiguration()
   useDeepLinks()
+
+  // remove connection on mobile verifier proofs if proof is rejected regardless of if it has been opened
+  const declinedProofs = useProofByState([ProofState.Declined, ProofState.Abandoned])
+  useEffect(() => {
+    declinedProofs.forEach(proof => {
+      const meta = proof?.metadata?.get(ProofMetadata.customMetadata) as ProofCustomMetadata
+      if (meta?.delete_conn_after_seen) {
+        deleteConnectionById(agent, proof?.connectionId ?? '').catch(() => {})
+        proof?.metadata.set(ProofMetadata.customMetadata, { ...meta, delete_conn_after_seen: false })
+      }
+    })
+  }, [declinedProofs, state.preferences.useDataRetention])
 
   const lockoutUser = async () => {
     if (agent && state.authentication.didAuthenticate) {
