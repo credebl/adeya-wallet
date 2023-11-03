@@ -48,7 +48,7 @@ export enum Screens {
   ProofChangeCredential = 'Choose a credential',
   DataRetention = 'Data Retention',
   Explore = 'Explore',
-  ExploreConnection = 'Organization Details',
+  OrganizationDetails = 'Organization Details',
 }
 
 export enum Stacks {
@@ -139,7 +139,13 @@ export type CredentialStackParams = {
 }
 export type OrganizationStackParams = {
   [Screens.Explore]: undefined
-  [Screens.ExploreConnection]: undefined
+  [Screens.OrganizationDetails]: {
+    name: string
+    description: string
+    logoUrl: string
+    orgSlug: string
+  }
+  [Screens.Scan]: undefined
 }
 export type HomeStackParams = {
   [Screens.Home]: undefined

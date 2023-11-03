@@ -62,8 +62,8 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
       marginBottom: 10,
     },
   })
-  const navigateToConnection = (name: string, description: string, logoUrl: string, OrgSlug: string) => {
-    navigation.navigate(Screens.ExploreConnection, { name, description, logoUrl, OrgSlug })
+  const navigateToConnection = (name: string, description: string, logoUrl: string, orgSlug: string) => {
+    navigation.navigate(Screens.OrganizationDetails, { name, description, logoUrl, orgSlug })
   }
   const orgnizationLabel = useMemo(() => organization.name, [organization])
   const organaizationLabelAbbr = useMemo(() => orgnizationLabel?.charAt(0).toUpperCase(), [organization])

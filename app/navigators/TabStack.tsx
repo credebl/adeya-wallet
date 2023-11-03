@@ -7,9 +7,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { AttachTourStep } from '../components/tour/AttachTourStep'
 import { useConfiguration } from '../contexts/configuration'
-import { useNetwork } from '../contexts/network'
 import { useTheme } from '../contexts/theme'
-import { Screens, TabStackParams, TabStacks } from '../types/navigators'
+import { TabStackParams, TabStacks } from '../types/navigators'
 import { isTablet, orientation, Orientation } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
@@ -25,7 +24,6 @@ const TabStack: React.FC = () => {
   const Tab = createBottomTabNavigator<TabStackParams>()
   const { ColorPallet, TabTheme } = useTheme()
   const { fontScale } = useWindowDimensions()
-  const { assertConnectedNetwork } = useNetwork()
 
   const showLabels = fontScale * TabTheme.tabBarTextStyle.fontSize < 18
   const styles = StyleSheet.create({
@@ -108,14 +106,6 @@ const TabStack: React.FC = () => {
 
             tabBarTestID: testIdWithKey(t('TabStack.Explore')),
           }}
-          listeners={({ navigation }) => ({
-            tabPress: () => {
-              if (!assertConnectedNetwork()) {
-                return
-              }
-              navigation.navigate(Screens.Explore)
-            },
-          })}
         />
         <Tab.Screen
           name={TabStacks.CredentialStack}
