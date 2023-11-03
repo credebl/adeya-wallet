@@ -10,6 +10,8 @@ import ContactBook from './assets/img/contact-book.svg'
 import CredentialDeclined from './assets/img/credential-declined.svg'
 import DeleteNotification from './assets/img/delete-notification.svg'
 import EmptyWallet from './assets/img/empty-wallet.svg'
+import IconInfoSentDark from './assets/img/icon-info-sent-dark.svg'
+import IconProofRequestDark from './assets/img/icon-proof-request-dark.svg'
 import Logo from './assets/img/logo-with-text.svg'
 import ProofRequestDeclined from './assets/img/proof-declined.svg'
 
@@ -24,6 +26,8 @@ export interface ISVGAssets {
   proofRequestDeclined: React.FC<SvgProps>
   arrow: React.FC<SvgProps>
   BackupSuccess: React.FC<SvgProps>
+  iconProofRequestDark: React.FC<SvgProps>
+  IconInfoSentDark: React.FC<SvgProps>
 }
 
 export interface IFontAttributes {
@@ -835,6 +839,8 @@ export const Assets = {
     proofRequestDeclined: ProofRequestDeclined,
     arrow: Arrow,
     BackupSuccess: BackupSuccess,
+    iconProofRequestDark: IconProofRequestDark,
+    IconInfoSentDark: IconInfoSentDark,
   },
   img: {
     logoPrimary: {
