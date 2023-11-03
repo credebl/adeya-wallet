@@ -255,8 +255,8 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
 
     setMessages(
       connectedMessage
-        ? [...transformedMessages.toSorted((a: any, b: any) => b.createdAt - a.createdAt), connectedMessage]
-        : transformedMessages.toSorted((a: any, b: any) => b.createdAt - a.createdAt),
+        ? [...transformedMessages.sort((a: any, b: any) => b.createdAt - a.createdAt), connectedMessage]
+        : transformedMessages.sort((a: any, b: any) => b.createdAt - a.createdAt),
     )
   }, [basicMessages, credentials, proofs, theirLabel])
 

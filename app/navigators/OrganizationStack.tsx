@@ -30,7 +30,7 @@ const OrganizationStack: React.FC = () => {
         })}
       />
       <Stack.Screen
-        name={Screens.ExploreConnection}
+        name={Screens.OrganizationDetails}
         component={OrganizationDetails}
         options={() => ({
           title: t('Screens.OrganizationDetails'),

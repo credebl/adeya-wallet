@@ -9,7 +9,7 @@ export interface OrgnizationDetailsProps {
   name: string
   description: string
   logoUrl: string
-  OrgSlug: string
+  orgSlug: string
 }
 
 export interface CredentialDetail {
@@ -20,14 +20,14 @@ export interface CredentialDetail {
   createDateTime: string
 }
 
-const useOrganizationDetailData = (OrgSlug: string) => {
+const useOrganizationDetailData = (orgSlug: string) => {
   const [organizationDetailData, setOrganizationDetailData] = useState([])
   const [credentialDetailData, setCredentialDetailData] = useState<CredentialDetail[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchOrganizationDetail(OrgSlug)
+        const response = await fetchOrganizationDetail(orgSlug)
         setOrganizationDetailData(response?.data.org_agents)
         setCredentialDetailData(response?.data.credential_definitions || [])
       } catch (error) {
@@ -39,7 +39,7 @@ const useOrganizationDetailData = (OrgSlug: string) => {
     }
 
     fetchData()
-  }, [OrgSlug])
+  }, [orgSlug])
 
   return {
     organizationDetailData,
