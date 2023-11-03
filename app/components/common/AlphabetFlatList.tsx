@@ -23,6 +23,7 @@ export type ListRenderItem<ItemT> = (props: IItemProps<ItemT>) => React.ReactEle
 export type ListRenderSectionHeader<T> = (props: T) => React.ReactElement | null
 
 export interface IProps<ItemT> {
+  onEndReached: ((info: { distanceFromEnd: number }) => void) | null | undefined
   data: {
     [key: string]: ItemT[]
   }
@@ -157,8 +158,11 @@ function AlphabetFlatList<ItemT>(props: IProps<ItemT>) {
         renderItem={renderItem}
         keyExtractor={(item, index) => `${index}`}
         getItemLayout={getItemLayout}
+        onEndReached={props.onEndReached}
         initialNumToRender={initialNumToRender}
         showsHorizontalScrollIndicator={false}
+        onEndReachedThreshold={0.1}
+        // onEndReached={props.onEndReached}
         viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
       />
       <AlphabetListView

@@ -21,41 +21,63 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
     container: {
       flexDirection: 'row',
       width: '100%',
-      marginTop: widthPercentageToDP('1%'),
+      marginTop: widthPercentageToDP('2%'),
+      padding: 5,
     },
+    // avatarContainer: {
+    //   alignItems: 'center',
+    //   justifyContent: 'center',
+    //   width: 30,
+    //   height: 30,
+    //   borderRadius: 15,
+    //   borderColor: ListItems.avatarCircle.borderColor,
+    //   borderWidth: 1,
+    //   marginRight: 16,
+    //   marginTop: 15,
+    // },
+    // avatarOrgPlaceholder: {
+    //   ...TextTheme.headingFour,
+    // },
+    // avatarOrgImage: {
+    //   alignItems: 'center',
+    //   justifyContent: 'center',
+    //   width: 30,
+    //   height: 30,
+    //   borderRadius: 15,
+    //   borderColor: ListItems.avatarCircle.borderColor,
+    //   borderWidth: 1,
+    // },
     avatarContainer: {
       alignItems: 'center',
       justifyContent: 'center',
-      width: 30,
-      height: 30,
-      borderRadius: 15,
+      width: 50,
+      height: 50,
+      borderRadius: 25,
       borderColor: ListItems.avatarCircle.borderColor,
       borderWidth: 1,
       marginRight: 16,
-      marginTop: 15,
     },
     avatarOrgPlaceholder: {
       ...TextTheme.headingFour,
+      textAlign: 'center',
     },
     avatarOrgImage: {
-      alignItems: 'center',
-      justifyContent: 'center',
       width: 30,
       height: 30,
-      borderRadius: 15,
-      borderColor: ListItems.avatarCircle.borderColor,
-      borderWidth: 1,
+    },
+    contactNameContainer: {
+      flex: 1,
+      paddingVertical: 4,
     },
     labelOrgText: {
       fontSize: 16,
       fontWeight: '600',
       color: ColorPallet.brand.primary,
     },
-    borderView: {
-      borderWidth: 0.5,
-      borderColor: '#A3C1EE',
-      marginHorizontal: 40,
-    },
+    // borderView: {
+    //   borderColor: '#A3C1EE',
+    //   marginHorizontal: 40,
+    // },
     labelContainer: {
       flex: 1,
       marginTop: 15,
@@ -92,7 +114,7 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
           </View>
         </View>
       </View>
-      <View style={styles.borderView} />
+      {/* <View style={styles.borderView} /> */}
     </TouchableOpacity>
   )
 }

@@ -1,5 +1,6 @@
+import { useConnections } from '@adeya/ssi'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, Text, Image, ScrollView } from 'react-native'
 import Toast from 'react-native-toast-message'
@@ -27,7 +28,14 @@ const OrganizationDetails: React.FC = () => {
   const navigation = useNavigation()
   const { t } = useTranslation()
   const params = useRoute<RouteProp<Record<string, OrganizationDetailProps>, string>>().params
+  const [isDisabled, setIsDisabled] = useState(false)
   const { organizationDetailData, credentialDetailData } = useOrganizationDetailData(params?.orgSlug)
+  const { records } = useConnections()
+  const connections = records
+  const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
+  const orglabel = connections?.map(item => item.theirLabel)
+  const isOrgLabelIncluded = orglabel.includes(params?.name)
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -86,23 +94,23 @@ const OrganizationDetails: React.FC = () => {
       borderColor: ColorPallet.brand.primaryLight,
       alignSelf: 'center',
       justifyContent: 'center',
-      marginTop: 20,
+      marginVertical: 20,
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     orgDescriptionContainner: {
-      height: 100,
+      height: params?.description.length > 70 ? 100 : 130,
       width: '100%',
       margin: 10,
+      marginVertical: 20,
       flexShrink: 0,
       borderWidth: 1,
       borderRadius: 10,
       borderColor: ColorPallet.brand.primaryLight,
       alignSelf: 'center',
-      flex: 1,
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     credentialContainner: {
-      height: 100,
+      height: credentialDetailData.length > 2 ? 'auto' : 100,
       width: '100%',
       margin: 10,
       flexShrink: 0,
@@ -110,7 +118,6 @@ const OrganizationDetails: React.FC = () => {
       borderRadius: 10,
       borderColor: ColorPallet.brand.primaryLight,
       alignSelf: 'center',
-      flex: 1,
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     labeltext: {
@@ -132,17 +139,27 @@ const OrganizationDetails: React.FC = () => {
     },
     button: {
       margin: 20,
-      marginTop: '70%',
+      flex: 1,
+      justifyContent: 'flex-end',
     },
     credLabel: {
       fontSize: 18,
       fontWeight: '600',
       width: '90%',
+      marginHorizontal: 10,
     },
     credContainer: {
       flexDirection: 'column',
     },
   })
+
+  useEffect(() => {
+    if ((!agentInvitations || agentInvitations.length === 0) && isOrgLabelIncluded) {
+      setIsDisabled(true)
+    } else {
+      setIsDisabled(false)
+    }
+  }, [organizationDetailData, isOrgLabelIncluded])
 
   const organaizationLabelAbbr = useMemo(() => params?.name?.charAt(0).toUpperCase(), [params])
   const handleInvitation = async (value: string): Promise<void> => {
@@ -221,7 +238,7 @@ const OrganizationDetails: React.FC = () => {
     }
   }
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
       <View style={styles.headerTextView}>
         <Text style={styles.titleText}>{t('Organizations.Title')}</Text>
       </View>
@@ -236,12 +253,11 @@ const OrganizationDetails: React.FC = () => {
               )}
             </View>
 
-            <Text style={styles.orgContainer} numberOfLines={4}>
+            <Text style={styles.orgContainer} numberOfLines={7}>
               {params?.name}
             </Text>
           </View>
         </View>
-
         <View style={styles.orgDescriptionContainner}>
           <View>
             <View style={styles.descriptionlabel}>
@@ -253,23 +269,25 @@ const OrganizationDetails: React.FC = () => {
           </View>
         </View>
         {credentialDetailData.length > 0 && (
-          <View style={styles.credentialContainner}>
+          <ScrollView showsHorizontalScrollIndicator={false} style={styles.credentialContainner}>
             <View>
               <View style={styles.descriptionlabel}>
                 <Text style={styles.orgHeaderText}>Available Credentials</Text>
               </View>
               <View style={styles.credContainer}>
-                {credentialDetailData.map((item, index) => (
-                  <View key={index}>
-                    <Text style={styles.labeltext}>{item?.tag}</Text>
-                  </View>
-                ))}
+                <ScrollView>
+                  {credentialDetailData.map((item, index) => (
+                    <View key={index}>
+                      <Text style={styles.labeltext}>{item?.tag}</Text>
+                    </View>
+                  ))}
+                </ScrollView>
               </View>
             </View>
-          </View>
+          </ScrollView>
         )}
       </View>
-      {credentialDetailData.length > 0 && (
+      {credentialDetailData.length > 0 && isDisabled && (
         <View style={styles.button}>
           <Button
             onPress={connectOrganization}
@@ -280,7 +298,7 @@ const OrganizationDetails: React.FC = () => {
           />
         </View>
       )}
-    </ScrollView>
+    </View>
   )
 }
 

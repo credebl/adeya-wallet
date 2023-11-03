@@ -12,8 +12,8 @@ const ScanButton: React.FC = () => {
     container: {
       flexDirection: 'row',
       justifyContent: 'flex-end',
+      alignItems: 'flex-end',
       marginTop: 'auto',
-      alignItems: 'baseline',
     },
     imageContainer: {
       width: 81,

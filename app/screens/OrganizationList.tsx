@@ -26,8 +26,10 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   const { t } = useTranslation()
   const { ColorPallet } = useTheme()
   const [searchInput, setSearchInput] = useState('')
+
   const [filteredOrganizations, setFilteredOrganizations] = useState<IOrganization[]>([])
-  const { loading, organizationData } = useOrganizationData()
+  const PAGE_SIZE = 20
+  const { loading, organizationData, loadMore } = useOrganizationData(PAGE_SIZE)
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -67,7 +69,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       flexDirection: 'row',
       height: Platform.OS === 'ios' ? 30 : 40,
       borderRadius: 5,
-      marginTop: 5,
+      marginTop: 40,
       borderColor: ColorPallet.brand.primary,
       backgroundColor: ColorPallet.brand.tabsearchBackground,
     },
@@ -158,7 +160,6 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       <View style={styles.headerTextView}>
         <Text style={styles.titleText}>{t('Organizations.Title')}</Text>
       </View>
-      <Text style={styles.headerText}>Organizations list</Text>
 
       <View style={styles.searchBarView}>
         <Image source={require('../assets/img/search.png')} style={styles.searchIcon} />
@@ -179,10 +180,19 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
           <AlphabetFlatList
             data={data}
             itemHeight={70}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.1}
             headerHeight={HEADER_HEIGHT}
             renderItem={({ item: organizations }) => (
               <OrganizationListItem organization={organizations} navigation={navigation} />
             )}
+            ListFooterComponent={() => {
+              return loading ? (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                  <ActivityIndicator size="large" />
+                </View>
+              ) : null
+            }}
           />
         </Fragment>
       )}

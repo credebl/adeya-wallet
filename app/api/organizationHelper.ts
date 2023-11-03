@@ -22,14 +22,27 @@ export interface Organization {
 export interface OrganizationData {
   organizations: Organization[]
 }
-const useOrganizationData = () => {
+
+const useOrganizationData = (pageSize: number) => {
   const [organizationData, setOrganizationData] = useState<OrganizationData>({ organizations: [] })
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   const fetchData = async () => {
     try {
-      const response = await fetchOrganizationData()
-      setOrganizationData(response?.data)
+      const response = await fetchOrganizationData(currentPage, pageSize)
+      const newData = response?.data.organizations || []
+
+      // Calculate the total number of pages based on the data and page size
+      const totalItems = response?.data.totalItems || 0
+      const newTotalPages = Math.ceil(totalItems / pageSize)
+
+      // Update the organization data and total pages
+      setOrganizationData(prevData => ({
+        organizations: [...prevData.organizations, ...newData],
+      }))
+      setTotalPages(newTotalPages)
     } catch (error) {
       Toast.show({
         type: ToastType.Error,
@@ -40,13 +53,22 @@ const useOrganizationData = () => {
     }
   }
 
+  const loadMore = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [currentPage, pageSize])
 
   return {
     organizationData,
     loading,
+    loadMore,
+    currentPage,
+    totalPages,
   }
 }
 
