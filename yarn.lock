@@ -7,10 +7,10 @@
   resolved "https://registry.npmjs.org/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
-"@adeya/ssi@0.0.1-alpha.13":
-  version "0.0.1-alpha.13"
-  resolved "https://registry.yarnpkg.com/@adeya/ssi/-/ssi-0.0.1-alpha.13.tgz#21cca8972885173667780e8a8d2b459108e32fc3"
-  integrity sha512-mPgrK6uIIj8XJt/KMdOVfh4Vx5NWX+e/WsqirqUMcICbyse6EcsK9g/Kk7CxpyepBOw3GcWVFEvgoKjDnbjS8A==
+"@adeya/ssi@0.0.1-alpha.14":
+  version "0.0.1-alpha.14"
+  resolved "https://registry.yarnpkg.com/@adeya/ssi/-/ssi-0.0.1-alpha.14.tgz#09b0841747bbbb2573b4a051fc0fd7bd35c537f6"
+  integrity sha512-U9teolKydZ2C7kFGo735XF1at12ymy6f9xPo7bKXJyWk+b3bUZsJDg8raaYAlerMkN41zvwZn755UO+qb1fIzQ==
   dependencies:
     "@aries-framework/anoncreds" "0.4.2"
     "@aries-framework/anoncreds-rs" "0.4.2"
@@ -1593,10 +1593,10 @@
   dependencies:
     fast-text-encoding "^1.0.3"
 
-"@hyperledger/aries-oca@^1.0.0":
-  version "1.0.0-alpha.119"
-  resolved "https://registry.yarnpkg.com/@hyperledger/aries-oca/-/aries-oca-1.0.0-alpha.119.tgz#d359ba3ea348fecbe94753e58657551a71749e4c"
-  integrity sha512-VUNkboDdyzgZeU9Bcv4jZaKvM0Clk95YLUr7GeBQ/bKyKz7WHyTXppTkKF5XZYW0H7/KvJfx9iwbdr+RHU8Z9A==
+"@hyperledger/aries-oca@1.0.0-alpha.130":
+  version "1.0.0-alpha.130"
+  resolved "https://registry.yarnpkg.com/@hyperledger/aries-oca/-/aries-oca-1.0.0-alpha.130.tgz#6bfa640927ae4bd67fd47f3f97bf2856c7c87699"
+  integrity sha512-YeSECYAGnRCYv+dsYDjcy2SO2J+YPHCscTtrtuR2PYR55NH95n6tXRca9d30QWeAF/QeqPfwlBUOg3UDUzHJ/g==
   dependencies:
     "@aries-framework/anoncreds" "^0.4.0"
     "@aries-framework/core" "^0.4.0"
