@@ -1,6 +1,6 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { useConnectionById, useProofById, ProofExchangeRecord, ProofState } from '@adeya/ssi'
+import { ProofExchangeRecord, ProofState, useConnectionById, useProofById } from '@adeya/ssi'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -13,9 +13,11 @@ import { ProofCustomMetadata, ProofMetadata, GroupedSharedProofDataItem, markPro
 import InformationReceived from '../assets/img/information-received.svg'
 import Button, { ButtonType } from '../components/buttons/Button'
 import SharedProofData from '../components/misc/SharedProofData'
+import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { ProofRequestsStackParams, Screens } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
+import { getConnectionName } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
 type ProofDetailsProps = StackScreenProps<ProofRequestsStackParams, Screens.ProofDetails>
@@ -29,6 +31,7 @@ interface VerifiedProofProps {
 
 interface UnverifiedProofProps {
   record: ProofExchangeRecord
+  navigation: StackNavigationProp<ProofRequestsStackParams, Screens.ProofDetails>
 }
 
 const VerifiedProof: React.FC<VerifiedProofProps> = ({
@@ -96,7 +99,7 @@ const VerifiedProof: React.FC<VerifiedProofProps> = ({
 
   const connection = useConnectionById(record.connectionId || '')
   const connectionLabel = useMemo(
-    () => (connection ? connection?.alias || connection?.theirLabel : t('Verifier.ConnectionLessLabel')),
+    () => (connection ? getConnectionName(connection) ?? 'Connection' : t('Verifier.ConnectionLessLabel')),
     [connection],
   )
 
@@ -191,13 +194,12 @@ const VerifiedProof: React.FC<VerifiedProofProps> = ({
   )
 }
 
-const UnverifiedProof: React.FC<UnverifiedProofProps> = ({ record }) => {
+const UnverifiedProof: React.FC<UnverifiedProofProps> = ({ record, navigation }) => {
   const { t } = useTranslation()
   const { ColorPallet } = useTheme()
 
   const styles = StyleSheet.create({
     header: {
-      flexGrow: 1,
       backgroundColor: ColorPallet.semantic.error,
       paddingHorizontal: 30,
       paddingVertical: 20,
@@ -218,9 +220,23 @@ const UnverifiedProof: React.FC<UnverifiedProofProps> = ({ record }) => {
       marginVertical: 10,
       fontSize: 18,
     },
+    footerButton: {
+      margin: 20,
+      marginTop: 'auto',
+    },
   })
+
+  const onGenerateNew = useCallback(() => {
+    const metadata = record.metadata.get(ProofMetadata.customMetadata) as ProofCustomMetadata
+    if (metadata?.proof_request_template_id) {
+      navigation.navigate(Screens.ProofRequesting, { templateId: metadata.proof_request_template_id })
+    } else {
+      navigation.navigate(Screens.ProofRequests, {})
+    }
+  }, [navigation])
+
   return (
-    <View testID={testIdWithKey('UnverifiedProofView')}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} testID={testIdWithKey('UnverifiedProofView')}>
       <View style={styles.header}>
         <View style={styles.headerTitleContainer}>
           <Icon name="bookmark-remove" size={45} color={'white'} />
@@ -232,7 +248,16 @@ const UnverifiedProof: React.FC<UnverifiedProofProps> = ({ record }) => {
           )}
         </View>
       </View>
-    </View>
+      <View style={styles.footerButton}>
+        <Button
+          title={t('Verifier.GenerateNewQR')}
+          accessibilityLabel={t('Verifier.GenerateNewQR')}
+          testID={testIdWithKey('GenerateNewQR')}
+          buttonType={ButtonType.Primary}
+          onPress={onGenerateNew}
+        />
+      </View>
+    </ScrollView>
   )
 }
 
@@ -244,9 +269,21 @@ const ProofDetails: React.FC<ProofDetailsProps> = ({ route, navigation }) => {
   const { recordId, isHistory, senderReview } = route?.params
   const record = useProofById(recordId)
   const { agent } = useAppAgent()
+  const [store] = useStore()
 
   useEffect(() => {
-    if (record && !record.metadata?.data?.customMetadata?.details_seen) {
+    return () => {
+      if (!store.preferences.useDataRetention) {
+        agent?.proofs.deleteById(recordId)
+      }
+      if ((record?.metadata.get(ProofMetadata.customMetadata) as ProofCustomMetadata).delete_conn_after_seen) {
+        agent?.connections.deleteById(record?.connectionId ?? '')
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (agent && record && !record.metadata?.data?.customMetadata?.details_seen) {
       markProofAsViewed(agent, record)
     }
   }, [record])
@@ -275,7 +312,7 @@ const ProofDetails: React.FC<ProofDetailsProps> = ({ route, navigation }) => {
       {(record.isVerified || senderReview) && (
         <VerifiedProof record={record} isHistory={isHistory} navigation={navigation} senderReview={senderReview} />
       )}
-      {!(record.isVerified || senderReview) && <UnverifiedProof record={record} />}
+      {!(record.isVerified || senderReview) && <UnverifiedProof record={record} navigation={navigation} />}
     </SafeAreaView>
   )
 }

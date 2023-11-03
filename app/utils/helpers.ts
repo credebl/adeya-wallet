@@ -30,7 +30,7 @@ import { CaptureBaseAttributeType } from '@hyperledger/aries-oca'
 import { TFunction } from 'i18next'
 import moment from 'moment'
 import queryString from 'query-string'
-import { Dispatch, ReactNode, SetStateAction } from 'react'
+import { ReactNode } from 'react'
 import { DeviceEventEmitter } from 'react-native'
 import { uniqueNamesGenerator, Config, names } from 'unique-names-generator'
 
@@ -107,59 +107,164 @@ export const hashToRGBA = (hash: number) => {
   return color
 }
 
-export function formatTime(time: Date, params?: { long?: boolean; format?: string }): string {
-  const getMonthKey = 'MMMM'
-  const momentTime = moment(time)
-  const monthKey = momentTime.format(getMonthKey)
-  const customMonthFormatRe = /M+/
-  const long = params?.long
-  const format = params?.format
-  const shortDateFormatMaskLength = 3
-
-  let formatString = i18n.t('Date.ShortFormat')
-  if (format) {
-    formatString = format
-  } else {
-    if (long) {
-      formatString = i18n.t('Date.LongFormat')
-    }
-
-    // if translation fails
-    if (formatString === 'Date.ShortFormat' || formatString === 'Date.LongFormat' || formatString === undefined) {
-      formatString = 'MMM D, YYYY'
-    }
+function getFormattedTimeForChatFormat(
+  chatFormat: boolean,
+  lessThanAMinuteAgo: boolean,
+  lessThanAnHourAgo: boolean,
+  sameDay: boolean,
+  momentTime: moment.Moment,
+  millisecondsAgo: number,
+  hoursFormat: string,
+): string | null {
+  if (!chatFormat) return null
+  if (lessThanAMinuteAgo) {
+    return i18n.t('Date.JustNow')
   }
-  const customMonthFormat = formatString?.match(customMonthFormatRe)?.[0]
+  if (lessThanAnHourAgo) {
+    const minutesAgo = Math.floor(millisecondsAgo / 1000 / 60)
+    return minutesAgo === 1 ? `1 ${i18n.t('Date.MinuteAgo')}` : `${minutesAgo} ${i18n.t('Date.MinutesAgo')}`
+  }
+  if (sameDay) {
+    return momentTime.format(hoursFormat)
+  }
+  return null
+}
 
-  let formattedTime = momentTime.format(formatString)
+function getFormattedTimeForSameDay(
+  sameDay: boolean,
+  trim: boolean,
+  momentTime: moment.Moment,
+  hoursFormat: string,
+): string | null {
+  if (sameDay && trim) {
+    return momentTime.format(hoursFormat)
+  }
+  return null
+}
 
-  if (customMonthFormat) {
-    let monthReplacement = ''
-    const monthReplacementKey = momentTime.format(customMonthFormat)
-    if (customMonthFormat.length === shortDateFormatMaskLength) {
-      // then we know we're dealing with a short date format: 'MMM'
-      monthReplacement = i18n.t(`Date.MonthShort.${monthKey}`)
-    } else if (customMonthFormat.length > shortDateFormatMaskLength) {
-      // then we know we're working with a long date format: 'MMMM'
-      monthReplacement = i18n.t(`Date.MonthLong.${monthKey}`)
-    }
-    // if translation doesn't work
-    if (monthReplacement === `Date.MonthLong.${monthKey}` || monthReplacement === `Date.MonthShort.${monthKey}`) {
-      monthReplacement = monthReplacementKey
-    }
+function getFormattedTimeForFormat(format: string | undefined, momentTime: moment.Moment): string | null {
+  if (format) {
+    return momentTime.format(format)
+  }
+  return null
+}
 
-    if (monthReplacement) {
-      formattedTime = formattedTime.replace(monthReplacementKey, monthReplacement)
-    }
+function getFormattedTimeForDefault(
+  shortMonth: boolean | undefined,
+  momentTime: moment.Moment,
+  sameYear: boolean,
+  trim: boolean,
+  isNonEnglish: boolean,
+  includeHour: boolean,
+  hoursFormat: string,
+): string {
+  let formatString = i18n.t('Date.ShortFormat')
+  if (!shortMonth) {
+    formatString = i18n.t('Date.LongFormat')
+  }
+  if (formatString === 'Date.ShortFormat' || formatString === 'Date.LongFormat' || formatString === undefined) {
+    formatString = 'MMM D'
+  }
+  let formattedTime =
+    trim && sameYear
+      ? momentTime.format(formatString)
+      : isNonEnglish
+      ? `${momentTime.format(formatString)} ${momentTime.format('YYYY')}`
+      : `${momentTime.format(formatString)}, ${momentTime.format('YYYY')}`
+  if (includeHour) {
+    formattedTime = `${formattedTime}, ${momentTime.format(hoursFormat)}`
   }
   return formattedTime
 }
 
-export function formatIfDate(
-  format: string | undefined,
-  value: string | number | null,
-  setter: Dispatch<SetStateAction<string | number | null>>,
-) {
+function getFormattedTimeWithCustomMonth(
+  customMonthFormat: string | undefined,
+  momentTime: moment.Moment,
+  monthKey: string,
+  formattedTime: string,
+): string {
+  if (!customMonthFormat) return formattedTime
+  let monthReplacement = ''
+  const monthReplacementKey = momentTime.format(customMonthFormat)
+  if (customMonthFormat.length === 3) {
+    monthReplacement = i18n.t(`Date.MonthShort.${monthKey}`)
+  } else if (customMonthFormat.length > 3) {
+    monthReplacement = i18n.t(`Date.MonthLong.${monthKey}`)
+  }
+  if (monthReplacement === `Date.MonthLong.${monthKey}` || monthReplacement === `Date.MonthShort.${monthKey}`) {
+    monthReplacement = monthReplacementKey
+  }
+  if (monthReplacement) {
+    formattedTime = formattedTime.replace(monthReplacementKey, monthReplacement)
+  }
+  return formattedTime
+}
+
+/**
+ *
+ * @param time
+ * @param params see below
+ * shortMonth: whether to use Jun in place of June, Mar in place of March for example (overridden by `format`)
+ * format: an optional custom moment format string to create the formatted date from
+ * includeHour: whether to add the hour and minute and am/pm. eg 9:32 pm (overridden by `chatFormat` and `trim`)
+ * chatFormat: whether to style the date to appear like a chat message timestamp eg. '7 minutes ago' or 'Just now'
+ * trim: if true, if it's the same day the date will be trimmed to just the hour, if it's the same year then the year will be trimmed from the date
+ * eg. if the current year is 2023, February 12, 2023 will be trimmed to February 12
+ * @returns formatted time string
+ */
+export function formatTime(
+  time: Date,
+  params?: { shortMonth?: boolean; format?: string; includeHour?: boolean; chatFormat?: boolean; trim?: boolean },
+): string {
+  const momentTime = moment(time)
+  const monthKey = momentTime.format('MMMM')
+  const shortMonth = params?.shortMonth
+  const format = params?.format
+  const includeHour = Boolean(params?.includeHour)
+  const chatFormat = Boolean(params?.chatFormat)
+  const trim = Boolean(params?.trim)
+  const millisecondsAgo = moment().diff(momentTime)
+  const lessThanAMinuteAgo = millisecondsAgo / 1000 / 60 < 1
+  const lessThanAnHourAgo = millisecondsAgo / 1000 / 60 / 60 < 1
+  const now = new Date()
+  const sameYear = time.getFullYear() === now.getFullYear()
+  const sameDay = time.getDate() === now.getDate() && time.getMonth() === now.getMonth() && sameYear
+  const isPortuguese = i18n.resolvedLanguage === 'pt-BR'
+  const isNonEnglish = i18n.resolvedLanguage === 'fr' || isPortuguese
+  const hoursFormat = isPortuguese ? 'HH:mm' : 'h:mm a'
+
+  let formattedTime = getFormattedTimeForChatFormat(
+    chatFormat,
+    lessThanAMinuteAgo,
+    lessThanAnHourAgo,
+    sameDay,
+    momentTime,
+    millisecondsAgo,
+    hoursFormat,
+  )
+  if (formattedTime) return formattedTime
+
+  formattedTime = getFormattedTimeForSameDay(sameDay, trim, momentTime, hoursFormat)
+  if (formattedTime) return formattedTime
+
+  formattedTime = getFormattedTimeForFormat(format, momentTime)
+  if (formattedTime) return formattedTime
+
+  formattedTime = getFormattedTimeForDefault(
+    shortMonth,
+    momentTime,
+    sameYear,
+    trim,
+    isNonEnglish,
+    includeHour,
+    hoursFormat,
+  )
+
+  const customMonthFormat = formattedTime?.match(/M+/)?.[0]
+  return getFormattedTimeWithCustomMonth(customMonthFormat, momentTime, monthKey, formattedTime)
+}
+
+export function formatIfDate(format: string | undefined, value: string | number | null) {
   const potentialDate = value ? value.toString() : null
   if (format === 'YYYYMMDD' && potentialDate && potentialDate.length === format.length) {
     const year = potentialDate.substring(0, 4)
@@ -168,9 +273,10 @@ export function formatIfDate(
     // NOTE: JavaScript counts months from 0 to 11: January = 0, December = 11.
     const date = new Date(Number(year), Number(month) - 1, Number(day))
     if (!isNaN(date.getDate())) {
-      setter(formatTime(date))
+      return formatTime(date, { shortMonth: true })
     }
   }
+  return value
 }
 
 /**
@@ -182,9 +288,6 @@ export function connectionRecordFromId(connectionId?: string): ConnectionRecord 
   }
 }
 
-/**
- * @deprecated The function should not be used
- */
 export function getConnectionName(connection: ConnectionRecord | void): string | void {
   if (!connection) {
     return

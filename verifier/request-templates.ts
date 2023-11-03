@@ -2,6 +2,30 @@ import { ProofRequestTemplate, ProofRequestType } from './types/proof-reqeust-te
 
 export const defaultProofRequestTemplates: Array<ProofRequestTemplate> = [
   {
+    id: 'Aries:5:ArbiterFullName:0.0.1:indy',
+    name: 'Student full name',
+    description: 'Verify the full name and date of birth of a arbiter',
+    version: '0.0.1',
+    payload: {
+      type: ProofRequestType.AnonCreds,
+      data: [
+        {
+          schema: 'TfGSZ1rWA4kk8npaaSg7Ca:2:Arbiter:0.1',
+          requestedAttributes: [
+            {
+              name: 'full_name',
+              restrictions: [{ cred_def_id: 'TfGSZ1rWA4kk8npaaSg7Ca:3:CL:53364:Arbiter' }],
+            },
+            {
+              name: 'date_of_birth',
+              restrictions: [{ cred_def_id: 'TfGSZ1rWA4kk8npaaSg7Ca:3:CL:53364:Arbiter' }],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     id: 'Aries:5:StudentFullName:0.0.1:indy',
     name: 'Student full name',
     description: 'Verify the full name of a student',

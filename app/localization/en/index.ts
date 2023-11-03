@@ -39,8 +39,8 @@ const translation = {
     "No": "No",
   },
   "Date": {
-    "ShortFormat": "MMM D, YYYY",
-    "LongFormat": "D MMMM YYYY, HH:mm:ss",
+    "ShortFormat": "MMM D",
+    "LongFormat": "MMMM D",
     "MonthLong": {
       "January": "January",
       "February": "February",
@@ -68,9 +68,11 @@ const translation = {
       "October": "Oct",
       "November": "Nov",
       "December": "Dec",
-    }
+    },
+    "MinuteAgo": "minute ago",
+    "MinutesAgo": "minutes ago",
+    "JustNow": "Just now",
   },
-
   "Language": {
     "English": "English",
   },
@@ -469,6 +471,7 @@ const translation = {
     "AppSettings": "App Settings",
     "AboutApp": "About App",
     "Language": "Language",
+    "DataRetention": "Data retention",
     "AppGuides": "App guides",
     "Build": "Build",
     "WhatAreContacts": "What are Contacts",
@@ -555,6 +558,8 @@ const translation = {
     "Explore": "Explore",
     "OrganizationDetails": "Organization Details",
     "ProofChangeCredential": "Choose a credential",
+    "DataRetention": "Data retention",
+    "Organization": "Explore",
     "OrganizationConnection": "Connection"
   },
   "Loading": {
@@ -615,6 +620,7 @@ const translation = {
     "ViewOffer": "View Offer",
     "OpenItem": "Open",
     "UserYou": "You",
+    "YouConnected": "You connected with",
     "CredentialProposalSent": "sent a credential proposal",
     "CredentialOfferReceived": "sent a credential offer",
     "CredentialRequestSent": "sent a credential request",
