@@ -14,20 +14,20 @@ import { useAppAgent } from '../utils/agent'
 import { connectFromInvitation, getJson, getUrl, receiveMessageFromUrlRedirect } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
-interface OrgnizationDetailsProps {
+interface OrganizationDetailProps {
   name: string
   description: string
   logoUrl: string
-  OrgSlug: string
+  orgSlug: string
 }
 
-const OrganizationDetails: React.FC<OrgnizationDetailsProps> = () => {
+const OrganizationDetails: React.FC = () => {
   const { ColorPallet, ListItems, TextTheme } = useTheme()
   const { agent } = useAppAgent()
   const navigation = useNavigation()
   const { t } = useTranslation()
-  const params = useRoute<RouteProp<Record<string, OrgnizationDetailsProps>, string>>().params
-  const { organizationDetailData, credentialDetailData } = useOrganizationDetailData(params?.OrgSlug)
+  const params = useRoute<RouteProp<Record<string, OrganizationDetailProps>, string>>().params
+  const { organizationDetailData, credentialDetailData } = useOrganizationDetailData(params?.orgSlug)
   const styles = StyleSheet.create({
     container: {
       flex: 1,
