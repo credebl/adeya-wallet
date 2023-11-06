@@ -1,6 +1,6 @@
 import { useConnections } from '@adeya/ssi'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, Text, Image, ScrollView } from 'react-native'
 import Toast from 'react-native-toast-message'
@@ -28,14 +28,12 @@ const OrganizationDetails: React.FC = () => {
   const navigation = useNavigation()
   const { t } = useTranslation()
   const params = useRoute<RouteProp<Record<string, OrganizationDetailProps>, string>>().params
-  const [isDisabled, setIsDisabled] = useState(false)
+  const [containerHeight, setContainerHeight] = useState(100)
   const { organizationDetailData, credentialDetailData } = useOrganizationDetailData(params?.orgSlug)
   const { records } = useConnections()
   const connections = records
-  const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
   const orglabel = connections?.map(item => item.theirLabel)
   const isOrgLabelIncluded = orglabel.includes(params?.name)
-
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -84,10 +82,9 @@ const OrganizationDetails: React.FC = () => {
       borderWidth: 1,
     },
     orgNameContainner: {
-      height: 100,
+      height: containerHeight,
       width: '100%',
       margin: 10,
-      maxHeight: 165,
       flexShrink: 0,
       borderWidth: 1,
       borderRadius: 10,
@@ -98,10 +95,9 @@ const OrganizationDetails: React.FC = () => {
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     orgDescriptionContainner: {
-      height: params?.description.length > 70 ? 100 : 130,
+      height: containerHeight,
       width: '100%',
       margin: 10,
-      marginVertical: 20,
       flexShrink: 0,
       borderWidth: 1,
       borderRadius: 10,
@@ -110,7 +106,7 @@ const OrganizationDetails: React.FC = () => {
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     credentialContainner: {
-      height: credentialDetailData.length > 2 ? 'auto' : 100,
+      height: containerHeight,
       width: '100%',
       margin: 10,
       flexShrink: 0,
@@ -147,20 +143,13 @@ const OrganizationDetails: React.FC = () => {
       fontWeight: '600',
       width: '90%',
       marginHorizontal: 10,
+      marginBottom: 10,
     },
+    orgLabelContainer: { width: '75%' },
     credContainer: {
       flexDirection: 'column',
     },
   })
-
-  useEffect(() => {
-    if ((!agentInvitations || agentInvitations.length === 0) && isOrgLabelIncluded) {
-      setIsDisabled(true)
-    } else {
-      setIsDisabled(false)
-    }
-  }, [organizationDetailData, isOrgLabelIncluded])
-
   const organaizationLabelAbbr = useMemo(() => params?.name?.charAt(0).toUpperCase(), [params])
   const handleInvitation = async (value: string): Promise<void> => {
     try {
@@ -197,6 +186,12 @@ const OrganizationDetails: React.FC = () => {
     }
   }
   const connectOrganization = async () => {
+    if (isOrgLabelIncluded) {
+      Toast.show({
+        type: ToastType.Error,
+        text1: 'You are already connected with organization',
+      })
+    }
     try {
       const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
 
@@ -237,13 +232,19 @@ const OrganizationDetails: React.FC = () => {
       })
     }
   }
+  const setDynamicHeight = () => {
+    if (credentialDetailData.length > 2) {
+      const calculatedHeight = credentialDetailData.length * 50
+      setContainerHeight(calculatedHeight)
+    }
+  }
   return (
     <View style={styles.container}>
       <View style={styles.headerTextView}>
-        <Text style={styles.titleText}>{t('Organizations.Title')}</Text>
+        <Text style={styles.titleText}>{t('Organizations.TitleDetail')}</Text>
       </View>
       <View style={{ margin: 3 }}>
-        <View style={styles.orgNameContainner}>
+        <View onLayout={setDynamicHeight} style={styles.orgNameContainner}>
           <View style={{ flexDirection: 'row' }}>
             <View style={styles.avatarContainer}>
               {params?.logoUrl ? (
@@ -252,15 +253,16 @@ const OrganizationDetails: React.FC = () => {
                 <Text style={styles.avatarOrgPlaceholder}>{organaizationLabelAbbr}</Text>
               )}
             </View>
-
-            <Text style={styles.orgContainer} numberOfLines={7}>
-              {params?.name}
-            </Text>
+            <View style={styles.orgLabelContainer}>
+              <Text style={styles.orgContainer} numberOfLines={7}>
+                {params?.name}
+              </Text>
+            </View>
           </View>
         </View>
         <View style={styles.orgDescriptionContainner}>
           <View>
-            <View style={styles.descriptionlabel}>
+            <View style={styles.descriptionlabel} onLayout={setDynamicHeight}>
               <Text style={styles.orgHeaderText}>About Organization</Text>
             </View>
             <Text style={styles.labeltext} numberOfLines={4}>
@@ -275,7 +277,7 @@ const OrganizationDetails: React.FC = () => {
                 <Text style={styles.orgHeaderText}>Available Credentials</Text>
               </View>
               <View style={styles.credContainer}>
-                <ScrollView>
+                <ScrollView onLayout={setDynamicHeight}>
                   {credentialDetailData.map((item, index) => (
                     <View key={index}>
                       <Text style={styles.labeltext}>{item?.tag}</Text>
@@ -287,7 +289,7 @@ const OrganizationDetails: React.FC = () => {
           </ScrollView>
         )}
       </View>
-      {credentialDetailData.length > 0 && isDisabled && (
+      {credentialDetailData.length > 0 && (
         <View style={styles.button}>
           <Button
             onPress={connectOrganization}

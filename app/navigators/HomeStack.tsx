@@ -6,7 +6,6 @@ import SettingsMenu from '../components/buttons/SettingsMenu'
 import { useTheme } from '../contexts/theme'
 import Home from '../screens/Home'
 import ListNotifications from '../screens/ListNotifications'
-import Scan from '../screens/Scan'
 import { HomeStackParams, Screens } from '../types/navigators'
 
 import { createDefaultStackOptions } from './defaultStackOptions'
@@ -35,7 +34,6 @@ const HomeStack: React.FC = () => {
           title: t('Screens.Notifications'),
         })}
       />
-      <Stack.Screen name={Screens.Scan} component={Scan} />
     </Stack.Navigator>
   )
 }

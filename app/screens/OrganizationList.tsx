@@ -28,7 +28,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   const [searchInput, setSearchInput] = useState('')
 
   const [filteredOrganizations, setFilteredOrganizations] = useState<IOrganization[]>([])
-  const PAGE_SIZE = 20
+  const PAGE_SIZE = 10
   const { loading, organizationData, loadMore } = useOrganizationData(PAGE_SIZE)
   const styles = StyleSheet.create({
     container: {
@@ -122,6 +122,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       marginTop: Platform.OS === 'ios' ? 5 : 0,
     },
     searchIcon: { marginTop: 5 },
+    loder: { justifyContent: 'center', flex: 1 },
   })
 
   useEffect(() => {
@@ -172,7 +173,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
         />
       </View>
       {loading ? (
-        <View style={{ justifyContent: 'center', flex: 1 }}>
+        <View style={styles.loder}>
           <ActivityIndicator style={{ width: 'auto' }} />
         </View>
       ) : (
@@ -181,14 +182,13 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
             data={data}
             itemHeight={70}
             onEndReached={loadMore}
-            onEndReachedThreshold={0.1}
             headerHeight={HEADER_HEIGHT}
             renderItem={({ item: organizations }) => (
               <OrganizationListItem organization={organizations} navigation={navigation} />
             )}
             ListFooterComponent={() => {
               return loading ? (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.loder}>
                   <ActivityIndicator size="large" />
                 </View>
               ) : null

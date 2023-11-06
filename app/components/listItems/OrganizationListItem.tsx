@@ -24,29 +24,6 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
       marginTop: widthPercentageToDP('2%'),
       padding: 5,
     },
-    // avatarContainer: {
-    //   alignItems: 'center',
-    //   justifyContent: 'center',
-    //   width: 30,
-    //   height: 30,
-    //   borderRadius: 15,
-    //   borderColor: ListItems.avatarCircle.borderColor,
-    //   borderWidth: 1,
-    //   marginRight: 16,
-    //   marginTop: 15,
-    // },
-    // avatarOrgPlaceholder: {
-    //   ...TextTheme.headingFour,
-    // },
-    // avatarOrgImage: {
-    //   alignItems: 'center',
-    //   justifyContent: 'center',
-    //   width: 30,
-    //   height: 30,
-    //   borderRadius: 15,
-    //   borderColor: ListItems.avatarCircle.borderColor,
-    //   borderWidth: 1,
-    // },
     avatarContainer: {
       alignItems: 'center',
       justifyContent: 'center',
@@ -89,6 +66,8 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
   }
   const orgnizationLabel = useMemo(() => organization.name, [organization])
   const organaizationLabelAbbr = useMemo(() => orgnizationLabel?.charAt(0).toUpperCase(), [organization])
+
+  // console.log('orhhhhh', organization)
   return (
     <TouchableOpacity
       onPress={() =>
@@ -114,6 +93,7 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
           </View>
         </View>
       </View>
+
       {/* <View style={styles.borderView} /> */}
     </TouchableOpacity>
   )

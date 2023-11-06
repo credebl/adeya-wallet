@@ -33,16 +33,10 @@ const useOrganizationData = (pageSize: number) => {
     try {
       const response = await fetchOrganizationData(currentPage, pageSize)
       const newData = response?.data.organizations || []
-
-      // Calculate the total number of pages based on the data and page size
-      const totalItems = response?.data.totalItems || 0
-      const newTotalPages = Math.ceil(totalItems / pageSize)
-
-      // Update the organization data and total pages
       setOrganizationData(prevData => ({
         organizations: [...prevData.organizations, ...newData],
       }))
-      setTotalPages(newTotalPages)
+      setTotalPages(response?.data.totalPages)
     } catch (error) {
       Toast.show({
         type: ToastType.Error,

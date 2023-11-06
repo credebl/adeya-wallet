@@ -3,7 +3,7 @@ import React from 'react'
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native'
 
 import { useNetwork } from '../../contexts/network'
-import { Screens } from '../../types/navigators'
+import { Screens, Stacks } from '../../types/navigators'
 
 const ScanButton: React.FC = () => {
   const navigation = useNavigation()
@@ -20,15 +20,17 @@ const ScanButton: React.FC = () => {
       height: 81,
     },
   })
-  const navigateToconnect = () => {
+  const navigateToconnect = e => {
+    e.preventDefault()
     if (!assertConnectedNetwork()) {
       return
     }
-    navigation.navigate(Screens.Scan as never)
+
+    navigation.navigate(Stacks.ConnectStack, { screen: Screens.Scan })
   }
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={navigateToconnect}>
+      <TouchableOpacity onPress={e => navigateToconnect(e)}>
         <Image style={styles.imageContainer} source={require('../../assets/img/Scanbutton.png')} />
       </TouchableOpacity>
     </View>
