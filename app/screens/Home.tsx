@@ -73,9 +73,6 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       position: 'absolute',
       top: heightPercentageToDP('70%'),
       flex: 1,
-      bottom: 10,
-      right: 0,
-      left: 0,
       zIndex: 1,
     },
   })
