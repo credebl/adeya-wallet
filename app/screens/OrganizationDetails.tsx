@@ -191,45 +191,46 @@ const OrganizationDetails: React.FC = () => {
         type: ToastType.Error,
         text1: 'You are already connected with organization',
       })
-    }
-    try {
-      const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
+    } else {
+      try {
+        const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
 
-      if (!agentInvitations || agentInvitations.length === 0) {
+        if (!agentInvitations || agentInvitations.length === 0) {
+          Toast.show({
+            type: ToastType.Error,
+            text1: 'No agent invitations available',
+          })
+          return
+        }
+
+        const lastArray = agentInvitations[0]
+
+        if (!lastArray || lastArray.length === 0) {
+          Toast.show({
+            type: ToastType.Error,
+            text1: 'No connection invitations available',
+          })
+          return
+        }
+
+        const lastItem = lastArray[lastArray.length - 1]
+
+        if (!lastItem?.connectionInvitation) {
+          Toast.show({
+            type: ToastType.Error,
+            text1: 'No last connection invitation available',
+          })
+          return
+        }
+
+        const lastConnectionInvitation = lastItem.connectionInvitation
+        await handleInvitation(lastConnectionInvitation)
+      } catch (error) {
         Toast.show({
           type: ToastType.Error,
           text1: 'No agent invitations available',
         })
-        return
       }
-
-      const lastArray = agentInvitations[0]
-
-      if (!lastArray || lastArray.length === 0) {
-        Toast.show({
-          type: ToastType.Error,
-          text1: 'No connection invitations available',
-        })
-        return
-      }
-
-      const lastItem = lastArray[lastArray.length - 1]
-
-      if (!lastItem?.connectionInvitation) {
-        Toast.show({
-          type: ToastType.Error,
-          text1: 'No last connection invitation available',
-        })
-        return
-      }
-
-      const lastConnectionInvitation = lastItem.connectionInvitation
-      await handleInvitation(lastConnectionInvitation)
-    } catch (error) {
-      Toast.show({
-        type: ToastType.Error,
-        text1: 'No agent invitations available',
-      })
     }
   }
   const setDynamicHeight = () => {
