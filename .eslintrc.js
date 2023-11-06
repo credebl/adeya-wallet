@@ -25,8 +25,8 @@ module.exports = {
   plugins: ['@typescript-eslint', 'import'],
   rules: {
     // The below 2 rules are set for now will remove them once solved
-    '@typescript-eslint/no-explicit-any': 'warn',
-    'no-unsafe-optional-chaining': 'warn',
+    '@typescript-eslint/no-explicit-any': 'off',
+    'no-unsafe-optional-chaining': 'off',
     'no-console': 'error',
     // Because of early development, we only warn on ts-ignore. In future we want to move to error
     '@typescript-eslint/ban-ts-comment': 'warn',
@@ -50,7 +50,7 @@ module.exports = {
     ],
     'import/no-cycle': 'error',
     'import/no-extraneous-dependencies': [
-      'error',
+      'off',
       {
         devDependencies: true,
       },

@@ -1,5 +1,5 @@
 import { StackNavigationProp } from '@react-navigation/stack'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native'
 import { widthPercentageToDP } from 'react-native-responsive-screen'
@@ -61,8 +61,8 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
   const navigateToConnection = (name: string, description: string, logoUrl: string, orgSlug: string) => {
     navigation.navigate(Screens.OrganizationDetails, { name, description, logoUrl, orgSlug })
   }
-  const orgnizationLabel = useMemo(() => organization.name, [organization])
-  const organaizationLabelAbbr = useMemo(() => orgnizationLabel?.charAt(0).toUpperCase(), [organization])
+  const organizationLabel = organization?.name
+  const organaizationLabelAbbr = organizationLabel?.charAt(0).toUpperCase()
 
   return (
     <TouchableOpacity

@@ -3,6 +3,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, Text, TextInput, Platform, Image, ActivityIndicator, StyleSheet } from 'react-native'
 
+import { HEADER_HEIGHT, PAGE_SIZE } from '../api/api-constants'
 import useOrganizationData from '../api/organizationHelper'
 import AlphabetFlatList from '../components/common'
 import ScanButton from '../components/common/ScanButton'
@@ -11,6 +12,7 @@ import { useTheme } from '../contexts/theme'
 import { OrganizationStackParams, Screens } from '../types/navigators'
 
 import { IContact } from './ContactItem'
+
 interface ListOrganizationProps {
   navigation: StackNavigationProp<OrganizationStackParams, Screens.Explore>
 }
@@ -28,7 +30,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   const [searchInput, setSearchInput] = useState('')
 
   const [filteredOrganizations, setFilteredOrganizations] = useState<IOrganization[]>([])
-  const PAGE_SIZE = 10
+
   const { loading, organizationData, loadMore } = useOrganizationData(PAGE_SIZE)
   const styles = StyleSheet.create({
     container: {
@@ -122,7 +124,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       marginTop: Platform.OS === 'ios' ? 5 : 0,
     },
     searchIcon: { marginTop: 5 },
-    loder: { justifyContent: 'center', flex: 1 },
+    loader: { justifyContent: 'center', flex: 1 },
   })
 
   useEffect(() => {
@@ -154,7 +156,6 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     const initialLetter = String.fromCharCode(letter)
     data[initialLetter] = items?.filter(item => item?.name.charAt(0) === initialLetter)
   }
-  const HEADER_HEIGHT = 50
 
   return (
     <View style={styles.container}>
@@ -173,7 +174,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
         />
       </View>
       {loading ? (
-        <View style={styles.loder}>
+        <View style={styles.loader}>
           <ActivityIndicator style={{ width: 'auto' }} />
         </View>
       ) : (
@@ -188,7 +189,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
             )}
             ListFooterComponent={() => {
               return loading ? (
-                <View style={styles.loder}>
+                <View style={styles.loader}>
                   <ActivityIndicator size="large" />
                 </View>
               ) : null

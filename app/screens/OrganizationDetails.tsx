@@ -94,7 +94,7 @@ const OrganizationDetails: React.FC = () => {
       marginVertical: 20,
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
-    orgDescriptionContainner: {
+    orgDescriptionContainer: {
       height: containerHeight,
       width: '100%',
       margin: 10,
@@ -191,46 +191,46 @@ const OrganizationDetails: React.FC = () => {
         type: ToastType.Error,
         text1: 'You are already connected with organization',
       })
-    } else {
-      try {
-        const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
+      return
+    }
+    try {
+      const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
 
-        if (!agentInvitations || agentInvitations.length === 0) {
-          Toast.show({
-            type: ToastType.Error,
-            text1: 'No agent invitations available',
-          })
-          return
-        }
-
-        const lastArray = agentInvitations[0]
-
-        if (!lastArray || lastArray.length === 0) {
-          Toast.show({
-            type: ToastType.Error,
-            text1: 'No connection invitations available',
-          })
-          return
-        }
-
-        const lastItem = lastArray[lastArray.length - 1]
-
-        if (!lastItem?.connectionInvitation) {
-          Toast.show({
-            type: ToastType.Error,
-            text1: 'No last connection invitation available',
-          })
-          return
-        }
-
-        const lastConnectionInvitation = lastItem.connectionInvitation
-        await handleInvitation(lastConnectionInvitation)
-      } catch (error) {
+      if (!agentInvitations || agentInvitations.length === 0) {
         Toast.show({
           type: ToastType.Error,
           text1: 'No agent invitations available',
         })
+        return
       }
+
+      const lastArray = agentInvitations[0]
+
+      if (!lastArray || lastArray.length === 0) {
+        Toast.show({
+          type: ToastType.Error,
+          text1: 'No connection invitations available',
+        })
+        return
+      }
+
+      const lastItem = lastArray[lastArray.length - 1]
+
+      if (!lastItem?.connectionInvitation) {
+        Toast.show({
+          type: ToastType.Error,
+          text1: 'No last connection invitation available',
+        })
+        return
+      }
+
+      const lastConnectionInvitation = lastItem.connectionInvitation
+      await handleInvitation(lastConnectionInvitation)
+    } catch (error) {
+      Toast.show({
+        type: ToastType.Error,
+        text1: 'No agent invitations available',
+      })
     }
   }
   const setDynamicHeight = () => {
@@ -261,7 +261,7 @@ const OrganizationDetails: React.FC = () => {
             </View>
           </View>
         </View>
-        <View style={styles.orgDescriptionContainner}>
+        <View style={styles.orgDescriptionContainer}>
           <View>
             <View style={styles.descriptionlabel} onLayout={setDynamicHeight}>
               <Text style={styles.orgHeaderText}>About Organization</Text>

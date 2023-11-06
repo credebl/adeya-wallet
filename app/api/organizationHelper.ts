@@ -55,7 +55,7 @@ const useOrganizationData = (pageSize: number) => {
 
   useEffect(() => {
     fetchData()
-  }, [currentPage, pageSize])
+  }, [currentPage])
 
   return {
     organizationData,
