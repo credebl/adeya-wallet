@@ -51,10 +51,7 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
       fontWeight: '600',
       color: ColorPallet.brand.primary,
     },
-    // borderView: {
-    //   borderColor: '#A3C1EE',
-    //   marginHorizontal: 40,
-    // },
+
     labelContainer: {
       flex: 1,
       marginTop: 15,
@@ -67,7 +64,6 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
   const orgnizationLabel = useMemo(() => organization.name, [organization])
   const organaizationLabelAbbr = useMemo(() => orgnizationLabel?.charAt(0).toUpperCase(), [organization])
 
-  // console.log('orhhhhh', organization)
   return (
     <TouchableOpacity
       onPress={() =>
@@ -93,8 +89,6 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
           </View>
         </View>
       </View>
-
-      {/* <View style={styles.borderView} /> */}
     </TouchableOpacity>
   )
 }
