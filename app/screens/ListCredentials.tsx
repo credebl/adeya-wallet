@@ -30,8 +30,9 @@ const style = StyleSheet.create({
     justifyContent: 'flex-end',
     alignSelf: 'flex-end',
     position: 'absolute',
+
     flex: 1,
-    marginTop: heightPercentageToDP('75%'),
+    top: heightPercentageToDP('70%'),
     zIndex: 1,
   },
 })

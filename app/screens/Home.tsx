@@ -4,7 +4,9 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, StyleSheet, View, Text, Dimensions, TouchableOpacity } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
+import { heightPercentageToDP } from 'react-native-responsive-screen'
 
+import ScanButton from '../components/common/ScanButton'
 import NotificationListItem, { NotificationType } from '../components/listItems/NotificationListItem'
 import NoNewUpdates from '../components/misc/NoNewUpdates'
 import AppGuideModal from '../components/modals/AppGuideModal'
@@ -63,6 +65,18 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
     },
     link: {
       ...HomeTheme.link,
+    },
+
+    fabConatiner: {
+      justifyContent: 'flex-end',
+      alignSelf: 'flex-end',
+      position: 'absolute',
+      top: heightPercentageToDP('70%'),
+      flex: 1,
+      bottom: 10,
+      right: 0,
+      left: 0,
+      zIndex: 1,
     },
   })
 
@@ -202,6 +216,9 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
         )}
       />
       <HomeContentView />
+      <View style={styles.fabConatiner}>
+        <ScanButton />
+      </View>
     </ScrollView>
   )
 }
