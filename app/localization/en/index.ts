@@ -256,7 +256,7 @@ const translation = {
     "TypeHere": "Type Message Here",
     "PeopleAndOrganizations": "organizations are listed here.",
     "Title" : "Select an organization to get credentials",
-    "TitleDetail": "Select an organization to get credential"
+    "TitleDetail": "Get credentials from selected organization"
   },
   "ContactDetails": {
     "Created": "Created",

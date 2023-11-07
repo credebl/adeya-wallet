@@ -6,7 +6,6 @@ import SettingsMenu from '../components/buttons/SettingsMenu'
 import { useTheme } from '../contexts/theme'
 import OrganizationDetails from '../screens/OrganizationDetails'
 import OrganizationList from '../screens/OrganizationList'
-import Scan from '../screens/Scan'
 import { OrganizationStackParams, Screens } from '../types/navigators'
 import { testIdWithKey } from '../utils/testable'
 
@@ -38,7 +37,6 @@ const OrganizationStack: React.FC = () => {
           headerBackTestID: testIdWithKey('Back'),
         })}
       />
-      <Stack.Screen name={Screens.Scan} component={Scan} />
     </Stack.Navigator>
   )
 }
