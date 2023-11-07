@@ -32,7 +32,7 @@ const style = StyleSheet.create({
     position: 'absolute',
 
     flex: 1,
-    top: heightPercentageToDP('70%'),
+    top: heightPercentageToDP('73%'),
     zIndex: 1,
   },
 })

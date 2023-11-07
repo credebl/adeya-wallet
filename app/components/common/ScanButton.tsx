@@ -11,6 +11,7 @@ const ScanButton: React.FC = () => {
   const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
+      bottom: 0,
       justifyContent: 'flex-end',
       alignItems: 'flex-end',
       marginTop: 'auto',

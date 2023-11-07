@@ -2,9 +2,8 @@ import { useIsFocused } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FlatList, StyleSheet, View, Text, Dimensions, TouchableOpacity } from 'react-native'
+import { FlatList, StyleSheet, View, Text, Dimensions, TouchableOpacity, Image } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import { heightPercentageToDP } from 'react-native-responsive-screen'
 
 import ScanButton from '../components/common/ScanButton'
 import NotificationListItem, { NotificationType } from '../components/listItems/NotificationListItem'
@@ -28,8 +27,6 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   const { useCustomNotifications, enableTours: enableToursConfig } = useConfiguration()
   const { notifications } = useCustomNotifications()
   const { t } = useTranslation()
-  const { homeContentView: HomeContentView } = useConfiguration()
-
   // This syntax is required for the jest mocks to work
   // eslint-disable-next-line import/no-named-as-default-member
   const { HomeTheme } = useTheme()
@@ -66,14 +63,27 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
     link: {
       ...HomeTheme.link,
     },
-
     fabConatiner: {
-      justifyContent: 'flex-end',
-      alignSelf: 'flex-end',
-      position: 'absolute',
-      top: heightPercentageToDP('70%'),
-      flex: 1,
+      // position: 'absolute',
+      // bottom: 0,
+      // alignSelf: 'flex-end',
+      // backgroundColor: 'red',
+      // marginTop: 40,
+      // backgroundColor: 'red',
+      // flex: 2,
+      // bottom: 0,
       zIndex: 1,
+      marginRight: 20,
+      marginBottom: 20,
+    },
+    feedbackContainer: {
+      paddingTop: 15,
+      marginHorizontal: offset,
+    },
+    homeImage: {
+      width: 300.236,
+      height: 300.303,
+      flexShrink: 0,
     },
   })
 
@@ -141,82 +151,88 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   }
 
   return (
-    <ScrollView>
-      {showTourPopup && (
-        <AppGuideModal
-          title={t('Tour.GuideTitle')}
-          description={t('Tour.WouldYouLike')}
-          onCallToActionPressed={onCTAPressed}
-          onCallToActionLabel={t('Tour.UseAppGuides')}
-          onSecondCallToActionPressed={onDismissPressed}
-          onSecondCallToActionLabel={t('Tour.DoNotUseAppGuides')}
-          onDismissPressed={onDismissPressed}
-        />
-      )}
-      <View style={styles.rowContainer}>
-        <View>
-          {notifications?.length > 0 ? (
-            <AttachTourStep index={1} fill>
+    <View style={{ flex: 1 }}>
+      <ScrollView>
+        {showTourPopup && (
+          <AppGuideModal
+            title={t('Tour.GuideTitle')}
+            description={t('Tour.WouldYouLike')}
+            onCallToActionPressed={onCTAPressed}
+            onCallToActionLabel={t('Tour.UseAppGuides')}
+            onSecondCallToActionPressed={onDismissPressed}
+            onSecondCallToActionLabel={t('Tour.DoNotUseAppGuides')}
+            onDismissPressed={onDismissPressed}
+          />
+        )}
+        <View style={styles.rowContainer}>
+          <View>
+            {notifications?.length > 0 ? (
+              <AttachTourStep index={1} fill>
+                <Text style={[HomeTheme.notificationsHeader, styles.header]}>
+                  {t('Home.Notifications')}
+                  {notifications?.length ? ` (${notifications.length})` : ''}
+                </Text>
+              </AttachTourStep>
+            ) : (
               <Text style={[HomeTheme.notificationsHeader, styles.header]}>
                 {t('Home.Notifications')}
                 {notifications?.length ? ` (${notifications.length})` : ''}
               </Text>
-            </AttachTourStep>
-          ) : (
-            <Text style={[HomeTheme.notificationsHeader, styles.header]}>
-              {t('Home.Notifications')}
-              {notifications?.length ? ` (${notifications.length})` : ''}
-            </Text>
-          )}
-          {notifications?.length > 1 ? (
-            <TouchableOpacity
-              style={styles.linkContainer}
-              activeOpacity={1}
-              onPress={() => navigation.navigate(Screens.Notifications)}>
-              <Text style={styles.link}>{t('Home.SeeAll')}</Text>
-            </TouchableOpacity>
-          ) : null}
+            )}
+            {notifications?.length > 1 ? (
+              <TouchableOpacity
+                style={styles.linkContainer}
+                activeOpacity={1}
+                onPress={() => navigation.navigate(Screens.Notifications)}>
+                <Text style={styles.link}>{t('Home.SeeAll')}</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
         </View>
-      </View>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        scrollEnabled={notifications?.length > 0 ? true : false}
-        snapToOffsets={[
-          0,
-          ...Array(notifications?.length)
-            .fill(0)
-            .map((n: number, i: number) => i * (width - 2 * (offset - offsetPadding)))
-            .slice(1),
-        ]}
-        decelerationRate="fast"
-        ListEmptyComponent={() => (
-          <View style={{ marginHorizontal: offset, width: width - 2 * offset }}>
-            <AttachTourStep index={1} fill>
-              <View>
-                <NoNewUpdates />
-              </View>
-            </AttachTourStep>
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          scrollEnabled={notifications?.length > 0 ? true : false}
+          snapToOffsets={[
+            0,
+            ...Array(notifications?.length)
+              .fill(0)
+              .map((n: number, i: number) => i * (width - 2 * (offset - offsetPadding)))
+              .slice(1),
+          ]}
+          decelerationRate="fast"
+          ListEmptyComponent={() => (
+            <View style={{ marginHorizontal: offset, width: width - 2 * offset }}>
+              <AttachTourStep index={1} fill>
+                <View>
+                  <NoNewUpdates />
+                </View>
+              </AttachTourStep>
+            </View>
+          )}
+          data={notifications}
+          keyExtractor={item => item.id}
+          renderItem={({ item, index }) => (
+            <View
+              style={{
+                width: width - 2 * offset,
+                marginLeft: !index ? offset : offsetPadding,
+                marginRight: index === notifications?.length - 1 ? offset : offsetPadding,
+              }}>
+              {DisplayListItemType(item)}
+            </View>
+          )}
+        />
+        <View style={styles.feedbackContainer}>
+          <View style={[styles.messageContainer]}>
+            <Image source={require('../assets/img/homeimage.png')} style={styles.homeImage} />
           </View>
-        )}
-        data={notifications}
-        keyExtractor={item => item.id}
-        renderItem={({ item, index }) => (
-          <View
-            style={{
-              width: width - 2 * offset,
-              marginLeft: !index ? offset : offsetPadding,
-              marginRight: index === notifications?.length - 1 ? offset : offsetPadding,
-            }}>
-            {DisplayListItemType(item)}
-          </View>
-        )}
-      />
-      <HomeContentView />
+        </View>
+      </ScrollView>
       <View style={styles.fabConatiner}>
         <ScanButton />
       </View>
-    </ScrollView>
+    </View>
   )
 }
 
