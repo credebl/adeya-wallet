@@ -73,6 +73,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       marginTop: 40,
       borderColor: ColorPallet.brand.primary,
       backgroundColor: ColorPallet.brand.tabsearchBackground,
+      alignItems: 'center',
     },
     listView: {
       marginTop: 0,

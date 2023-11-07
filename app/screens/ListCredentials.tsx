@@ -12,7 +12,6 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, StyleSheet, View } from 'react-native'
-import { heightPercentageToDP } from 'react-native-responsive-screen'
 
 import ScanButton from '../components/common/ScanButton'
 import CredentialCard from '../components/misc/CredentialCard'
@@ -25,15 +24,12 @@ import { isW3CCredential } from '../utils/credential'
 interface EnhancedW3CRecord extends W3cCredentialRecord {
   connectionLabel?: string
 }
-const style = StyleSheet.create({
-  fabConatiner: {
-    justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  scanContainer: {
     position: 'absolute',
-
-    flex: 1,
-    top: heightPercentageToDP('73%'),
-    zIndex: 1,
+    bottom: 10,
+    right: 10,
   },
 })
 
@@ -85,7 +81,7 @@ const ListCredentials: React.FC = () => {
   }, [])
 
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
         style={{ backgroundColor: ColorPallet.brand.primaryBackground }}
         data={credentialList?.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf())}
@@ -121,7 +117,7 @@ const ListCredentials: React.FC = () => {
         ListEmptyComponent={() => <CredentialEmptyList message={t('Credentials.EmptyList')} />}
       />
       <CredentialListOptions />
-      <View style={style.fabConatiner}>
+      <View style={styles.scanContainer}>
         <ScanButton />
       </View>
     </View>

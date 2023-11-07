@@ -14,7 +14,7 @@ import {
   sendProofProblemReport,
   CredentialExchangeRecord,
 } from '@adeya/ssi'
-import { unix } from 'moment'
+import moment from 'moment'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
@@ -167,8 +167,8 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
             ?.filter(attr => attr.credentialId === id)
             .map(attr => {
               return {
-                to: attr.nonRevoked?.to !== undefined ? unix(attr.nonRevoked.to) : undefined,
-                from: attr.nonRevoked?.from !== undefined ? unix(attr.nonRevoked.from) : undefined,
+                to: attr.nonRevoked?.to !== undefined ? moment.unix(attr.nonRevoked.to) : undefined,
+                from: attr.nonRevoked?.from !== undefined ? moment.unix(attr.nonRevoked.from) : undefined,
               }
             })
           return dateIntervals?.some(
