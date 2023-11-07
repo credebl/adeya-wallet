@@ -62,7 +62,7 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
     navigation.navigate(Screens.OrganizationDetails, { name, description, logoUrl, orgSlug })
   }
   const organizationLabel = organization?.name
-  const organaizationLabelAbbr = organizationLabel?.charAt(0).toUpperCase()
+  const organizationLabelAbbr = organizationLabel?.charAt(0).toUpperCase()
 
   return (
     <TouchableOpacity
@@ -78,7 +78,7 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
               <Image style={styles.avatarOrgImage} source={{ uri: organization?.logoUrl }} />
             </View>
           ) : (
-            <Text style={styles.avatarOrgPlaceholder}>{organaizationLabelAbbr}</Text>
+            <Text style={styles.avatarOrgPlaceholder}>{organizationLabelAbbr}</Text>
           )}
         </View>
         <View style={styles.labelContainer}>

@@ -3,7 +3,6 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, Text, TextInput, Platform, Image, ActivityIndicator, StyleSheet } from 'react-native'
 
-import { HEADER_HEIGHT, PAGE_SIZE } from '../api/api-constants'
 import useOrganizationData from '../api/organizationHelper'
 import AlphabetFlatList from '../components/common'
 import ScanButton from '../components/common/ScanButton'
@@ -23,7 +22,7 @@ interface IOrganization {
   description: string
   orgSlug: string
 }
-
+const HEADER_HEIGHT = 50
 const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   const { t } = useTranslation()
   const { ColorPallet } = useTheme()
@@ -31,7 +30,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
 
   const [filteredOrganizations, setFilteredOrganizations] = useState<IOrganization[]>([])
 
-  const { loading, organizationData, loadMore } = useOrganizationData(PAGE_SIZE)
+  const { loading, organizationData, loadMore } = useOrganizationData()
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -128,7 +127,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   })
 
   useEffect(() => {
-    return setFilteredOrganizations(
+    setFilteredOrganizations(
       organizationData?.organizations.filter(org => {
         if (searchInput) {
           const orgName = org?.name.toLowerCase()

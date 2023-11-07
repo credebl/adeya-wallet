@@ -150,7 +150,7 @@ const OrganizationDetails: React.FC = () => {
       flexDirection: 'column',
     },
   })
-  const organaizationLabelAbbr = useMemo(() => params?.name?.charAt(0).toUpperCase(), [params])
+  const organizationLabelAbbr = useMemo(() => params?.name?.charAt(0).toUpperCase(), [params])
   const handleInvitation = async (value: string): Promise<void> => {
     try {
       const { connectionRecord } = await connectFromInvitation(agent, value)
@@ -251,7 +251,7 @@ const OrganizationDetails: React.FC = () => {
               {params?.logoUrl ? (
                 <Image style={styles.avatarOrgImage} source={{ uri: params.logoUrl }} />
               ) : (
-                <Text style={styles.avatarOrgPlaceholder}>{organaizationLabelAbbr}</Text>
+                <Text style={styles.avatarOrgPlaceholder}>{organizationLabelAbbr}</Text>
               )}
             </View>
             <View style={styles.orgLabelContainer}>

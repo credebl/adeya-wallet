@@ -3,7 +3,6 @@ import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, StyleSheet, View, Text, Dimensions, TouchableOpacity, Image } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
 
 import ScanButton from '../components/common/ScanButton'
 import NotificationListItem, { NotificationType } from '../components/listItems/NotificationListItem'
@@ -144,83 +143,81 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView>
-        {showTourPopup && (
-          <AppGuideModal
-            title={t('Tour.GuideTitle')}
-            description={t('Tour.WouldYouLike')}
-            onCallToActionPressed={onCTAPressed}
-            onCallToActionLabel={t('Tour.UseAppGuides')}
-            onSecondCallToActionPressed={onDismissPressed}
-            onSecondCallToActionLabel={t('Tour.DoNotUseAppGuides')}
-            onDismissPressed={onDismissPressed}
-          />
-        )}
-        <View style={styles.rowContainer}>
-          <View>
-            {notifications?.length > 0 ? (
-              <AttachTourStep index={1} fill>
-                <Text style={[HomeTheme.notificationsHeader, styles.header]}>
-                  {t('Home.Notifications')}
-                  {notifications?.length ? ` (${notifications.length})` : ''}
-                </Text>
-              </AttachTourStep>
-            ) : (
+      {showTourPopup && (
+        <AppGuideModal
+          title={t('Tour.GuideTitle')}
+          description={t('Tour.WouldYouLike')}
+          onCallToActionPressed={onCTAPressed}
+          onCallToActionLabel={t('Tour.UseAppGuides')}
+          onSecondCallToActionPressed={onDismissPressed}
+          onSecondCallToActionLabel={t('Tour.DoNotUseAppGuides')}
+          onDismissPressed={onDismissPressed}
+        />
+      )}
+      <View style={styles.rowContainer}>
+        <View>
+          {notifications?.length > 0 ? (
+            <AttachTourStep index={1} fill>
               <Text style={[HomeTheme.notificationsHeader, styles.header]}>
                 {t('Home.Notifications')}
                 {notifications?.length ? ` (${notifications.length})` : ''}
               </Text>
-            )}
-            {notifications?.length > 1 ? (
-              <TouchableOpacity
-                style={styles.linkContainer}
-                activeOpacity={1}
-                onPress={() => navigation.navigate(Screens.Notifications)}>
-                <Text style={styles.link}>{t('Home.SeeAll')}</Text>
-              </TouchableOpacity>
-            ) : null}
-          </View>
-        </View>
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          scrollEnabled={notifications?.length > 0 ? true : false}
-          snapToOffsets={[
-            0,
-            ...Array(notifications?.length)
-              .fill(0)
-              .map((n: number, i: number) => i * (width - 2 * (offset - offsetPadding)))
-              .slice(1),
-          ]}
-          decelerationRate="fast"
-          ListEmptyComponent={() => (
-            <View style={{ marginHorizontal: offset, width: width - 2 * offset }}>
-              <AttachTourStep index={1} fill>
-                <View>
-                  <NoNewUpdates />
-                </View>
-              </AttachTourStep>
-            </View>
+            </AttachTourStep>
+          ) : (
+            <Text style={[HomeTheme.notificationsHeader, styles.header]}>
+              {t('Home.Notifications')}
+              {notifications?.length ? ` (${notifications.length})` : ''}
+            </Text>
           )}
-          data={notifications}
-          keyExtractor={item => item.id}
-          renderItem={({ item, index }) => (
-            <View
-              style={{
-                width: width - 2 * offset,
-                marginLeft: !index ? offset : offsetPadding,
-                marginRight: index === notifications?.length - 1 ? offset : offsetPadding,
-              }}>
-              {DisplayListItemType(item)}
-            </View>
-          )}
-        />
-        <View style={styles.feedbackContainer}>
-          <View style={[styles.messageContainer]}>
-            <Image source={require('../assets/img/homeimage.png')} style={styles.homeImage} />
-          </View>
+          {notifications?.length > 1 ? (
+            <TouchableOpacity
+              style={styles.linkContainer}
+              activeOpacity={1}
+              onPress={() => navigation.navigate(Screens.Notifications)}>
+              <Text style={styles.link}>{t('Home.SeeAll')}</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
-      </ScrollView>
+      </View>
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        scrollEnabled={notifications?.length > 0 ? true : false}
+        snapToOffsets={[
+          0,
+          ...Array(notifications?.length)
+            .fill(0)
+            .map((n: number, i: number) => i * (width - 2 * (offset - offsetPadding)))
+            .slice(1),
+        ]}
+        decelerationRate="fast"
+        ListEmptyComponent={() => (
+          <View style={{ marginHorizontal: offset, width: width - 2 * offset }}>
+            <AttachTourStep index={1} fill>
+              <View>
+                <NoNewUpdates />
+              </View>
+            </AttachTourStep>
+          </View>
+        )}
+        data={notifications}
+        keyExtractor={item => item.id}
+        renderItem={({ item, index }) => (
+          <View
+            style={{
+              width: width - 2 * offset,
+              marginLeft: !index ? offset : offsetPadding,
+              marginRight: index === notifications?.length - 1 ? offset : offsetPadding,
+            }}>
+            {DisplayListItemType(item)}
+          </View>
+        )}
+      />
+      <View style={styles.feedbackContainer}>
+        <View style={[styles.messageContainer]}>
+          <Image source={require('../assets/img/homeimage.png')} style={styles.homeImage} />
+        </View>
+      </View>
       <View style={styles.fabConatiner}>
         <ScanButton />
       </View>

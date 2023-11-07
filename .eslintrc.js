@@ -50,7 +50,7 @@ module.exports = {
     ],
     'import/no-cycle': 'error',
     'import/no-extraneous-dependencies': [
-      'warn',
+      'error',
       {
         devDependencies: true,
       },
