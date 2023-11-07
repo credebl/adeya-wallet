@@ -1,5 +1,6 @@
+import { useConnections } from '@adeya/ssi'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, Text, Image, ScrollView } from 'react-native'
 import Toast from 'react-native-toast-message'
@@ -27,7 +28,12 @@ const OrganizationDetails: React.FC = () => {
   const navigation = useNavigation()
   const { t } = useTranslation()
   const params = useRoute<RouteProp<Record<string, OrganizationDetailProps>, string>>().params
+  const [containerHeight, setContainerHeight] = useState(100)
   const { organizationDetailData, credentialDetailData } = useOrganizationDetailData(params?.orgSlug)
+  const { records } = useConnections()
+  const connections = records
+  const orglabel = connections?.map(item => item.theirLabel)
+  const isOrgLabelIncluded = orglabel.includes(params?.name)
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -76,21 +82,20 @@ const OrganizationDetails: React.FC = () => {
       borderWidth: 1,
     },
     orgNameContainner: {
-      height: 100,
+      height: containerHeight,
       width: '100%',
       margin: 10,
-      maxHeight: 165,
       flexShrink: 0,
       borderWidth: 1,
       borderRadius: 10,
       borderColor: ColorPallet.brand.primaryLight,
       alignSelf: 'center',
       justifyContent: 'center',
-      marginTop: 20,
+      marginVertical: 20,
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
-    orgDescriptionContainner: {
-      height: 100,
+    orgDescriptionContainer: {
+      height: containerHeight,
       width: '100%',
       margin: 10,
       flexShrink: 0,
@@ -98,11 +103,10 @@ const OrganizationDetails: React.FC = () => {
       borderRadius: 10,
       borderColor: ColorPallet.brand.primaryLight,
       alignSelf: 'center',
-      flex: 1,
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     credentialContainner: {
-      height: 100,
+      height: containerHeight,
       width: '100%',
       margin: 10,
       flexShrink: 0,
@@ -110,7 +114,6 @@ const OrganizationDetails: React.FC = () => {
       borderRadius: 10,
       borderColor: ColorPallet.brand.primaryLight,
       alignSelf: 'center',
-      flex: 1,
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     labeltext: {
@@ -132,19 +135,22 @@ const OrganizationDetails: React.FC = () => {
     },
     button: {
       margin: 20,
-      marginTop: '70%',
+      flex: 1,
+      justifyContent: 'flex-end',
     },
     credLabel: {
       fontSize: 18,
       fontWeight: '600',
       width: '90%',
+      marginHorizontal: 10,
+      marginBottom: 10,
     },
+    orgLabelContainer: { width: '75%' },
     credContainer: {
       flexDirection: 'column',
     },
   })
-
-  const organaizationLabelAbbr = useMemo(() => params?.name?.charAt(0).toUpperCase(), [params])
+  const organizationLabelAbbr = useMemo(() => params?.name?.charAt(0).toUpperCase(), [params])
   const handleInvitation = async (value: string): Promise<void> => {
     try {
       const { connectionRecord } = await connectFromInvitation(agent, value)
@@ -180,6 +186,13 @@ const OrganizationDetails: React.FC = () => {
     }
   }
   const connectOrganization = async () => {
+    if (isOrgLabelIncluded) {
+      Toast.show({
+        type: ToastType.Error,
+        text1: 'You are already connected with organization',
+      })
+      return
+    }
     try {
       const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
 
@@ -220,31 +233,37 @@ const OrganizationDetails: React.FC = () => {
       })
     }
   }
+  const setDynamicHeight = () => {
+    if (credentialDetailData.length > 2) {
+      const calculatedHeight = credentialDetailData.length * 50
+      setContainerHeight(calculatedHeight)
+    }
+  }
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
       <View style={styles.headerTextView}>
-        <Text style={styles.titleText}>{t('Organizations.Title')}</Text>
+        <Text style={styles.titleText}>{t('Organizations.TitleDetail')}</Text>
       </View>
       <View style={{ margin: 3 }}>
-        <View style={styles.orgNameContainner}>
+        <View onLayout={setDynamicHeight} style={styles.orgNameContainner}>
           <View style={{ flexDirection: 'row' }}>
             <View style={styles.avatarContainer}>
               {params?.logoUrl ? (
                 <Image style={styles.avatarOrgImage} source={{ uri: params.logoUrl }} />
               ) : (
-                <Text style={styles.avatarOrgPlaceholder}>{organaizationLabelAbbr}</Text>
+                <Text style={styles.avatarOrgPlaceholder}>{organizationLabelAbbr}</Text>
               )}
             </View>
-
-            <Text style={styles.orgContainer} numberOfLines={4}>
-              {params?.name}
-            </Text>
+            <View style={styles.orgLabelContainer}>
+              <Text style={styles.orgContainer} numberOfLines={7}>
+                {params?.name}
+              </Text>
+            </View>
           </View>
         </View>
-
-        <View style={styles.orgDescriptionContainner}>
+        <View style={styles.orgDescriptionContainer}>
           <View>
-            <View style={styles.descriptionlabel}>
+            <View style={styles.descriptionlabel} onLayout={setDynamicHeight}>
               <Text style={styles.orgHeaderText}>About Organization</Text>
             </View>
             <Text style={styles.labeltext} numberOfLines={4}>
@@ -253,20 +272,22 @@ const OrganizationDetails: React.FC = () => {
           </View>
         </View>
         {credentialDetailData.length > 0 && (
-          <View style={styles.credentialContainner}>
+          <ScrollView showsHorizontalScrollIndicator={false} style={styles.credentialContainner}>
             <View>
               <View style={styles.descriptionlabel}>
                 <Text style={styles.orgHeaderText}>Available Credentials</Text>
               </View>
               <View style={styles.credContainer}>
-                {credentialDetailData.map((item, index) => (
-                  <View key={index}>
-                    <Text style={styles.labeltext}>{item?.tag}</Text>
-                  </View>
-                ))}
+                <ScrollView onLayout={setDynamicHeight}>
+                  {credentialDetailData.map((item, index) => (
+                    <View key={index}>
+                      <Text style={styles.labeltext}>{item?.tag}</Text>
+                    </View>
+                  ))}
+                </ScrollView>
               </View>
             </View>
-          </View>
+          </ScrollView>
         )}
       </View>
       {credentialDetailData.length > 0 && (
@@ -280,7 +301,7 @@ const OrganizationDetails: React.FC = () => {
           />
         </View>
       )}
-    </ScrollView>
+    </View>
   )
 }
 

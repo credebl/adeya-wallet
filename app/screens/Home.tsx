@@ -2,9 +2,9 @@ import { useIsFocused } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FlatList, StyleSheet, View, Text, Dimensions, TouchableOpacity } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { FlatList, StyleSheet, View, Text, Dimensions, TouchableOpacity, Image } from 'react-native'
 
+import ScanButton from '../components/common/ScanButton'
 import NotificationListItem, { NotificationType } from '../components/listItems/NotificationListItem'
 import NoNewUpdates from '../components/misc/NoNewUpdates'
 import AppGuideModal from '../components/modals/AppGuideModal'
@@ -26,8 +26,6 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   const { useCustomNotifications, enableTours: enableToursConfig } = useConfiguration()
   const { notifications } = useCustomNotifications()
   const { t } = useTranslation()
-  const { homeContentView: HomeContentView } = useConfiguration()
-
   // This syntax is required for the jest mocks to work
   // eslint-disable-next-line import/no-named-as-default-member
   const { HomeTheme } = useTheme()
@@ -63,6 +61,20 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
     },
     link: {
       ...HomeTheme.link,
+    },
+    fabConatiner: {
+      zIndex: 1,
+      marginRight: 20,
+      marginBottom: 20,
+    },
+    feedbackContainer: {
+      paddingTop: 15,
+      marginHorizontal: offset,
+    },
+    homeImage: {
+      width: 300.236,
+      height: 300.303,
+      flexShrink: 0,
     },
   })
 
@@ -130,7 +142,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   }
 
   return (
-    <ScrollView>
+    <View style={{ flex: 1 }}>
       {showTourPopup && (
         <AppGuideModal
           title={t('Tour.GuideTitle')}
@@ -201,8 +213,15 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
           </View>
         )}
       />
-      <HomeContentView />
-    </ScrollView>
+      <View style={styles.feedbackContainer}>
+        <View style={[styles.messageContainer]}>
+          <Image source={require('../assets/img/homeimage.png')} style={styles.homeImage} />
+        </View>
+      </View>
+      <View style={styles.fabConatiner}>
+        <ScanButton />
+      </View>
+    </View>
   )
 }
 

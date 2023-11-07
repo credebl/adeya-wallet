@@ -12,6 +12,7 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, StyleSheet, View } from 'react-native'
+import { heightPercentageToDP } from 'react-native-responsive-screen'
 
 import ScanButton from '../components/common/ScanButton'
 import CredentialCard from '../components/misc/CredentialCard'
@@ -24,11 +25,15 @@ import { isW3CCredential } from '../utils/credential'
 interface EnhancedW3CRecord extends W3cCredentialRecord {
   connectionLabel?: string
 }
-
 const style = StyleSheet.create({
   fabConatiner: {
     justifyContent: 'flex-end',
-    marginTop: '90%',
+    alignSelf: 'flex-end',
+    position: 'absolute',
+
+    flex: 1,
+    top: heightPercentageToDP('73%'),
+    zIndex: 1,
   },
 })
 
