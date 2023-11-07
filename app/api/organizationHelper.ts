@@ -4,6 +4,7 @@ import Toast from 'react-native-toast-message'
 import { ToastType } from '../components/toast/BaseToast'
 
 import { fetchOrganizationData } from './Organization'
+import { PAGE_SIZE } from './api-constants'
 
 export interface Organization {
   id: number
@@ -22,14 +23,21 @@ export interface Organization {
 export interface OrganizationData {
   organizations: Organization[]
 }
+
 const useOrganizationData = () => {
   const [organizationData, setOrganizationData] = useState<OrganizationData>({ organizations: [] })
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   const fetchData = async () => {
     try {
-      const response = await fetchOrganizationData()
-      setOrganizationData(response?.data)
+      const response = await fetchOrganizationData(currentPage, PAGE_SIZE)
+      const newData = response?.data.organizations || []
+      setOrganizationData(prevData => ({
+        organizations: [...prevData.organizations, ...newData],
+      }))
+      setTotalPages(response?.data.totalPages)
     } catch (error) {
       Toast.show({
         type: ToastType.Error,
@@ -40,13 +48,22 @@ const useOrganizationData = () => {
     }
   }
 
+  const loadMore = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [currentPage])
 
   return {
     organizationData,
     loading,
+    loadMore,
+    currentPage,
+    totalPages,
   }
 }
 

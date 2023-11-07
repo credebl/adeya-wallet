@@ -5,9 +5,9 @@ import { ToastType } from '../components/toast/BaseToast'
 
 import { ORG_DETAILS, ORG_PROFILE } from './api-constants'
 
-export const fetchOrganizationData = async () => {
+export const fetchOrganizationData = async (pageNumber: number, pageSize: number) => {
   try {
-    const response = await fetch(`${Config.PUBLIC_ORG}${ORG_PROFILE}`)
+    const response = await fetch(`${Config.PUBLIC_ORG}${ORG_PROFILE}?pageNumber=${pageNumber}&pageSize=${pageSize}`)
     const result = await response.json()
     return result
   } catch (error) {

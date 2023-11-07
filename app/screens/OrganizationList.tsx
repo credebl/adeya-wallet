@@ -11,6 +11,7 @@ import { useTheme } from '../contexts/theme'
 import { OrganizationStackParams, Screens } from '../types/navigators'
 
 import { IContact } from './ContactItem'
+
 interface ListOrganizationProps {
   navigation: StackNavigationProp<OrganizationStackParams, Screens.Explore>
 }
@@ -21,13 +22,15 @@ interface IOrganization {
   description: string
   orgSlug: string
 }
-
+const HEADER_HEIGHT = 50
 const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   const { t } = useTranslation()
   const { ColorPallet } = useTheme()
   const [searchInput, setSearchInput] = useState('')
+
   const [filteredOrganizations, setFilteredOrganizations] = useState<IOrganization[]>([])
-  const { loading, organizationData } = useOrganizationData()
+
+  const { loading, organizationData, loadMore } = useOrganizationData()
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -67,7 +70,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       flexDirection: 'row',
       height: Platform.OS === 'ios' ? 30 : 40,
       borderRadius: 5,
-      marginTop: 5,
+      marginTop: 40,
       borderColor: ColorPallet.brand.primary,
       backgroundColor: ColorPallet.brand.tabsearchBackground,
     },
@@ -120,10 +123,11 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       marginTop: Platform.OS === 'ios' ? 5 : 0,
     },
     searchIcon: { marginTop: 5 },
+    loader: { justifyContent: 'center', flex: 1 },
   })
 
   useEffect(() => {
-    return setFilteredOrganizations(
+    setFilteredOrganizations(
       organizationData?.organizations.filter(org => {
         if (searchInput) {
           const orgName = org?.name.toLowerCase()
@@ -151,14 +155,12 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     const initialLetter = String.fromCharCode(letter)
     data[initialLetter] = items?.filter(item => item?.name.charAt(0) === initialLetter)
   }
-  const HEADER_HEIGHT = 50
 
   return (
     <View style={styles.container}>
       <View style={styles.headerTextView}>
         <Text style={styles.titleText}>{t('Organizations.Title')}</Text>
       </View>
-      <Text style={styles.headerText}>Organizations list</Text>
 
       <View style={styles.searchBarView}>
         <Image source={require('../assets/img/search.png')} style={styles.searchIcon} />
@@ -171,7 +173,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
         />
       </View>
       {loading ? (
-        <View style={{ justifyContent: 'center', flex: 1 }}>
+        <View style={styles.loader}>
           <ActivityIndicator style={{ width: 'auto' }} />
         </View>
       ) : (
@@ -179,10 +181,18 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
           <AlphabetFlatList
             data={data}
             itemHeight={70}
+            onEndReached={loadMore}
             headerHeight={HEADER_HEIGHT}
             renderItem={({ item: organizations }) => (
               <OrganizationListItem organization={organizations} navigation={navigation} />
             )}
+            ListFooterComponent={() => {
+              return loading ? (
+                <View style={styles.loader}>
+                  <ActivityIndicator size="large" />
+                </View>
+              ) : null
+            }}
           />
         </Fragment>
       )}
