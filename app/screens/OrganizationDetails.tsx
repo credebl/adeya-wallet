@@ -150,7 +150,9 @@ const OrganizationDetails: React.FC = () => {
       flexDirection: 'column',
     },
   })
+
   const organizationLabelAbbr = useMemo(() => params?.name?.charAt(0).toUpperCase(), [params])
+
   const handleInvitation = async (value: string): Promise<void> => {
     try {
       const { connectionRecord } = await connectFromInvitation(agent, value)

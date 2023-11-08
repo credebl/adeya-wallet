@@ -67,7 +67,7 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
   return (
     <TouchableOpacity
       onPress={() =>
-        navigateToConnection(organization.name, organization.description, organization.logoUrl, organization.OrgSlug)
+        navigateToConnection(organization.name, organization.description, organization.logoUrl, organization.orgSlug)
       }
       testID={testIdWithKey('Contact')}
       accessibilityLabel={t('ContactDetails.AContact')}>
@@ -93,4 +93,4 @@ const OrganizationListItem: React.FC<Props> = ({ organization, navigation }) => 
   )
 }
 
-export default OrganizationListItem
+export default React.memo(OrganizationListItem)

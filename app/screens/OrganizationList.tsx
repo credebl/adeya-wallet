@@ -1,7 +1,7 @@
 import { StackNavigationProp } from '@react-navigation/stack'
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, Text, TextInput, Platform, Image, ActivityIndicator, StyleSheet } from 'react-native'
+import { View, Text, TextInput, Platform, Image, ActivityIndicator, StyleSheet, Pressable } from 'react-native'
 
 import useOrganizationData from '../api/organizationHelper'
 import AlphabetFlatList from '../components/common'
@@ -10,27 +10,29 @@ import OrganizationListItem from '../components/listItems/OrganizationListItem'
 import { useTheme } from '../contexts/theme'
 import { OrganizationStackParams, Screens } from '../types/navigators'
 
-import { IContact } from './ContactItem'
-
 interface ListOrganizationProps {
   navigation: StackNavigationProp<OrganizationStackParams, Screens.Explore>
 }
 
-interface IOrganization {
+interface Organization {
   logoUrl: string
   name: string
   description: string
   orgSlug: string
 }
-const HEADER_HEIGHT = 50
+
+const HEADER_HEIGHT = 20
+
 const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   const { t } = useTranslation()
   const { ColorPallet } = useTheme()
   const [searchInput, setSearchInput] = useState('')
 
-  const [filteredOrganizations, setFilteredOrganizations] = useState<IOrganization[]>([])
+  const [filteredOrganizations, setFilteredOrganizations] = useState<Organization[]>([])
 
   const { loading, organizationData, loadMore } = useOrganizationData()
+  const inputRef = useRef<TextInput>(null)
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -68,9 +70,10 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       borderWidth: 1,
       width: '95%',
       flexDirection: 'row',
-      height: Platform.OS === 'ios' ? 30 : 40,
+      height: 40,
       borderRadius: 5,
-      marginTop: 40,
+      marginTop: 20,
+      marginBottom: 10,
       borderColor: ColorPallet.brand.primary,
       backgroundColor: ColorPallet.brand.tabsearchBackground,
       alignItems: 'center',
@@ -121,36 +124,54 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     },
     inputView: {
       marginHorizontal: 4,
-      marginTop: Platform.OS === 'ios' ? 5 : 0,
     },
-    searchIcon: { marginTop: 5 },
-    loader: { justifyContent: 'center', flex: 1 },
+    searchIcon: {
+      marginLeft: 5,
+    },
+    loader: {
+      justifyContent: 'center',
+      flex: 1,
+    },
+    scanContainer: {
+      position: 'absolute',
+      bottom: 10,
+      right: 10,
+    },
   })
 
+  useMemo(() => {
+    if (searchInput) return
+    setFilteredOrganizations(organizationData?.organizations)
+  }, [organizationData])
+
   useEffect(() => {
-    setFilteredOrganizations(
-      organizationData?.organizations.filter(org => {
-        if (searchInput) {
-          const orgName = org?.name.toLowerCase()
-          return orgName.includes(searchInput.toLowerCase())
-        }
-        return true
-      }),
-    )
-  }, [searchInput, organizationData])
+    setFilteredOrganizations(organizationData?.organizations)
+  }, [organizationData])
+
   const handleSearchInputChange = (text: string) => {
     setSearchInput(text)
+
+    if (!text) {
+      setFilteredOrganizations(organizationData?.organizations)
+      return
+    }
+
+    const filterList = organizationData?.organizations.filter(org => {
+      const orgName = org?.name.toLowerCase()
+      return orgName.includes(searchInput.toLowerCase())
+    })
+    setFilteredOrganizations(filterList)
   }
 
-  const items: IContact[] = filteredOrganizations?.map((item, index) => ({
+  const items = filteredOrganizations?.map((item, index) => ({
     id: index,
     logoUrl: item.logoUrl,
     name: item.name,
     description: item.description,
-    OrgSlug: item.orgSlug,
+    orgSlug: item.orgSlug,
   }))
 
-  const data: { [key: string]: IContact[] } = {}
+  const data: { [key: string]: Organization[] } = {}
 
   for (let letter = 'A'.charCodeAt(0); letter <= 'Z'.charCodeAt(0); letter++) {
     const initialLetter = String.fromCharCode(letter)
@@ -163,42 +184,36 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
         <Text style={styles.titleText}>{t('Organizations.Title')}</Text>
       </View>
 
-      <View style={styles.searchBarView}>
+      <Pressable style={styles.searchBarView} onPress={() => inputRef?.current?.focus()}>
         <Image source={require('../assets/img/search.png')} style={styles.searchIcon} />
         <TextInput
+          ref={inputRef}
           scrollEnabled={false}
           style={styles.inputView}
-          placeholder="Search..."
+          placeholder="Search"
           value={searchInput}
-          onChangeText={text => handleSearchInputChange(text)}
+          onChangeText={handleSearchInputChange}
         />
+      </Pressable>
+      <AlphabetFlatList
+        data={data}
+        itemHeight={70}
+        onEndReached={loadMore}
+        headerHeight={HEADER_HEIGHT}
+        renderItem={({ item: organization }) => (
+          <OrganizationListItem key={organization?.id} organization={organization} navigation={navigation} />
+        )}
+        ListFooterComponent={
+          loading ? (
+            <View style={styles.loader}>
+              <ActivityIndicator size="large" />
+            </View>
+          ) : null
+        }
+      />
+      <View style={styles.scanContainer}>
+        <ScanButton />
       </View>
-      {loading ? (
-        <View style={styles.loader}>
-          <ActivityIndicator style={{ width: 'auto' }} />
-        </View>
-      ) : (
-        <Fragment>
-          <AlphabetFlatList
-            data={data}
-            itemHeight={70}
-            onEndReached={loadMore}
-            headerHeight={HEADER_HEIGHT}
-            renderItem={({ item: organizations }) => (
-              <OrganizationListItem organization={organizations} navigation={navigation} />
-            )}
-            ListFooterComponent={() => {
-              return loading ? (
-                <View style={styles.loader}>
-                  <ActivityIndicator size="large" />
-                </View>
-              ) : null
-            }}
-          />
-        </Fragment>
-      )}
-      <View />
-      <ScanButton />
     </View>
   )
 }
