@@ -32,12 +32,15 @@ const useOrganizationData = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true)
       const response = await fetchOrganizationData(currentPage, PAGE_SIZE)
       const newData = response?.data.organizations || []
       setOrganizationData(prevData => ({
         organizations: [...prevData.organizations, ...newData],
       }))
-      setTotalPages(response?.data.totalPages)
+      if (response?.data?.totalPages) {
+        setTotalPages(response?.data.totalPages)
+      }
     } catch (error) {
       Toast.show({
         type: ToastType.Error,
@@ -49,7 +52,7 @@ const useOrganizationData = () => {
   }
 
   const loadMore = () => {
-    if (currentPage < totalPages) {
+    if (currentPage < totalPages && !loading) {
       setCurrentPage(currentPage + 1)
     }
   }

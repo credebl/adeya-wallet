@@ -85,29 +85,27 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.rowContainer}>
-        <View>
-          {notifications?.length > 0 ? (
-            <AttachTourStep index={1} fill>
-              <Text style={[HomeTheme.notificationsHeader, styles.header]}>
-                {t('Home.Notifications')}
-                {notifications?.length ? ` (${notifications.length})` : ''}
-              </Text>
-            </AttachTourStep>
-          ) : (
+        {notifications?.length > 0 ? (
+          <AttachTourStep index={1} fill>
             <Text style={[HomeTheme.notificationsHeader, styles.header]}>
               {t('Home.Notifications')}
               {notifications?.length ? ` (${notifications.length})` : ''}
             </Text>
-          )}
-          {notifications?.length > 1 ? (
-            <TouchableOpacity
-              style={styles.linkContainer}
-              activeOpacity={1}
-              onPress={() => navigation.navigate(Screens.Notifications)}>
-              <Text style={styles.link}>{t('Home.SeeAll')}</Text>
-            </TouchableOpacity>
-          ) : null}
-        </View>
+          </AttachTourStep>
+        ) : (
+          <Text style={[HomeTheme.notificationsHeader, styles.header]}>
+            {t('Home.Notifications')}
+            {notifications?.length ? ` (${notifications.length})` : ''}
+          </Text>
+        )}
+        {notifications?.length > 1 ? (
+          <TouchableOpacity
+            style={styles.linkContainer}
+            activeOpacity={1}
+            onPress={() => navigation.navigate(Screens.Notifications)}>
+            <Text style={styles.link}>{t('Home.SeeAll')}</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
       <FlatList
         horizontal
