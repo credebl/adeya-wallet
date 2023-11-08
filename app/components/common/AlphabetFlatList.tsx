@@ -161,7 +161,6 @@ function AlphabetFlatList<ItemT>(props: IProps<ItemT>) {
         getItemLayout={getItemLayout}
         onEndReached={props.onEndReached}
         initialNumToRender={initialNumToRender}
-        showsHorizontalScrollIndicator={false}
         onEndReachedThreshold={0.1}
         viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
         ListFooterComponent={props.ListFooterComponent}

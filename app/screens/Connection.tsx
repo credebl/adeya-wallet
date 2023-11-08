@@ -155,6 +155,8 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
         screen: Screens.ContactDetails,
         params: { connectionId: connectionId },
       })
+      dispatch({ isVisible: false })
+      return
     }
 
     if (state.notificationRecord && goalCode) {
