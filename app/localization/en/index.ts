@@ -245,14 +245,14 @@ const translation = {
     "NotEnabledText2": "If you wish to enable this feature turn biometrics on in the device settings and then return to this screen.",
       },
   "Contacts": {
-    "EmptyList": "Your Contacts is empty!",
+    "EmptyContactsList": "Your Contacts is empty!",
     "TypeHere": "Type Message Here",
     "PeopleAndOrganizations": "People and organizations you've interacted with are listed here.",
     "WhatAreContacts": "What are Contacts",
     "AddContact": "Add Contact",
   },
   "Organizations": {
-    "EmptyList": "No matching organization found. Please refine your search.",
+    "EmptyOrganizationsList": "No matching organization found. Please refine your search.",
     "TypeHere": "Type Message Here",
     "PeopleAndOrganizations": "organizations are listed here.",
     "Title" : "Select an organization to get credentials",
@@ -294,7 +294,7 @@ const translation = {
   "Credentials": {
     "CredentialsNotFound": "Credentials not found",
     "CredentialDetails": "Credential Details",
-    "EmptyList": "Your wallet is empty. Your accepted credentials will be added here.",
+    "EmptyCredentailsList": "Your wallet is empty. Your accepted credentials will be added here.",
     "IssuedBy": "Issued by",
     "Credential": "credential"
   },
@@ -657,7 +657,7 @@ const translation = {
     "UseProofRequest": "Use this proof request",
     "SendThisProofRequest": "Send this proof request",
     "SendProofRequest": "Send a Proof Request",
-    "EmptyList": "Your wallet is empty. Your proof request templates will be added here.",
+    "EmptyProofRequestsList": "Your wallet is empty. Your proof request templates will be added here.",
     "ShowTemplateUsageHistory": "Show usage history",
     "RequestSent": "Presentation request sent",
     "PresentationDeclined": "Presentation request declined",

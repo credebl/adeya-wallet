@@ -23,7 +23,7 @@ const EmptyListOrganizations: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={[TextTheme.headingThree, styles.text]}>{t('Organizations.EmptyList')}</Text>
+      <Text style={[TextTheme.headingThree, styles.text]}>{t('Organizations.EmptyOrganizationsList')}</Text>
     </View>
   )
 }
