@@ -41,7 +41,7 @@ const EmptyListContacts: React.FC<EmptyListProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Assets.svg.contactBook fill={ListItems.emptyList.color} height={120} />
+      <Assets.svg.contactBook height={120} />
       <Text style={[TextTheme.headingThree, styles.text, { paddingTop: 30 }]}>{t('Contacts.EmptyList')}</Text>
       <Text style={[ListItems.emptyList, styles.text]}>{t('Contacts.PeopleAndOrganizations')}</Text>
       <Text

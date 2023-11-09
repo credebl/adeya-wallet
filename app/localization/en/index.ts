@@ -252,11 +252,14 @@ const translation = {
     "AddContact": "Add Contact",
   },
   "Organizations": {
-    "EmptyList": "Your Organization is empty!",
+    "EmptyList": "No matching organization found. Please refine your search.",
     "TypeHere": "Type Message Here",
     "PeopleAndOrganizations": "organizations are listed here.",
     "Title" : "Select an organization to get credentials",
-    "TitleDetail": "Get credentials from selected organization"
+    "TitleDetail": "Get credentials from selected organization",
+    "AboutOrganization": "About Organization",
+    "AvailableCredentials": "Available Credentials",
+    "Connect": "Connect",
   },
   "ContactDetails": {
     "Created": "Created",

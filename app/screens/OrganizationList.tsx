@@ -1,12 +1,12 @@
 import { StackNavigationProp } from '@react-navigation/stack'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, Text, TextInput, Platform, Image, ActivityIndicator, StyleSheet, Pressable } from 'react-native'
+import { View, Text, TextInput, Image, ActivityIndicator, StyleSheet, Pressable, FlatList } from 'react-native'
 
 import useOrganizationData from '../api/organizationHelper'
-import AlphabetFlatList from '../components/common'
 import ScanButton from '../components/common/ScanButton'
 import OrganizationListItem from '../components/listItems/OrganizationListItem'
+import EmptyListOrganizations from '../components/misc/EmptyListOrganizations'
 import { useTheme } from '../contexts/theme'
 import { OrganizationStackParams, Screens } from '../types/navigators'
 
@@ -21,23 +21,20 @@ interface Organization {
   orgSlug: string
 }
 
-const HEADER_HEIGHT = 20
-
 const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
   const { t } = useTranslation()
   const { ColorPallet } = useTheme()
   const [searchInput, setSearchInput] = useState('')
 
-  const [filteredOrganizations, setFilteredOrganizations] = useState<Organization[]>([])
-
-  const { loading, organizationData, loadMore } = useOrganizationData()
+  const { loading, organizationData, loadMore } = useOrganizationData(searchInput)
   const inputRef = useRef<TextInput>(null)
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       height: '100%',
-      margin: '2.5%',
+      padding: '2.5%',
+      backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     headerTextView: {
       justifyContent: 'center',
@@ -60,11 +57,6 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     inputText: {
       width: '100%',
     },
-    Separator: {
-      backgroundColor: ColorPallet.brand.primaryBackground,
-      height: 1,
-      marginHorizontal: '4%',
-    },
     searchBarView: {
       alignSelf: 'center',
       borderWidth: 1,
@@ -75,52 +67,7 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       marginTop: 20,
       marginBottom: 10,
       borderColor: ColorPallet.brand.primary,
-      backgroundColor: ColorPallet.brand.tabsearchBackground,
       alignItems: 'center',
-    },
-    listView: {
-      marginTop: 0,
-      width: '100%',
-      height: 'auto',
-    },
-    selectedLetter: {
-      borderWidth: 1,
-      width: 20,
-      borderRadius: 10,
-      backgroundColor: ColorPallet.brand.highlightedEclipse,
-      color: ColorPallet.grayscale.white,
-    },
-    orgLabelTextactive: {
-      alignSelf: 'center',
-      paddingBottom: 2,
-      color: ColorPallet.grayscale.white,
-    },
-    orgLabelText: {
-      color: ColorPallet.brand.primary,
-    },
-    alphabetView: {
-      marginLeft: 20,
-      borderWidth: 1,
-      height: '100%',
-      borderRadius: 5,
-      borderColor: ColorPallet.brand.modalOrgBackground,
-      backgroundColor: ColorPallet.brand.modalOrgBackground,
-      position: 'relative',
-    },
-    alphabetLetter: {
-      position: 'relative',
-    },
-    highlightedLetter: {
-      position: 'absolute',
-      backgroundColor: ColorPallet.brand.highlightedEclipse,
-      borderRadius: Platform.OS === 'ios' ? 15 : 10,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: 20,
-      height: 20,
-    },
-    highlightedText: {
-      color: 'white',
     },
     inputView: {
       marginHorizontal: 4,
@@ -137,33 +84,18 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
       bottom: 10,
       right: 10,
     },
+    itemSeparator: {
+      backgroundColor: ColorPallet.brand.primaryBackground,
+      height: 1,
+      marginHorizontal: 16,
+    },
   })
-
-  useMemo(() => {
-    if (searchInput) return
-    setFilteredOrganizations(organizationData?.organizations)
-  }, [organizationData])
-
-  useEffect(() => {
-    setFilteredOrganizations(organizationData?.organizations)
-  }, [organizationData])
 
   const handleSearchInputChange = (text: string) => {
     setSearchInput(text)
-
-    if (!text) {
-      setFilteredOrganizations(organizationData?.organizations)
-      return
-    }
-
-    const filterList = organizationData?.organizations.filter(org => {
-      const orgName = org?.name.toLowerCase()
-      return orgName.includes(searchInput.toLowerCase())
-    })
-    setFilteredOrganizations(filterList)
   }
 
-  const items = filteredOrganizations?.map((item, index) => ({
+  const items = organizationData.organizations?.map((item, index) => ({
     id: index,
     logoUrl: item.logoUrl,
     name: item.name,
@@ -195,14 +127,14 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
           onChangeText={handleSearchInputChange}
         />
       </Pressable>
-      <AlphabetFlatList
-        data={data}
-        itemHeight={70}
+      <FlatList
+        data={items}
+        keyboardShouldPersistTaps="handled"
         onEndReached={loadMore}
-        headerHeight={HEADER_HEIGHT}
         renderItem={({ item: organization }) => (
           <OrganizationListItem key={organization?.id} organization={organization} navigation={navigation} />
         )}
+        keyExtractor={item => item.id.toString()}
         ListFooterComponent={
           loading ? (
             <View style={styles.loader}>
@@ -210,6 +142,9 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
             </View>
           ) : null
         }
+        onEndReachedThreshold={0.2}
+        ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+        ListEmptyComponent={!loading ? () => <EmptyListOrganizations /> : null}
       />
       <View style={styles.scanContainer}>
         <ScanButton />

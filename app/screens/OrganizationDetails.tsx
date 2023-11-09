@@ -1,8 +1,9 @@
 import { useConnections } from '@adeya/ssi'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, Text, Image, ScrollView } from 'react-native'
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import Toast from 'react-native-toast-message'
 
 import useOrganizationDetailData from '../api/organizationDetailHelper'
@@ -28,19 +29,20 @@ const OrganizationDetails: React.FC = () => {
   const navigation = useNavigation()
   const { t } = useTranslation()
   const params = useRoute<RouteProp<Record<string, OrganizationDetailProps>, string>>().params
-  const [containerHeight, setContainerHeight] = useState(100)
   const { organizationDetailData, credentialDetailData } = useOrganizationDetailData(params?.orgSlug)
   const { records } = useConnections()
   const connections = records
-  const orglabel = connections?.map(item => item.theirLabel)
-  const isOrgLabelIncluded = orglabel.includes(params?.name)
+
+  const isAlreadyConnected = useMemo(() => {
+    return connections?.some(connection => connection.theirLabel === params?.name)
+  }, [connections, params])
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       height: '100%',
       margin: '2.5%',
     },
-
     headerTextView: {
       justifyContent: 'center',
       alignSelf: 'center',
@@ -61,11 +63,11 @@ const OrganizationDetails: React.FC = () => {
       borderColor: ListItems.avatarCircle.borderColor,
       borderWidth: 1,
       flexDirection: 'row',
-      marginLeft: 20,
+      marginLeft: 15,
     },
-    descriptionlabel: {
-      marginLeft: 20,
-      marginTop: 10,
+    descriptionLabel: {
+      marginLeft: 15,
+      marginTop: 5,
     },
     orgHeaderText: {
       fontSize: 17,
@@ -81,60 +83,46 @@ const OrganizationDetails: React.FC = () => {
       borderColor: ListItems.avatarCircle.borderColor,
       borderWidth: 1,
     },
-    orgNameContainner: {
-      height: containerHeight,
-      width: '100%',
-      margin: 10,
-      flexShrink: 0,
+    orgNameContainer: {
+      paddingVertical: 10,
       borderWidth: 1,
       borderRadius: 10,
       borderColor: ColorPallet.brand.primaryLight,
-      alignSelf: 'center',
-      justifyContent: 'center',
-      marginVertical: 20,
+      marginVertical: 10,
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
     orgDescriptionContainer: {
-      height: containerHeight,
-      width: '100%',
-      margin: 10,
-      flexShrink: 0,
+      minHeight: hp('15%'),
+      maxHeight: hp('20%'),
+      paddingVertical: 10,
       borderWidth: 1,
       borderRadius: 10,
       borderColor: ColorPallet.brand.primaryLight,
-      alignSelf: 'center',
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
-    credentialContainner: {
-      height: containerHeight,
-      width: '100%',
-      margin: 10,
-      flexShrink: 0,
-      borderWidth: 1,
-      borderRadius: 10,
-      borderColor: ColorPallet.brand.primaryLight,
-      alignSelf: 'center',
-      backgroundColor: ColorPallet.brand.secondaryBackground,
-    },
-    labeltext: {
-      justifyContent: 'center',
+    credentialContainer: {
+      height: hp('20%'),
       marginTop: 10,
-      marginLeft: 20,
+      paddingVertical: 10,
+      borderWidth: 1,
+      borderRadius: 10,
+      borderColor: ColorPallet.brand.primaryLight,
+      backgroundColor: ColorPallet.brand.secondaryBackground,
+    },
+    labelText: {
+      marginTop: 10,
+      marginHorizontal: 15,
       fontSize: 16,
     },
     avatarOrgPlaceholder: {
       ...TextTheme.headingFour,
     },
     orgContainer: {
-      marginTop: 20,
-      marginLeft: 10,
-      marginRight: 5,
       fontWeight: '600',
       color: ColorPallet.brand.primary,
       fontSize: 17,
     },
     button: {
-      margin: 20,
       flex: 1,
       justifyContent: 'flex-end',
     },
@@ -145,9 +133,14 @@ const OrganizationDetails: React.FC = () => {
       marginHorizontal: 10,
       marginBottom: 10,
     },
-    orgLabelContainer: { width: '75%' },
-    credContainer: {
-      flexDirection: 'column',
+    orgLabelContainer: {
+      width: '65%',
+      marginLeft: 10,
+      marginRight: 5,
+    },
+    contactItemContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
     },
   })
 
@@ -188,13 +181,6 @@ const OrganizationDetails: React.FC = () => {
     }
   }
   const connectOrganization = async () => {
-    if (isOrgLabelIncluded) {
-      Toast.show({
-        type: ToastType.Error,
-        text1: 'You are already connected with organization',
-      })
-      return
-    }
     try {
       const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
 
@@ -235,68 +221,55 @@ const OrganizationDetails: React.FC = () => {
       })
     }
   }
-  const setDynamicHeight = () => {
-    if (credentialDetailData.length > 2) {
-      const calculatedHeight = credentialDetailData.length * 50
-      setContainerHeight(calculatedHeight)
-    }
-  }
+
   return (
     <View style={styles.container}>
       <View style={styles.headerTextView}>
         <Text style={styles.titleText}>{t('Organizations.TitleDetail')}</Text>
       </View>
-      <View style={{ margin: 3 }}>
-        <View onLayout={setDynamicHeight} style={styles.orgNameContainner}>
-          <View style={{ flexDirection: 'row' }}>
-            <View style={styles.avatarContainer}>
-              {params?.logoUrl ? (
-                <Image style={styles.avatarOrgImage} source={{ uri: params.logoUrl }} />
-              ) : (
-                <Text style={styles.avatarOrgPlaceholder}>{organizationLabelAbbr}</Text>
-              )}
-            </View>
-            <View style={styles.orgLabelContainer}>
-              <Text style={styles.orgContainer} numberOfLines={7}>
-                {params?.name}
-              </Text>
-            </View>
+      <View style={styles.orgNameContainer}>
+        <View style={styles.contactItemContainer}>
+          <View style={styles.avatarContainer}>
+            {params?.logoUrl ? (
+              <Image style={styles.avatarOrgImage} source={{ uri: params.logoUrl }} />
+            ) : (
+              <Text style={styles.avatarOrgPlaceholder}>{organizationLabelAbbr}</Text>
+            )}
+          </View>
+          <View style={styles.orgLabelContainer}>
+            <Text style={styles.orgContainer}>{params?.name}</Text>
           </View>
         </View>
-        <View style={styles.orgDescriptionContainer}>
+      </View>
+      <View style={styles.orgDescriptionContainer}>
+        <View style={styles.descriptionLabel}>
+          <Text style={styles.orgHeaderText}>{t('Organizations.AboutOrganization')}</Text>
+        </View>
+        <ScrollView>
           <View>
-            <View style={styles.descriptionlabel} onLayout={setDynamicHeight}>
-              <Text style={styles.orgHeaderText}>About Organization</Text>
-            </View>
-            <Text style={styles.labeltext} numberOfLines={4}>
-              {params?.description}
-            </Text>
+            <Text style={styles.labelText}>{params?.description}</Text>
           </View>
-        </View>
-        {credentialDetailData.length > 0 && (
-          <ScrollView showsHorizontalScrollIndicator={false} style={styles.credentialContainner}>
-            <View>
-              <View style={styles.descriptionlabel}>
-                <Text style={styles.orgHeaderText}>Available Credentials</Text>
-              </View>
-              <View style={styles.credContainer}>
-                <ScrollView onLayout={setDynamicHeight}>
-                  {credentialDetailData.map((item, index) => (
-                    <View key={index}>
-                      <Text style={styles.labeltext}>{item?.tag}</Text>
-                    </View>
-                  ))}
-                </ScrollView>
-              </View>
-            </View>
-          </ScrollView>
-        )}
+        </ScrollView>
       </View>
       {credentialDetailData.length > 0 && (
+        <View style={styles.credentialContainer}>
+          <View style={styles.descriptionLabel}>
+            <Text style={styles.orgHeaderText}>{t('Organizations.AvailableCredentials')}</Text>
+          </View>
+          <ScrollView>
+            {credentialDetailData.map(item => (
+              <View key={item?.credentialDefinitionId}>
+                <Text style={styles.labelText}>{item?.tag}</Text>
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+      {!isAlreadyConnected && (
         <View style={styles.button}>
           <Button
             onPress={connectOrganization}
-            title={'Connect'}
+            title={t('Organizations.Connect')}
             accessibilityLabel={'Connect'}
             testID={testIdWithKey('Connect')}
             buttonType={ButtonType.Primary}

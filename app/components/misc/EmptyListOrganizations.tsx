@@ -6,15 +6,14 @@ import { useTheme } from '../../contexts/theme'
 
 const EmptyListOrganizations: React.FC = () => {
   const { t } = useTranslation()
-  const { ColorPallet, TextTheme } = useTheme()
+  const { TextTheme } = useTheme()
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       height: '100%',
       alignItems: 'center',
-      paddingTop: 100,
+      paddingTop: 50,
       alignSelf: 'center',
-      backgroundColor: ColorPallet.brand.primaryBackground,
     },
     text: {
       textAlign: 'center',
@@ -24,9 +23,7 @@ const EmptyListOrganizations: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* <Assets.svg.contactBook fill={ListItems.emptyList.color} height={120} /> */}
-      <Text style={[TextTheme.headingThree, styles.text, { paddingTop: 30 }]}>{t('Organizations.EmptyList')}</Text>
-      {/* <Text style={[ListItems.emptyList, styles.text]}>{t('Organizations.PeopleAndOrganizations')}</Text> */}
+      <Text style={[TextTheme.headingThree, styles.text]}>{t('Organizations.EmptyList')}</Text>
     </View>
   )
 }
