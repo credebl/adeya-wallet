@@ -1,13 +1,14 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Text, useWindowDimensions, View, StyleSheet, Image } from 'react-native'
+import { Text, useWindowDimensions, View, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { AttachTourStep } from '../components/tour/AttachTourStep'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
+import { Assets } from '../theme'
 import { TabStackParams, TabStacks } from '../types/navigators'
 import { isTablet, orientation, Orientation } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
@@ -90,7 +91,7 @@ const TabStack: React.FC = () => {
             tabBarIconStyle: styles.tabBarIcon,
             tabBarIcon: ({ focused }) => (
               <View style={{ ...TabTheme.tabBarContainerStyle, justifyContent: showLabels ? 'flex-end' : 'center' }}>
-                <Image source={require('../assets/img/Explore.png')} height={30} width={80} />
+                <Assets.svg.ExploreIcon />
                 {showLabels && (
                   <Text
                     style={{
