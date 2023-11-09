@@ -114,7 +114,7 @@ const ListCredentials: React.FC = () => {
             </View>
           )
         }}
-        ListEmptyComponent={() => <CredentialEmptyList message={t('Credentials.EmptyList')} />}
+        ListEmptyComponent={() => <CredentialEmptyList message={t('Credentials.EmptyCredentailsList')} />}
       />
       <CredentialListOptions />
       <View style={styles.scanContainer}>
