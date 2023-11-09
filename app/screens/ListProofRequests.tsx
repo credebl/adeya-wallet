@@ -128,7 +128,7 @@ const ListProofRequests: React.FC<ListProofRequestsProps> = ({ navigation, route
         renderItem={({ item }) => {
           return <ProofRequestsCard template={item} connectionId={connectionId} navigation={navigation} />
         }}
-        ListEmptyComponent={() => <EmptyList message={t('Verifier.EmptyList')} />}
+        ListEmptyComponent={() => <EmptyList message={t('Verifier.EmptyProofRequestsList')} />}
       />
     </SafeAreaView>
   )

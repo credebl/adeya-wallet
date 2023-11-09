@@ -24,20 +24,30 @@ export interface OrganizationData {
   organizations: Organization[]
 }
 
-const useOrganizationData = () => {
+const useOrganizationData = (searchData?: string) => {
   const [organizationData, setOrganizationData] = useState<OrganizationData>({ organizations: [] })
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
 
-  const fetchData = async () => {
+  const fetchData = async (searchText?: string) => {
     try {
       setLoading(true)
-      const response = await fetchOrganizationData(currentPage, PAGE_SIZE)
+      const response = await fetchOrganizationData({ pageNumber: currentPage, pageSize: PAGE_SIZE, searchText })
       const newData = response?.data.organizations || []
-      setOrganizationData(prevData => ({
-        organizations: [...prevData.organizations, ...newData],
-      }))
+
+      if (searchText) {
+        setOrganizationData({ organizations: [...newData] })
+      } else {
+        // If we are on the first page, we want to replace the data with the new data to reset the list
+        if (currentPage === 1) {
+          setOrganizationData({ organizations: [...newData] })
+        } else {
+          setOrganizationData(prevData => ({
+            organizations: [...prevData.organizations, ...newData],
+          }))
+        }
+      }
       if (response?.data?.totalPages) {
         setTotalPages(response?.data.totalPages)
       }
@@ -58,8 +68,8 @@ const useOrganizationData = () => {
   }
 
   useEffect(() => {
-    fetchData()
-  }, [currentPage])
+    fetchData(searchData)
+  }, [currentPage, searchData])
 
   return {
     organizationData,
