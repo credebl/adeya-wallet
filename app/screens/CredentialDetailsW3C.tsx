@@ -1,7 +1,14 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { CredentialExchangeRecord, W3cCredentialRecord } from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
+import {
+  CredentialExchangeRecord,
+  W3cCredentialRecord,
+  getW3cCredentialRecordById,
+  getAllCredentialExchangeRecords,
+  deleteCredentialExchangeRecordById,
+} from '@adeya/ssi'
+import { BrandingOverlay } from '@hyperledger/aries-oca'
+import { BrandingOverlayType, CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
@@ -17,9 +24,9 @@ import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import { BifoldError } from '../types/error'
 import { ContactStackParams, CredentialStackParams, Screens } from '../types/navigators'
-import { CardLayoutOverlay11, CardOverlayType, CredentialOverlay } from '../types/oca'
 import { W3CCredentialAttributeField } from '../types/record'
 import { ModalUsage } from '../types/remove'
+import { useAppAgent } from '../utils/agent'
 import {
   buildFieldsFromJSONLDCredential,
   credentialTextColor,
@@ -40,7 +47,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   }
 
   const { credential } = route?.params
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   const { t, i18n } = useTranslation()
   const { TextTheme, ColorPallet } = useTheme()
   const { OCABundleResolver } = useConfiguration()
@@ -48,24 +55,24 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const [tables, setTables] = useState<W3CCredentialAttributeField[]>([])
   const [w3cCredential, setW3cCredential] = useState<W3cCredentialRecord>()
 
-  const [overlay, setOverlay] = useState<CredentialOverlay<CardLayoutOverlay11>>({
+  const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay>>({
     bundle: undefined,
     presentationFields: [],
     metaOverlay: undefined,
-    cardLayoutOverlay: undefined,
+    brandingOverlay: undefined,
   })
 
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: overlay.cardLayoutOverlay?.primaryBackgroundColor,
+      backgroundColor: overlay.brandingOverlay?.primaryBackgroundColor,
       display: 'flex',
     },
     secondaryHeaderContainer: {
       height: 1.5 * logoHeight,
       backgroundColor:
-        (overlay.cardLayoutOverlay?.backgroundImage?.src
+        (overlay.brandingOverlay?.backgroundImage
           ? 'rgba(0, 0, 0, 0)'
-          : overlay.cardLayoutOverlay?.secondaryBackgroundColor) ?? 'rgba(0, 0, 0, 0.24)',
+          : overlay.brandingOverlay?.secondaryBackgroundColor) ?? 'rgba(0, 0, 0, 0.24)',
     },
     primaryHeaderContainer: {
       paddingHorizontal,
@@ -90,7 +97,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
       shadowOpacity: 0.3,
     },
     textContainer: {
-      color: credentialTextColor(ColorPallet, overlay.cardLayoutOverlay?.primaryBackgroundColor),
+      color: credentialTextColor(ColorPallet, overlay.brandingOverlay?.primaryBackgroundColor),
       flexShrink: 1,
     },
   })
@@ -123,7 +130,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
           return credential
         } else if (credential instanceof CredentialExchangeRecord) {
           const credentialRecordId = credential.credentials[0].credentialRecordId
-          const record = await agent.w3cCredentials.getCredentialRecordById(credentialRecordId)
+          const record = await getW3cCredentialRecordById(agent, credentialRecordId)
           return record
         }
       }
@@ -153,7 +160,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     setTables(jsonLdValues)
 
     OCABundleResolver.resolveAllBundles(params).then(bundle => {
-      setOverlay({ ...overlay, ...bundle })
+      setOverlay({ ...overlay, ...(bundle as CredentialOverlay<BrandingOverlay>) })
     })
   }, [w3cCredential])
 
@@ -162,11 +169,10 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
       if (!(agent && credential)) {
         return
       }
-
-      const credentialList = await agent.credentials.getAll()
+      const credentialList = await getAllCredentialExchangeRecords(agent)
       const rec = credentialList.find(cred => cred.credentials[0]?.credentialRecordId === credential.id)
       if (rec) {
-        await agent.credentials.deleteById(rec.id)
+        await deleteCredentialExchangeRecordById(agent, rec.id)
       }
       Toast.show({
         type: ToastType.Success,
@@ -191,9 +197,9 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const CredentialCardLogo: React.FC = () => {
     return (
       <View style={styles.logoContainer}>
-        {overlay.cardLayoutOverlay?.logo?.src ? (
+        {overlay.brandingOverlay?.logo ? (
           <Image
-            source={toImageSource(overlay.cardLayoutOverlay?.logo.src)}
+            source={toImageSource(overlay.brandingOverlay?.logo)}
             style={{
               resizeMode: 'cover',
               width: logoHeight,
@@ -203,7 +209,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
           />
         ) : (
           <Text style={[TextTheme.title, { fontSize: 0.5 * logoHeight, color: '#000' }]}>
-            {(overlay.metaOverlay?.name ?? overlay.metaOverlay?.issuerName ?? 'C')?.charAt(0).toUpperCase()}
+            {(overlay.metaOverlay?.name ?? overlay.metaOverlay?.issuer ?? 'C')?.charAt(0).toUpperCase()}
           </Text>
         )}
       </View>
@@ -227,7 +233,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
               },
             ]}
             numberOfLines={1}>
-            {overlay.metaOverlay?.issuerName}
+            {overlay.metaOverlay?.issuer}
           </Text>
           <Text
             testID={testIdWithKey('CredentialName')}
@@ -248,9 +254,9 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const CredentialDetailSecondaryHeader: React.FC = () => {
     return (
       <>
-        {overlay.cardLayoutOverlay?.backgroundImage?.src ? (
+        {overlay.brandingOverlay?.backgroundImage ? (
           <ImageBackground
-            source={toImageSource(overlay.cardLayoutOverlay?.backgroundImage.src)}
+            source={toImageSource(overlay.brandingOverlay?.backgroundImage)}
             imageStyle={{
               resizeMode: 'cover',
             }}>
@@ -264,7 +270,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   }
 
   const header = () => {
-    return OCABundleResolver.cardOverlayType === CardOverlayType.CardLayout10 ? (
+    return OCABundleResolver.getBrandingOverlayType() === BrandingOverlayType.Branding10 ? (
       <View>
         {credential && (
           <CredentialCard schemaId={w3cCredential?.credential.context[1] as string} style={{ margin: 16 }} />

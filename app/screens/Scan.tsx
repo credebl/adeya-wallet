@@ -1,6 +1,5 @@
 import type { BarCodeReadEvent } from 'react-native-camera'
 
-import { useAgent } from '@aries-framework/react-hooks'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -17,12 +16,13 @@ import { useStore } from '../contexts/store'
 import { BifoldError, QrCodeScanError } from '../types/error'
 import { ConnectStackParams, Screens, Stacks } from '../types/navigators'
 import { PermissionContract } from '../types/permissions'
+import { useAppAgent } from '../utils/agent'
 import { connectFromInvitation, getJson, getUrl, receiveMessageFromUrlRedirect } from '../utils/helpers'
 
 export type ScanProps = StackScreenProps<ConnectStackParams>
 
 const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   const { t } = useTranslation()
   const [store] = useStore()
   const [loading, setLoading] = useState<boolean>(true)
@@ -36,11 +36,11 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
   const handleInvitation = async (value: string): Promise<void> => {
     try {
       setLoading(true)
-      const connectionRecord = await connectFromInvitation(value, agent)
+      const { connectionRecord } = await connectFromInvitation(agent, value)
       setLoading(false)
       navigation.getParent()?.navigate(Stacks.ConnectionStack, {
         screen: Screens.Connection,
-        params: { connectionId: connectionRecord.id },
+        params: { connectionId: connectionRecord?.id },
       })
     } catch (err: unknown) {
       setLoading(false)

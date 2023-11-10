@@ -1,26 +1,41 @@
-import type { W3cCredentialRecord } from '@aries-framework/core'
+import type { W3cCredentialRecord } from '@adeya/ssi'
 
-import { CredentialExchangeRecord, CredentialState } from '@aries-framework/core'
-import { useAgent, useCredentialByState } from '@aries-framework/react-hooks'
+import {
+  useCredentialByState,
+  CredentialExchangeRecord,
+  CredentialState,
+  findConnectionById,
+  getW3cCredentialRecordById,
+} from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FlatList, View } from 'react-native'
+import { FlatList, StyleSheet, View } from 'react-native'
 
+import ScanButton from '../components/common/ScanButton'
 import CredentialCard from '../components/misc/CredentialCard'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import { CredentialStackParams, Screens } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { isW3CCredential } from '../utils/credential'
 
 interface EnhancedW3CRecord extends W3cCredentialRecord {
   connectionLabel?: string
 }
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  scanContainer: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+})
 
 const ListCredentials: React.FC = () => {
   const { t } = useTranslation()
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   const { credentialListOptions: CredentialListOptions, credentialEmptyList: CredentialEmptyList } = useConfiguration()
   const credentials = [
     ...useCredentialByState(CredentialState.CredentialReceived),
@@ -42,11 +57,11 @@ const ListCredentials: React.FC = () => {
           if (isW3CCredential(credential)) {
             const credentialRecordId = credential.credentials[0].credentialRecordId
             try {
-              const record = await agent.w3cCredentials.getCredentialRecordById(credentialRecordId)
+              const record = await getW3cCredentialRecordById(agent, credentialRecordId)
               if (!credential?.connectionId) {
                 throw new Error('Connection Id notfound')
               }
-              const connection = await agent.connections.findById(credential?.connectionId)
+              const connection = await findConnectionById(agent, credential?.connectionId)
               const enhancedRecord = record as EnhancedW3CRecord
               enhancedRecord.connectionLabel = connection?.theirLabel
               return enhancedRecord
@@ -66,7 +81,7 @@ const ListCredentials: React.FC = () => {
   }, [])
 
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
         style={{ backgroundColor: ColorPallet.brand.primaryBackground }}
         data={credentialList?.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf())}
@@ -99,9 +114,12 @@ const ListCredentials: React.FC = () => {
             </View>
           )
         }}
-        ListEmptyComponent={() => <CredentialEmptyList message={t('Credentials.EmptyList')} />}
+        ListEmptyComponent={() => <CredentialEmptyList message={t('Credentials.EmptyCredentailsList')} />}
       />
       <CredentialListOptions />
+      <View style={styles.scanContainer}>
+        <ScanButton />
+      </View>
     </View>
   )
 }

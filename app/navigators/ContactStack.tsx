@@ -3,6 +3,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import HeaderRightHome from '../components/buttons/HeaderHome'
+import SettingsMenu from '../components/buttons/SettingsMenu'
 import { useTheme } from '../contexts/theme'
 import Chat from '../screens/Chat'
 import ConnectionInvitation from '../screens/ConnectionInvitation'
@@ -10,11 +11,13 @@ import ContactDetails from '../screens/ContactDetails'
 import CredentialDetails from '../screens/CredentialDetails'
 import CredentialDetailsW3C from '../screens/CredentialDetailsW3C'
 import CredentialOffer from '../screens/CredentialOffer'
+import Home from '../screens/Home'
 import ListContacts from '../screens/ListContacts'
 import ProofDetails from '../screens/ProofDetails'
 import ProofRequest from '../screens/ProofRequest'
 import WhatAreContacts from '../screens/WhatAreContacts'
 import { ContactStackParams, Screens } from '../types/navigators'
+import { testIdWithKey } from '../utils/testable'
 
 import { createDefaultStackOptions } from './defaultStackOptions'
 
@@ -32,7 +35,17 @@ const ContactStack: React.FC = () => {
         component={ContactDetails}
         options={{
           title: t('Screens.ContactDetails'),
+          headerBackTestID: testIdWithKey('Back'),
         }}
+      />
+      <Stack.Screen
+        name={Screens.Home}
+        component={Home}
+        options={() => ({
+          title: t('Screens.Home'),
+          headerRight: () => null,
+          headerLeft: () => <SettingsMenu />,
+        })}
       />
       <Stack.Screen name={Screens.Chat} component={Chat} />
       <Stack.Screen

@@ -1,5 +1,4 @@
-import { ProofExchangeRecord } from '@aries-framework/core'
-import { useProofs } from '@aries-framework/react-hooks'
+import { useProofs, ProofExchangeRecord } from '@adeya/ssi'
 import { useMemo } from 'react'
 
 import { ProofMetadata, ProofCustomMetadata } from '../types/metadata'

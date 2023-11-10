@@ -1,15 +1,30 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
-import { DidExchangeState } from '@aries-framework/core'
-import { useAgent, useProofById } from '@aries-framework/react-hooks'
+import { useProofById, DidExchangeState, deleteConnectionById } from '@adeya/ssi'
 import { useIsFocused } from '@react-navigation/core'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, DeviceEventEmitter, Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
+import {
+  BackHandler,
+  DeviceEventEmitter,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  Vibration,
+  View,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { isPresentationFailed, isPresentationReceived, linkProofWithTemplate, sendProofRequest } from '../../verifier'
+import {
+  ProofCustomMetadata,
+  ProofMetadata,
+  isPresentationFailed,
+  isPresentationReceived,
+  linkProofWithTemplate,
+  sendProofRequest,
+} from '../../verifier'
 import LoadingIndicator from '../components/animated/LoadingIndicator'
 import Button, { ButtonType } from '../components/buttons/Button'
 import QRRenderer from '../components/misc/QRRenderer'
@@ -19,6 +34,7 @@ import { useConnectionByOutOfBandId, useOutOfBandByConnectionId } from '../hooks
 import { useTemplate } from '../hooks/proof-request-templates'
 import { BifoldError } from '../types/error'
 import { ProofRequestsStackParams, Screens } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { createTempConnectionInvitation } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
@@ -38,7 +54,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   // eslint-disable-next-line no-unsafe-optional-chaining
   const { templateId, predicateValues } = route?.params
 
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   if (!agent) {
     throw new Error('Unable to fetch agent from AFJ')
   }
@@ -54,7 +70,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   const proofRecord = useProofById(proofRecordId ?? '')
   const template = useTemplate(templateId)
 
-  const goalCode = useOutOfBandByConnectionId(record?.id ?? '')?.outOfBandInvitation.goalCode
+  const goalCode = useOutOfBandByConnectionId(agent, record?.id ?? '')?.outOfBandInvitation.goalCode
 
   const styles = StyleSheet.create({
     container: {
@@ -151,9 +167,14 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   useEffect(() => {
     const sendAsyncProof = async () => {
       if (record && record.state === DidExchangeState.Completed) {
+        //send haptic feedback to verifier that connection is completed
+        Vibration.vibrate()
         // send proof logic
         const result = await sendProofRequest(agent, template, record.id, predicateValues)
         if (result?.proofRecord) {
+          // verifier side doesn't have access to the goal code so we need to add metadata here
+          const metadata = result.proofRecord.metadata.get(ProofMetadata.customMetadata) as ProofCustomMetadata
+          result.proofRecord.metadata.set(ProofMetadata.customMetadata, { ...metadata, delete_conn_after_seen: true })
           linkProofWithTemplate(agent, result.proofRecord, templateId)
         }
         setProofRecordId(result?.proofRecord.id)
@@ -165,7 +186,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   useEffect(() => {
     if (proofRecord && (isPresentationReceived(proofRecord) || isPresentationFailed(proofRecord))) {
       if (goalCode?.endsWith('verify.once')) {
-        agent.connections.deleteById(record?.id ?? '')
+        deleteConnectionById(agent, record?.id ?? '')
       }
       navigation.navigate(Screens.ProofDetails, { recordId: proofRecord.id })
     }

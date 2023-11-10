@@ -1,6 +1,12 @@
-import { V1RequestPresentationMessage } from '@aries-framework/anoncreds'
-import { CredentialExchangeRecord, ProofExchangeRecord, ProofState } from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
+import {
+  V1RequestPresentationMessage,
+  CredentialExchangeRecord,
+  ProofExchangeRecord,
+  ProofState,
+  declineCredentialOffer as declineCredential,
+  declineProofRequest as declineProof,
+  getProofRequestAgentMessage,
+} from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react'
@@ -17,6 +23,7 @@ import { BifoldError } from '../../types/error'
 import { GenericFn } from '../../types/fn'
 import { HomeStackParams, Screens, Stacks } from '../../types/navigators'
 import { ModalUsage } from '../../types/remove'
+import { useAppAgent } from '../../utils/agent'
 import { parsedSchema } from '../../utils/helpers'
 import { testIdWithKey } from '../../utils/testable'
 import Button, { ButtonType } from '../buttons/Button'
@@ -58,7 +65,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
   const [, dispatch] = useStore()
   const { t } = useTranslation()
   const { ColorPallet, TextTheme } = useTheme()
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   const [declineModalVisible, setDeclineModalVisible] = useState(false)
   const [details, setDetails] = useState<DisplayDetails>({
     type: InfoBoxType.Info,
@@ -130,9 +137,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
   const declineProofRequest = async () => {
     try {
       const proofId = (notification as ProofExchangeRecord).id
-      if (agent) {
-        await agent.proofs.declineRequest({ proofRecordId: proofId })
-      }
+      await declineProof(agent, { proofRecordId: proofId })
     } catch (err: unknown) {
       const error = new BifoldError(t('Error.Title1028'), t('Error.Message1028'), (err as Error).message, 1028)
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
@@ -150,9 +155,8 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
   const declineCredentialOffer = async () => {
     try {
       const credentialId = (notification as CredentialExchangeRecord).id
-      if (agent) {
-        await agent.credentials.declineOffer(credentialId)
-      }
+
+      await declineCredential(agent, credentialId)
     } catch (err: unknown) {
       const error = new BifoldError(t('Error.Title1028'), t('Error.Message1028'), (err as Error).message, 1028)
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
@@ -210,7 +214,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
           break
         case NotificationType.ProofRequest: {
           const proofId = (notification as ProofExchangeRecord).id
-          agent?.proofs.findRequestMessage(proofId).then(message => {
+          getProofRequestAgentMessage(agent, proofId).then(message => {
             if (message instanceof V1RequestPresentationMessage && message.indyProofRequest) {
               resolve({
                 type: InfoBoxType.Info,

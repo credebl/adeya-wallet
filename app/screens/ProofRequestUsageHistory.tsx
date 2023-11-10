@@ -1,5 +1,4 @@
-import { ProofExchangeRecord, ProofState } from '@aries-framework/core'
-import { useConnectionById } from '@aries-framework/react-hooks'
+import { useConnectionById, ProofExchangeRecord, ProofState } from '@adeya/ssi'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -109,7 +108,7 @@ const ProofRequestUsageHistoryRecord: React.FC<ProofRequestUsageHistoryRecordPro
       </View>
       <View style={style.rightContainer}>
         {presentationReceived && <Icon style={style.icon} name={'chevron-right'} />}
-        <Text style={style.date}>{formatTime(record.createdAt)}</Text>
+        <Text style={style.date}>{formatTime(record.createdAt, { shortMonth: true })}</Text>
       </View>
     </TouchableOpacity>
   )
