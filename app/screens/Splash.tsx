@@ -1,13 +1,4 @@
-import {
-  Agent,
-  ConsoleLogger,
-  HttpOutboundTransport,
-  LogLevel,
-  MediatorPickupStrategy,
-  WsOutboundTransport,
-} from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
-import { agentDependencies } from '@aries-framework/react-native'
+import { initializeAgent, ConsoleLogger, LogLevel, InitConfig, getAgentModules } from '@adeya/ssi'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/core'
 import { CommonActions } from '@react-navigation/native'
@@ -17,6 +8,7 @@ import { ScrollView, StyleSheet, Text, View, useWindowDimensions, Image } from '
 import { Config } from 'react-native-config'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import indyLedgers from '../../configs/ledgers/indy'
 import InfoBox, { InfoBoxType } from '../components/misc/InfoBox'
 import ProgressBar from '../components/tour/ProgressBar'
 import TipCarousel from '../components/tour/TipCarousel'
@@ -33,7 +25,7 @@ import {
   Onboarding as StoreOnboardingState,
   Tours as ToursState,
 } from '../types/state'
-import { getAgentModules, createLinkSecretIfRequired } from '../utils/agent'
+import { AdeyaAgent, useAppAgent } from '../utils/agent'
 import { testIdWithKey } from '../utils/testable'
 
 enum InitErrorTypes {
@@ -83,11 +75,11 @@ const resumeOnboardingAt = (state: StoreOnboardingState, enableWalletNaming: boo
  */
 const Splash: React.FC = () => {
   const { width } = useWindowDimensions()
-  const { indyLedgers, enableWalletNaming } = useConfiguration()
+  const { enableWalletNaming } = useConfiguration()
   const [progressPercent, setProgressPercent] = useState(0)
   const [initOnboardingCount, setInitOnboardingCount] = useState(0)
   const [initAgentCount, setInitAgentCount] = useState(0)
-  const { setAgent } = useAgent()
+  const { setAgent } = useAppAgent()
   const { t } = useTranslation()
   const [stepText, setStepText] = useState<string>(t('Init.Starting'))
   const [initError, setInitError] = useState<Error | null>(null)
@@ -104,9 +96,7 @@ const Splash: React.FC = () => {
     t('Init.FetchingPreferences'),
     t('Init.VerifyingOnboarding'),
     t('Init.GettingCredentials'),
-    t('Init.RegisteringTransports'),
     t('Init.InitializingAgent'),
-    t('Init.ConnectingLedgers'),
     t('Init.SettingAgent'),
     t('Init.Finishing'),
   ]
@@ -272,42 +262,29 @@ const Splash: React.FC = () => {
         }
 
         setStep(5)
-        const options = {
-          config: {
-            label: store.preferences.walletName || 'ADEYA Wallet',
-            walletConfig: {
-              id: credentials.id,
-              key: credentials.key,
-            },
-            logger: new ConsoleLogger(LogLevel.off),
-            mediatorPickupStrategy: MediatorPickupStrategy.Implicit,
-            autoUpdateStorageOnStartup: true,
-            autoAcceptConnections: true,
-          },
-          dependencies: agentDependencies,
-          modules: getAgentModules({
-            indyNetworks: indyLedgers,
-            mediatorInvitationUrl: Config.MEDIATOR_URL,
-          }),
+        if (!Config.MEDIATOR_URL) {
+          throw new Error('Missing mediator URL')
         }
 
-        const newAgent = new Agent(options)
-        const wsTransport = new WsOutboundTransport()
-        const httpTransport = new HttpOutboundTransport()
+        const agentConfig: InitConfig = {
+          label: store.preferences.walletName || 'ADEYA Wallet',
+          walletConfig: {
+            id: credentials.id,
+            key: credentials.key,
+          },
+          logger: new ConsoleLogger(LogLevel.debug),
+          autoUpdateStorageOnStartup: true,
+        }
 
-        newAgent.registerOutboundTransport(wsTransport)
-        newAgent.registerOutboundTransport(httpTransport)
+        const newAgent = (await initializeAgent({
+          agentConfig,
+          modules: getAgentModules(Config.MEDIATOR_URL, indyLedgers),
+        })) as unknown as AdeyaAgent
 
         setStep(6)
-        await newAgent.initialize()
-
-        setStep(7)
-        await createLinkSecretIfRequired(newAgent)
-
-        setStep(8)
         setAgent(newAgent)
 
-        setStep(9)
+        setStep(7)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,

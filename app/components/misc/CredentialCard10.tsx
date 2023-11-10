@@ -1,4 +1,6 @@
-import { CredentialExchangeRecord } from '@aries-framework/core'
+import { CredentialExchangeRecord } from '@adeya/ssi'
+import { LegacyBrandingOverlay } from '@hyperledger/aries-oca'
+import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dimensions, Image, ImageBackground, StyleSheet, Text, View, ViewStyle } from 'react-native'
@@ -7,7 +9,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useConfiguration } from '../../contexts/configuration'
 import { useTheme } from '../../contexts/theme'
 import { GenericFn } from '../../types/fn'
-import { CardLayoutOverlay10, CredentialOverlay } from '../../types/oca'
 import {
   credentialTextColor,
   getCredentialIdentifiers,
@@ -52,7 +53,7 @@ Variation 1:
   |             Body              |
   | Issued/Expired Date           |
 
- Variation 2:
+Variation 2:
   Header: Large Logo (1x4) + Credential Name (1x4)
   Body: Reserved for Future Use (2x4)
   Footer: Issued or Expired Date (1x4)
@@ -72,21 +73,19 @@ const CredentialCard10: React.FC<CredentialCard10Props> = ({ credential, style =
   const { t, i18n } = useTranslation()
   const { ColorPallet, TextTheme } = useTheme()
   const { OCABundleResolver } = useConfiguration()
-  const [overlay, setOverlay] = useState<CredentialOverlay<CardLayoutOverlay10>>({})
+  const [overlay, setOverlay] = useState<CredentialOverlay<LegacyBrandingOverlay>>({})
   const [isRevoked, setIsRevoked] = useState<boolean>(false)
   const credentialConnectionLabel = getCredentialConnectionLabel(credential)
 
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: overlay?.cardLayoutOverlay?.imageSource
-        ? transparent
-        : overlay?.cardLayoutOverlay?.backgroundColor,
+      backgroundColor: overlay?.brandingOverlay?.imageSource ? transparent : overlay?.brandingOverlay?.backgroundColor,
       height: cardHeight,
       borderRadius: borderRadius,
     },
     outerHeaderContainer: {
       flexDirection: 'column',
-      backgroundColor: overlay?.cardLayoutOverlay?.header?.backgroundColor ?? transparent,
+      backgroundColor: overlay?.brandingOverlay?.header?.backgroundColor ?? transparent,
       height: cardHeaderHeight + borderPadding,
       borderTopLeftRadius: borderRadius,
       borderTopRightRadius: borderRadius,
@@ -98,14 +97,14 @@ const CredentialCard10: React.FC<CredentialCard10Props> = ({ credential, style =
       marginRight: borderPadding,
       marginTop: borderPadding,
       marginBottom: borderPadding,
-      backgroundColor: overlay?.cardLayoutOverlay?.header?.backgroundColor ?? transparent,
+      backgroundColor: overlay?.brandingOverlay?.header?.backgroundColor ?? transparent,
     },
     bodyContainer: {
       flexGrow: 1,
     },
     footerContainer: {
       flexDirection: 'row',
-      backgroundColor: overlay?.cardLayoutOverlay?.footer?.backgroundColor ?? transparent,
+      backgroundColor: overlay?.brandingOverlay?.footer?.backgroundColor ?? transparent,
       paddingHorizontal,
       paddingVertical,
       borderBottomLeftRadius: borderRadius,
@@ -149,7 +148,7 @@ const CredentialCard10: React.FC<CredentialCard10Props> = ({ credential, style =
       setOverlay({
         ...overlay,
         ...bundle,
-        cardLayoutOverlay: bundle.cardLayoutOverlay as CardLayoutOverlay10,
+        brandingOverlay: bundle.brandingOverlay as LegacyBrandingOverlay,
       })
     })
   }, [])
@@ -162,17 +161,17 @@ const CredentialCard10: React.FC<CredentialCard10Props> = ({ credential, style =
     return (
       <View style={[styles.outerHeaderContainer]}>
         <View testID={testIdWithKey('CredentialCardHeader')} style={[styles.innerHeaderContainer]}>
-          {overlay?.cardLayoutOverlay?.header?.imageSource && (
+          {overlay?.brandingOverlay?.header?.imageSource && (
             <Image
-              source={toImageSource(overlay?.cardLayoutOverlay?.header?.imageSource)}
+              source={toImageSource(overlay?.brandingOverlay?.header?.imageSource)}
               style={{
-                flex: !overlay?.cardLayoutOverlay?.header?.hideIssuer ? 1 : 4,
+                flex: !overlay?.brandingOverlay?.header?.hideIssuer ? 1 : 4,
                 resizeMode: 'contain',
                 maxHeight: styles.outerHeaderContainer.height - borderPadding,
               }}
             />
           )}
-          {overlay?.cardLayoutOverlay?.header?.hideIssuer ? null : (
+          {overlay?.brandingOverlay?.header?.hideIssuer ? null : (
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -180,20 +179,19 @@ const CredentialCard10: React.FC<CredentialCard10Props> = ({ credential, style =
                 TextTheme.label,
                 {
                   color:
-                    overlay?.cardLayoutOverlay?.header?.color ??
+                    overlay?.brandingOverlay?.header?.color ??
                     credentialTextColor(
                       ColorPallet,
-                      overlay?.cardLayoutOverlay?.header?.backgroundColor ||
-                        overlay?.cardLayoutOverlay?.backgroundColor,
+                      overlay?.brandingOverlay?.header?.backgroundColor || overlay?.brandingOverlay?.backgroundColor,
                     ),
                   paddingHorizontal: 0.5 * paddingHorizontal,
-                  flex: !overlay?.cardLayoutOverlay?.header?.imageSource ? 4 : 3,
+                  flex: !overlay?.brandingOverlay?.header?.imageSource ? 4 : 3,
                   textAlignVertical: 'center',
                 },
               ]}
               testID={testIdWithKey('CredentialIssuer')}
               maxFontSizeMultiplier={1}>
-              {overlay?.metaOverlay?.issuerName}
+              {overlay?.metaOverlay?.issuer}
             </Text>
           )}
           <Text
@@ -203,10 +201,10 @@ const CredentialCard10: React.FC<CredentialCard10Props> = ({ credential, style =
               TextTheme.label,
               {
                 color:
-                  overlay?.cardLayoutOverlay?.header?.color ??
+                  overlay?.brandingOverlay?.header?.color ??
                   credentialTextColor(
                     ColorPallet,
-                    overlay?.cardLayoutOverlay?.header?.backgroundColor || overlay?.cardLayoutOverlay?.backgroundColor,
+                    overlay?.brandingOverlay?.header?.backgroundColor || overlay?.brandingOverlay?.backgroundColor,
                   ),
                 textAlign: 'right',
                 paddingHorizontal: 0.5 * paddingHorizontal,
@@ -244,16 +242,16 @@ const CredentialCard10: React.FC<CredentialCard10Props> = ({ credential, style =
               TextTheme.caption,
               {
                 color:
-                  overlay?.cardLayoutOverlay?.footer?.color ??
+                  overlay?.brandingOverlay?.footer?.color ??
                   credentialTextColor(
                     ColorPallet,
-                    overlay?.cardLayoutOverlay?.footer?.backgroundColor || overlay?.cardLayoutOverlay?.backgroundColor,
+                    overlay?.brandingOverlay?.footer?.backgroundColor || overlay?.brandingOverlay?.backgroundColor,
                   ),
               },
             ]}
             testID={testIdWithKey('CredentialIssued')}
             maxFontSizeMultiplier={1}>
-            {t('CredentialDetails.Issued')}: {formatTime(credential.createdAt)}
+            {t('CredentialDetails.Issued')}: {formatTime(credential.createdAt, { shortMonth: true })}
           </Text>
         )}
       </View>
@@ -274,16 +272,16 @@ const CredentialCard10: React.FC<CredentialCard10Props> = ({ credential, style =
     <TouchableOpacity
       accessible={true}
       accessibilityLabel={`${
-        overlay.metaOverlay?.issuerName ? `${t('Credentials.IssuedBy')} ${overlay.metaOverlay?.issuerName}` : ''
+        overlay.metaOverlay?.issuer ? `${t('Credentials.IssuedBy')} ${overlay.metaOverlay?.issuer}` : ''
       }, ${overlay.metaOverlay?.watermark ?? ''} ${overlay.metaOverlay?.name ?? ''} ${t('Credentials.Credential')}.`}
       disabled={typeof onPress === 'undefined' ? true : false}
       onPress={onPress}
       style={[styles.container, style]}
       testID={testIdWithKey('ShowCredentialDetails')}>
       <View style={[styles.flexGrow, { overflow: 'hidden' }]} testID={testIdWithKey('CredentialCard')}>
-        {overlay?.cardLayoutOverlay?.imageSource ? (
+        {overlay?.brandingOverlay?.imageSource ? (
           <ImageBackground
-            source={toImageSource(overlay?.cardLayoutOverlay?.imageSource)}
+            source={toImageSource(overlay?.brandingOverlay?.imageSource)}
             style={styles.flexGrow}
             imageStyle={{ borderRadius }}>
             {overlay.metaOverlay?.watermark && (
