@@ -36,7 +36,7 @@
     "@react-navigation/devtools": "^6.0.19",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.17",
-    "axios": "^1.4.0",
+    "axios": "^1.6.0",
     "bip39": "^3.1.0",
     "events": "^1.1.1",
     "expo-modules-core": "^1.2.7",
