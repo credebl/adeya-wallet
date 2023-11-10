@@ -1,6 +1,4 @@
-import { AnonCredsNonRevokedInterval, AnonCredsProofRequestRestriction } from '@aries-framework/anoncreds'
-import { CredentialExchangeRecord } from '@aries-framework/core'
-
+import { AnonCredsNonRevokedInterval, AnonCredsProofRequestRestriction } from '@adeya/ssi'
 export interface FieldParams {
   name: string | null
   format?: string
@@ -74,24 +72,6 @@ export class Predicate extends Field {
     this.parameterizable = params.parameterizable
   }
 }
-
-export interface ProofCredentialAttributes {
-  credExchangeRecord?: CredentialExchangeRecord
-  credDefId?: string
-  schemaId?: string
-  credName: string
-  attributes?: Attribute[]
-}
-
-export interface ProofCredentialPredicates {
-  credExchangeRecord?: CredentialExchangeRecord
-  credDefId?: string
-  schemaId?: string
-  credName: string
-  predicates?: Predicate[]
-}
-
-export interface ProofCredentialItems extends ProofCredentialAttributes, ProofCredentialPredicates {}
 
 export type W3CCredentialAttribute = {
   key: string

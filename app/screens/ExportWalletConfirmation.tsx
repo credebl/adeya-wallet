@@ -1,4 +1,4 @@
-import { useAgent } from '@aries-framework/react-hooks'
+import { exportWallet as exportAdeyaWallet } from '@adeya/ssi'
 import { useNavigation, useRoute } from '@react-navigation/core'
 import shuffle from 'lodash.shuffle'
 import React, { useEffect, useState } from 'react'
@@ -24,9 +24,10 @@ import Button, { ButtonType } from '../components/buttons/Button'
 import { ToastType } from '../components/toast/BaseToast'
 import { useTheme } from '../contexts/theme'
 import { Screens } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 
 function ExportWalletConfirmation() {
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   const navigation = useNavigation()
   const parms = useRoute()
   const { t } = useTranslation()
@@ -153,7 +154,7 @@ function ExportWalletConfirmation() {
         path: encryptedFileLocation,
       }
 
-      await agent?.wallet.export(exportConfig)
+      await exportAdeyaWallet(agent, exportConfig)
 
       Toast.show({
         type: ToastType.Success,
@@ -200,7 +201,7 @@ function ExportWalletConfirmation() {
         path: encryptedFileLocation,
       }
 
-      await agent?.wallet.export(exportConfig)
+      await exportAdeyaWallet(agent, exportConfig)
 
       if (Platform.OS === 'ios') {
         await Share.share({
