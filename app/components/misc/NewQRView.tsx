@@ -1,5 +1,4 @@
-import { DidExchangeState } from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
+import { DidExchangeState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,6 +12,7 @@ import { useTheme } from '../../contexts/theme'
 import { useConnectionByOutOfBandId } from '../../hooks/connections'
 import { QrCodeScanError } from '../../types/error'
 import { Screens, Stacks } from '../../types/navigators'
+import { useAppAgent } from '../../utils/agent'
 import { createConnectionInvitation } from '../../utils/helpers'
 import LoadingIndicator from '../animated/LoadingIndicator'
 
@@ -41,7 +41,7 @@ const NewQRView: React.FC<Props> = ({ defaultToConnect, handleCodeScan, error, e
   const { t } = useTranslation()
   const invalidQrCodes = new Set<string>()
   const { ColorPallet, TextTheme } = useTheme()
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   const styles = StyleSheet.create({
     container: {
       flex: 1,

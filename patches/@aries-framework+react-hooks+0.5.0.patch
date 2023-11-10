@@ -1,0 +1,185 @@
+diff --git a/node_modules/@aries-framework/react-hooks/build/AgentProvider.d.ts b/node_modules/@aries-framework/react-hooks/build/AgentProvider.d.ts
+index 0b3f967..35fdf4d 100644
+--- a/node_modules/@aries-framework/react-hooks/build/AgentProvider.d.ts
++++ b/node_modules/@aries-framework/react-hooks/build/AgentProvider.d.ts
+@@ -1,13 +1,13 @@
+-import type { Agent } from '@aries-framework/core';
+-import type { PropsWithChildren } from 'react';
+-import * as React from 'react';
++import type { Agent } from "@aries-framework/core"
++import type { PropsWithChildren } from "react"
++import * as React from "react"
+ interface AgentContextInterface<AppAgent extends Agent = Agent> {
+-    loading: boolean;
+-    agent: AppAgent;
++  loading: boolean
++  agent?: AppAgent
++  setAgent: (agent: Agent) => void
+ }
+-export declare const useAgent: <AppAgent extends Agent<any>>() => AgentContextInterface<AppAgent>;
+-interface Props {
+-    agent: Agent;
+-}
+-declare const AgentProvider: React.FC<PropsWithChildren<Props>>;
+-export default AgentProvider;
++export declare const useAgent: <
++  AppAgent extends Agent<any>
++>() => AgentContextInterface<AppAgent>
++declare const AgentProvider: React.FC<PropsWithChildren>
++export default AgentProvider
+diff --git a/node_modules/@aries-framework/react-hooks/build/AgentProvider.js b/node_modules/@aries-framework/react-hooks/build/AgentProvider.js
+index 4469c64..3df3090 100644
+--- a/node_modules/@aries-framework/react-hooks/build/AgentProvider.js
++++ b/node_modules/@aries-framework/react-hooks/build/AgentProvider.js
+@@ -1,59 +1,94 @@
+-"use strict";
+-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+-    if (k2 === undefined) k2 = k;
+-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+-}) : (function(o, m, k, k2) {
+-    if (k2 === undefined) k2 = k;
+-    o[k2] = m[k];
+-}));
+-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+-    Object.defineProperty(o, "default", { enumerable: true, value: v });
+-}) : function(o, v) {
+-    o["default"] = v;
+-});
+-var __importStar = (this && this.__importStar) || function (mod) {
+-    if (mod && mod.__esModule) return mod;
+-    var result = {};
+-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+-    __setModuleDefault(result, mod);
+-    return result;
+-};
+-var __importDefault = (this && this.__importDefault) || function (mod) {
+-    return (mod && mod.__esModule) ? mod : { "default": mod };
+-};
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.useAgent = void 0;
+-const question_answer_1 = require("@aries-framework/question-answer");
+-const React = __importStar(require("react"));
+-const react_1 = require("react");
+-const BasicMessageProvider_1 = __importDefault(require("./BasicMessageProvider"));
+-const ConnectionProvider_1 = __importDefault(require("./ConnectionProvider"));
+-const CredentialProvider_1 = __importDefault(require("./CredentialProvider"));
+-const ProofProvider_1 = __importDefault(require("./ProofProvider"));
+-const QuestionAnswerProvider_1 = __importDefault(require("./QuestionAnswerProvider"));
+-const recordUtils_1 = require("./recordUtils");
+-const AgentContext = (0, react_1.createContext)(undefined);
++"use strict"
++var __createBinding =
++  (this && this.__createBinding) ||
++  (Object.create
++    ? function (o, m, k, k2) {
++        if (k2 === undefined) k2 = k
++        Object.defineProperty(o, k2, {
++          enumerable: true,
++          get: function () {
++            return m[k]
++          },
++        })
++      }
++    : function (o, m, k, k2) {
++        if (k2 === undefined) k2 = k
++        o[k2] = m[k]
++      })
++var __setModuleDefault =
++  (this && this.__setModuleDefault) ||
++  (Object.create
++    ? function (o, v) {
++        Object.defineProperty(o, "default", { enumerable: true, value: v })
++      }
++    : function (o, v) {
++        o["default"] = v
++      })
++var __importStar =
++  (this && this.__importStar) ||
++  function (mod) {
++    if (mod && mod.__esModule) return mod
++    var result = {}
++    if (mod != null)
++      for (var k in mod)
++        if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
++          __createBinding(result, mod, k)
++    __setModuleDefault(result, mod)
++    return result
++  }
++var __importDefault =
++  (this && this.__importDefault) ||
++  function (mod) {
++    return mod && mod.__esModule ? mod : { default: mod }
++  }
++Object.defineProperty(exports, "__esModule", { value: true })
++exports.useAgent = void 0
++const React = __importStar(require("react"))
++const react_1 = require("react")
++const BasicMessageProvider_1 = __importDefault(
++  require("./BasicMessageProvider")
++)
++const ConnectionProvider_1 = __importDefault(require("./ConnectionProvider"))
++const CredentialProvider_1 = __importDefault(require("./CredentialProvider"))
++const ProofProvider_1 = __importDefault(require("./ProofProvider"))
++const AgentContext = (0, react_1.createContext)(undefined)
+ const useAgent = () => {
+-    const agentContext = (0, react_1.useContext)(AgentContext);
+-    if (!agentContext) {
+-        throw new Error('useAgent must be used within a AgentContextProvider');
+-    }
+-    return agentContext;
+-};
+-exports.useAgent = useAgent;
+-const AgentProvider = ({ agent, children }) => {
+-    const isQaRegistered = (0, recordUtils_1.useIsModuleRegistered)(agent, question_answer_1.QuestionAnswerModule);
+-    const [agentState] = (0, react_1.useState)({
+-        loading: false,
+-        agent,
+-    });
+-    return (React.createElement(AgentContext.Provider, { value: agentState },
+-        React.createElement(ConnectionProvider_1.default, { agent: agent },
+-            React.createElement(CredentialProvider_1.default, { agent: agent },
+-                React.createElement(ProofProvider_1.default, { agent: agent },
+-                    React.createElement(BasicMessageProvider_1.default, { agent: agent }, isQaRegistered ? React.createElement(QuestionAnswerProvider_1.default, { agent: agent },
+-                        children,
+-                        " ") : children))))));
+-};
+-exports.default = AgentProvider;
++  const agentContext = (0, react_1.useContext)(AgentContext)
++  if (!agentContext) {
++    throw new Error("useAgent must be used within a AgentContextProvider")
++  }
++  return agentContext
++}
++exports.useAgent = useAgent
++const AgentProvider = ({ children }) => {
++  const [agentState, setState] = (0, react_1.useState)({
++    loading: true,
++    agent: undefined,
++  })
++  const setAgent = (agent) => {
++    setState({ agent, loading: false })
++  }
++  return React.createElement(
++    AgentContext.Provider,
++    { value: Object.assign({ setAgent }, agentState) },
++    React.createElement(
++      ConnectionProvider_1.default,
++      { agent: agentState.agent },
++      React.createElement(
++        CredentialProvider_1.default,
++        { agent: agentState.agent },
++        React.createElement(
++          ProofProvider_1.default,
++          { agent: agentState.agent },
++          React.createElement(
++            BasicMessageProvider_1.default,
++            { agent: agentState.agent },
++            children
++          )
++        )
++      )
++    )
++  )
++}
++exports.default = AgentProvider
+ //# sourceMappingURL=AgentProvider.js.map

@@ -1,5 +1,4 @@
-/* eslint-disable no-unsafe-optional-chaining */
-import { useAgent } from '@aries-framework/react-hooks'
+import { MetaOverlay, OverlayType } from '@hyperledger/aries-oca'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -15,11 +14,12 @@ import {
 import Button, { ButtonType } from '../components/buttons/Button'
 import AlertModal from '../components/modals/AlertModal'
 import { useConfiguration } from '../contexts/configuration'
+import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { useTemplate } from '../hooks/proof-request-templates'
 import { Screens, ProofRequestsStackParams } from '../types/navigators'
-import { MetaOverlay, OverlayType } from '../types/oca'
 import { Attribute, Field, Predicate } from '../types/record'
+import { useAppAgent } from '../utils/agent'
 import { formatIfDate } from '../utils/helpers'
 import { buildFieldsFromAnonCredsProofRequestTemplate } from '../utils/oca'
 import { parseSchemaFromId } from '../utils/schema'
@@ -36,7 +36,7 @@ const AttributeItem: React.FC<{ item: Attribute; style?: StyleProp<TextStyle> }>
   const [value, setValue] = useState(item.value)
 
   useEffect(() => {
-    formatIfDate(item.format, value, setValue)
+    setValue(formatIfDate(item.format, value))
   }, [])
 
   return (
@@ -58,7 +58,7 @@ const PredicateItem: React.FC<{
   useEffect(() => {
     // can't format the date if parameterizable, must remain a number
     if (!item.parameterizable) {
-      formatIfDate(item.format, pValue, setPValue)
+      setPValue(formatIfDate(item.format, pValue))
     }
   }, [])
 
@@ -124,12 +124,20 @@ const ProofRequestAttributesCard: React.FC<ProofRequestAttributesCardParams> = (
 
   useEffect(() => {
     OCABundleResolver.resolve({ identifiers: { schemaId: data.schema }, language: i18n.language }).then(bundle => {
-      const metaOverlay = bundle?.metaOverlay || {
-        captureBase: '',
-        type: OverlayType.Meta10,
-        name: parseSchemaFromId(data.schema).name,
-        language: i18n.language,
-      }
+      const metaOverlay =
+        bundle?.metaOverlay ||
+        new MetaOverlay({
+          capture_base: '',
+          type: OverlayType.Meta10,
+          name: parseSchemaFromId(data.schema).name,
+          description: '',
+          language: i18n.language,
+          credential_help_text: '',
+          credential_support_url: '',
+          issuer: '',
+          issuer_description: '',
+          issuer_url: '',
+        })
       setMeta(metaOverlay)
     })
   }, [data.schema])
@@ -176,11 +184,12 @@ const ProofRequestAttributesCard: React.FC<ProofRequestAttributesCardParams> = (
 
 const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, navigation }) => {
   const { ColorPallet, TextTheme } = useTheme()
+  const [store] = useStore()
   const { t } = useTranslation()
   const { i18n } = useTranslation()
   const { OCABundleResolver } = useConfiguration()
 
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   if (!agent) {
     throw new Error('Unable to fetch agent from AFJ')
   }
@@ -229,13 +238,20 @@ const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, naviga
     const attributes = template.payload.type === ProofRequestType.AnonCreds ? template.payload.data : []
 
     OCABundleResolver.resolve({ identifiers: { templateId }, language: i18n.language }).then(bundle => {
-      const metaOverlay = bundle?.metaOverlay || {
-        captureBase: '',
-        type: OverlayType.Meta10,
-        name: template.name,
-        description: template.description,
-        language: i18n.language,
-      }
+      const metaOverlay =
+        bundle?.metaOverlay ||
+        new MetaOverlay({
+          capture_base: '',
+          type: OverlayType.Meta10,
+          name: template.name,
+          description: template.description,
+          language: i18n.language,
+          credential_help_text: '',
+          credential_support_url: '',
+          issuer: '',
+          issuer_description: '',
+          issuer_url: '',
+        })
       setMeta(metaOverlay)
       setAttributes(attributes)
     })
@@ -280,7 +296,7 @@ const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, naviga
       // Else redirect to the screen with connectionless request
       navigation.navigate(Screens.ProofRequesting, { templateId, predicateValues: customPredicateValues })
     }
-  }, [agent, templateId, connectionId, customPredicateValues, invalidPredicate])
+  }, [templateId, connectionId, customPredicateValues, invalidPredicate])
 
   const showTemplateUsageHistory = useCallback(async () => {
     navigation.navigate(Screens.ProofRequestUsageHistory, { templateId })
@@ -307,15 +323,17 @@ const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, naviga
             onPress={() => useProofRequest()}
           />
         </View>
-        <View style={style.footerButton}>
-          <Button
-            title={t('Verifier.ShowTemplateUsageHistory')}
-            accessibilityLabel={t('Verifier.ShowTemplateUsageHistory')}
-            testID={testIdWithKey('ShowTemplateUsageHistory')}
-            buttonType={ButtonType.Secondary}
-            onPress={() => showTemplateUsageHistory()}
-          />
-        </View>
+        {store.preferences.useDataRetention && (
+          <View style={style.footerButton}>
+            <Button
+              title={t('Verifier.ShowTemplateUsageHistory')}
+              accessibilityLabel={t('Verifier.ShowTemplateUsageHistory')}
+              testID={testIdWithKey('ShowTemplateUsageHistory')}
+              buttonType={ButtonType.Secondary}
+              onPress={() => showTemplateUsageHistory()}
+            />
+          </View>
+        )}
       </View>
     )
   }

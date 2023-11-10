@@ -1,79 +1,112 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+<div align="center">
+  <h1><img align="center" src="./assets/adeya.png" height="52" /> ADEYA SSI Wallet</h1>
 
-# Getting Started
+<a align="center" href="https://play.google.com/store/apps/details?id=id.credebl.adeya"><img align="center" src="./assets/store_badge_android.png" height="50" /></a>
+<a align="center" href="https://apps.apple.com/in/app/adeya-ssi-wallet/id6463845498"><img align="center" src="./assets/store_badge_apple.png" height="52" /></a>
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+</div>
 
-## Step 1: Start the Metro Server
+---
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## Prerequisites
 
-To start Metro, run the following command from the _root_ of your React Native project:
+- Set-up requires [Node.js](https://nodejs.org/en/download/) to be installed on your computer.
+  - The `ADEYA SSI Wallet` requires `Node.js v18` to build the project. You can either manually install Node version 18, or you can use a version manager like [nvm](https://github.com/nvm-sh/nvm)
+- We use [Yarn](https://yarnpkg.com) as our package manager.
+- We use [CocoaPods](https://cocoapods.org/) for `iOS` dependency management.
+
+---
+
+## Env Variables
 
 ```bash
-# using npm
-npm start
+MEDIATOR_URL=
+# Use push notifications for mediator only if we have the mediator with push notification enabled
+MEDIATOR_USE_PUSH_NOTIFICATIONS=true
+MEDIATOR_LABEL=Mediator
+# Use OCA(Overlay Credential Architecture) for app if we have a valid OCA url with json file
+OCA_URL=
+#BASE_URL
+PUBLIC_ORG=https://example.com
+```
 
-# OR using Yarn
+---
+
+## Getting Started
+
+- Clone the repository
+
+```bash
+git clone https://github.com/credebl/adeya-wallet.git
+```
+
+- Move to the project directory
+
+```bash
+cd adeya-wallet
+```
+
+- Install dependencies
+
+```bash
+yarn
+```
+
+- Install `iOS` dependencies
+
+```bash
+cd ios && pod install && cd ..
+```
+
+- Run the project
+
+```bash
 yarn start
 ```
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
+- Run the project on `iOS`
 
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
 yarn ios
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+- Run the project on `Android`
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+```bash
+yarn android
+```
 
-## Step 3: Modifying your App
+---
 
-Now that you have successfully run the app, let's modify it.
+## Indy Ledgers Supported
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+- bcovrin:test
+- indicio
+- indicio:test
+- indicio:demo
+- sovrin:builder
+- sovrin:staging
+- sovrin
+- candy:dev
+- candy:test
+- candy
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+> Note: If you want add any additional indy ledger, you can add it in `configs/ledgers/indy/ledgers.json` file.
 
-## Congratulations! :tada:
+---
 
-You've successfully run and modified your React Native App. :partying_face:
+## Contributing
 
-### Now what?
+We welcome contributions from the community to improve ADEYA SSI Wallet. If you'd like to contribute, please follow these guidelines:
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+1. Fork the repository and create a new branch for your feature or bug fix.
+2. Raise an issue for the feature or bug fix.
+3. Make your changes and ensure that your code follows the project's coding style.
+4. Commit your changes and push your branch to GitHub.
+5. Submit a pull request with a clear description of your changes and their purpose
 
-# Troubleshooting
+---
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## License
 
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+This project is licensed under the Apache License - see the [LICENSE](./LICENSE.md) file for details.

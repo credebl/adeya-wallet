@@ -1,11 +1,10 @@
-import type {
+import {
   BasicMessageRecord,
   ConnectionRecord,
   CredentialExchangeRecord,
   ProofExchangeRecord,
-} from '@aries-framework/core'
-
-import { useBasicMessagesByConnectionId } from '@aries-framework/react-hooks'
+  useBasicMessagesByConnectionId,
+} from '@adeya/ssi'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -18,6 +17,7 @@ import { Role } from '../../types/chat'
 import { ContactStackParams, Screens, Stacks } from '../../types/navigators'
 import {
   formatTime,
+  getConnectionName,
   getCredentialEventLabel,
   getCredentialEventRole,
   getProofEventLabel,
@@ -40,7 +40,7 @@ const ContactListItem: React.FC<Props> = ({ contact, navigation }) => {
   const basicMessages = useBasicMessagesByConnectionId(contact.id)
   const credentials = useCredentialsByConnectionId(contact.id)
   const proofs = useProofsByConnectionId(contact.id)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<CondensedMessage>({ text: '', createdAt: contact.createdAt })
 
   const styles = StyleSheet.create({
     container: {
@@ -116,7 +116,14 @@ const ContactListItem: React.FC<Props> = ({ contact, navigation }) => {
         }
       }),
     )
-    setMessage(transformedMessages.sort((a: any, b: any) => b.createdAt - a.createdAt)[0]?.text ?? '')
+
+    // don't show a message snippet for the initial connection
+    const connectedMessage = {
+      text: '',
+      createdAt: contact.createdAt,
+    }
+
+    setMessage([...transformedMessages.sort((a: any, b: any) => b.createdAt - a.createdAt), connectedMessage][0])
   }, [basicMessages, credentials, proofs])
 
   const navigateToContact = useCallback(() => {
@@ -125,7 +132,7 @@ const ContactListItem: React.FC<Props> = ({ contact, navigation }) => {
       ?.navigate(Stacks.ContactStack, { screen: Screens.Chat, params: { connectionId: contact.id } })
   }, [contact])
 
-  const contactLabel = useMemo(() => contact.alias || contact.theirLabel, [contact])
+  const contactLabel = useMemo(() => getConnectionName(contact) ?? '', [contact])
   const contactLabelAbbr = useMemo(() => contactLabel?.charAt(0).toUpperCase(), [contact])
 
   return (
@@ -149,12 +156,12 @@ const ContactListItem: React.FC<Props> = ({ contact, navigation }) => {
               <Text style={styles.contactNameText}>{contactLabel}</Text>
             </View>
             <View style={styles.timeContainer}>
-              <Text>{formatTime(contact.createdAt)}</Text>
+              <Text>{formatTime(message.createdAt, { shortMonth: true, trim: true })}</Text>
             </View>
           </View>
           <View>
             <Text style={TextTheme.normal} numberOfLines={1} ellipsizeMode={'tail'}>
-              {message}
+              {message.text}
             </Text>
           </View>
         </View>

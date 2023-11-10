@@ -81,7 +81,6 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
       <View style={styles.renameView}>
         <TextInput
           style={[styles.textInput, { borderWidth: 2 }, focused && { ...Inputs.inputSelected }]}
-          selectionColor={Inputs.inputSelected.borderColor}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           onChangeText={onChangeText}

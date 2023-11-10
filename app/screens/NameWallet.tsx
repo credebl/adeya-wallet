@@ -1,4 +1,3 @@
-import { useAgent } from '@aries-framework/react-hooks'
 import { useNavigation } from '@react-navigation/core'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,6 +12,7 @@ import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { Screens } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { generateRandomWalletName } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
@@ -32,7 +32,7 @@ const NameWallet: React.FC = () => {
   const { ColorPallet, TextTheme, Assets } = useTheme()
   const navigation = useNavigation()
   const [store, dispatch] = useStore()
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   const [walletName, setWalletName] = useState(store.preferences.walletName ?? generateRandomWalletName())
   const onBoardingComplete =
     store.onboarding.didCompleteTutorial &&

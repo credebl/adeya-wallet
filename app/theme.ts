@@ -10,6 +10,9 @@ import ContactBook from './assets/img/contact-book.svg'
 import CredentialDeclined from './assets/img/credential-declined.svg'
 import DeleteNotification from './assets/img/delete-notification.svg'
 import EmptyWallet from './assets/img/empty-wallet.svg'
+import ExploreIcon from './assets/img/explore-icon.svg'
+import IconInfoSentDark from './assets/img/icon-info-sent-dark.svg'
+import IconProofRequestDark from './assets/img/icon-proof-request-dark.svg'
 import Logo from './assets/img/logo-with-text.svg'
 import ProofRequestDeclined from './assets/img/proof-declined.svg'
 
@@ -24,6 +27,9 @@ export interface ISVGAssets {
   proofRequestDeclined: React.FC<SvgProps>
   arrow: React.FC<SvgProps>
   BackupSuccess: React.FC<SvgProps>
+  iconProofRequestDark: React.FC<SvgProps>
+  IconInfoSentDark: React.FC<SvgProps>
+  ExploreIcon: React.FC<SvgProps>
 }
 
 export interface IFontAttributes {
@@ -99,6 +105,9 @@ export interface IBrandColors {
   tabBarInactive: string
   unorderedList: string
   unorderedListModal: string
+  modalOrgBackground: string
+  highlightedEclipse: string
+  tabsearchBackground: string
 }
 
 export interface ISemanticColors {
@@ -218,6 +227,9 @@ const BrandColors: IBrandColors = {
   headerText: GrayscaleColors.white,
   buttonText: GrayscaleColors.white,
   tabBarInactive: GrayscaleColors.white,
+  modalOrgBackground: '#E1EAFF',
+  highlightedEclipse: '#012048',
+  tabsearchBackground: '#F4F4F4',
 }
 export const ColorPallet: IColorPallet = {
   brand: BrandColors,
@@ -750,7 +762,6 @@ export const OnboardingTheme = {
   headerTintColor: ColorPallet.grayscale.white,
   headerText: {
     ...TextTheme.headingTwo,
-    // color: ColorPallet.notification.infoText,
     color: '#1F4EAD',
   },
   bodyText: {
@@ -831,6 +842,9 @@ export const Assets = {
     proofRequestDeclined: ProofRequestDeclined,
     arrow: Arrow,
     BackupSuccess: BackupSuccess,
+    iconProofRequestDark: IconProofRequestDark,
+    IconInfoSentDark: IconInfoSentDark,
+    ExploreIcon: ExploreIcon,
   },
   img: {
     logoPrimary: {
