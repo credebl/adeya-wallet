@@ -1,3 +1,5 @@
+import { CaptureBaseAttributeType } from '@hyperledger/aries-oca'
+import { Attribute, Field } from '@hyperledger/aries-oca/build/legacy'
 import startCase from 'lodash.startcase'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -5,8 +7,6 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import { hiddenFieldValue } from '../../constants'
 import { useTheme } from '../../contexts/theme'
-import { BaseType } from '../../types/oca'
-import { Attribute, Field } from '../../types/record'
 import { isDataUrl } from '../../utils/helpers'
 import { testIdWithKey } from '../../utils/testable'
 
@@ -45,7 +45,7 @@ export const AttributeValue: React.FC<AttributeValueParams> = ({ field, style, s
   ) {
     return <RecordBinaryField attributeValue={field.value as string} style={style} shown={shown} />
   }
-  if (field.type == BaseType.DateInt) {
+  if (field.type == CaptureBaseAttributeType.DateInt || field.type == CaptureBaseAttributeType.DateTime) {
     return <RecordDateIntField field={field} style={style} shown={shown} />
   }
   return (
@@ -84,7 +84,7 @@ const RecordField: React.FC<RecordFieldProps> = ({
     valueContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      paddingTop: 10,
+      paddingTop: 5,
     },
     valueText: {
       ...ListItems.recordAttributeText,
@@ -94,33 +94,37 @@ const RecordField: React.FC<RecordFieldProps> = ({
 
   return (
     <View style={styles.container}>
-      {fieldLabel ? (
-        fieldLabel(field)
-      ) : (
-        <Text style={[ListItems.recordAttributeLabel, { fontWeight: 'bold' }]} testID={testIdWithKey('AttributeName')}>
-          {field.label ?? startCase(field.name || '')}
-        </Text>
-      )}
+      <View style={styles.valueContainer}>
+        {fieldLabel ? (
+          fieldLabel(field)
+        ) : (
+          <Text
+            style={[ListItems.recordAttributeLabel, { fontWeight: 'bold' }]}
+            testID={testIdWithKey('AttributeName')}>
+            {field.label ?? startCase(field.name || '')}
+          </Text>
+        )}
+
+        {hideFieldValue ? (
+          <TouchableOpacity
+            accessible={true}
+            accessibilityLabel={shown ? t('Record.Hide') : t('Record.Show')}
+            testID={testIdWithKey('ShowHide')}
+            activeOpacity={1}
+            onPress={onToggleViewPressed}
+            style={styles.link}>
+            <Text style={ListItems.recordLink}>{shown ? t('Record.Hide') : t('Record.Show')}</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
+
       <View style={styles.valueContainer}>
         {fieldValue ? (
           fieldValue(field)
         ) : (
-          <>
-            <View style={styles.valueText}>
-              <AttributeValue field={field as Attribute} shown={shown} />
-            </View>
-            {hideFieldValue ? (
-              <TouchableOpacity
-                accessible={true}
-                accessibilityLabel={shown ? t('Record.Hide') : t('Record.Show')}
-                testID={testIdWithKey('ShowHide')}
-                activeOpacity={1}
-                onPress={onToggleViewPressed}
-                style={styles.link}>
-                <Text style={ListItems.recordLink}>{shown ? t('Record.Hide') : t('Record.Show')}</Text>
-              </TouchableOpacity>
-            ) : null}
-          </>
+          <View style={styles.valueText}>
+            <AttributeValue field={field as Attribute} shown={shown} />
+          </View>
         )}
       </View>
       {<View style={[styles.border, hideBottomBorder && { borderBottomWidth: 0 }]} />}

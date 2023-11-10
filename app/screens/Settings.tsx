@@ -1,5 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StackScreenProps } from '@react-navigation/stack'
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   ScrollView,
@@ -9,6 +10,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  Switch,
 } from 'react-native'
 import { getVersion, getBuildNumber } from 'react-native-device-info'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -22,6 +24,8 @@ import { Locales } from '../localization'
 import { GenericFn } from '../types/fn'
 import { Screens, SettingStackParams, Stacks } from '../types/navigators'
 import { SettingSection } from '../types/settings'
+import * as PushNotificationHelper from '../utils/PushNotificationHelper'
+import { useAppAgent } from '../utils/agent'
 import { testIdWithKey } from '../utils/testable'
 
 type SettingsProps = StackScreenProps<SettingStackParams>
@@ -31,9 +35,12 @@ const touchCountToEnableBiometrics = 9
 const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   const { t, i18n } = useTranslation()
   const [store, dispatch] = useStore()
+  const { agent } = useAppAgent()
   const developerOptionCount = useRef(0)
   const { SettingsTheme, TextTheme, ColorPallet, Assets } = useTheme()
   const { settings, enableTours } = useConfiguration()
+  const [enablePushNotifications, setEnablePushNotifications] = useState(false)
+  const [pushNotificationCapable, setPushNotificationCapable] = useState(true)
 
   const languages = [{ id: Locales.en, value: t('Language.English') }]
 
@@ -78,6 +85,27 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
       alignItems: 'center',
     },
   })
+  const getPushNotificationCapable = async () => {
+    if (!agent) return
+    if ((await AsyncStorage.getItem('MEDIATOR_NOTIFICATION_SUPPORT')) === 'true') setPushNotificationCapable(true)
+    else setPushNotificationCapable(false)
+  }
+
+  const initializePushNotificationsToggle = async () => {
+    setEnablePushNotifications(await PushNotificationHelper.isEnabled())
+  }
+  const toggleDevPushNotificationsSwitch = async () => {
+    if (!pushNotificationCapable || !agent) return
+    await PushNotificationHelper.setDeviceInfo(agent, enablePushNotifications)
+    setEnablePushNotifications(!enablePushNotifications)
+  }
+
+  useEffect(() => {
+    if (agent) {
+      getPushNotificationCapable()
+      initializePushNotificationsToggle()
+    }
+  }, [agent])
 
   const currentLanguage = languages.find(l => l.id === i18n.language)?.value
 
@@ -171,6 +199,25 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
           testID: testIdWithKey('Language'),
           onPress: () => navigation.navigate(Screens.Language),
         },
+        {
+          title:
+            t('PushNotifications.PushNotifications') +
+            (pushNotificationCapable ? '' : t('PushNotifications.NotAvailable')),
+          value: (
+            <Switch
+              trackColor={{ false: ColorPallet.grayscale.lightGrey, true: ColorPallet.brand.primaryDisabled }}
+              thumbColor={enablePushNotifications ? ColorPallet.brand.primary : ColorPallet.grayscale.mediumGrey}
+              ios_backgroundColor={ColorPallet.grayscale.lightGrey}
+              onValueChange={toggleDevPushNotificationsSwitch}
+              value={enablePushNotifications}
+            />
+          ),
+          accessibilityLabel:
+            t('PushNotifications.PushNotifications') +
+            (pushNotificationCapable ? '' : t('PushNotifications.NotAvailable')),
+          testID: testIdWithKey('PushNotificationsSwitch'),
+          onPress: () => {},
+        },
       ],
     },
     {
@@ -249,6 +296,17 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
         },
       ],
     })
+
+    const section = settingsSections.find(item => item.header.title === t('Settings.AppSettings'))
+    if (section) {
+      section.data.splice(3, 0, {
+        title: t('Settings.DataRetention'),
+        value: store.preferences.useDataRetention ? t('Global.On') : t('Global.Off'),
+        accessibilityLabel: t('Settings.DataRetention'),
+        testID: testIdWithKey('DataRetention'),
+        onPress: () => navigation.navigate(Screens.DataRetention),
+      })
+    }
   }
 
   if (store.preferences.useConnectionInviterCapability) {

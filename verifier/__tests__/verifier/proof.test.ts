@@ -1,5 +1,5 @@
 import { getProofIdentifiers, groupSharedProofDataByCredential, parseAnonCredsProof } from '../../utils/proof'
-import { AnonCredsProof } from '@aries-framework/anoncreds'
+import { AnonCredsProof } from '@adeya/ssi'
 const proof_request = {
   name: 'proof-request',
   version: '1.0',

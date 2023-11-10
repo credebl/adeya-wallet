@@ -1,4 +1,5 @@
 import {
+  useConnectionById,
   AnonCredsCredentialsForProofRequest,
   AnonCredsProofFormat,
   AnonCredsProofFormatService,
@@ -7,35 +8,42 @@ import {
   AnonCredsRequestedPredicateMatch,
   LegacyIndyProofFormat,
   LegacyIndyProofFormatService,
-} from '@aries-framework/anoncreds'
-import {
-  Agent,
   ConnectionRecord,
   CredentialExchangeRecord,
   CredentialState,
   BasicMessageRecord,
   ProofExchangeRecord,
   ProofState,
-} from '@aries-framework/core'
-import { BasicMessageRole } from '@aries-framework/core/build/modules/basic-messages/BasicMessageRole'
-import {
+  Buffer,
+  BasicMessageRole,
   GetCredentialsForRequestReturn,
   ProofFormatDataMessagePayload,
-} from '@aries-framework/core/build/modules/proofs/protocol/ProofProtocolOptions'
-import { useConnectionById } from '@aries-framework/react-hooks'
-import { Buffer } from 'buffer'
+  acceptInvitationFromUrl,
+  createInvitation,
+  AnonCredsRequestedPredicate,
+  getProofFormatData,
+  getCredentialsForProofRequest,
+  AnonCredsPredicateType,
+  AnonCredsRequestedAttribute,
+} from '@adeya/ssi'
+import { CaptureBaseAttributeType } from '@hyperledger/aries-oca'
+import { TFunction } from 'i18next'
 import moment from 'moment'
 import queryString from 'query-string'
-import { Dispatch, ReactNode, SetStateAction } from 'react'
+import { ReactNode } from 'react'
+import { DeviceEventEmitter } from 'react-native'
 import { uniqueNamesGenerator, Config, names } from 'unique-names-generator'
 
-import { domain } from '../constants'
+import { EventTypes, domain } from '../constants'
 import { i18n } from '../localization/index'
 import { Role } from '../types/chat'
-import { Attribute, Predicate, ProofCredentialAttributes, ProofCredentialPredicates } from '../types/record'
+import { BifoldError } from '../types/error'
+import { ProofCredentialAttributes, ProofCredentialItems, ProofCredentialPredicates } from '../types/proof-items'
+import { Attribute, Predicate } from '../types/record'
 import { ChildFn } from '../types/tour'
 
 export { parsedCredDefNameFromCredential } from './cred-def'
+import { AdeyaAgent } from './agent'
 import { parseCredDefFromId } from './cred-def'
 
 export { parsedCredDefName } from './cred-def'
@@ -99,59 +107,164 @@ export const hashToRGBA = (hash: number) => {
   return color
 }
 
-export function formatTime(time: Date, params?: { long?: boolean; format?: string }): string {
-  const getMonthKey = 'MMMM'
-  const momentTime = moment(time)
-  const monthKey = momentTime.format(getMonthKey)
-  const customMonthFormatRe = /M+/
-  const long = params?.long
-  const format = params?.format
-  const shortDateFormatMaskLength = 3
-
-  let formatString = i18n.t('Date.ShortFormat')
-  if (format) {
-    formatString = format
-  } else {
-    if (long) {
-      formatString = i18n.t('Date.LongFormat')
-    }
-
-    // if translation fails
-    if (formatString === 'Date.ShortFormat' || formatString === 'Date.LongFormat' || formatString === undefined) {
-      formatString = 'MMM D, YYYY'
-    }
+function getFormattedTimeForChatFormat(
+  chatFormat: boolean,
+  lessThanAMinuteAgo: boolean,
+  lessThanAnHourAgo: boolean,
+  sameDay: boolean,
+  momentTime: moment.Moment,
+  millisecondsAgo: number,
+  hoursFormat: string,
+): string | null {
+  if (!chatFormat) return null
+  if (lessThanAMinuteAgo) {
+    return i18n.t('Date.JustNow')
   }
-  const customMonthFormat = formatString?.match(customMonthFormatRe)?.[0]
+  if (lessThanAnHourAgo) {
+    const minutesAgo = Math.floor(millisecondsAgo / 1000 / 60)
+    return minutesAgo === 1 ? `1 ${i18n.t('Date.MinuteAgo')}` : `${minutesAgo} ${i18n.t('Date.MinutesAgo')}`
+  }
+  if (sameDay) {
+    return momentTime.format(hoursFormat)
+  }
+  return null
+}
 
-  let formattedTime = momentTime.format(formatString)
+function getFormattedTimeForSameDay(
+  sameDay: boolean,
+  trim: boolean,
+  momentTime: moment.Moment,
+  hoursFormat: string,
+): string | null {
+  if (sameDay && trim) {
+    return momentTime.format(hoursFormat)
+  }
+  return null
+}
 
-  if (customMonthFormat) {
-    let monthReplacement = ''
-    const monthReplacementKey = momentTime.format(customMonthFormat)
-    if (customMonthFormat.length === shortDateFormatMaskLength) {
-      // then we know we're dealing with a short date format: 'MMM'
-      monthReplacement = i18n.t(`Date.MonthShort.${monthKey}`)
-    } else if (customMonthFormat.length > shortDateFormatMaskLength) {
-      // then we know we're working with a long date format: 'MMMM'
-      monthReplacement = i18n.t(`Date.MonthLong.${monthKey}`)
-    }
-    // if translation doesn't work
-    if (monthReplacement === `Date.MonthLong.${monthKey}` || monthReplacement === `Date.MonthShort.${monthKey}`) {
-      monthReplacement = monthReplacementKey
-    }
+function getFormattedTimeForFormat(format: string | undefined, momentTime: moment.Moment): string | null {
+  if (format) {
+    return momentTime.format(format)
+  }
+  return null
+}
 
-    if (monthReplacement) {
-      formattedTime = formattedTime.replace(monthReplacementKey, monthReplacement)
-    }
+function getFormattedTimeForDefault(
+  shortMonth: boolean | undefined,
+  momentTime: moment.Moment,
+  sameYear: boolean,
+  trim: boolean,
+  isNonEnglish: boolean,
+  includeHour: boolean,
+  hoursFormat: string,
+): string {
+  let formatString = i18n.t('Date.ShortFormat')
+  if (!shortMonth) {
+    formatString = i18n.t('Date.LongFormat')
+  }
+  if (formatString === 'Date.ShortFormat' || formatString === 'Date.LongFormat' || formatString === undefined) {
+    formatString = 'MMM D'
+  }
+  let formattedTime =
+    trim && sameYear
+      ? momentTime.format(formatString)
+      : isNonEnglish
+      ? `${momentTime.format(formatString)} ${momentTime.format('YYYY')}`
+      : `${momentTime.format(formatString)}, ${momentTime.format('YYYY')}`
+  if (includeHour) {
+    formattedTime = `${formattedTime}, ${momentTime.format(hoursFormat)}`
   }
   return formattedTime
 }
 
-export function formatIfDate(
-  format: string | undefined,
-  value: string | number | null,
-  setter: Dispatch<SetStateAction<string | number | null>>,
-) {
+function getFormattedTimeWithCustomMonth(
+  customMonthFormat: string | undefined,
+  momentTime: moment.Moment,
+  monthKey: string,
+  formattedTime: string,
+): string {
+  if (!customMonthFormat) return formattedTime
+  let monthReplacement = ''
+  const monthReplacementKey = momentTime.format(customMonthFormat)
+  if (customMonthFormat.length === 3) {
+    monthReplacement = i18n.t(`Date.MonthShort.${monthKey}`)
+  } else if (customMonthFormat.length > 3) {
+    monthReplacement = i18n.t(`Date.MonthLong.${monthKey}`)
+  }
+  if (monthReplacement === `Date.MonthLong.${monthKey}` || monthReplacement === `Date.MonthShort.${monthKey}`) {
+    monthReplacement = monthReplacementKey
+  }
+  if (monthReplacement) {
+    formattedTime = formattedTime.replace(monthReplacementKey, monthReplacement)
+  }
+  return formattedTime
+}
+
+/**
+ *
+ * @param time
+ * @param params see below
+ * shortMonth: whether to use Jun in place of June, Mar in place of March for example (overridden by `format`)
+ * format: an optional custom moment format string to create the formatted date from
+ * includeHour: whether to add the hour and minute and am/pm. eg 9:32 pm (overridden by `chatFormat` and `trim`)
+ * chatFormat: whether to style the date to appear like a chat message timestamp eg. '7 minutes ago' or 'Just now'
+ * trim: if true, if it's the same day the date will be trimmed to just the hour, if it's the same year then the year will be trimmed from the date
+ * eg. if the current year is 2023, February 12, 2023 will be trimmed to February 12
+ * @returns formatted time string
+ */
+export function formatTime(
+  time: Date,
+  params?: { shortMonth?: boolean; format?: string; includeHour?: boolean; chatFormat?: boolean; trim?: boolean },
+): string {
+  const momentTime = moment(time)
+  const monthKey = momentTime.format('MMMM')
+  const shortMonth = params?.shortMonth
+  const format = params?.format
+  const includeHour = Boolean(params?.includeHour)
+  const chatFormat = Boolean(params?.chatFormat)
+  const trim = Boolean(params?.trim)
+  const millisecondsAgo = moment().diff(momentTime)
+  const lessThanAMinuteAgo = millisecondsAgo / 1000 / 60 < 1
+  const lessThanAnHourAgo = millisecondsAgo / 1000 / 60 / 60 < 1
+  const now = new Date()
+  const sameYear = time.getFullYear() === now.getFullYear()
+  const sameDay = time.getDate() === now.getDate() && time.getMonth() === now.getMonth() && sameYear
+  const isPortuguese = i18n.resolvedLanguage === 'pt-BR'
+  const isNonEnglish = i18n.resolvedLanguage === 'fr' || isPortuguese
+  const hoursFormat = isPortuguese ? 'HH:mm' : 'h:mm a'
+
+  let formattedTime = getFormattedTimeForChatFormat(
+    chatFormat,
+    lessThanAMinuteAgo,
+    lessThanAnHourAgo,
+    sameDay,
+    momentTime,
+    millisecondsAgo,
+    hoursFormat,
+  )
+  if (formattedTime) return formattedTime
+
+  formattedTime = getFormattedTimeForSameDay(sameDay, trim, momentTime, hoursFormat)
+  if (formattedTime) return formattedTime
+
+  formattedTime = getFormattedTimeForFormat(format, momentTime)
+  if (formattedTime) return formattedTime
+
+  formattedTime = getFormattedTimeForDefault(
+    shortMonth,
+    momentTime,
+    sameYear,
+    trim,
+    isNonEnglish,
+    includeHour,
+    hoursFormat,
+  )
+
+  const customMonthFormat = formattedTime?.match(/M+/)?.[0]
+  return getFormattedTimeWithCustomMonth(customMonthFormat, momentTime, monthKey, formattedTime)
+}
+
+export function formatIfDate(format: string | undefined, value: string | number | null) {
   const potentialDate = value ? value.toString() : null
   if (format === 'YYYYMMDD' && potentialDate && potentialDate.length === format.length) {
     const year = potentialDate.substring(0, 4)
@@ -160,9 +273,10 @@ export function formatIfDate(
     // NOTE: JavaScript counts months from 0 to 11: January = 0, December = 11.
     const date = new Date(Number(year), Number(month) - 1, Number(day))
     if (!isNaN(date.getDate())) {
-      setter(formatTime(date))
+      return formatTime(date, { shortMonth: true })
     }
   }
+  return value
 }
 
 /**
@@ -174,9 +288,6 @@ export function connectionRecordFromId(connectionId?: string): ConnectionRecord 
   }
 }
 
-/**
- * @deprecated The function should not be used
- */
 export function getConnectionName(connection: ConnectionRecord | void): string | void {
   if (!connection) {
     return
@@ -231,7 +342,7 @@ export function firstValidCredential(
   return first
 }
 
-export const getOobDeepLink = async (url: string, agent: Agent | undefined): Promise<any> => {
+export const getOobDeepLink = async (url: string, agent: AdeyaAgent | undefined): Promise<any> => {
   const queryParams = queryString.parseUrl(url).query
   const b64Message = queryParams['d_m'] ?? queryParams['c_i']
   const rawmessage = Buffer.from(b64Message as string, 'base64').toString()
@@ -275,6 +386,110 @@ export const isDataUrl = (value: string | number | null) => {
   return typeof value === 'string' && value.startsWith('data:image/')
 }
 
+export type Fields = Record<string, AnonCredsRequestedAttributeMatch[] | AnonCredsRequestedPredicateMatch[]>
+
+/**
+ * Retrieve current credentials info filtered by `credentialDefinitionId` if given.
+ * @param credDefId Credential Definition Id
+ * @returns Array of `AnonCredsCredentialInfo`
+ */
+export const getCredentialInfo = (credId: string, fields: Fields): any[] => {
+  const credentialInfo: any[] = []
+
+  Object.keys(fields).forEach(proofKey => {
+    credentialInfo.push(...fields[proofKey].map(attr => attr.credentialInfo))
+  })
+
+  return !credId ? credentialInfo : credentialInfo.filter(cred => cred.credentialId === credId)
+}
+
+/**
+ * Evaluate if given attribute value satisfies the predicate.
+ * @param attribute Credential attribute value
+ * @param pValue Predicate value
+ * @param pType Predicate type ({@link AnonCredsPredicateType})
+ * @returns `true`if predicate is satisfied, otherwise `false`
+ */
+const evaluateOperation = (attribute: number, pValue: number, pType: AnonCredsPredicateType): boolean => {
+  if (pType === '>=') {
+    return attribute >= pValue
+  }
+
+  if (pType === '>') {
+    return attribute > pValue
+  }
+
+  if (pType === '<=') {
+    return attribute <= pValue
+  }
+  if (pType === '<') {
+    return attribute < pValue
+  }
+
+  return false
+}
+
+/**
+ * Given proof credential items, evaluate and return its predicates, setting `satisfied` property.
+ * @param proofCredentialsItems
+ * @returns Array of evaluated predicates
+ */
+export const evaluatePredicates =
+  (fields: Fields, credId?: string) =>
+  (proofCredentialItems: ProofCredentialItems): Predicate[] => {
+    const predicates = proofCredentialItems.predicates
+    if (!predicates || predicates.length == 0) {
+      return []
+    }
+
+    if ((credId && credId != proofCredentialItems.credId) || !proofCredentialItems.credId) {
+      return []
+    }
+
+    const credentialAttributes = getCredentialInfo(proofCredentialItems.credId, fields).map(ci => ci.attributes)
+
+    return predicates.map((predicate: Predicate) => {
+      const { pType, pValue, name: field } = predicate
+      let satisfied = false
+
+      if (field) {
+        const attribute = credentialAttributes.find(attr => attr[field] != undefined)?.[field]
+
+        if (attribute && pValue) {
+          satisfied = evaluateOperation(Number(attribute), Number(pValue), pType as AnonCredsPredicateType)
+        }
+      }
+
+      return { ...predicate, satisfied }
+    })
+  }
+
+const addMissingDisplayAttributes = (attrReq: AnonCredsRequestedAttribute) => {
+  const credName = credNameFromRestriction(attrReq.restrictions)
+  //there is no credId in this context so use credName as a placeholder
+  const processedAttributes: ProofCredentialAttributes = {
+    credExchangeRecord: undefined,
+    altCredentials: [credName],
+    credId: credName,
+    schemaId: undefined,
+    credDefId: undefined,
+    credName: credName,
+    attributes: [] as Attribute[],
+  }
+  const { name, names } = attrReq
+  for (const attributeName of [...(names ?? (name && [name]) ?? [])]) {
+    processedAttributes.attributes?.push(
+      new Attribute({
+        revoked: false,
+        credentialId: credName,
+        name: attributeName,
+        value: '',
+      }),
+    )
+  }
+  return processedAttributes
+}
+
 export const processProofAttributes = (
   request?: ProofFormatDataMessagePayload<[LegacyIndyProofFormat, AnonCredsProofFormat], 'request'> | undefined,
   credentials?: GetCredentialsForRequestReturn<[LegacyIndyProofFormatService, AnonCredsProofFormatService]>,
@@ -286,58 +501,127 @@ export const processProofAttributes = (
   const retrievedCredentialAttributes =
     credentials?.proofFormats?.indy?.attributes ?? credentials?.proofFormats?.anoncreds?.attributes
 
+  // non_revoked interval can sometimes be top level
+  const requestNonRevoked = request?.indy?.non_revoked ?? request?.anoncreds?.non_revoked
+
   if (!requestedProofAttributes || !retrievedCredentialAttributes) {
     return {}
   }
-
   for (const key of Object.keys(retrievedCredentialAttributes)) {
-    // The shift operation modifies the original input array, therefore make a copy
-    const credential = [...(retrievedCredentialAttributes[key] ?? [])].sort(credentialSortFn).shift()
-    const credNameRestriction = credNameFromRestriction(requestedProofAttributes[key]?.restrictions)
+    const altCredentials = [...(retrievedCredentialAttributes[key] ?? [])]
+      .sort(credentialSortFn)
+      .map(cred => cred.credentialId)
 
-    let credName = credNameRestriction ?? key
-    if (credential?.credentialInfo?.credentialDefinitionId || credential?.credentialInfo?.schemaId) {
-      credName = parseCredDefFromId(
-        credential?.credentialInfo?.credentialDefinitionId,
-        credential?.credentialInfo?.schemaId,
-      )
-    }
-    let revoked = false
-    let credExchangeRecord = undefined
-    if (credential) {
-      credExchangeRecord = credentialRecords?.filter(
-        record => record.credentials[0]?.credentialRecordId === credential.credentialId,
-      )[0]
-      revoked = credExchangeRecord?.revocationNotification !== undefined
-    }
-    const { name, names } = requestedProofAttributes[key]
+    const credentialList = [...(retrievedCredentialAttributes[key] ?? [])].sort(credentialSortFn)
 
-    for (const attributeName of [...(names ?? (name && [name]) ?? [])]) {
-      if (!processedAttributes[credName]) {
-        // init processedAttributes object
-        processedAttributes[credName] = {
-          credExchangeRecord,
-          schemaId: credential?.credentialInfo?.schemaId,
-          credDefId: credential?.credentialInfo?.credentialDefinitionId,
-          credName,
-          attributes: [],
-        }
+    const { name, names, non_revoked } = requestedProofAttributes[key]
+
+    if (credentialList.length <= 0) {
+      const missingAttributes = addMissingDisplayAttributes(requestedProofAttributes[key])
+      if (!processedAttributes[missingAttributes.credName]) {
+        processedAttributes[missingAttributes.credName] = missingAttributes
+      } else {
+        processedAttributes[missingAttributes.credName].attributes?.push(...(missingAttributes.attributes ?? []))
       }
+    }
 
-      let attributeValue = ''
+    //iterate over all credentials that satisfy the proof
+    for (const credential of credentialList) {
+      let credName = key
+      if (credential?.credentialInfo?.credentialDefinitionId || credential?.credentialInfo?.schemaId) {
+        credName = parseCredDefFromId(
+          credential?.credentialInfo?.credentialDefinitionId,
+          credential?.credentialInfo?.schemaId,
+        )
+      }
+      let revoked = false
+      let credExchangeRecord = undefined
       if (credential) {
-        attributeValue = credential.credentialInfo.attributes[attributeName]
+        credExchangeRecord = credentialRecords?.find(record =>
+          record.credentials.map(cred => cred.credentialRecordId).includes(credential.credentialId),
+        )
+        revoked = credExchangeRecord?.revocationNotification !== undefined
+      } else {
+        continue
       }
-      processedAttributes[credName].attributes?.push(
-        new Attribute({
-          revoked,
-          name: attributeName,
-          value: attributeValue,
-        }),
-      )
+      for (const attributeName of [...(names ?? (name && [name]) ?? [])]) {
+        if (!processedAttributes[credential?.credentialId]) {
+          // init processedAttributes object
+          processedAttributes[credential.credentialId] = {
+            credExchangeRecord,
+            altCredentials,
+            credId: credential?.credentialId,
+            schemaId: credential?.credentialInfo?.schemaId,
+            credDefId: credential?.credentialInfo?.credentialDefinitionId,
+            credName,
+            attributes: [],
+          }
+        }
+
+        let attributeValue = ''
+        if (credential) {
+          attributeValue = credential.credentialInfo.attributes[attributeName]
+        }
+        processedAttributes[credential.credentialId].attributes?.push(
+          new Attribute({
+            ...requestedProofAttributes[key],
+            revoked,
+            credentialId: credential.credentialId,
+            name: attributeName,
+            value: attributeValue,
+            nonRevoked: requestNonRevoked ?? non_revoked,
+          }),
+        )
+      }
     }
   }
   return processedAttributes
+}
+
+export const mergeAttributesAndPredicates = (
+  attributes: { [key: string]: ProofCredentialAttributes },
+  predicates: { [key: string]: ProofCredentialPredicates },
+) => {
+  const merged: { [key: string]: ProofCredentialAttributes & ProofCredentialPredicates } = { ...attributes }
+  for (const [key, predicate] of Object.entries(predicates)) {
+    const existingEntry = merged[key]
+    if (existingEntry) {
+      const mergedAltCreds = existingEntry?.altCredentials?.filter(
+        (credId: string) => predicate?.altCredentials?.includes(credId),
+      )
+      merged[key] = { ...existingEntry, ...predicate }
+      merged[key].altCredentials = mergedAltCreds
+    } else {
+      merged[key] = predicate
+    }
+  }
+  return merged
+}
+
+const addMissingDisplayPredicates = (predReq: AnonCredsRequestedPredicate) => {
+  const credName = credNameFromRestriction(predReq.restrictions)
+  //there is no credId in this context so use credName as a placeholder
+  const processedPredicates: ProofCredentialPredicates = {
+    credExchangeRecord: undefined,
+    altCredentials: [credName],
+    credId: credName,
+    schemaId: undefined,
+    credDefId: undefined,
+    credName: credName,
+    predicates: [] as Predicate[],
+  }
+  const { name, p_type: pType, p_value: pValue } = predReq
+
+  processedPredicates.predicates?.push(
+    new Predicate({
+      revoked: false,
+      credentialId: credName,
+      name: name,
+      pValue,
+      pType,
+    }),
+  )
+  return processedPredicates
 }
 
 export const processProofPredicates = (
@@ -346,7 +630,6 @@ export const processProofPredicates = (
   credentialRecords?: CredentialExchangeRecord[],
 ): { [key: string]: ProofCredentialPredicates } => {
   const processedPredicates = {} as { [key: string]: ProofCredentialPredicates }
-
   const requestedProofPredicates = request?.anoncreds?.requested_predicates ?? request?.indy?.requested_predicates
   const retrievedCredentialPredicates =
     credentials?.proofFormats?.anoncreds?.predicates ?? credentials?.proofFormats?.indy?.predicates
@@ -355,68 +638,170 @@ export const processProofPredicates = (
     return {}
   }
 
-  for (const key of Object.keys(requestedProofPredicates)) {
-    // The shift operation modifies the original input array, therefore make a copy
-    const credential = [...(retrievedCredentialPredicates[key] ?? [])].sort(credentialSortFn).shift()
-    let credExchangeRecord = undefined
-    if (credential) {
-      credExchangeRecord = credentialRecords?.filter(
-        record => record.credentials[0]?.credentialRecordId === credential.credentialId,
-      )[0]
-    }
-    const { credentialId, credentialDefinitionId, schemaId } = { ...credential, ...credential?.credentialInfo }
-    const revoked =
-      credentialRecords?.filter(record => record.credentials[0]?.credentialRecordId === credentialId)[0]
-        ?.revocationNotification !== undefined
-    const { name, p_type: pType, p_value: pValue } = requestedProofPredicates[key]
+  // non_revoked interval can sometimes be top level
+  const requestNonRevoked = request?.indy?.non_revoked ?? request?.anoncreds?.non_revoked
 
-    const credNameRestriction = credNameFromRestriction(requestedProofPredicates[key]?.restrictions)
+  for (const key of Object.keys(retrievedCredentialPredicates)) {
+    const altCredentials = [...(retrievedCredentialPredicates[key] ?? [])]
+      .sort(credentialSortFn)
+      .map(cred => cred.credentialId)
 
-    let credName = credNameRestriction ?? key
-    if (credential?.credentialInfo?.credentialDefinitionId || credential?.credentialInfo?.schemaId) {
-      credName = parseCredDefFromId(
-        credential?.credentialInfo?.credentialDefinitionId,
-        credential?.credentialInfo?.schemaId,
-      )
-    }
-
-    if (!processedPredicates[credName]) {
-      processedPredicates[credName] = {
-        credExchangeRecord,
-        schemaId,
-        credDefId: credentialDefinitionId,
-        credName: credName,
-        predicates: [],
+    const credentialList = [...(retrievedCredentialPredicates[key] ?? [])].sort(credentialSortFn)
+    const { name, p_type: pType, p_value: pValue, non_revoked } = requestedProofPredicates[key]
+    if (credentialList.length <= 0) {
+      const missingPredicates = addMissingDisplayPredicates(requestedProofPredicates[key])
+      if (!processedPredicates[missingPredicates.credName]) {
+        processedPredicates[missingPredicates.credName] = missingPredicates
+      } else {
+        processedPredicates[missingPredicates.credName].predicates?.push(...(missingPredicates.predicates ?? []))
       }
     }
 
-    processedPredicates[credName].predicates?.push(
-      new Predicate({
-        credentialId,
-        name,
-        revoked,
-        pValue,
-        pType,
-      }),
-    )
+    for (const credential of credentialList) {
+      let revoked = false
+      let credExchangeRecord = undefined
+      if (credential) {
+        credExchangeRecord = credentialRecords?.find(record =>
+          record.credentials.map(cred => cred.credentialRecordId).includes(credential.credentialId),
+        )
+        revoked = credExchangeRecord?.revocationNotification !== undefined
+      } else {
+        continue
+      }
+      const { credentialDefinitionId, schemaId } = { ...credential, ...credential?.credentialInfo }
+
+      const credNameRestriction = credNameFromRestriction(requestedProofPredicates[key]?.restrictions)
+
+      let credName = credNameRestriction ?? key
+      if (credential?.credentialInfo?.credentialDefinitionId || credential?.credentialInfo?.schemaId) {
+        credName = parseCredDefFromId(
+          credential?.credentialInfo?.credentialDefinitionId,
+          credential?.credentialInfo?.schemaId,
+        )
+      }
+
+      if (!processedPredicates[credential.credentialId]) {
+        processedPredicates[credential.credentialId] = {
+          altCredentials,
+          credExchangeRecord,
+          credId: credential.credentialId,
+          schemaId,
+          credDefId: credentialDefinitionId,
+          credName: credName,
+          predicates: [],
+        }
+      }
+
+      processedPredicates[credential.credentialId].predicates?.push(
+        new Predicate({
+          ...requestedProofPredicates[key],
+          credentialId: credential?.credentialId,
+          name,
+          revoked,
+          pValue,
+          pType,
+          nonRevoked: requestNonRevoked ?? non_revoked,
+        }),
+      )
+    }
   }
   return processedPredicates
 }
 
-export const mergeAttributesAndPredicates = (
-  attributes: { [key: string]: ProofCredentialAttributes },
-  predicates: { [key: string]: ProofCredentialPredicates },
+export const retrieveCredentialsForProof = async (
+  agent: AdeyaAgent,
+  proof: ProofExchangeRecord,
+  fullCredentials: CredentialExchangeRecord[],
+  t: TFunction<'translation', undefined>,
 ) => {
-  const merged = { ...attributes }
-  for (const [key, predicate] of Object.entries(predicates)) {
-    const existingEntry = merged[key]
-    if (existingEntry) {
-      merged[key] = { ...existingEntry, ...predicate }
-    } else {
-      merged[key] = predicate
+  try {
+    const format = await getProofFormatData(agent, proof.id)
+    const hasAnonCreds = format.request?.anoncreds !== undefined
+    const hasIndy = format.request?.indy !== undefined
+    const credentials = await getCredentialsForProofRequest(agent, {
+      proofRecordId: proof.id,
+      proofFormats: {
+        // AFJ will try to use the format, even if the value is undefined (but the key is present)
+        // We should ignore the key, if the value is undefined. For now this is a workaround.
+        ...(hasIndy
+          ? {
+              indy: {
+                // Setting `filterByNonRevocationRequirements` to `false` returns all
+                // credentials even if they are revokable (and revoked). We need this to
+                // be able to show why a proof cannot be satisfied. Otherwise we can only
+                // show failure.
+                filterByNonRevocationRequirements: false,
+              },
+            }
+          : {}),
+
+        ...(hasAnonCreds
+          ? {
+              anoncreds: {
+                // Setting `filterByNonRevocationRequirements` to `false` returns all
+                // credentials even if they are revokable (and revoked). We need this to
+                // be able to show why a proof cannot be satisfied. Otherwise we can only
+                // show failure.
+                filterByNonRevocationRequirements: false,
+              },
+            }
+          : {}),
+      },
+    })
+    if (!credentials) {
+      throw new Error(t('ProofRequest.RequestedCredentialsCouldNotBeFound'))
     }
+
+    if (!format) {
+      throw new Error(t('ProofRequest.RequestedCredentialsCouldNotBeFound'))
+    }
+
+    if (!(format && credentials && fullCredentials)) {
+      return
+    }
+
+    const proofFormat = credentials.proofFormats.anoncreds ?? credentials.proofFormats.indy
+
+    const attributes = processProofAttributes(format.request, credentials, fullCredentials)
+    const predicates = processProofPredicates(format.request, credentials, fullCredentials)
+
+    const groupedProof = Object.values(mergeAttributesAndPredicates(attributes, predicates))
+    return { groupedProof: groupedProof, retrievedCredentials: proofFormat, fullCredentials }
+  } catch (err: unknown) {
+    const error = new BifoldError(t('Error.Title1043'), t('Error.Message1043'), (err as Error)?.message ?? err, 1043)
+    DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
   }
-  return merged
+}
+
+export const pTypeToText = (
+  item: Predicate,
+  t: TFunction<'translation', undefined>,
+  attributeTypes?: Record<string, string>,
+) => {
+  const itemCopy = { ...item }
+  const pTypeMap: { [key: string]: string | undefined } = {
+    '>=': t('ProofRequest.PredicateGe'),
+    '>': t('ProofRequest.PredicateGr'),
+    '<=': t('ProofRequest.PredicateLe'),
+    '<': t('ProofRequest.PredicateLs'),
+  }
+  const pTypeDateMap: { [key: string]: string | undefined } = {
+    '>=': t('ProofRequest.PredicateGeDate'),
+    '>': t('ProofRequest.PredicateGeDate'),
+    '<=': t('ProofRequest.PredicateLeDate'),
+    '<': t('ProofRequest.PredicateLeDate'),
+  }
+  const pTypeDateOffset: { [key: string]: number | undefined } = {
+    '>=': -1,
+    '<=': 1,
+  }
+  if (attributeTypes && attributeTypes[item.name ?? ''] == CaptureBaseAttributeType.DateTime) {
+    itemCopy.pType = pTypeDateMap[item.pType] ?? item.pType
+    itemCopy.pValue = parseInt(`${itemCopy.pValue}`) + (pTypeDateOffset[item.pType] ?? 0)
+  } else {
+    itemCopy.pType = pTypeMap[item.pType] ?? item.pType
+  }
+  return itemCopy
 }
 
 /**
@@ -449,7 +834,7 @@ export const sortCredentialsForAutoSelect = (
  * @param agent an Agent instance
  * @returns payload from following the redirection
  */
-export const receiveMessageFromUrlRedirect = async (url: string, agent: Agent | undefined) => {
+export const receiveMessageFromUrlRedirect = async (url: string, agent: AdeyaAgent | undefined) => {
   const res = await fetch(url, {
     method: 'GET',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
@@ -465,7 +850,7 @@ export const receiveMessageFromUrlRedirect = async (url: string, agent: Agent | 
  * @param agent an Agent instance
  * @returns payload from following the redirection
  */
-export const receiveMessageFromDeepLink = async (url: string, agent: Agent | undefined) => {
+export const receiveMessageFromDeepLink = async (url: string, agent: AdeyaAgent | undefined) => {
   const res = await fetch(url, {
     method: 'GET',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
@@ -478,45 +863,20 @@ export const receiveMessageFromDeepLink = async (url: string, agent: Agent | und
 /**
  *
  * @param uri a URI containing a base64 encoded connection invite in the query parameter
- * @param agent an Agent instance
  * @returns a connection record from parsing and receiving the invitation
  */
-export const connectFromInvitation = async (uri: string, agent: Agent | undefined) => {
-  const invitation = await agent?.oob.parseInvitation(uri)
-
-  if (!invitation) {
-    throw new Error('Could not parse invitation from URL')
-  }
-
-  const record = await agent?.oob.receiveInvitation(invitation)
-  const connectionRecord = record?.connectionRecord
-  if (!connectionRecord?.id) {
-    throw new Error('Connection does not have an ID')
-  }
-
-  return connectionRecord
+export const connectFromInvitation = async (agent: AdeyaAgent, uri: string) => {
+  return await acceptInvitationFromUrl(agent, uri)
 }
 
 /**
  * Create a new connection invitation
  *
- * @param agent an Agent instance
  * @param goalCode add goalCode to connection invitation
  * @returns a connection record
  */
-export const createConnectionInvitation = async (agent: Agent | undefined, goalCode?: string) => {
-  const record = await agent?.oob.createInvitation({ goalCode })
-  if (!record) {
-    throw new Error('Could not create new invitation')
-  }
-
-  const invitationUrl = record.outOfBandInvitation.toUrl({ domain })
-
-  return {
-    record,
-    invitation: record.outOfBandInvitation,
-    invitationUrl,
-  }
+export const createConnectionInvitation = async (agent: AdeyaAgent, goalCode?: string) => {
+  return createInvitation(agent, domain, { goalCode })
 }
 
 /**
@@ -526,7 +886,7 @@ export const createConnectionInvitation = async (agent: Agent | undefined, goalC
  * @param type add goalCode to connection invitation
  * @returns a connection record
  */
-export const createTempConnectionInvitation = async (agent: Agent | undefined, type: 'issue' | 'verify') => {
+export const createTempConnectionInvitation = async (agent: AdeyaAgent, type: 'issue' | 'verify') => {
   return createConnectionInvitation(agent, `aries.vc.${type}.once`)
 }
 

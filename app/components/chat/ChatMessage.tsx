@@ -33,7 +33,7 @@ const MessageTime: React.FC<{ message: ExtendedChatMessage }> = ({ message }) =>
 
   return (
     <Text style={message.user._id === Role.me ? theme.timeStyleRight : theme.timeStyleLeft}>
-      {formatTime(message.createdAt)}
+      {formatTime(message.createdAt, { includeHour: true, chatFormat: true, trim: true })}
     </Text>
   )
 }
