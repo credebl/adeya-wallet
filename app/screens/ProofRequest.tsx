@@ -262,7 +262,9 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
       })
   }, [selectedCredentials])
 
-  const toggleDeclineModalVisible = () => setDeclineModalVisible(!declineModalVisible)
+  const toggleDeclineModalVisible = () => {
+    setDeclineModalVisible(!declineModalVisible)
+  }
 
   const getCredentialsFields = (): Fields => ({
     ...retrievedCredentials?.attributes,
@@ -342,7 +344,6 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
     try {
       if (proof) {
         await declineProofRequest(agent, { proofRecordId: proof.id })
-        setisDeclineEnable(false)
 
         // sending a problem report fails if there is neither a connectionId nor a ~service decorator
         if (proof.connectionId) {
