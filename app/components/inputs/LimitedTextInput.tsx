@@ -13,11 +13,13 @@ interface Props extends TextInputProps {
   limit: number
   handleChangeText: (text: string) => void
 }
+
 type ErrorState = {
   visible: boolean
   title: string
   description: string
 }
+
 const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...textInputProps }) => {
   const [focused, setFocused] = useState(false)
   const [characterCount, setCharacterCount] = useState(0)
@@ -81,7 +83,6 @@ const LimitedTextInput: React.FC<Props> = ({ label, limit, handleChangeText, ...
       <View style={styles.renameView}>
         <TextInput
           style={[styles.textInput, { borderWidth: 2 }, focused && { ...Inputs.inputSelected }]}
-          selectionColor={Inputs.inputSelected.borderColor}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           onChangeText={onChangeText}
