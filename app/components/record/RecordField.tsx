@@ -34,7 +34,6 @@ interface AttributeValueParams {
 
 export const AttributeValue: React.FC<AttributeValueParams> = ({ field, style, shown }) => {
   const { ListItems } = useTheme()
-
   const styles = StyleSheet.create({
     text: {
       ...ListItems.recordAttributeText,

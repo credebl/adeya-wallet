@@ -70,7 +70,6 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
   const [retrievedCredentials, setRetrievedCredentials] = useState<AnonCredsCredentialsForProofRequest>()
   const [loading, setLoading] = useState<boolean>(true)
   const [declineModalVisible, setDeclineModalVisible] = useState(false)
-  const [isDeclineEnable, setisDeclineEnable] = useState(true)
   const { ColorPallet, ListItems, TextTheme } = useTheme()
   const { RecordLoading } = useAnimatedComponents()
   const goalCode = useOutOfBandByConnectionId(agent, proof?.connectionId ?? '')?.outOfBandInvitation.goalCode
@@ -265,7 +264,6 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
 
   const toggleDeclineModalVisible = () => {
     setDeclineModalVisible(!declineModalVisible)
-    setisDeclineEnable(true)
   }
 
   const getCredentialsFields = (): Fields => ({
@@ -346,7 +344,6 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
     try {
       if (proof) {
         await declineProofRequest(agent, { proofRecordId: proof.id })
-        setisDeclineEnable(false)
 
         // sending a problem report fails if there is neither a connectionId nor a ~service decorator
         if (proof.connectionId) {

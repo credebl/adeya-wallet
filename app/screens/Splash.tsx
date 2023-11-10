@@ -1,34 +1,7 @@
-import {
-  Agent,
-  AutoAcceptCredential,
-  ConsoleLogger,
-  HttpOutboundTransport,
-  LogLevel,
-  MediatorPickupStrategy,
-  WsOutboundTransport,
-} from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
-import { agentDependencies } from '@aries-framework/react-native'
+import { initializeAgent, ConsoleLogger, LogLevel, InitConfig, getAgentModules } from '@adeya/ssi'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/core'
 import { CommonActions } from '@react-navigation/native'
-import {
-  LocalStorageKeys,
-  DispatchAction,
-  Screens,
-  Stacks,
-  OnboardingState,
-  LoginAttemptState,
-  PreferencesState,
-  ToursState,
-  useAuth,
-  useTheme,
-  useStore,
-  useConfiguration,
-  InfoBox,
-  InfoBoxType,
-  testIdWithKey,
-} from 'aries-bifold'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View, useWindowDimensions, Image } from 'react-native'
@@ -63,9 +36,25 @@ const onboardingComplete = (state: StoreOnboardingState): boolean => {
   return state.didCompleteTutorial && state.didAgreeToTerms && state.didCreatePIN && state.didConsiderBiometry
 }
 
-const resumeOnboardingAt = (state: OnboardingState): Screens => {
-  if (state.didCompleteTutorial && state.didAgreeToTerms && state.didCreatePIN && !state.didConsiderBiometry) {
+const resumeOnboardingAt = (state: StoreOnboardingState, enableWalletNaming: boolean | undefined): Screens => {
+  if (
+    state.didCompleteTutorial &&
+    state.didAgreeToTerms &&
+    state.didCreatePIN &&
+    (state.didNameWallet || !enableWalletNaming) &&
+    !state.didConsiderBiometry
+  ) {
     return Screens.UseBiometry
+  }
+
+  if (
+    state.didCompleteTutorial &&
+    state.didAgreeToTerms &&
+    state.didCreatePIN &&
+    enableWalletNaming &&
+    !state.didNameWallet
+  ) {
+    return Screens.NameWallet
   }
 
   if (state.didCompleteTutorial && state.didAgreeToTerms && !state.didCreatePIN) {
@@ -78,21 +67,15 @@ const resumeOnboardingAt = (state: OnboardingState): Screens => {
 
   return Screens.Onboarding
 }
-/*
-  To customize this splash screen set the background color of the
-  iOS and Android launch screen to match the background color of
-  of this view.
-*/
+
+/**
+ * To customize this splash screen set the background color of the
+ * iOS and Android launch screen to match the background color of
+ * of this view.
+ */
 const Splash: React.FC = () => {
   const { width } = useWindowDimensions()
-  const { setAgent } = useAgent()
-  const { t } = useTranslation()
-  const [store, dispatch] = useStore()
-  const navigation = useNavigation()
-  const { getWalletCredentials } = useAuth()
-  const { ColorPallet, Assets } = useTheme()
-  const { indyLedgers } = useConfiguration()
-  const [stepText, setStepText] = useState<string>(t('Init.Starting'))
+  const { enableWalletNaming } = useConfiguration()
   const [progressPercent, setProgressPercent] = useState(0)
   const [initOnboardingCount, setInitOnboardingCount] = useState(0)
   const [initAgentCount, setInitAgentCount] = useState(0)
@@ -172,7 +155,6 @@ const Splash: React.FC = () => {
     } catch (error) {
       // todo (WK)
     }
-    return undefined
   }
 
   useEffect(() => {
@@ -242,8 +224,8 @@ const Splash: React.FC = () => {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
-              routes: [{ name: resumeOnboardingAt(dataAsJSON) }],
-            })
+              routes: [{ name: resumeOnboardingAt(dataAsJSON, enableWalletNaming) }],
+            }),
           )
 
           return
@@ -280,20 +262,8 @@ const Splash: React.FC = () => {
         }
 
         setStep(5)
-        const options = {
-          config: {
-            label: 'ADEYA Wallet',
-            mediatorConnectionsInvite: Config.MEDIATOR_URL,
-            mediatorPickupStrategy: MediatorPickupStrategy.Implicit,
-            walletConfig: { id: credentials.id, key: credentials.key },
-            autoAcceptConnections: true,
-            autoAcceptCredentials: AutoAcceptCredential.ContentApproved,
-            logger: new ConsoleLogger(LogLevel.trace),
-            indyLedgers,
-            connectToIndyLedgersOnStartup: false,
-            autoUpdateStorageOnStartup: true,
-          },
-          dependencies: agentDependencies,
+        if (!Config.MEDIATOR_URL) {
+          throw new Error('Missing mediator URL')
         }
 
         const agentConfig: InitConfig = {
@@ -312,12 +282,6 @@ const Splash: React.FC = () => {
         })) as unknown as AdeyaAgent
 
         setStep(6)
-        await newAgent.initialize()
-
-        setStep(7)
-        await newAgent.ledger.connectToPools()
-
-        setStep(8)
         setAgent(newAgent)
 
         setStep(7)

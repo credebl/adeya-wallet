@@ -13,6 +13,8 @@ export const styles = StyleSheet.create({
     marginBottom: hp('2.5%'),
     justifyContent: 'center',
     color: '#1F4EAD',
+    paddingBottom: hp('2%'),
+    fontSize: 28,
   },
   backgroundImage: {
     height: 245,
@@ -45,7 +47,7 @@ export const styles = StyleSheet.create({
     width: wp('80%'),
     flexDirection: 'column',
     flexShrink: 0,
-    fontSize: hp('2%'),
+    fontSize: hp('2.5%'),
     textAlign: 'center',
     color: '#2289F7',
   },

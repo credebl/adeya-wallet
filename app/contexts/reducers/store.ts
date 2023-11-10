@@ -360,7 +360,6 @@ export const reducer = <S extends State>(state: S, action: ReducerAction<Dispatc
         ...{ deepLink: { activeDeepLink: value } },
       }
     }
-
     default:
       return state
   }

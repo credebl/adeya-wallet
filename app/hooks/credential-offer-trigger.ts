@@ -1,8 +1,5 @@
-import { useCredentialByState } from '@adeya/ssi'
-import { CredentialState } from '@aries-framework/core'
-import { useCredentialByState } from '@aries-framework/react-hooks'
-import { useNavigation } from '@react-navigation/core'
-import { Screens, Stacks } from 'aries-bifold'
+import { CredentialState, useCredentialByState } from '@adeya/ssi'
+import { useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
 
 import { Screens, Stacks } from '../types/navigators'
