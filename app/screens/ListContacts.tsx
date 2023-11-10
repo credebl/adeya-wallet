@@ -1,5 +1,4 @@
-import { ConnectionRecord, ConnectionType } from '@aries-framework/core'
-import { useConnections } from '@aries-framework/react-hooks'
+import { ConnectionRecord, ConnectionType, useConnections } from '@adeya/ssi'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'

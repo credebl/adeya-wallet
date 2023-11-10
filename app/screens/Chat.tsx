@@ -1,21 +1,25 @@
 import {
+  useBasicMessagesByConnectionId,
+  useConnectionById,
   BasicMessageRecord,
   CredentialExchangeRecord,
   CredentialState,
   ProofExchangeRecord,
   ProofState,
-} from '@aries-framework/core'
-import { useAgent, useBasicMessagesByConnectionId, useConnectionById } from '@aries-framework/react-hooks'
+  sendBasicMessage,
+  BasicMessageRepository,
+} from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Text } from 'react-native'
+import { Linking, Text } from 'react-native'
 import { GiftedChat, IMessage } from 'react-native-gifted-chat'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { isPresentationReceived } from '../../verifier'
 import InfoIcon from '../components/buttons/InfoIcon'
 import { renderComposer, renderInputToolbar, renderSend } from '../components/chat'
+import ActionSlider from '../components/chat/ActionSlider'
 import { renderActions } from '../components/chat/ChatActions'
 import { ChatEvent } from '../components/chat/ChatEvent'
 import { ChatMessage, ExtendedChatMessage, CallbackType } from '../components/chat/ChatMessage'
@@ -24,8 +28,11 @@ import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { useCredentialsByConnectionId } from '../hooks/credentials'
 import { useProofsByConnectionId } from '../hooks/proofs'
+import { ColorPallet } from '../theme'
 import { Role } from '../types/chat'
+import { BasicMessageMetadata, BasicMessageCustomMetadata } from '../types/metadata'
 import { ContactStackParams, Screens, Stacks } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { isW3CCredential } from '../utils/credential'
 import {
   getCredentialEventLabel,
@@ -45,7 +52,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
   const { connectionId } = route.params
   const [store] = useStore()
   const { t } = useTranslation()
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   const connection = useConnectionById(connectionId)
   const basicMessages = useBasicMessagesByConnectionId(connectionId)
   const credentials = useCredentialsByConnectionId(connectionId)
@@ -53,7 +60,8 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
   const theirLabel = useMemo(() => connection?.theirLabel || connection?.id || '', [connection])
   const { assertConnectedNetwork, silentAssertConnectedNetwork } = useNetwork()
   const [messages, setMessages] = useState<Array<ExtendedChatMessage>>([])
-  const { ChatTheme: theme } = useTheme()
+  const [showActionSlider, setShowActionSlider] = useState(false)
+  const { ChatTheme: theme, Assets } = useTheme()
 
   useMemo(() => {
     assertConnectedNetwork()
@@ -66,22 +74,55 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
     })
   }, [connection])
 
+  // when chat is open, mark messages as seen
+  useEffect(() => {
+    basicMessages.forEach(msg => {
+      const meta = msg.metadata.get(BasicMessageMetadata.customMetadata) as BasicMessageCustomMetadata
+      if (agent && !meta?.seen) {
+        msg.metadata.set(BasicMessageMetadata.customMetadata, { ...meta, seen: true })
+        const basicMessageRepository = agent.context.dependencyManager.resolve(BasicMessageRepository)
+        basicMessageRepository.update(agent.context, msg)
+      }
+    })
+  }, [basicMessages])
+
   useEffect(() => {
     const transformedMessages: Array<ExtendedChatMessage> = basicMessages.map((record: BasicMessageRecord) => {
       const role = getMessageEventRole(record)
+      const linkRegex = /(?:https?:\/\/\S{1,100})|(?:\S{1,100}@\S{1,100})/gm
+      const mailRegex = /^[\w.-]+@\w+(?:\.\w+)+$/gm
+      const links = record.content.match(linkRegex) ?? []
+      const handleLinkPress = (link: string) => {
+        if (link.match(mailRegex)) {
+          link = 'mailto:' + link
+        }
+        Linking.openURL(link)
+      }
+      const msgText = (
+        <Text style={role === Role.me ? theme.rightText : theme.leftText}>
+          {record.content.split(linkRegex).map((split, i) => {
+            if (i < links.length) {
+              const link = links[i]
+              return (
+                <>
+                  <Text>{split}</Text>
+                  <Text
+                    onPress={() => handleLinkPress(link)}
+                    style={{ color: ColorPallet.brand.link, textDecorationLine: 'underline' }}
+                    accessibilityRole={'link'}>
+                    {link}
+                  </Text>
+                </>
+              )
+            }
+            return <Text key={split}>{split}</Text>
+          })}
+        </Text>
+      )
       return {
         _id: record.id,
         text: record.content,
-        renderEvent: () => (
-          <Text
-            style={
-              role === Role.me
-                ? [theme.rightText, theme.rightTextHighlighted]
-                : [theme.leftText, theme.leftTextHighlighted]
-            }>
-            {record.content}
-          </Text>
-        ),
+        renderEvent: () => msgText,
         createdAt: record.updatedAt || record.createdAt,
         type: record.type,
         user: { _id: role },
@@ -129,13 +170,13 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
           onDetails: () => {
             const navMap: { [key in CredentialState]?: () => void } = {
               [CredentialState.Done]: () => {
-                navigation.getParent()?.navigate(Stacks.ContactStack, {
+                navigation.navigate(Stacks.ContactStack as any, {
                   screen: isW3CCredential(record) ? Screens.CredentialDetailsW3C : Screens.CredentialDetails,
                   params: { credential: record },
                 })
               },
               [CredentialState.OfferReceived]: () => {
-                navigation.getParent()?.navigate(Stacks.ContactStack, {
+                navigation.navigate(Stacks.ContactStack as any, {
                   screen: Screens.CredentialOffer,
                   params: { credentialId: record.id },
                 })
@@ -166,7 +207,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
           messageOpensCallbackType: callbackTypeForMessage(record),
           onDetails: () => {
             const toProofDetails = () => {
-              navigation.getParent()?.navigate(Stacks.ContactStack, {
+              navigation.navigate(Stacks.ContactStack as any, {
                 screen: Screens.ProofDetails,
                 params: {
                   recordId: record.id,
@@ -182,7 +223,7 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
               [ProofState.PresentationSent]: toProofDetails,
               [ProofState.PresentationReceived]: toProofDetails,
               [ProofState.RequestReceived]: () => {
-                navigation.getParent()?.navigate(Stacks.ContactStack, {
+                navigation.navigate(Stacks.ContactStack as any, {
                   screen: Screens.ProofRequest,
                   params: { proofId: record.id },
                 })
@@ -196,18 +237,38 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
         }
       }),
     )
-    setMessages(transformedMessages.sort((a: any, b: any) => b.createdAt - a.createdAt))
-  }, [basicMessages, credentials, proofs])
+
+    const connectedMessage = connection
+      ? {
+          _id: 'connected',
+          text: `${t('Chat.YouConnected')} ${theirLabel}`,
+          renderEvent: () => (
+            <Text style={theme.rightText}>
+              {t('Chat.YouConnected')}
+              <Text style={[theme.rightText, theme.rightTextHighlighted]}> {theirLabel}</Text>
+            </Text>
+          ),
+          createdAt: connection.createdAt,
+          user: { _id: Role.me },
+        }
+      : undefined
+
+    setMessages(
+      connectedMessage
+        ? [...transformedMessages.sort((a: any, b: any) => b.createdAt - a.createdAt), connectedMessage]
+        : transformedMessages.sort((a: any, b: any) => b.createdAt - a.createdAt),
+    )
+  }, [basicMessages, credentials, proofs, theirLabel])
 
   const onSend = useCallback(
     async (messages: IMessage[]) => {
-      await agent?.basicMessages.sendMessage(connectionId, messages[0].text)
+      await sendBasicMessage(agent, connectionId, messages[0].text)
     },
     [agent, connectionId],
   )
 
   const onSendRequest = useCallback(async () => {
-    navigation.getParent()?.navigate(Stacks.ProofRequestsStack, {
+    navigation.navigate(Stacks.ProofRequestsStack as any, {
       screen: Screens.ProofRequests,
       params: { navigation: navigation, connectionId },
     })
@@ -215,23 +276,31 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
 
   const actions = useMemo(() => {
     return store.preferences.useVerifierCapability
-      ? {
-          [t('Verifier.SendProofRequest')]: () => onSendRequest(),
-          // if we localize Cancel, it will not be recognized as a "Cancel" button by the Chat library and on ios
-          // tapping outside the action sheet will not close it
-          ['Cancel']: () => {
-            /* do nothing */
+      ? [
+          {
+            text: t('Verifier.SendProofRequest'),
+            onPress: () => {
+              setShowActionSlider(false)
+              onSendRequest()
+            },
+            icon: () => <Assets.svg.IconInfoSentDark height={30} width={30} />,
           },
-        }
+        ]
       : undefined
   }, [t, store.preferences.useVerifierCapability, onSendRequest])
 
+  const onDismiss = () => {
+    setShowActionSlider(false)
+  }
+
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1 }}>
+    <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1, paddingTop: 20 }}>
       <GiftedChat
         messages={messages}
         showAvatarForEveryMessage={true}
+        alignTop
         renderAvatar={() => null}
+        messageIdGenerator={msg => msg?._id.toString() || '0'}
         renderMessage={props => <ChatMessage messageProps={props} />}
         renderInputToolbar={props => renderInputToolbar(props, theme)}
         renderSend={props => renderSend(props, theme)}
@@ -242,7 +311,9 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
           _id: Role.me,
         }}
         renderActions={props => renderActions(props, theme, actions)}
+        onPressActionButton={() => setShowActionSlider(true)}
       />
+      {showActionSlider && <ActionSlider onDismiss={onDismiss} actions={actions} />}
     </SafeAreaView>
   )
 }

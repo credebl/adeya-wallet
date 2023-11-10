@@ -202,17 +202,19 @@ const Terms: React.FC = () => {
       <ScrollView style={[style.container]}>
         <InfoTextBox>Please agree to the terms and conditions below before using this application.</InfoTextBox>
 
-        {terms.map((para, index) => (
-          <View key={index}>
-            <Text style={style.titleText}>{para.title}</Text>
-            {Object.keys(para.subtitle).map(subtitleCount => (
-              <View key={subtitleCount} style={style.paragraph}>
-                <Text style={[style.enumeration]}>{subtitleCount}</Text>
-                <Text style={[style.bodyText]}>{para.subtitle[subtitleCount]}</Text>
-              </View>
-            ))}
-          </View>
-        ))}
+        <View style={{ marginBottom: 5 }}>
+          {terms.map((para, index) => (
+            <View key={index} style={{ marginBottom: index === terms.length - 1 ? 25 : 0 }}>
+              <Text style={style.titleText}>{para.title}</Text>
+              {Object.keys(para.subtitle).map(subtitleCount => (
+                <View key={subtitleCount} style={style.paragraph}>
+                  <Text style={[style.enumeration]}>{subtitleCount}</Text>
+                  <Text style={[style.bodyText]}>{para.subtitle[subtitleCount]}</Text>
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
         <View style={[style.controlsContainer]}>
           {!(store.onboarding.didAgreeToTerms && store.authentication.didAuthenticate) && (
             <>

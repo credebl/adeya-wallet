@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord } from '@aries-framework/core'
+import { CredentialExchangeRecord } from '@adeya/ssi'
 
 import { CredentialSharedProofData, AnonCredsProofRequestTemplatePayloadData } from '../../verifier'
 import { Attribute, Field, Predicate } from '../types/record'

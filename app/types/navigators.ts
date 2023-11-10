@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord, W3cCredentialRecord } from '@aries-framework/core'
+import { CredentialExchangeRecord, W3cCredentialRecord } from '@adeya/ssi'
 import { NavigatorScreenParams } from '@react-navigation/core'
 
 export enum Screens {
@@ -45,6 +45,10 @@ export enum Screens {
   WalletOptions = 'Create Walllet',
   ImportSuccess = 'Import Success',
   CredentialDetailsW3C = 'Credential Details W3C',
+  ProofChangeCredential = 'Choose a credential',
+  DataRetention = 'Data Retention',
+  Explore = 'Explore',
+  OrganizationDetails = 'Organization Details',
 }
 
 export enum Stacks {
@@ -63,6 +67,7 @@ export enum TabStacks {
   HomeStack = 'Tab Home Stack',
   ConnectStack = 'Tab Connect Stack',
   CredentialStack = 'Tab Credential Stack',
+  OrganizationStack = 'Tab OrganizationStack Stack',
 }
 
 export type RootStackParams = {
@@ -79,6 +84,7 @@ export type TabStackParams = {
   [TabStacks.HomeStack]: NavigatorScreenParams<HomeStackParams>
   [TabStacks.ConnectStack]: NavigatorScreenParams<ConnectStackParams>
   [TabStacks.CredentialStack]: NavigatorScreenParams<CredentialStackParams>
+  [TabStacks.OrganizationStack]: NavigatorScreenParams<OrganizationStackParams>
 }
 
 export type AuthenticateStackParams = {
@@ -108,6 +114,7 @@ export type ContactStackParams = {
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean }
   [Screens.ProofRequest]: { proofId: string }
+  [Screens.Home]: undefined
 }
 
 export type ProofRequestsStackParams = {
@@ -116,14 +123,30 @@ export type ProofRequestsStackParams = {
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean; senderReview?: boolean }
   [Screens.ProofRequestDetails]: { templateId: string; connectionId?: string }
   [Screens.ProofRequestUsageHistory]: { templateId: string }
+  [Screens.ProofChangeCredential]: {
+    selectedCred: string
+    altCredentials: string[]
+    proofId: string
+    onCredChange: (arg: string) => void
+  }
 }
 
 export type CredentialStackParams = {
   [Screens.Credentials]: undefined
   [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
   [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
+  [Screens.Scan]: undefined
 }
-
+export type OrganizationStackParams = {
+  [Screens.Explore]: undefined
+  [Screens.OrganizationDetails]: {
+    name: string
+    description: string
+    logoUrl: string
+    orgSlug: string
+  }
+  [Screens.Scan]: undefined
+}
 export type HomeStackParams = {
   [Screens.Home]: undefined
   [Screens.Notifications]: undefined
@@ -150,6 +173,7 @@ export type SettingStackParams = {
   [Screens.WalletOptions]: undefined
   [Screens.ImportSuccess]: undefined
   [Screens.NameWallet]: undefined
+  [Screens.DataRetention]: undefined
 }
 
 export type NotificationStackParams = {
@@ -167,4 +191,5 @@ export type DeliveryStackParams = {
   [Screens.OnTheWay]: { credentialId: string }
   [Screens.Declined]: { credentialId: string }
   [Screens.Chat]: { connectionId: string }
+  [Screens.ContactDetails]: { connectionId: string }
 }
