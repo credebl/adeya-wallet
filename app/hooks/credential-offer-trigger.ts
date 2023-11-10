@@ -1,4 +1,4 @@
-import { useCredentialByState, CredentialState } from '@adeya/ssi'
+import { CredentialState, useCredentialByState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
 
