@@ -75,13 +75,8 @@ const OrganizationDetails: React.FC = () => {
       fontWeight: '700',
     },
     avatarOrgImage: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      borderColor: ListItems.avatarCircle.borderColor,
-      borderWidth: 1,
+      width: 50,
+      height: 50,
     },
     orgNameContainer: {
       paddingVertical: 10,
@@ -182,7 +177,7 @@ const OrganizationDetails: React.FC = () => {
   }
   const connectOrganization = async () => {
     try {
-      const agentInvitations = organizationDetailData.map(item => item?.agent_invitations)
+      const [agentInvitations] = organizationDetailData.map(item => item?.agent_invitations)
 
       if (!agentInvitations || agentInvitations.length === 0) {
         Toast.show({
@@ -191,33 +186,18 @@ const OrganizationDetails: React.FC = () => {
         })
         return
       }
-
-      const lastArray = agentInvitations[0]
-
-      if (!lastArray || lastArray.length === 0) {
-        Toast.show({
-          type: ToastType.Error,
-          text1: 'No connection invitations available',
-        })
-        return
+      let connectionInvitationUrl = ''
+      if (agentInvitations.length === 1) {
+        connectionInvitationUrl = agentInvitations[0]?.connectionInvitation
+      } else if (agentInvitations.length > 1) {
+        connectionInvitationUrl = agentInvitations[agentInvitations.length - 1]?.connectionInvitation
       }
 
-      const lastItem = lastArray[lastArray.length - 1]
-
-      if (!lastItem?.connectionInvitation) {
-        Toast.show({
-          type: ToastType.Error,
-          text1: 'No last connection invitation available',
-        })
-        return
-      }
-
-      const lastConnectionInvitation = lastItem.connectionInvitation
-      await handleInvitation(lastConnectionInvitation)
+      await handleInvitation(connectionInvitationUrl)
     } catch (error) {
       Toast.show({
         type: ToastType.Error,
-        text1: 'No agent invitations available',
+        text1: 'Accepting connection invitation failed',
       })
     }
   }
