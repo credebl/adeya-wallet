@@ -39,8 +39,8 @@ const translation = {
     "No": "No",
   },
   "Date": {
-    "ShortFormat": "MMM D, YYYY",
-    "LongFormat": "D MMMM YYYY, HH:mm:ss",
+    "ShortFormat": "MMM D",
+    "LongFormat": "MMMM D",
     "MonthLong": {
       "January": "January",
       "February": "February",
@@ -68,9 +68,11 @@ const translation = {
       "October": "Oct",
       "November": "Nov",
       "December": "Dec",
-    }
+    },
+    "MinuteAgo": "minute ago",
+    "MinutesAgo": "minutes ago",
+    "JustNow": "Just now",
   },
-
   "Language": {
     "English": "English",
   },
@@ -243,11 +245,21 @@ const translation = {
     "NotEnabledText2": "If you wish to enable this feature turn biometrics on in the device settings and then return to this screen.",
       },
   "Contacts": {
-    "EmptyList": "Your Contacts is empty!",
+    "EmptyContactsList": "Your Contacts is empty!",
     "TypeHere": "Type Message Here",
     "PeopleAndOrganizations": "People and organizations you've interacted with are listed here.",
     "WhatAreContacts": "What are Contacts",
     "AddContact": "Add Contact",
+  },
+  "Organizations": {
+    "EmptyOrganizationsList": "No matching organization found. Please refine your search.",
+    "TypeHere": "Type Message Here",
+    "PeopleAndOrganizations": "organizations are listed here.",
+    "Title" : "Select an organization to get credentials",
+    "TitleDetail": "Get credentials from selected organization",
+    "AboutOrganization": "About Organization",
+    "AvailableCredentials": "Available Credentials",
+    "Connect": "Connect",
   },
   "ContactDetails": {
     "Created": "Created",
@@ -282,7 +294,7 @@ const translation = {
   "Credentials": {
     "CredentialsNotFound": "Credentials not found",
     "CredentialDetails": "Credential Details",
-    "EmptyList": "Your wallet is empty. Your accepted credentials will be added here.",
+    "EmptyCredentailsList": "Your wallet is empty. Your accepted credentials will be added here.",
     "IssuedBy": "Issued by",
     "Credential": "credential"
   },
@@ -396,13 +408,24 @@ const translation = {
     "DeleteOfferDescription": "Don't recognize the organization? Check your Contacts list. You only receive notifications from Contacts you've initiated",
   },
   "ProofRequest": {
+    "FromYourWallet": "From your wallet",
+    "MissingCredentials": "Missing credentials",
+    "PredicateGeDate": "is after",
+    "PredicateLeDate": "is before",
+    "PredicateGe": "is greater than or equal to",
+    "PredicateGr": "is greater than",
+    "PredicateLe": "is less than or equal to",
+    "PredicateLs": "is less than",
     "ProofRequest": "Proof Request",
     "RequestProcessing": "Just a moment...",
     "OfferDelay": "Offer delay",
+    "ChangeCredential": "Change credential",
     "RejectThisProof?": "Reject this Proof Request?",
     "DeclineThisProof?": "Decline this Proof Request?",
+    "MultipleCredentials": "You have multiple credentials to choose from:",
     "AcceptingProof": "Accepting Proof",
     "SuccessfullyAcceptedProof": "Successfully Accepted Proof",
+    "SensitiveInformation": "This request is asking for sensitive information.",
     "ProofRequestNotFound": "Proof request not Found",
     "RejectingProof": "Rejecting Proof",
     "ProofAccepted": "Proof Accepted",
@@ -412,6 +435,7 @@ const translation = {
     "NotAvailableInYourWallet": "Not available",
     "IsRequesting": "is requesting",
     "IsRequestingSomethingYouDontHaveAvailable": "is requesting something you don't have available",
+    "YouDoNotHaveDataPredicate": "You do not meet the requirements of this proof request from",
     "IsRequestingYouToShare": "is requesting the following information from",
     "Credential": "credential.",
     "Credentials": "credentials.",
@@ -450,6 +474,7 @@ const translation = {
     "AppSettings": "App Settings",
     "AboutApp": "About App",
     "Language": "Language",
+    "DataRetention": "Data retention",
     "AppGuides": "App guides",
     "Build": "Build",
     "WhatAreContacts": "What are Contacts",
@@ -462,6 +487,7 @@ const translation = {
     "Home": "Home",
     "Scan": "Scan",
     "Credentials": "Credentials",
+    "Explore":"Explore"
   },
   "RootStack": {
     "Contacts": "Contacts",
@@ -531,7 +557,13 @@ const translation = {
     "VerifyPhrase"  : 'Verify Phrase',
     "Success"  : 'Success',
     "CredentialDetailsW3C" :'Credential Details W3C',
-    "WalletName" :"Wallet Name"
+    "WalletName" :"Wallet Name",
+    "Explore": "Explore",
+    "OrganizationDetails": "Organization Details",
+    "ProofChangeCredential": "Choose a credential",
+    "DataRetention": "Data retention",
+    "Organization": "Explore",
+    "OrganizationConnection": "Connection"
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",
@@ -591,6 +623,7 @@ const translation = {
     "ViewOffer": "View Offer",
     "OpenItem": "Open",
     "UserYou": "You",
+    "YouConnected": "You connected with",
     "CredentialProposalSent": "sent a credential proposal",
     "CredentialOfferReceived": "sent a credential offer",
     "CredentialRequestSent": "sent a credential request",
@@ -624,7 +657,7 @@ const translation = {
     "UseProofRequest": "Use this proof request",
     "SendThisProofRequest": "Send this proof request",
     "SendProofRequest": "Send a Proof Request",
-    "EmptyList": "Your wallet is empty. Your proof request templates will be added here.",
+    "EmptyProofRequestsList": "Your wallet is empty. Your proof request templates will be added here.",
     "ShowTemplateUsageHistory": "Show usage history",
     "RequestSent": "Presentation request sent",
     "PresentationDeclined": "Presentation request declined",
@@ -654,7 +687,18 @@ const translation = {
     "you_have_successfully": 'You have successfully selected the words.',
     "complete_backup": 'Complete Backup',
     "backup_wallet": 'Backup Wallet',
-
+  },
+  "PushNotifications": {
+    "BulletFour": "new messages",
+    "BulletOne": "new credential offers",
+    "BulletThree": "updates to your credentials",
+    "BulletTwo": "new proof requests",
+    "DeveloperTitle": "Push Notifications",
+    "HeadingOne": "It is recommended you allow this app to receive push notifications.",
+    "HeadingTwo": "Notifications will be sent to you when you receive:",
+    "NotAvailable": " (Not Available)",
+    "Title": "Notifications",
+    "PushNotifications": "Push Notifications",
   }
 }
 

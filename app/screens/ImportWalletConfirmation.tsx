@@ -1,13 +1,4 @@
-import {
-  Agent,
-  ConsoleLogger,
-  LogLevel,
-  WalletExportImportConfig,
-  HttpOutboundTransport,
-  WsOutboundTransport,
-} from '@aries-framework/core'
-import { useAgent } from '@aries-framework/react-hooks'
-import { agentDependencies } from '@aries-framework/react-native'
+import { importWalletWithAgent, ConsoleLogger, LogLevel, InitConfig, getAgentModules } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import {
@@ -35,7 +26,7 @@ import { useAuth } from '../contexts/auth'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { AuthenticateStackParams, Screens } from '../types/navigators'
-import { getAgentModules } from '../utils/agent'
+import { useAppAgent } from '../utils/agent'
 
 type ImportWalletVerifyProps = StackScreenProps<AuthenticateStackParams, Screens.ImportWalletVerify>
 
@@ -43,10 +34,10 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
   const { ColorPallet } = useTheme()
   const [store] = useStore()
   const [PassPhrase, setPassPhrase] = useState('')
-  const { getWalletCredentials, checkImportWallet } = useAuth()
+  const { getWalletCredentials } = useAuth()
   const [verify, setVerify] = useState(false)
   const [selectedFilePath, setSelectedFilePath] = useState('')
-  const { setAgent } = useAgent()
+  const { setAgent } = useAppAgent()
   const { height } = Dimensions.get('window')
   const { width } = Dimensions.get('window')
 
@@ -101,10 +92,6 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
     }
   }, [navigation])
 
-  const deleteTempImportedWallet = async (walletPath: string) => {
-    await RNFS.unlink(walletPath)
-  }
-
   const initAgent = async (seed: string): Promise<void> => {
     setVerify(true)
     Keyboard.dismiss()
@@ -128,66 +115,25 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
         key: credentials.key,
       }
 
-      const importConfig: WalletExportImportConfig = {
+      const importConfig = {
         key: encodeHash,
         path: selectedFilePath,
       }
 
-      const tempImportPath = RNFS.DocumentDirectoryPath + '/importTemp'
-
-      const response = await checkImportWallet(
-        {
-          ...walletConfig,
-          storage: {
-            type: 'sqlite',
-            path: tempImportPath,
-          },
-        },
-        importConfig,
-      )
-      if (!response) {
-        await deleteTempImportedWallet(tempImportPath)
-        Toast.show({
-          type: ToastType.Error,
-          text1: `You've entered an invalid passphrase.`,
-          visibilityTime: 5000,
-          position: 'bottom',
-        })
-        setVerify(false)
-        return
+      const agentConfig: InitConfig = {
+        label: store.preferences.walletName,
+        walletConfig,
+        logger: new ConsoleLogger(LogLevel.off),
+        autoUpdateStorageOnStartup: true,
       }
 
-      await deleteTempImportedWallet(tempImportPath)
-
-      const newAgent = new Agent({
-        config: {
-          label: store.preferences.walletName,
-          walletConfig: {
-            id: credentials.id,
-            key: credentials.key,
-          },
-          logger: new ConsoleLogger(LogLevel.off),
-          autoUpdateStorageOnStartup: true,
-        },
-        dependencies: agentDependencies,
-        modules: getAgentModules({
-          indyNetworks: indyLedgers,
-          mediatorInvitationUrl: Config.MEDIATOR_URL,
-        }),
+      const agent = await importWalletWithAgent({
+        agentConfig,
+        importConfig,
+        modules: getAgentModules(Config.MEDIATOR_URL!, indyLedgers),
       })
-      const wsTransport = new WsOutboundTransport()
-      const httpTransport = new HttpOutboundTransport()
 
-      newAgent.registerOutboundTransport(wsTransport)
-      newAgent.registerOutboundTransport(httpTransport)
-
-      await newAgent.wallet.import(walletConfig, importConfig)
-
-      await newAgent.wallet.initialize(walletConfig)
-
-      await newAgent.initialize()
-
-      setAgent(newAgent)
+      setAgent(agent!)
       setVerify(true)
       Toast.show({
         type: ToastType.Success,

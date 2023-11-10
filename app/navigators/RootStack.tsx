@@ -1,10 +1,11 @@
-import { useAgent } from '@aries-framework/react-hooks'
+import { deleteConnectionById, ProofState, useProofByState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { createStackNavigator, StackCardStyleInterpolator, StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AppState } from 'react-native'
 
+import { ProofCustomMetadata, ProofMetadata } from '../../verifier'
 import { walletTimeout } from '../constants'
 import { useAuth } from '../contexts/auth'
 import { useConfiguration } from '../contexts/configuration'
@@ -22,6 +23,7 @@ import { createCarouselStyle } from '../screens/OnboardingPages'
 import PINCreate from '../screens/PINCreate'
 import PINEnter from '../screens/PINEnter'
 import { AuthenticateStackParams, Screens, Stacks } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { connectFromInvitation, getOobDeepLink } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
@@ -37,7 +39,7 @@ import { createDefaultStackOptions } from './defaultStackOptions'
 const RootStack: React.FC = () => {
   const [state, dispatch] = useStore()
   const { removeSavedWalletSecret } = useAuth()
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   const appState = useRef(AppState.currentState)
   const [backgroundTime, setBackgroundTime] = useState<number | undefined>(undefined)
   const [prevAppStateVisible, setPrevAppStateVisible] = useState<string>('')
@@ -49,6 +51,18 @@ const RootStack: React.FC = () => {
   const OnboardingTheme = theme.OnboardingTheme
   const { pages, terms, splash, useBiometry, enableWalletNaming } = useConfiguration()
   useDeepLinks()
+
+  // remove connection on mobile verifier proofs if proof is rejected regardless of if it has been opened
+  const declinedProofs = useProofByState([ProofState.Declined, ProofState.Abandoned])
+  useEffect(() => {
+    declinedProofs.forEach(proof => {
+      const meta = proof?.metadata?.get(ProofMetadata.customMetadata) as ProofCustomMetadata
+      if (meta?.delete_conn_after_seen) {
+        deleteConnectionById(agent, proof?.connectionId ?? '').catch(() => {})
+        proof?.metadata.set(ProofMetadata.customMetadata, { ...meta, delete_conn_after_seen: false })
+      }
+    })
+  }, [declinedProofs, state.preferences.useDataRetention])
 
   const lockoutUser = async () => {
     if (agent && state.authentication.didAuthenticate) {
@@ -72,10 +86,10 @@ const RootStack: React.FC = () => {
     async function handleDeepLink(deepLink: string) {
       try {
         // Try connection based
-        const connectionRecord = await connectFromInvitation(deepLink, agent)
+        const { connectionRecord } = await connectFromInvitation(agent, deepLink)
         navigation.navigate(Stacks.ConnectionStack as any, {
           screen: Screens.Connection,
-          params: { connectionId: connectionRecord.id },
+          params: { connectionId: connectionRecord?.id },
         })
       } catch {
         try {

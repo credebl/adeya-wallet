@@ -6,7 +6,7 @@ import { useTheme } from '../../contexts/theme'
 import { testIdWithKey } from '../../utils/testable'
 
 const LoadingIndicator: React.FC = () => {
-  const { ColorPallet, Assets } = useTheme()
+  const { Assets } = useTheme()
   const rotationAnim = useRef(new Animated.Value(0)).current
   const timing: Animated.TimingAnimationConfig = {
     toValue: 1,
@@ -23,7 +23,6 @@ const LoadingIndicator: React.FC = () => {
     },
   })
   const imageDisplayOptions = {
-    fill: ColorPallet.notification.infoText,
     height: 200,
     width: 200,
   }

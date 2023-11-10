@@ -1,29 +1,28 @@
-import { CredentialState } from '@aries-framework/core'
-import { useAgent, useConnectionById, useCredentialByState } from '@aries-framework/react-hooks'
+import { CredentialState, useConnectionById, useCredentialByState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeviceEventEmitter } from 'react-native'
+import { DeviceEventEmitter, BackHandler, View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
-import RecordRemove from '../components/record/RecordRemove'
 import { ToastType } from '../components/toast/BaseToast'
 import { EventTypes } from '../constants'
-import { useConfiguration } from '../contexts/configuration'
+import { useTheme } from '../contexts/theme'
 import { BifoldError } from '../types/error'
 import { ContactStackParams, Screens, TabStacks } from '../types/navigators'
-import { Attribute } from '../types/record'
 import { ModalUsage } from '../types/remove'
-import { formatTime } from '../utils/helpers'
+import { useAppAgent } from '../utils/agent'
+import { formatTime, getConnectionName } from '../utils/helpers'
+import { testIdWithKey } from '../utils/testable'
 
 type ContactDetailsProps = StackScreenProps<ContactStackParams, Screens.ContactDetails>
 
 const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
   const { connectionId } = route?.params
-  const { agent } = useAgent()
+  const { agent } = useAppAgent()
   const { t } = useTranslation()
   const navigation = useNavigation<StackNavigationProp<ContactStackParams>>()
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState<boolean>(false)
@@ -34,7 +33,14 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
     ...useCredentialByState(CredentialState.CredentialReceived),
     ...useCredentialByState(CredentialState.Done),
   ].filter(credential => credential.connectionId === connection?.id)
-  const { record } = useConfiguration()
+  const { ColorPallet, TextTheme } = useTheme()
+
+  const styles = StyleSheet.create({
+    contentContainer: {
+      padding: 20,
+      backgroundColor: ColorPallet.brand.secondaryBackground,
+    },
+  })
 
   const handleOnRemove = () => {
     if (connectionCredentials?.length) {
@@ -62,12 +68,21 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
         text1: t('ContactDetails.ContactRemoved'),
       })
     } catch (err: unknown) {
-      const error = new BifoldError(t('Error.Title1037'), t('Error.Message1037'), (err as Error).message, 1025)
-
+      const error = new BifoldError(t('Error.Title1037'), t('Error.Message1037'), (err as Error)?.message ?? err, 1037)
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
     }
   }
 
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      navigation.navigate(Screens.Home as never)
+      return true
+    })
+
+    return () => {
+      backHandler.remove()
+    }
+  }, [])
   const handleCancelRemove = () => {
     setIsRemoveModalDisplayed(false)
   }
@@ -86,19 +101,28 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
   const callGoToCredentials = useCallback(() => handleGoToCredentials(), [])
   const callCancelUnableToRemove = useCallback(() => handleCancelUnableRemove(), [])
 
+  const contactLabel = useMemo(() => getConnectionName(connection) ?? '', [connection])
+
   return (
     <SafeAreaView style={{ flexGrow: 1 }} edges={['bottom', 'left', 'right']}>
-      {record({
-        fields: [
-          {
-            name: connection?.alias || connection?.theirLabel,
-            value: t('ContactDetails.DateOfConnection', {
-              date: connection?.createdAt ? formatTime(connection.createdAt) : '',
-            }),
-          },
-        ] as Attribute[],
-        footer: () => <RecordRemove onRemove={callOnRemove} />,
-      })}
+      <View style={styles.contentContainer}>
+        <Text style={{ ...TextTheme.headingThree }}>{contactLabel}</Text>
+        <Text style={{ ...TextTheme.normal, marginTop: 20 }}>
+          {t('ContactDetails.DateOfConnection', {
+            date: connection?.createdAt ? formatTime(connection.createdAt, { includeHour: true }) : '',
+          })}
+        </Text>
+      </View>
+      <TouchableOpacity
+        onPress={callOnRemove}
+        accessibilityLabel={t('ContactDetails.RemoveContact')}
+        accessibilityRole={'button'}
+        testID={testIdWithKey('RemoveFromWallet')}
+        style={[styles.contentContainer, { marginTop: 10 }]}>
+        <Text style={{ ...TextTheme.normal, color: ColorPallet.semantic.error }}>
+          {t('ContactDetails.RemoveContact')}
+        </Text>
+      </TouchableOpacity>
       <CommonRemoveModal
         usage={ModalUsage.ContactRemove}
         visible={isRemoveModalDisplayed}

@@ -1,4 +1,4 @@
-import { useConnectionById } from '@aries-framework/react-hooks'
+import { useConnectionById } from '@adeya/ssi'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
@@ -12,7 +12,8 @@ import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import { useOutOfBandByConnectionId } from '../hooks/connections'
 import { useNotifications } from '../hooks/notifications'
-import { Screens, TabStacks, DeliveryStackParams } from '../types/navigators'
+import { Screens, TabStacks, DeliveryStackParams, Stacks } from '../types/navigators'
+import { useAppAgent } from '../utils/agent'
 import { testIdWithKey } from '../utils/testable'
 
 type ConnectionProps = StackScreenProps<DeliveryStackParams, Screens.Connection>
@@ -40,7 +41,8 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
   const { notifications } = useNotifications()
   const { ColorPallet, TextTheme } = useTheme()
   const { ConnectionLoading } = useAnimatedComponents()
-  const oobRecord = useOutOfBandByConnectionId(connectionId ?? '')
+  const { agent } = useAppAgent()
+  const oobRecord = useOutOfBandByConnectionId(agent, connectionId ?? '')
   const goalCode = oobRecord?.outOfBandInvitation.goalCode
   const merge: MergeFunction = (current, next) => ({ ...current, ...next })
   const [state, dispatch] = useReducer(merge, {
@@ -149,9 +151,10 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
       oobRecord &&
       (!goalCode || (!goalCode.startsWith('aries.vc.verify') && !goalCode.startsWith('aries.vc.issue')))
     ) {
-      // No goal code, we don't know what to expect next,
-      // navigate to the chat screen.
-      navigation.navigate(Screens.Chat, { connectionId })
+      navigation.navigate(Stacks.ConnectionStack, {
+        screen: Screens.ContactDetails,
+        params: { connectionId: connectionId },
+      })
       dispatch({ isVisible: false })
       return
     }
