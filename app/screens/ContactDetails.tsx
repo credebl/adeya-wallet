@@ -1,12 +1,13 @@
 import { CredentialState, useConnectionById, useCredentialByState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeviceEventEmitter, BackHandler, View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { DeviceEventEmitter, View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
+import Button, { ButtonType } from '../components/buttons/Button'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
 import { ToastType } from '../components/toast/BaseToast'
 import { EventTypes } from '../constants'
@@ -40,6 +41,11 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
       padding: 20,
       backgroundColor: ColorPallet.brand.secondaryBackground,
     },
+    controlsContainer: {
+      marginTop: 'auto',
+      margin: 20,
+      justifyContent: 'center',
+    },
   })
 
   const handleOnRemove = () => {
@@ -57,12 +63,11 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
       }
 
       await agent.connections.deleteById(connection.id)
-
+      setIsRemoveModalDisplayed(false)
       navigation.navigate(Screens.Contacts)
 
       // FIXME: This delay is a hack so that the toast doesn't appear until the modal is dismissed
       await new Promise(resolve => setTimeout(resolve, 1000))
-
       Toast.show({
         type: ToastType.Success,
         text1: t('ContactDetails.ContactRemoved'),
@@ -72,17 +77,6 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
     }
   }
-
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      navigation.navigate(Screens.Home as never)
-      return true
-    })
-
-    return () => {
-      backHandler.remove()
-    }
-  }, [])
   const handleCancelRemove = () => {
     setIsRemoveModalDisplayed(false)
   }
@@ -96,45 +90,60 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
   }
 
   const callOnRemove = useCallback(() => handleOnRemove(), [])
-  const callSubmitRemove = useCallback(() => handleSubmitRemove(), [])
+  const callSubmitRemove = useCallback(() => handleSubmitRemove(), [connection])
   const callCancelRemove = useCallback(() => handleCancelRemove(), [])
   const callGoToCredentials = useCallback(() => handleGoToCredentials(), [])
   const callCancelUnableToRemove = useCallback(() => handleCancelUnableRemove(), [])
 
   const contactLabel = useMemo(() => getConnectionName(connection) ?? '', [connection])
-
+  const onDismissModalTouched = () => {
+    navigation.getParent()?.navigate(TabStacks.HomeStack, { screen: Screens.Home })
+  }
   return (
     <SafeAreaView style={{ flexGrow: 1 }} edges={['bottom', 'left', 'right']}>
-      <View style={styles.contentContainer}>
-        <Text style={{ ...TextTheme.headingThree }}>{contactLabel}</Text>
-        <Text style={{ ...TextTheme.normal, marginTop: 20 }}>
-          {t('ContactDetails.DateOfConnection', {
-            date: connection?.createdAt ? formatTime(connection.createdAt, { includeHour: true }) : '',
-          })}
-        </Text>
+      {connection && (
+        <View>
+          <View style={styles.contentContainer}>
+            <Text style={{ ...TextTheme.headingThree }}>{contactLabel}</Text>
+            <Text style={{ ...TextTheme.normal, marginTop: 20 }}>
+              {t('ContactDetails.DateOfConnection', {
+                date: connection?.createdAt ? formatTime(connection.createdAt, { includeHour: true }) : '',
+              })}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={callOnRemove}
+            accessibilityLabel={t('ContactDetails.RemoveContact')}
+            accessibilityRole={'button'}
+            testID={testIdWithKey('RemoveFromWallet')}
+            style={[styles.contentContainer, { marginTop: 10 }]}>
+            <Text style={{ ...TextTheme.normal, color: ColorPallet.semantic.error }}>
+              {t('ContactDetails.RemoveContact')}
+            </Text>
+          </TouchableOpacity>
+          <CommonRemoveModal
+            usage={ModalUsage.ContactRemove}
+            visible={isRemoveModalDisplayed}
+            onSubmit={callSubmitRemove}
+            onCancel={callCancelRemove}
+          />
+          <CommonRemoveModal
+            usage={ModalUsage.ContactRemoveWithCredentials}
+            visible={isCredentialsRemoveModalDisplayed}
+            onSubmit={callGoToCredentials}
+            onCancel={callCancelUnableToRemove}
+          />
+        </View>
+      )}
+      <View style={[styles.controlsContainer]}>
+        <Button
+          title={t('Loading.BackToHome')}
+          accessibilityLabel={t('Loading.BackToHome')}
+          testID={testIdWithKey('BackToHome')}
+          onPress={onDismissModalTouched}
+          buttonType={ButtonType.ModalSecondary}
+        />
       </View>
-      <TouchableOpacity
-        onPress={callOnRemove}
-        accessibilityLabel={t('ContactDetails.RemoveContact')}
-        accessibilityRole={'button'}
-        testID={testIdWithKey('RemoveFromWallet')}
-        style={[styles.contentContainer, { marginTop: 10 }]}>
-        <Text style={{ ...TextTheme.normal, color: ColorPallet.semantic.error }}>
-          {t('ContactDetails.RemoveContact')}
-        </Text>
-      </TouchableOpacity>
-      <CommonRemoveModal
-        usage={ModalUsage.ContactRemove}
-        visible={isRemoveModalDisplayed}
-        onSubmit={callSubmitRemove}
-        onCancel={callCancelRemove}
-      />
-      <CommonRemoveModal
-        usage={ModalUsage.ContactRemoveWithCredentials}
-        visible={isCredentialsRemoveModalDisplayed}
-        onSubmit={callGoToCredentials}
-        onCancel={callCancelUnableToRemove}
-      />
     </SafeAreaView>
   )
 }
