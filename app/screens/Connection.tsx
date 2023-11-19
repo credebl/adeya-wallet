@@ -16,6 +16,7 @@ import { useNotifications } from '../hooks/notifications'
 import { Screens, TabStacks, DeliveryStackParams, Stacks } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
 import { testIdWithKey } from '../utils/testable'
+import { heightPercentageToDP } from 'react-native-responsive-screen'
 
 type ConnectionProps = StackScreenProps<DeliveryStackParams, Screens.Connection>
 
