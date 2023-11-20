@@ -1,4 +1,10 @@
-import { CredentialState, useConnectionById, useCredentialByState } from '@adeya/ssi'
+import {
+  CredentialState,
+  deleteConnectionRecordById,
+  deleteOobRecordById,
+  useConnectionById,
+  useCredentialByState,
+} from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useMemo, useState } from 'react'
@@ -62,7 +68,14 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
         return
       }
 
-      await agent.connections.deleteById(connection.id)
+      // deleting connection record
+      await deleteConnectionRecordById(agent, connection.id)
+
+      // deleting oob record
+      if (connection?.outOfBandId) {
+        await deleteOobRecordById(agent, connection.outOfBandId)
+      }
+
       setIsRemoveModalDisplayed(false)
       navigation.navigate(Screens.Contacts)
 

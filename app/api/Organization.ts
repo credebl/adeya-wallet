@@ -31,7 +31,7 @@ export const fetchOrganizationData = async ({ pageNumber, pageSize, searchText }
   } catch (error) {
     Toast.show({
       type: ToastType.Error,
-      text1: searchText ? 'Searching organizatio failed' : 'Fetching organizations failed',
+      text1: searchText ? 'Searching organizations failed' : 'Fetching organizations failed',
     })
   }
 }
