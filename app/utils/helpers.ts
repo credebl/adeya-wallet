@@ -25,6 +25,8 @@ import {
   getCredentialsForProofRequest,
   AnonCredsPredicateType,
   AnonCredsRequestedAttribute,
+  parseInvitationFromUrl,
+  findByReceivedInvitationId,
 } from '@adeya/ssi'
 import { CaptureBaseAttributeType } from '@hyperledger/aries-oca'
 import { TFunction } from 'i18next'
@@ -858,6 +860,23 @@ export const receiveMessageFromDeepLink = async (url: string, agent: AdeyaAgent 
   const message = await res.json()
   await agent?.receiveMessage(message)
   return message
+}
+
+/**
+ *
+ * @param agent an Agent instance
+ * @param uri a URI containing a base64 encoded connection invite in the query parameter
+ * @returns boolean indicating if the connection was already established
+ */
+export const checkIfAlreadyConnected = async (agent: AdeyaAgent, invitationUrl: string) => {
+  const invitation = await parseInvitationFromUrl(agent, invitationUrl)
+  const outOfBandRecord = await findByReceivedInvitationId(agent, invitation.id)
+
+  if (outOfBandRecord) {
+    return true
+  }
+
+  return false
 }
 
 /**
