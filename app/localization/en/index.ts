@@ -250,6 +250,7 @@ const translation = {
     "PeopleAndOrganizations": "People and organizations you've interacted with are listed here.",
     "WhatAreContacts": "What are Contacts",
     "AddContact": "Add Contact",
+    "AlreadyConnected": "You have already accepted this invitation.",
   },
   "Organizations": {
     "EmptyOrganizationsList": "No matching organization found. Please refine your search.",
