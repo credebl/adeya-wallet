@@ -1,4 +1,11 @@
-import { importWalletWithAgent, ConsoleLogger, LogLevel, InitConfig, getAgentModules } from '@adeya/ssi'
+import {
+  importWalletWithAgent,
+  ConsoleLogger,
+  LogLevel,
+  InitConfig,
+  getAgentModules,
+  isWalletImportable,
+} from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import {
@@ -127,6 +134,18 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
         autoUpdateStorageOnStartup: true,
       }
 
+      const walletImportCheck = await isWalletImportable(walletConfig, importConfig)
+
+      if (!walletImportCheck) {
+        Toast.show({
+          type: ToastType.Error,
+          text1: `You've entered an invalid passphrase.`,
+          position: 'bottom',
+        })
+        setVerify(false)
+        return
+      }
+
       const agent = await importWalletWithAgent({
         agentConfig,
         importConfig,
@@ -152,7 +171,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
       setVerify(false)
     }
   }
-  const VerifyPharase = async (seed: string) => {
+  const verifyPassPhrase = async (seed: string) => {
     const result = seed.replaceAll(',', ' ')
     if (result) {
       initAgent(result)
@@ -233,7 +252,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
           buttonType={ButtonType.Primary}
           accessibilityLabel={'okay'}
           disabled={verify}
-          onPress={() => VerifyPharase(PassPhrase)}>
+          onPress={() => verifyPassPhrase(PassPhrase)}>
           {verify && <ButtonLoading />}
         </Button>
       </View>
