@@ -6,7 +6,7 @@ import {
   AnonCredsCredentialsForProofRequest,
   AnonCredsRequestedAttributeMatch,
   AnonCredsRequestedPredicateMatch,
-  deleteConnectionById,
+  deleteConnectionRecordById,
   getProofFormatData,
   selectCredentialsForProofRequest,
   acceptProofRequest,
@@ -330,7 +330,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
         proofFormats: automaticRequestedCreds.proofFormats,
       })
       if (proof.connectionId && goalCode && goalCode.endsWith('verify.once')) {
-        await deleteConnectionById(agent, proof.connectionId)
+        await deleteConnectionRecordById(agent, proof.connectionId)
       }
     } catch (err: unknown) {
       setPendingModalVisible(false)
@@ -349,7 +349,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
         if (proof.connectionId) {
           await sendProofProblemReport(agent, { proofRecordId: proof.id, description: t('ProofRequest.Declined') })
           if (goalCode && goalCode.endsWith('verify.once')) {
-            await deleteConnectionById(agent, proof.connectionId)
+            await deleteConnectionRecordById(agent, proof.connectionId)
           }
         }
       }
