@@ -7,7 +7,7 @@ import { USER_CERTIFICATE } from '../api/api-constants'
 import { ToastType } from '../components/toast/BaseToast'
 import { CredentialData } from '../types/share'
 
-const useSocialShare = () => {
+export const useSocialShare = () => {
   const [loading, setLoading] = useState(false)
 
   const socialShare = async (credentialData: CredentialData) => {
@@ -29,12 +29,12 @@ const useSocialShare = () => {
       if (!response.ok) {
         Toast.show({
           type: ToastType.Error,
-          text1: 'Failed to fetch data. Status: ${response.status}',
+          text1: 'Failed to fetch social share content',
         })
       }
 
       const data = await response.json()
-      const shareOptions = { message: 'Certificate', url: data.data, mimeType: 'image/jpeg' }
+      const shareOptions = { message: data?.label, url: data?.data, mimeType: 'image/jpeg' }
       await Share.open(shareOptions)
       return data
     } catch (error) {
@@ -44,5 +44,3 @@ const useSocialShare = () => {
 
   return { socialShare, loading }
 }
-
-export default useSocialShare

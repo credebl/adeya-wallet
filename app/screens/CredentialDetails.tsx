@@ -45,7 +45,7 @@ import {
 } from '../utils/credential'
 import { formatTime, getCredentialConnectionLabel } from '../utils/helpers'
 import { buildFieldsFromAnonCredsCredential } from '../utils/oca'
-import useSocialShare from '../utils/social-share'
+import { useSocialShare } from '../utils/social-share'
 import { testIdWithKey } from '../utils/testable'
 
 type CredentialDetailsProps = StackScreenProps<CredentialStackParams, Screens.CredentialDetails>
@@ -61,7 +61,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
 
   const { credential } = route?.params
 
-  const credentialId = credential?.credentials[0]?.credentialRecordId
+  const credentialId = credential.id
   const schemaId = credential?.metadata?.data['_anoncreds/credential']?.schemaId
   const attributes = credential?.credentialAttributes?.map(attribute => ({
     name: attribute.name,
@@ -73,6 +73,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     schemaId,
     attributes,
   }
+
   const { agent } = useAppAgent()
   const { t, i18n } = useTranslation()
   const { TextTheme, ColorPallet } = useTheme()
