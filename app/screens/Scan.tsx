@@ -52,6 +52,7 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
           type: ToastType.Warn,
           text1: t('Contacts.AlreadyConnected'),
         })
+        navigation.goBack()
         return
       }
 

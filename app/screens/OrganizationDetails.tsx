@@ -30,13 +30,15 @@ const OrganizationDetails: React.FC = () => {
   const { t } = useTranslation()
   const params = useRoute<RouteProp<Record<string, OrganizationDetailProps>, string>>().params
   const { organizationDetailData, credentialDetailData } = useOrganizationDetailData(params?.orgSlug)
-  const [invitationUrl, setinvitationUrl] = useState('')
-  const [disableConnect, setdisableConnect] = useState(false)
+  const [invitationUrl, setInvitationUrl] = useState('')
+  const [disableConnect, setDisableConnect] = useState(false)
   const { records } = useConnections()
   const connections = records
 
   const isAlreadyConnected = useMemo(() => {
-    return connections?.some(connection => connection.theirLabel === params?.name)
+    return connections?.some(
+      connection => connection.theirLabel?.replace(/\s/g, '').trim() === params?.name.replace(/\s/g, '').trim(),
+    )
   }, [connections, params])
 
   const styles = StyleSheet.create({
@@ -187,21 +189,22 @@ const OrganizationDetails: React.FC = () => {
     let connectionInvitationUrl = ''
     if (agentInvitations.length === 1) {
       connectionInvitationUrl = agentInvitations[0]?.connectionInvitation
-      setinvitationUrl(connectionInvitationUrl)
+      setInvitationUrl(connectionInvitationUrl)
     } else if (agentInvitations.length > 1) {
       connectionInvitationUrl = agentInvitations[agentInvitations.length - 1]?.connectionInvitation
-      setinvitationUrl(connectionInvitationUrl)
+      setInvitationUrl(connectionInvitationUrl)
     }
   }, [organizationDetailData])
+
   const connectOrganization = async () => {
-    setdisableConnect(true)
+    setDisableConnect(true)
     try {
       if (!invitationUrl) {
         Toast.show({
           type: ToastType.Error,
           text1: 'No connection invitation available',
         })
-        setdisableConnect(false)
+        setDisableConnect(false)
         return
       }
 

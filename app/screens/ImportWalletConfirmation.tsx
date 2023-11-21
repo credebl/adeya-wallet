@@ -115,7 +115,8 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
           text1: `Please enter passphrase`,
         })
       }
-      const encodeHash = seed
+
+      const encodeHash = seed.replaceAll(' ', '').trim()
 
       const walletConfig = {
         id: credentials.id,
@@ -130,11 +131,11 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
       const agentConfig: InitConfig = {
         label: store.preferences.walletName,
         walletConfig,
-        logger: new ConsoleLogger(LogLevel.off),
+        logger: new ConsoleLogger(LogLevel.debug),
         autoUpdateStorageOnStartup: true,
       }
 
-      const walletImportCheck = await isWalletImportable(walletConfig, importConfig)
+      const walletImportCheck = await isWalletImportable({ ...walletConfig }, importConfig)
 
       if (!walletImportCheck) {
         Toast.show({
@@ -164,7 +165,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
     } catch (e: unknown) {
       Toast.show({
         type: ToastType.Error,
-        text1: `You've entered an invalid passphrase.`,
+        text1: 'Wallet import failed. Please try again',
         visibilityTime: 5000,
         position: 'bottom',
       })
@@ -192,10 +193,21 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
         copyTo: 'documentDirectory',
       })
 
+      if (!res.name?.endsWith('.wallet')) {
+        Toast.show({
+          type: ToastType.Error,
+          text1: 'Please select a valid wallet file',
+          visibilityTime: 2000,
+        })
+        navigation.goBack()
+        return
+      }
+
       if (!res.fileCopyUri) {
         Toast.show({
           type: ToastType.Error,
         })
+        navigation.goBack()
         return
       }
 
