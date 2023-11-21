@@ -124,6 +124,10 @@ const Onboarding: React.FC<OnboardingProps> = ({
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack()
+          return true
+        }
         BackHandler.exitApp()
 
         return true
