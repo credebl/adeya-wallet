@@ -4,6 +4,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AccessibilityInfo, Modal, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { heightPercentageToDP } from 'react-native-responsive-screen'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Button, { ButtonType } from '../components/buttons/Button'
@@ -15,7 +16,6 @@ import { useNotifications } from '../hooks/notifications'
 import { Screens, TabStacks, DeliveryStackParams, Stacks } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
 import { testIdWithKey } from '../utils/testable'
-import { heightPercentageToDP } from 'react-native-responsive-screen'
 
 type ConnectionProps = StackScreenProps<DeliveryStackParams, Screens.Connection>
 
