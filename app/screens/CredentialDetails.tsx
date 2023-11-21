@@ -9,9 +9,19 @@ import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { BrandingOverlayType, CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import {
+  DeviceEventEmitter,
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
+import Icon from 'react-native-vector-icons/AntDesign'
 
 import CredentialCard from '../components/misc/CredentialCard'
 import InfoBox, { InfoBoxType } from '../components/misc/InfoBox'
@@ -35,6 +45,7 @@ import {
 } from '../utils/credential'
 import { formatTime, getCredentialConnectionLabel } from '../utils/helpers'
 import { buildFieldsFromAnonCredsCredential } from '../utils/oca'
+import useSocialShare from '../utils/social-share'
 import { testIdWithKey } from '../utils/testable'
 
 type CredentialDetailsProps = StackScreenProps<CredentialStackParams, Screens.CredentialDetails>
@@ -49,6 +60,19 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
   }
 
   const { credential } = route?.params
+
+  const credentialId = credential?.credentials[0]?.credentialRecordId
+  const schemaId = credential?.metadata?.data['_anoncreds/credential']?.schemaId
+  const attributes = credential?.credentialAttributes?.map(attribute => ({
+    name: attribute.name,
+    value: attribute.value,
+  }))
+
+  const shareData = {
+    credentialId,
+    schemaId,
+    attributes,
+  }
   const { agent } = useAppAgent()
   const { t, i18n } = useTranslation()
   const { TextTheme, ColorPallet } = useTheme()
@@ -60,6 +84,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
   const [isRevokedMessageHidden, setIsRevokedMessageHidden] = useState<boolean>(
     (credential!.metadata.get(CredentialMetadata.customMetadata) as customMetadata)?.revoked_detail_dismissed ?? false,
   )
+  const { socialShare, loading } = useSocialShare()
 
   const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay>>({
     bundle: undefined,
@@ -69,7 +94,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
   })
 
   const credentialConnectionLabel = getCredentialConnectionLabel(credential)
-
+  const isPresentationFieldsEmpty = !overlay.brandingOverlay?.digest
   const styles = StyleSheet.create({
     container: {
       backgroundColor: overlay.brandingOverlay?.primaryBackgroundColor,
@@ -107,6 +132,14 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     textContainer: {
       color: credentialTextColor(ColorPallet, overlay.brandingOverlay?.primaryBackgroundColor),
       flexShrink: 1,
+    },
+    shareContainer: {
+      flexDirection: 'row',
+    },
+    shareIcon: {
+      position: 'absolute',
+      bottom: 10,
+      right: 20,
     },
   })
 
@@ -312,7 +345,20 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
       <View style={styles.container}>
         <CredentialDetailSecondaryHeader />
         <CredentialCardLogo />
-        <CredentialDetailPrimaryHeader />
+        <View style={styles.shareContainer}>
+          <CredentialDetailPrimaryHeader />
+          {loading ? (
+            <ActivityIndicator size={30} style={styles.shareIcon} color={ColorPallet.grayscale.white} />
+          ) : (
+            <View style={styles.shareIcon}>
+              {!isPresentationFieldsEmpty && (
+                <TouchableOpacity onPress={() => socialShare(shareData)}>
+                  <Icon size={30} name="sharealt" color={ColorPallet.grayscale.white} />
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+        </View>
         {isRevoked && !isRevokedMessageHidden ? (
           <View style={{ padding: paddingVertical, paddingTop: 0 }}>
             {credential && <CredentialRevocationMessage credential={credential} />}
