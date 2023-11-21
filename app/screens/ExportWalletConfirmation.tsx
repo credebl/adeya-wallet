@@ -130,9 +130,10 @@ function ExportWalletConfirmation() {
     setPhraseData(shuffledPhraseData)
     setArraySetPhraseData(Array(shuffledPhraseData.length).fill(''))
   }, [])
+
   const exportWallet = async (seed: string) => {
     setMatchPhrase(true)
-    const encodeHash = seed.replaceAll(',', ' ')
+    const encodeHash = seed
 
     try {
       const documentDirectory: string = DownloadDirectoryPath
@@ -171,7 +172,8 @@ function ExportWalletConfirmation() {
   }
   const exportWalletIOS = async (seed: string) => {
     setMatchPhrase(true)
-    const encodeHash = seed.replaceAll(',', ' ')
+
+    const encodeHash = seed
     const { fs } = RNFetchBlob
     try {
       const documentDirectory = fs.dirs.DocumentDir
@@ -251,11 +253,11 @@ function ExportWalletConfirmation() {
       try {
         const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
           title: 'Permission',
-          message: 'PCM needs to write to storage',
+          message: 'ADEYA Wallet needs to write to storage',
           buttonPositive: '',
         })
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          exportWallet(sysPassPhrase)
+          await exportWallet(sysPassPhrase)
         }
       } catch (error) {
         Toast.show({
@@ -264,13 +266,13 @@ function ExportWalletConfirmation() {
         })
       }
     } else {
-      exportWalletIOS(sysPassPhrase)
+      await exportWalletIOS(sysPassPhrase)
     }
   }
 
   const verifyPhrase = () => {
-    const addedPassPhraseData = arraySetPhraseData.join(',')
-    const displayedPassphrase = parms?.params?.phraseData.map(item => item).join(',')
+    const addedPassPhraseData = arraySetPhraseData.join('')
+    const displayedPassphrase = parms?.params?.phraseData.map(item => item).join('')
     if (displayedPassphrase.trim() !== '') {
       const sysPassPhrase = addedPassPhraseData.trim()
       const userPassphrase = displayedPassphrase.trim()
