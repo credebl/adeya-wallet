@@ -21,7 +21,7 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
-import Icon from 'react-native-vector-icons/AntDesign'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import CredentialCard from '../components/misc/CredentialCard'
 import InfoBox, { InfoBoxType } from '../components/misc/InfoBox'
@@ -139,7 +139,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     },
     shareIcon: {
       position: 'absolute',
-      bottom: 10,
+      bottom: 20,
       right: 20,
     },
   })
@@ -354,7 +354,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
             <View style={styles.shareIcon}>
               {!isPresentationFieldsEmpty && (
                 <TouchableOpacity onPress={() => socialShare(shareData)}>
-                  <Icon size={30} name="sharealt" color={ColorPallet.grayscale.white} />
+                  <Icon size={30} name="share-variant-outline" color={ColorPallet.grayscale.white} />
                 </TouchableOpacity>
               )}
             </View>
