@@ -29,8 +29,11 @@ export const useSocialShare = () => {
       if (!response.ok) {
         Toast.show({
           type: ToastType.Error,
-          text1: 'Failed to fetch social share content',
+          text1: 'Failed to fetch social share content for this credential.',
         })
+
+        setLoading(false)
+        return
       }
 
       const data = await response.json()
