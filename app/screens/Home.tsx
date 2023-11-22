@@ -2,7 +2,6 @@ import { StackScreenProps } from '@react-navigation/stack'
 import React, { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, StyleSheet, View, Text, Dimensions, TouchableOpacity, Image } from 'react-native'
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 
 import ScanButton from '../components/common/ScanButton'
 import NotificationListItem, { NotificationType } from '../components/listItems/NotificationListItem'
@@ -41,7 +40,8 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'center',
-      height: 300,
+      marginTop: 20,
+      height: 250,
       width: 300,
     },
     header: {
@@ -61,8 +61,8 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       right: 10,
     },
     homeImage: {
-      width: wp('70%'),
-      height: hp('40%'),
+      height: '85%',
+      width: '80%',
     },
   })
 
