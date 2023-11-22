@@ -35,6 +35,7 @@
         <category android:name="android.intent.category.BROWSABLE" />
         <data android:scheme="didcomm" />
         <data android:scheme="adeyawallet" />
+        <data android:scheme="https" android:host="agent.credebl.id" />
       </intent-filter>
     </activity>
   </application>
