@@ -66,6 +66,11 @@ const CredentialOfferAccept: React.FC<CredentialOfferAcceptProps> = ({ visible, 
   if (!credential) {
     throw new Error('Unable to fetch credential from AFJ')
   }
+
+  const onBackToHomeTouched = () => {
+    navigation.getParent()?.navigate(TabStacks.HomeStack, { screen: Screens.Home })
+  }
+
   const onDoneTouched = () => {
     navigation.getParent()?.navigate(TabStacks.CredentialStack, { screen: Screens.Credentials })
   }
@@ -99,6 +104,7 @@ const CredentialOfferAccept: React.FC<CredentialOfferAcceptProps> = ({ visible, 
       AccessibilityInfo.announceForAccessibility(t('Connection.TakingTooLong'))
     }
   }, [shouldShowDelayMessage])
+
   return (
     <Modal visible={visible} transparent={true} animationType={'none'}>
       <SafeAreaView style={{ ...ListItems.credentialOfferBackground }}>
@@ -139,7 +145,20 @@ const CredentialOfferAccept: React.FC<CredentialOfferAcceptProps> = ({ visible, 
             </Text>
           )}
         </ScrollView>
+
         <View style={[styles.controlsContainer]}>
+          {credentialDeliveryStatus === DeliveryStatus.Pending && (
+            <View>
+              <Button
+                title={t('Loading.BackToHome')}
+                accessibilityLabel={t('Loading.BackToHome')}
+                testID={testIdWithKey('BackToHome')}
+                onPress={onBackToHomeTouched}
+                buttonType={ButtonType.ModalSecondary}
+              />
+            </View>
+          )}
+
           {credentialDeliveryStatus === DeliveryStatus.Completed && (
             <View>
               <Button
