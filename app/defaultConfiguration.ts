@@ -2,7 +2,7 @@ import { BrandingOverlayType, RemoteOCABundleResolver } from '@hyperledger/aries
 import { Config } from 'react-native-config'
 
 import defaultIndyLedgers from '../configs/ledgers/indy'
-import { defaultProofRequestTemplates } from '../verifier'
+import { useProofRequestTemplates } from '../verifier'
 
 import EmptyList from './components/misc/EmptyList'
 import Record from './components/record/Record'
@@ -30,6 +30,7 @@ export const defaultConfiguration: ConfigurationContext = {
     brandingOverlayType: BrandingOverlayType.Branding10,
     preLoad: true,
   }),
+  proofTemplateBaseUrl: Config.PROOF_TEMPLATE_URL ?? '',
   scan: Scan,
   useBiometry: UseBiometry,
   record: Record,
@@ -45,7 +46,7 @@ export const defaultConfiguration: ConfigurationContext = {
     pageTitle: '',
   },
   useCustomNotifications: useNotifications,
-  proofRequestTemplates: defaultProofRequestTemplates,
+  proofRequestTemplates: useProofRequestTemplates,
   enableTours: false,
   enableWalletNaming: true,
   enableBackupWallet: true,

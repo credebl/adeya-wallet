@@ -78,7 +78,7 @@ const ListCredentials: React.FC = () => {
     updateCredentials().then(updatedCredentials => {
       setCredentialList(updatedCredentials)
     })
-  }, [])
+  }, [credentialList])
 
   return (
     <View style={styles.container}>
