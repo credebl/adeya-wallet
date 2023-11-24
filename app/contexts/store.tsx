@@ -34,7 +34,7 @@ export const defaultState: State = {
     developerModeEnabled: false,
     biometryPreferencesUpdated: false,
     useBiometry: false,
-    useVerifierCapability: false,
+    useVerifierCapability: true,
     useConnectionInviterCapability: false,
     useDevVerifierTemplates: false,
     walletName: generateRandomWalletName(),
