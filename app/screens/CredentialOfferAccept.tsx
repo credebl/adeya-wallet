@@ -147,7 +147,7 @@ const CredentialOfferAccept: React.FC<CredentialOfferAcceptProps> = ({ visible, 
         </ScrollView>
 
         <View style={[styles.controlsContainer]}>
-          {credentialDeliveryStatus === DeliveryStatus.Pending && (
+          {credentialDeliveryStatus === DeliveryStatus.Pending && credential.state === CredentialState.RequestSent && (
             <View>
               <Button
                 title={t('Loading.BackToHome')}
