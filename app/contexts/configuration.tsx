@@ -29,6 +29,7 @@ export interface ConfigurationContext {
   credentialEmptyList: React.FC<EmptyListProps>
   developer: React.FC
   OCABundleResolver: OCABundleResolverType
+  proofTemplateBaseUrl?: string
   scan: React.FC<ScanProps>
   useBiometry: React.FC
   record: React.FC<RecordProps>
@@ -39,7 +40,7 @@ export interface ConfigurationContext {
   useCustomNotifications: () => { total: number; notifications: any }
   connectionTimerDelay?: number
   autoRedirectConnectionToHome?: boolean
-  proofRequestTemplates?: Array<ProofRequestTemplate>
+  proofRequestTemplates?: () => Array<ProofRequestTemplate>
   enableTours?: boolean
   enableWalletNaming?: boolean
   enableBackupWallet?: boolean
