@@ -277,37 +277,37 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     }
   }
 
-  if (store.preferences.useVerifierCapability) {
-    settingsSections.splice(1, 0, {
-      header: {
-        icon: 'send',
-        title: t('Screens.ProofRequests'),
+  // if (store.preferences.useVerifierCapability) {
+  settingsSections.splice(1, 0, {
+    header: {
+      icon: 'send',
+      title: t('Screens.ProofRequests'),
+    },
+    data: [
+      {
+        title: t('Screens.SendProofRequest'),
+        accessibilityLabel: t('Screens.ProofRequests'),
+        testID: testIdWithKey('ProofRequests'),
+        onPress: () =>
+          navigation.getParent()?.navigate(Stacks.ProofRequestsStack, {
+            screen: Screens.ProofRequests,
+            params: { navigation: navigation },
+          }),
       },
-      data: [
-        {
-          title: t('Screens.SendProofRequest'),
-          accessibilityLabel: t('Screens.ProofRequests'),
-          testID: testIdWithKey('ProofRequests'),
-          onPress: () =>
-            navigation.getParent()?.navigate(Stacks.ProofRequestsStack, {
-              screen: Screens.ProofRequests,
-              params: { navigation: navigation },
-            }),
-        },
-      ],
-    })
+    ],
+  })
 
-    const section = settingsSections.find(item => item.header.title === t('Settings.AppSettings'))
-    if (section) {
-      section.data.splice(3, 0, {
-        title: t('Settings.DataRetention'),
-        value: store.preferences.useDataRetention ? t('Global.On') : t('Global.Off'),
-        accessibilityLabel: t('Settings.DataRetention'),
-        testID: testIdWithKey('DataRetention'),
-        onPress: () => navigation.navigate(Screens.DataRetention),
-      })
-    }
+  const section = settingsSections.find(item => item.header.title === t('Settings.AppSettings'))
+  if (section) {
+    section.data.splice(3, 0, {
+      title: t('Settings.DataRetention'),
+      value: store.preferences.useDataRetention ? t('Global.On') : t('Global.Off'),
+      accessibilityLabel: t('Settings.DataRetention'),
+      testID: testIdWithKey('DataRetention'),
+      onPress: () => navigation.navigate(Screens.DataRetention),
+    })
   }
+  // }
 
   if (store.preferences.useConnectionInviterCapability) {
     settingsSections.splice(2, 0, {
