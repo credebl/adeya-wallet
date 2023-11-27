@@ -91,7 +91,7 @@ const TabStack: React.FC = () => {
             tabBarIconStyle: styles.tabBarIcon,
             tabBarIcon: ({ focused }) => (
               <View style={{ ...TabTheme.tabBarContainerStyle, justifyContent: showLabels ? 'flex-end' : 'center' }}>
-                <Assets.svg.ExploreIcon />
+                {focused ? <Assets.svg.ExploreIconActive /> : <Assets.svg.ExploreIcon />}
                 {showLabels && (
                   <Text
                     style={{
