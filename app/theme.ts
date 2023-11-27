@@ -31,6 +31,7 @@ export interface ISVGAssets {
   iconProofRequestDark: React.FC<SvgProps>
   IconInfoSentDark: React.FC<SvgProps>
   ExploreIcon: React.FC<SvgProps>
+  ExploreIconActive: React.FC<SvgProps>
 }
 
 export interface IFontAttributes {
