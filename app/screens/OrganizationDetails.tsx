@@ -1,6 +1,6 @@
 import { useConnections } from '@adeya/ssi'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, Text, Image, ScrollView } from 'react-native'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
@@ -30,11 +30,15 @@ const OrganizationDetails: React.FC = () => {
   const { t } = useTranslation()
   const params = useRoute<RouteProp<Record<string, OrganizationDetailProps>, string>>().params
   const { organizationDetailData, credentialDetailData } = useOrganizationDetailData(params?.orgSlug)
+  const [invitationUrl, setInvitationUrl] = useState('')
+  const [disableConnect, setDisableConnect] = useState(false)
   const { records } = useConnections()
   const connections = records
 
   const isAlreadyConnected = useMemo(() => {
-    return connections?.some(connection => connection.theirLabel === params?.name)
+    return connections?.some(
+      connection => connection.theirLabel?.replace(/\s/g, '').trim() === params?.name.replace(/\s/g, '').trim(),
+    )
   }, [connections, params])
 
   const styles = StyleSheet.create({
@@ -175,25 +179,36 @@ const OrganizationDetails: React.FC = () => {
       }
     }
   }
-  const connectOrganization = async () => {
-    try {
-      const [agentInvitations] = organizationDetailData.map(item => item?.agent_invitations)
 
-      if (!agentInvitations || agentInvitations.length === 0) {
+  useEffect(() => {
+    const [agentInvitations] = organizationDetailData.map(item => item?.agent_invitations)
+
+    if (!agentInvitations || agentInvitations.length === 0) {
+      return
+    }
+    let connectionInvitationUrl = ''
+    if (agentInvitations.length === 1) {
+      connectionInvitationUrl = agentInvitations[0]?.connectionInvitation
+      setInvitationUrl(connectionInvitationUrl)
+    } else if (agentInvitations.length > 1) {
+      connectionInvitationUrl = agentInvitations[agentInvitations.length - 1]?.connectionInvitation
+      setInvitationUrl(connectionInvitationUrl)
+    }
+  }, [organizationDetailData])
+
+  const connectOrganization = async () => {
+    setDisableConnect(true)
+    try {
+      if (!invitationUrl) {
         Toast.show({
           type: ToastType.Error,
-          text1: 'No agent invitations available',
+          text1: 'No connection invitation available',
         })
+        setDisableConnect(false)
         return
       }
-      let connectionInvitationUrl = ''
-      if (agentInvitations.length === 1) {
-        connectionInvitationUrl = agentInvitations[0]?.connectionInvitation
-      } else if (agentInvitations.length > 1) {
-        connectionInvitationUrl = agentInvitations[agentInvitations.length - 1]?.connectionInvitation
-      }
 
-      await handleInvitation(connectionInvitationUrl)
+      await handleInvitation(invitationUrl)
     } catch (error) {
       Toast.show({
         type: ToastType.Error,
@@ -201,7 +216,6 @@ const OrganizationDetails: React.FC = () => {
       })
     }
   }
-
   return (
     <View style={styles.container}>
       <View style={styles.headerTextView}>
@@ -253,6 +267,7 @@ const OrganizationDetails: React.FC = () => {
             accessibilityLabel={'Connect'}
             testID={testIdWithKey('Connect')}
             buttonType={ButtonType.Primary}
+            disabled={disableConnect}
           />
         </View>
       )}

@@ -1,11 +1,13 @@
-import { deleteConnectionById, ProofState, useProofByState } from '@adeya/ssi'
+import { deleteConnectionRecordById, ProofState, useProofByState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { createStackNavigator, StackCardStyleInterpolator, StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AppState } from 'react-native'
+import Toast from 'react-native-toast-message'
 
 import { ProofCustomMetadata, ProofMetadata } from '../../verifier'
+import { ToastType } from '../components/toast/BaseToast'
 import { walletTimeout } from '../constants'
 import { useAuth } from '../contexts/auth'
 import { useConfiguration } from '../contexts/configuration'
@@ -24,7 +26,7 @@ import PINCreate from '../screens/PINCreate'
 import PINEnter from '../screens/PINEnter'
 import { AuthenticateStackParams, Screens, Stacks } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
-import { connectFromInvitation, getOobDeepLink } from '../utils/helpers'
+import { checkIfAlreadyConnected, connectFromInvitation, getOobDeepLink } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
 import ConnectStack from './ConnectStack'
@@ -58,7 +60,8 @@ const RootStack: React.FC = () => {
     declinedProofs.forEach(proof => {
       const meta = proof?.metadata?.get(ProofMetadata.customMetadata) as ProofCustomMetadata
       if (meta?.delete_conn_after_seen) {
-        deleteConnectionById(agent, proof?.connectionId ?? '').catch(() => {})
+        deleteConnectionRecordById(agent, proof?.connectionId ?? '').catch(() => {})
+
         proof?.metadata.set(ProofMetadata.customMetadata, { ...meta, delete_conn_after_seen: false })
       }
     })
@@ -85,6 +88,17 @@ const RootStack: React.FC = () => {
   useEffect(() => {
     async function handleDeepLink(deepLink: string) {
       try {
+        // check if connection already exists
+        const isAlreadyConnected = await checkIfAlreadyConnected(agent, deepLink)
+
+        if (isAlreadyConnected) {
+          Toast.show({
+            type: ToastType.Warn,
+            text1: t('Contacts.AlreadyConnected'),
+          })
+          return
+        }
+
         // Try connection based
         const { connectionRecord } = await connectFromInvitation(agent, deepLink)
         navigation.navigate(Stacks.ConnectionStack as any, {

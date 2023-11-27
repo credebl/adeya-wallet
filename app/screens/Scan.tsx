@@ -17,7 +17,13 @@ import { BifoldError, QrCodeScanError } from '../types/error'
 import { ConnectStackParams, Screens, Stacks } from '../types/navigators'
 import { PermissionContract } from '../types/permissions'
 import { useAppAgent } from '../utils/agent'
-import { connectFromInvitation, getJson, getUrl, receiveMessageFromUrlRedirect } from '../utils/helpers'
+import {
+  checkIfAlreadyConnected,
+  connectFromInvitation,
+  getJson,
+  getUrl,
+  receiveMessageFromUrlRedirect,
+} from '../utils/helpers'
 
 export type ScanProps = StackScreenProps<ConnectStackParams>
 
@@ -36,6 +42,20 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
   const handleInvitation = async (value: string): Promise<void> => {
     try {
       setLoading(true)
+
+      const isAlreadyConnected = await checkIfAlreadyConnected(agent, value)
+
+      if (isAlreadyConnected) {
+        setLoading(false)
+
+        Toast.show({
+          type: ToastType.Warn,
+          text1: t('Contacts.AlreadyConnected'),
+        })
+        navigation.goBack()
+        return
+      }
+
       const { connectionRecord } = await connectFromInvitation(agent, value)
       setLoading(false)
       navigation.getParent()?.navigate(Stacks.ConnectionStack, {

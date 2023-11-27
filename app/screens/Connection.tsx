@@ -4,6 +4,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AccessibilityInfo, Modal, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { heightPercentageToDP } from 'react-native-responsive-screen'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Button, { ButtonType } from '../components/buttons/Button'
@@ -71,6 +72,11 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
     controlsContainer: {
       marginTop: 'auto',
       margin: 20,
+    },
+    controlsContainerHome: {
+      justifyContent: 'center',
+      alignSelf: 'center',
+      marginTop: heightPercentageToDP('50%'),
     },
     delayMessageText: {
       textAlign: 'center',
@@ -151,7 +157,7 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
       oobRecord &&
       (!goalCode || (!goalCode.startsWith('aries.vc.verify') && !goalCode.startsWith('aries.vc.issue')))
     ) {
-      navigation.navigate(Stacks.ConnectionStack, {
+      navigation.navigate(Stacks.ContactStack, {
         screen: Screens.ContactDetails,
         params: { connectionId: connectionId },
       })
@@ -196,44 +202,55 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
   }, [notifications])
 
   return (
-    <Modal
-      visible={state.isVisible}
-      transparent={true}
-      animationType={'slide'}
-      onRequestClose={() => {
-        dispatch({ isVisible: false })
-      }}>
-      <SafeAreaView style={{ backgroundColor: ColorPallet.brand.modalPrimaryBackground }}>
-        <ScrollView style={[styles.container]}>
-          <View style={[styles.messageContainer]}>
-            <Text
-              style={[TextTheme.modalHeadingThree, styles.messageText]}
-              testID={testIdWithKey('CredentialOnTheWay')}>
-              {t('Connection.JustAMoment')}
-            </Text>
-          </View>
+    <View>
+      <Modal
+        visible={state.isVisible}
+        transparent={true}
+        animationType={'slide'}
+        onRequestClose={() => {
+          dispatch({ isVisible: false })
+        }}>
+        <SafeAreaView style={{ backgroundColor: ColorPallet.brand.modalPrimaryBackground }}>
+          <ScrollView style={[styles.container]}>
+            <View style={[styles.messageContainer]}>
+              <Text
+                style={[TextTheme.modalHeadingThree, styles.messageText]}
+                testID={testIdWithKey('CredentialOnTheWay')}>
+                {t('Connection.JustAMoment')}
+              </Text>
+            </View>
 
-          <View style={[styles.image]}>
-            <ConnectionLoading />
-          </View>
+            <View style={[styles.image]}>
+              <ConnectionLoading />
+            </View>
 
-          {state.shouldShowDelayMessage && (
-            <Text style={[TextTheme.modalNormal, styles.delayMessageText]} testID={testIdWithKey('TakingTooLong')}>
-              {t('Connection.TakingTooLong')}
-            </Text>
-          )}
-        </ScrollView>
-        <View style={[styles.controlsContainer]}>
-          <Button
-            title={t('Loading.BackToHome')}
-            accessibilityLabel={t('Loading.BackToHome')}
-            testID={testIdWithKey('BackToHome')}
-            onPress={onDismissModalTouched}
-            buttonType={ButtonType.ModalSecondary}
-          />
-        </View>
-      </SafeAreaView>
-    </Modal>
+            {state.shouldShowDelayMessage && (
+              <Text style={[TextTheme.modalNormal, styles.delayMessageText]} testID={testIdWithKey('TakingTooLong')}>
+                {t('Connection.TakingTooLong')}
+              </Text>
+            )}
+          </ScrollView>
+          <View style={[styles.controlsContainer]}>
+            <Button
+              title={t('Loading.BackToHome')}
+              accessibilityLabel={t('Loading.BackToHome')}
+              testID={testIdWithKey('BackToHome')}
+              onPress={onDismissModalTouched}
+              buttonType={ButtonType.ModalSecondary}
+            />
+          </View>
+        </SafeAreaView>
+      </Modal>
+      <View style={[styles.controlsContainerHome]}>
+        <Button
+          title={t('Loading.BackToHome')}
+          accessibilityLabel={t('Loading.BackToHome')}
+          testID={testIdWithKey('BackToHome')}
+          onPress={onDismissModalTouched}
+          buttonType={ButtonType.ModalSecondary}
+        />
+      </View>
+    </View>
   )
 }
 
