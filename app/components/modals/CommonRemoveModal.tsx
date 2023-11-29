@@ -125,6 +125,10 @@ const CommonRemoveModal: React.FC<CommonRemoveModalProps> = ({ usage, visible, d
       ...TextTheme.modalNormal,
       marginTop: 25,
     },
+    cancelButton: {
+      paddingTop: 10,
+      paddingBottom: 25,
+    },
   })
 
   const titleForConfirmButton = (): string => {
@@ -321,7 +325,7 @@ const CommonRemoveModal: React.FC<CommonRemoveModalProps> = ({ usage, visible, d
               }
             />
           </View>
-          <View style={[{ paddingTop: 10 }]}>
+          <View style={styles.cancelButton}>
             <Button
               title={t('Global.Cancel')}
               accessibilityLabel={t('Global.Cancel')}
