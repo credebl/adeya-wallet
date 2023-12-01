@@ -1,9 +1,11 @@
 import {
   CredentialState,
+  ProofState,
   deleteConnectionRecordById,
   deleteOobRecordById,
   useConnectionById,
   useCredentialByState,
+  useProofByState,
 } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack'
@@ -34,6 +36,8 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
   const navigation = useNavigation<StackNavigationProp<ContactStackParams>>()
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState<boolean>(false)
   const [isCredentialsRemoveModalDisplayed, setIsCredentialsRemoveModalDisplayed] = useState<boolean>(false)
+  const [isCredentialsOfferRemoveModalDisplayed, setIsCredentialsOfferRemoveModalDisplayed] = useState<boolean>(false)
+  const [isProofRequestRemoveModalDisplayed, setIsProofRequestRemoveModalDisplayed] = useState<boolean>(false)
   const connection = useConnectionById(connectionId)
   // FIXME: This should be exposed via a react hook that allows to filter credentials by connection id
   const connectionCredentials = [
@@ -42,6 +46,12 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
   ].filter(credential => credential.connectionId === connection?.id)
   const { ColorPallet, TextTheme } = useTheme()
 
+  const connectionCredentialsOffer = [...useCredentialByState(CredentialState.OfferReceived)].filter(
+    credential => credential.connectionId === connection?.id,
+  )
+  const connectionProofRequest = [...useProofByState(ProofState.RequestReceived)].filter(
+    credential => credential.connectionId === connection?.id,
+  )
   const styles = StyleSheet.create({
     contentContainer: {
       padding: 20,
@@ -55,10 +65,19 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
   })
 
   const handleOnRemove = () => {
-    if (connectionCredentials?.length) {
-      setIsCredentialsRemoveModalDisplayed(true)
-    } else {
-      setIsRemoveModalDisplayed(true)
+    switch (true) {
+      case Boolean(connectionCredentialsOffer?.length):
+        setIsCredentialsOfferRemoveModalDisplayed(true)
+        break
+      case Boolean(connectionCredentials?.length):
+        setIsCredentialsRemoveModalDisplayed(true)
+        break
+      case Boolean(connectionProofRequest?.length):
+        setIsProofRequestRemoveModalDisplayed(true)
+        break
+      default:
+        setIsRemoveModalDisplayed(true)
+        break
     }
   }
 
@@ -97,16 +116,28 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
   const handleGoToCredentials = () => {
     navigation.getParent()?.navigate(TabStacks.CredentialStack, { screen: Screens.Credentials })
   }
-
+  const handleGoToCredentialsOffer = () => {
+    navigation.getParent()?.navigate(TabStacks.HomeStack, { screen: Screens.Home })
+  }
   const handleCancelUnableRemove = () => {
     setIsCredentialsRemoveModalDisplayed(false)
+  }
+
+  const handleOfferCancelUnableRemove = () => {
+    setIsCredentialsOfferRemoveModalDisplayed(false)
+  }
+  const handleProofRequestCancelUnableRemove = () => {
+    setIsProofRequestRemoveModalDisplayed(false)
   }
 
   const callOnRemove = useCallback(() => handleOnRemove(), [])
   const callSubmitRemove = useCallback(() => handleSubmitRemove(), [connection])
   const callCancelRemove = useCallback(() => handleCancelRemove(), [])
   const callGoToCredentials = useCallback(() => handleGoToCredentials(), [])
+  const callGoToCredentialsOffer = useCallback(() => handleGoToCredentialsOffer(), [])
   const callCancelUnableToRemove = useCallback(() => handleCancelUnableRemove(), [])
+  const callCancelUnableToRemoveOffer = useCallback(() => handleOfferCancelUnableRemove(), [])
+  const callCancelUnableToRemoveProofRequest = useCallback(() => handleProofRequestCancelUnableRemove(), [])
 
   const contactLabel = useMemo(() => getConnectionName(connection) ?? '', [connection])
   const onDismissModalTouched = () => {
@@ -145,6 +176,18 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ route }) => {
             visible={isCredentialsRemoveModalDisplayed}
             onSubmit={callGoToCredentials}
             onCancel={callCancelUnableToRemove}
+          />
+          <CommonRemoveModal
+            usage={ModalUsage.ContactRemoveWithCredentialsOffer}
+            visible={isCredentialsOfferRemoveModalDisplayed}
+            onSubmit={callGoToCredentialsOffer}
+            onCancel={callCancelUnableToRemoveOffer}
+          />
+          <CommonRemoveModal
+            usage={ModalUsage.ContactRemoveWithProofRequest}
+            visible={isProofRequestRemoveModalDisplayed}
+            onSubmit={callGoToCredentialsOffer}
+            onCancel={callCancelUnableToRemoveProofRequest}
           />
         </View>
       )}
