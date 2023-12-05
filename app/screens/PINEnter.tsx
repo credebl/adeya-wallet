@@ -261,6 +261,44 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
     }
   }
 
+  const handlePINInput = async (PIN: string) => {
+    setPIN(PIN)
+    if (usage === PINEntryUsage.PINCheck) {
+      await verifyPIN(PIN)
+    }
+    if (PIN.length === minPINLength) {
+      try {
+        Keyboard.dismiss()
+        const result = await checkPIN(PIN)
+        if (!result) {
+          const newAttempt = store.loginAttempt.loginAttempts + 1
+          if (!getLockoutPenalty(newAttempt)) {
+            // skip displaying modals if we are going to lockout
+            setAlertModalVisible(true)
+          }
+          setContinueEnabled(true)
+
+          // log incorrect login attempts
+          dispatch({
+            type: DispatchAction.ATTEMPT_UPDATED,
+            payload: [{ loginAttempts: newAttempt }],
+          })
+
+          return
+        }
+
+        // reset login attempts if login is successful
+        dispatch({
+          type: DispatchAction.ATTEMPT_UPDATED,
+          payload: [{ loginAttempts: 0 }],
+        })
+
+        setAuthenticated(true)
+      } catch (error: unknown) {
+        // TODO:(jl) process error
+      }
+    }
+  }
   const onPINInputCompleted = async (PIN: string) => {
     try {
       setContinueEnabled(false)
@@ -324,12 +362,7 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
             <Text style={[TextTheme.normal, { alignSelf: 'center', marginBottom: 16 }]}>{t('PINEnter.EnterPIN')}</Text>
           )}
           <PINInput
-            onPINChanged={(p: string) => {
-              setPIN(p)
-              if (p.length === minPINLength) {
-                Keyboard.dismiss()
-              }
-            }}
+            onPINChanged={(p: string) => handlePINInput(p)}
             testID={testIdWithKey('EnterPIN')}
             accessibilityLabel={t('PINEnter.EnterPIN')}
             autoFocus={true}
