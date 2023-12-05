@@ -5,8 +5,8 @@ export const styles = StyleSheet.create({
   container: {
     height: hp('100%'),
     width: wp('100%'),
-    padding: wp('5%'),
-    paddingTop: hp('5%'),
+    paddingTop: hp('3%'),
+    padding: hp('1%'),
   },
   headerText: {
     alignSelf: 'center',
@@ -51,14 +51,23 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#2289F7',
   },
-  descriptiionText: {
+  descriptionText: {
     alignSelf: 'center',
     marginHorizontal: wp('1%'),
   },
-  startedButtonconatiner: {
+  startedButtonContainer: {
+    marginTop: 'auto',
     margin: wp('5%'),
   },
-  guideimages: {
+  guideImages: {
     alignItems: 'center',
+  },
+  ScrollView: {
+    flex: 1,
+    padding: hp('0.5%'),
+  },
+  endPageContainer: {
+    height: '100%',
+    justifyContent: 'center',
   },
 })
