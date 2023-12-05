@@ -8,7 +8,7 @@ import onBoardingOrganizeEase from '../assets/img/onBoardingOrganizeease.svg'
 import onBoardingDataSafe from '../assets/img/onBoardingdatasafe.svg'
 import Button, { ButtonType } from '../components/buttons/Button'
 import { useStore } from '../contexts/store'
-import { styles } from '../onBordingstyle'
+import { styles } from '../onboardingStyles'
 
 import { ITheme, theme } from '../theme'
 import { GenericFn } from '../types/fn'
