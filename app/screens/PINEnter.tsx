@@ -269,7 +269,25 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
     if (PIN.length === minPINLength) {
       try {
         Keyboard.dismiss()
-        await checkPIN(PIN)
+        const result = await checkPIN(PIN)
+        if (!result) {
+          const newAttempt = store.loginAttempt.loginAttempts + 1
+          if (!getLockoutPenalty(newAttempt)) {
+            // skip displaying modals if we are going to lockout
+            setAlertModalVisible(true)
+          }
+          setContinueEnabled(true)
+
+          // log incorrect login attempts
+          dispatch({
+            type: DispatchAction.ATTEMPT_UPDATED,
+            payload: [{ loginAttempts: newAttempt }],
+          })
+
+          return
+        }
+
+        // reset login attempts if login is successful
         dispatch({
           type: DispatchAction.ATTEMPT_UPDATED,
           payload: [{ loginAttempts: 0 }],
