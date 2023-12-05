@@ -4,11 +4,11 @@ import React from 'react'
 import { Image, ScrollView, StyleSheet, Text, View, ImageBackground } from 'react-native'
 import { SvgProps } from 'react-native-svg'
 
-import onBoardingOrganizeease from '../assets/img/onBoardingOrganizeease.svg'
-import onBoardingdatasafe from '../assets/img/onBoardingdatasafe.svg'
+import onBoardingOrganizeEase from '../assets/img/onBoardingOrganizeease.svg'
+import onBoardingDataSafe from '../assets/img/onBoardingdatasafe.svg'
 import Button, { ButtonType } from '../components/buttons/Button'
 import { useStore } from '../contexts/store'
-import { styles } from '../onBordingstyle'
+import { styles } from '../onboardingStyles'
 
 import { ITheme, theme } from '../theme'
 import { GenericFn } from '../types/fn'
@@ -88,18 +88,19 @@ const OnboardingPages = (onTutorialCompleted: GenericFn): Array<Element> => {
 
     return (
       <>
-        <ScrollView style={styles.container} contentContainerStyle={{ justifyContent: 'center' }}>
-          <Text style={[defaultStyle.headerText, styles.headerText]}>Share Securely</Text>
-          <Image source={require('../assets/img/sharesecure.png')} style={styles.backgroundImage} />
-          <View style={styles.descriptiionText}>
-            <Text style={[styles.bodyText]}>
-              Take complete control over your data. Securely connect with people and organizations to share necessary
-              information without compromising your privacy.
-            </Text>
-          </View>
-
+        <View style={styles.endPageContainer}>
+          <Text style={[defaultStyle.headerText, styles.headerText, { marginTop: 20 }]}>Share Securely</Text>
+          <ScrollView style={styles.ScrollView} contentContainerStyle={{ justifyContent: 'center' }}>
+            <Image source={require('../assets/img/sharesecure.png')} style={[styles.backgroundImage]} />
+            <View style={styles.descriptionText}>
+              <Text style={[styles.bodyText]}>
+                Take complete control over your data. Securely connect with people and organizations to share necessary
+                information without compromising your privacy.
+              </Text>
+            </View>
+          </ScrollView>
           {!(store.onboarding.didCompleteTutorial && store.authentication.didAuthenticate) && (
-            <View style={styles.startedButtonconatiner}>
+            <View style={styles.startedButtonContainer}>
               <Button
                 title="Get Started"
                 accessibilityLabel="Get Started"
@@ -109,7 +110,7 @@ const OnboardingPages = (onTutorialCompleted: GenericFn): Array<Element> => {
               />
             </View>
           )}
-        </ScrollView>
+        </View>
       </>
     )
   }
@@ -123,7 +124,7 @@ const OnboardingPages = (onTutorialCompleted: GenericFn): Array<Element> => {
           <Image source={require('../assets/img/face-scan.png')} style={styles.Image} />
         </ImageBackground>
 
-        <View style={styles.descriptiionText}>
+        <View style={styles.descriptionText}>
           <Text style={[styles.bodyText]}>
             Unlock the power of your digital identity with our all-in-one wallet! Let's embark on a journey to take full
             control of your digital presence.
@@ -139,12 +140,12 @@ const OnboardingPages = (onTutorialCompleted: GenericFn): Array<Element> => {
     body: string
   }> = [
     {
-      image: onBoardingdatasafe,
+      image: onBoardingDataSafe,
       title: 'Keep your data safe',
       body: 'Safeguard your digital Credentials with ADEYA, ensuring that your data remains protected and shared with your consent only.',
     },
     {
-      image: onBoardingOrganizeease,
+      image: onBoardingOrganizeEase,
       title: 'Organize with ease',
       body: 'Organize and manage your digital credentials effortlessly within ADEYA. Say goodbye to paper documents and embrace the convenience of an identity wallet in your hand.',
     },
@@ -160,8 +161,8 @@ const OnboardingPages = (onTutorialCompleted: GenericFn): Array<Element> => {
     return (
       <ScrollView style={styles.container}>
         <Text style={[defaultStyle.headerText, styles.headerText]}>{title}</Text>
-        <View style={styles.guideimages}>{image(imageDisplayOptions)}</View>
-        <View style={styles.descriptiionText}>
+        <View style={styles.guideImages}>{image(imageDisplayOptions)}</View>
+        <View style={styles.descriptionText}>
           <Text style={[styles.bodyText]}>{body}</Text>
         </View>
       </ScrollView>
