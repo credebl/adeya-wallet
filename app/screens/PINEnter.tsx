@@ -263,6 +263,23 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
 
   const onPINInputCompleted = async (PIN: string) => {
     if (PIN.length === minPINLength) {
+      try {
+        setContinueEnabled(false)
+
+        if (usage === PINEntryUsage.PINCheck) {
+          await verifyPIN(PIN)
+        }
+
+        if (usage === PINEntryUsage.WalletUnlock) {
+          await unlockWalletWithPIN(PIN)
+        }
+      } catch (error: unknown) {
+        // TODO:(jl) process error
+      }
+    }
+  }
+  const handlePinInput = async (PIN: string) => {
+    if (PIN.length === minPINLength) {
       setPIN(PIN)
       try {
         setContinueEnabled(false)
@@ -327,7 +344,7 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
             <Text style={[TextTheme.normal, { alignSelf: 'center', marginBottom: 16 }]}>{t('PINEnter.EnterPIN')}</Text>
           )}
           <PINInput
-            onPINChanged={(p: string) => onPINInputCompleted(p)}
+            onPINChanged={(p: string) => handlePinInput(p)}
             testID={testIdWithKey('EnterPIN')}
             accessibilityLabel={t('PINEnter.EnterPIN')}
             autoFocus={true}
