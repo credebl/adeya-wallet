@@ -34,7 +34,6 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
   const { t } = useTranslation()
   const { checkPIN, getWalletCredentials, isBiometricsActive, disableBiometrics } = useAuth()
   const [store, dispatch] = useStore()
-  const [PIN, setPIN] = useState<string>('')
   const [continueEnabled, setContinueEnabled] = useState(true)
   const [displayLockoutWarning, setDisplayLockoutWarning] = useState(false)
   const [biometricsErr, setBiometricsErr] = useState(false)
@@ -261,27 +260,10 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
     }
   }
 
-  const onPINInputCompleted = async (PIN: string) => {
-    if (PIN.length === minPINLength) {
-      try {
-        setContinueEnabled(false)
-
-        if (usage === PINEntryUsage.PINCheck) {
-          await verifyPIN(PIN)
-        }
-
-        if (usage === PINEntryUsage.WalletUnlock) {
-          await unlockWalletWithPIN(PIN)
-        }
-      } catch (error: unknown) {
-        // TODO:(jl) process error
-      }
-    }
-  }
   const handlePinInput = async (PIN: string) => {
     if (PIN.length === minPINLength) {
-      setPIN(PIN)
       try {
+        Keyboard.dismiss()
         setContinueEnabled(false)
 
         if (usage === PINEntryUsage.PINCheck) {
@@ -374,12 +356,8 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
               title={t('PINEnter.Unlock')}
               buttonType={ButtonType.Primary}
               testID={testIdWithKey('Enter')}
-              disabled={!continueEnabled}
-              accessibilityLabel={t('PINEnter.Unlock')}
-              onPress={() => {
-                Keyboard.dismiss()
-                onPINInputCompleted(PIN)
-              }}>
+              disabled={continueEnabled}
+              accessibilityLabel={t('PINEnter.Unlock')}>
               {!continueEnabled && <ButtonLoading />}
             </Button>
           </View>
