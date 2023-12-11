@@ -198,7 +198,7 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
         const newAttempt = store.loginAttempt.loginAttempts + 1
         if (!getLockoutPenalty(newAttempt)) {
           // skip displaying modals if we are going to lockout
-          // setAlertModalVisible(true)
+          setAlertModalVisible(true)
         }
 
         setContinueEnabled(true)
@@ -261,58 +261,22 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
     }
   }
 
-  const handlePINInput = async (PIN: string) => {
+  const onPINInputCompleted = async (PIN: string) => {
     if (PIN.length === minPINLength) {
       setPIN(PIN)
-      setContinueEnabled(false)
-      if (usage === PINEntryUsage.PINCheck) {
-        await verifyPIN(PIN)
-      }
       try {
-        Keyboard.dismiss()
+        setContinueEnabled(false)
 
-        const result = await checkPIN(PIN)
-        if (!result) {
-          const newAttempt = store.loginAttempt.loginAttempts + 1
-          if (!getLockoutPenalty(newAttempt)) {
-            // skip displaying modals if we are going to lockout
-            setAlertModalVisible(true)
-          }
-          setContinueEnabled(true)
-
-          // log incorrect login attempts
-          dispatch({
-            type: DispatchAction.ATTEMPT_UPDATED,
-            payload: [{ loginAttempts: newAttempt }],
-          })
-
-          return
+        if (usage === PINEntryUsage.PINCheck) {
+          await verifyPIN(PIN)
         }
-        // reset login attempts if login is successful
-        dispatch({
-          type: DispatchAction.ATTEMPT_UPDATED,
-          payload: [{ loginAttempts: 0 }],
-        })
 
-        setAuthenticated(true)
+        if (usage === PINEntryUsage.WalletUnlock) {
+          await unlockWalletWithPIN(PIN)
+        }
       } catch (error: unknown) {
         // TODO:(jl) process error
       }
-    }
-  }
-  const onPINInputCompleted = async (PIN: string) => {
-    try {
-      setContinueEnabled(false)
-
-      if (usage === PINEntryUsage.PINCheck) {
-        await verifyPIN(PIN)
-      }
-
-      if (usage === PINEntryUsage.WalletUnlock) {
-        await unlockWalletWithPIN(PIN)
-      }
-    } catch (error: unknown) {
-      // TODO:(jl) process error
     }
   }
 
@@ -363,7 +327,7 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
             <Text style={[TextTheme.normal, { alignSelf: 'center', marginBottom: 16 }]}>{t('PINEnter.EnterPIN')}</Text>
           )}
           <PINInput
-            onPINChanged={(p: string) => handlePINInput(p)}
+            onPINChanged={(p: string) => onPINInputCompleted(p)}
             testID={testIdWithKey('EnterPIN')}
             accessibilityLabel={t('PINEnter.EnterPIN')}
             autoFocus={true}
