@@ -3,20 +3,25 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { SvgProps } from 'react-native-svg'
 
 import Arrow from './assets/icons/large-arrow.svg'
+import ConnectionIconActive from './assets/img/Connect-active.svg'
+import Connection from './assets/img/Connect.svg'
 import ExploreIconActive from './assets/img/active-explore-icon.svg'
 import AppLockout from './assets/img/app-lockout.svg'
 import BackupSuccess from './assets/img/backup-success.svg'
 import Biometrics from './assets/img/biometrics.svg'
 import ContactBook from './assets/img/contact-book.svg'
+import CredentialIconActive from './assets/img/credential-active.svg'
 import CredentialDeclined from './assets/img/credential-declined.svg'
+import Credential from './assets/img/credential.svg'
 import DeleteNotification from './assets/img/delete-notification.svg'
 import EmptyWallet from './assets/img/empty-wallet.svg'
 import ExploreIcon from './assets/img/explore-icon.svg'
+import HomeIconActive from './assets/img/home.svg'
+import HomeIcon from './assets/img/homeinactivesvg.svg'
 import IconInfoSentDark from './assets/img/icon-info-sent-dark.svg'
 import IconProofRequestDark from './assets/img/icon-proof-request-dark.svg'
 import Logo from './assets/img/logo-with-text.svg'
 import ProofRequestDeclined from './assets/img/proof-declined.svg'
-
 export interface ISVGAssets {
   appLockout: React.FC<SvgProps>
   biometrics: React.FC<SvgProps>
@@ -32,6 +37,12 @@ export interface ISVGAssets {
   IconInfoSentDark: React.FC<SvgProps>
   ExploreIcon: React.FC<SvgProps>
   ExploreIconActive: React.FC<SvgProps>
+  HomeIcon: React.FC<SvgProps>
+  HomeIconActive: React.FC<SvgProps>
+  Connection: React.FC<SvgProps>
+  ConnectionIconActive: React.FC<SvgProps>
+  Credential: React.FC<SvgProps>
+  CredentialIconActive: React.FC<SvgProps>
 }
 
 export interface IFontAttributes {
@@ -563,11 +574,11 @@ export const ListItems = StyleSheet.create({
 
 export const TabTheme = {
   tabBarStyle: {
-    height: 60,
-    backgroundColor: '#D3E4FA',
-    shadowOffset: { width: 0, height: -3 },
-    shadowRadius: 6,
-    shadowColor: ColorPallet.grayscale.black,
+    height: 80,
+    backgroundColor: '#ffff',
+    shadowOffset: { width: 0, height: -4 },
+    shadowRadius: 8,
+    shadowColor: ColorPallet.grayscale.white,
     shadowOpacity: 0.1,
     borderTopWidth: 0,
     paddingBottom: 0,
@@ -578,7 +589,7 @@ export const TabTheme = {
     alignItems: 'center',
   },
   tabBarActiveTintColor: ColorPallet.brand.primary,
-  tabBarInactiveTintColor: ColorPallet.notification.infoText,
+  tabBarInactiveTintColor: '#000',
   tabBarTextStyle: {
     ...TextTheme.label,
     fontWeight: 'normal',
@@ -848,6 +859,12 @@ export const Assets = {
     IconInfoSentDark: IconInfoSentDark,
     ExploreIcon: ExploreIcon,
     ExploreIconActive: ExploreIconActive,
+    HomeIcon: HomeIcon,
+    HomeIconActive: HomeIconActive,
+    Connection: Connection,
+    ConnectionIconActive: ConnectionIconActive,
+    Credential: Credential,
+    CredentialIconActive: CredentialIconActive,
   },
   img: {
     logoPrimary: {
