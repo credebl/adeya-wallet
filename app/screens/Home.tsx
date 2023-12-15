@@ -57,8 +57,8 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
     },
     fabContainer: {
       position: 'absolute',
-      bottom: 10,
-      right: 10,
+      bottom: 1,
+      alignSelf: 'center',
     },
     homeImage: {
       height: '85%',
