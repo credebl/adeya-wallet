@@ -575,7 +575,7 @@ export const ListItems = StyleSheet.create({
 export const TabTheme = {
   tabBarStyle: {
     height: 80,
-    backgroundColor: '#ffff',
+    backgroundColor: ColorPallet.grayscale.white,
     shadowOffset: { width: 0, height: -4 },
     shadowRadius: 8,
     shadowColor: ColorPallet.grayscale.white,
@@ -589,7 +589,7 @@ export const TabTheme = {
     alignItems: 'center',
   },
   tabBarActiveTintColor: ColorPallet.brand.primary,
-  tabBarInactiveTintColor: '#000',
+  tabBarInactiveTintColor: ColorPallet.grayscale.black,
   tabBarTextStyle: {
     ...TextTheme.label,
     fontWeight: 'normal',
