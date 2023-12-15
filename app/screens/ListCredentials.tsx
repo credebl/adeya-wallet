@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scanContainer: {
     position: 'absolute',
-    bottom: 10,
-    right: 10,
+    bottom: 1,
+    alignSelf: 'center',
   },
 })
 
