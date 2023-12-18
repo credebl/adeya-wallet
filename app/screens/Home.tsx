@@ -1,26 +1,23 @@
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
-import { FlatList, StyleSheet, View, Text, Dimensions, TouchableOpacity, Image } from 'react-native'
+import { FlatList, StyleSheet, View, Dimensions, Image } from 'react-native'
 
 import ScanButton from '../components/common/ScanButton'
 import NotificationListItem, { NotificationType } from '../components/listItems/NotificationListItem'
 import NoNewUpdates from '../components/misc/NoNewUpdates'
-import { AttachTourStep } from '../components/tour/AttachTourStep'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import { HomeStackParams, Screens } from '../types/navigators'
 
 const { width } = Dimensions.get('window')
-const offset = 25
+const offset = 10
 const offsetPadding = 5
 
 type HomeProps = StackScreenProps<HomeStackParams, Screens.Home>
 
-const Home: React.FC<HomeProps> = ({ navigation }) => {
+const Home: React.FC<HomeProps> = () => {
   const { useCustomNotifications } = useConfiguration()
   const { notifications } = useCustomNotifications()
-  const { t } = useTranslation()
   // This syntax is required for the jest mocks to work
   // eslint-disable-next-line import/no-named-as-default-member
   const { HomeTheme } = useTheme()
@@ -84,62 +81,41 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.rowContainer}>
-        {notifications?.length > 0 ? (
-          <AttachTourStep index={1} fill>
-            <Text style={[HomeTheme.notificationsHeader, styles.header]}>
-              {t('Home.Notifications')}
-              {notifications?.length ? ` (${notifications.length})` : ''}
-            </Text>
-          </AttachTourStep>
-        ) : (
-          <Text style={[HomeTheme.notificationsHeader, styles.header]}>
-            {t('Home.Notifications')}
-            {notifications?.length ? ` (${notifications.length})` : ''}
-          </Text>
-        )}
-        {notifications?.length > 1 ? (
-          <TouchableOpacity
-            style={styles.linkContainer}
-            activeOpacity={1}
-            onPress={() => navigation.navigate(Screens.Notifications)}>
-            <Text style={styles.link}>{t('Home.SeeAll')}</Text>
-          </TouchableOpacity>
-        ) : null}
-      </View>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        scrollEnabled={notifications?.length > 0 ? true : false}
-        style={{ flexGrow: 0 }}
-        snapToOffsets={[
-          0,
-          ...Array(notifications?.length)
-            .fill(0)
-            .map((n: number, i: number) => i * (width - 2 * (offset - offsetPadding)))
-            .slice(1),
-        ]}
-        decelerationRate="fast"
-        ListEmptyComponent={() => (
-          <View style={{ marginHorizontal: offset, width: width - 2 * offset }}>
-            <View>
-              <NoNewUpdates />
+      <View style={{ marginTop: 20 }}>
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          scrollEnabled={notifications?.length > 0 ? true : false}
+          style={{ flexGrow: 0 }}
+          snapToOffsets={[
+            0,
+            ...Array(notifications?.length)
+              .fill(0)
+              .map((n: number, i: number) => i * (width - 2 * (offset - offsetPadding)))
+              .slice(1),
+          ]}
+          decelerationRate="fast"
+          ListEmptyComponent={() => (
+            <View style={{ marginHorizontal: offset, width: width - 2 * offset }}>
+              <View>
+                <NoNewUpdates />
+              </View>
             </View>
-          </View>
-        )}
-        data={notifications}
-        keyExtractor={item => item.id}
-        renderItem={({ item, index }) => (
-          <View
-            style={{
-              width: width - 2 * offset,
-              marginLeft: !index ? offset : offsetPadding,
-              marginRight: index === notifications?.length - 1 ? offset : offsetPadding,
-            }}>
-            {DisplayListItemType(item)}
-          </View>
-        )}
-      />
+          )}
+          data={notifications}
+          keyExtractor={item => item.id}
+          renderItem={({ item, index }) => (
+            <View
+              style={{
+                width: width - 2 * offset,
+                marginLeft: !index ? offset : offsetPadding,
+                marginRight: index === notifications?.length - 1 ? offset : offsetPadding,
+              }}>
+              {DisplayListItemType(item)}
+            </View>
+          )}
+        />
+      </View>
       <View style={styles.messageContainer}>
         <Image source={require('../assets/img/homeimage.png')} resizeMode="contain" style={styles.homeImage} />
       </View>

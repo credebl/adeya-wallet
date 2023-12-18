@@ -48,6 +48,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     container: {
       backgroundColor: ColorPallet.brand.primaryBackground,
       width: '100%',
+      padding: 10,
     },
     section: {
       backgroundColor: SettingsTheme.groupBackground,

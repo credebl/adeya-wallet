@@ -6,6 +6,7 @@ import Arrow from './assets/icons/large-arrow.svg'
 import ConnectionIconActive from './assets/img/Connect-active.svg'
 import Connection from './assets/img/Connect.svg'
 import ExploreIconActive from './assets/img/active-explore-icon.svg'
+import WalletVcInfo from './assets/img/amico.svg'
 import AppLockout from './assets/img/app-lockout.svg'
 import BackupSuccess from './assets/img/backup-success.svg'
 import Biometrics from './assets/img/biometrics.svg'
@@ -13,6 +14,7 @@ import ContactBook from './assets/img/contact-book.svg'
 import CredentialIconActive from './assets/img/credential-active.svg'
 import CredentialDeclined from './assets/img/credential-declined.svg'
 import Credential from './assets/img/credential.svg'
+import WalletConnectionInfo from './assets/img/cuate.svg'
 import DeleteNotification from './assets/img/delete-notification.svg'
 import EmptyWallet from './assets/img/empty-wallet.svg'
 import ExploreIcon from './assets/img/explore-icon.svg'
@@ -22,6 +24,8 @@ import IconInfoSentDark from './assets/img/icon-info-sent-dark.svg'
 import IconProofRequestDark from './assets/img/icon-proof-request-dark.svg'
 import Logo from './assets/img/logo-with-text.svg'
 import ProofRequestDeclined from './assets/img/proof-declined.svg'
+import WalletInfo from './assets/img/rafiki.svg'
+
 export interface ISVGAssets {
   appLockout: React.FC<SvgProps>
   biometrics: React.FC<SvgProps>
@@ -43,6 +47,9 @@ export interface ISVGAssets {
   ConnectionIconActive: React.FC<SvgProps>
   Credential: React.FC<SvgProps>
   CredentialIconActive: React.FC<SvgProps>
+  WalletInfo: React.FC<SvgProps>
+  WalletConnectionInfo: React.FC<SvgProps>
+  WalletVcInfo: React.FC<SvgProps>
 }
 
 export interface IFontAttributes {
@@ -147,6 +154,8 @@ export interface INotificationColors {
   errorIcon: string
   errorText: string
   popupOverlay: string
+  gradientPrimary: string
+  gradientSecondary: string
 }
 
 export interface IGrayscaleColors {
@@ -204,6 +213,8 @@ const NotificationColors: INotificationColors = {
   errorIcon: '#A12622',
   errorText: '#A12622',
   popupOverlay: `rgba(0, 0, 0, ${mediumOpacity})`,
+  gradientPrimary: '#1F4EAD',
+  gradientSecondary: '#00D2FF',
 }
 
 const GrayscaleColors: IGrayscaleColors = {
@@ -865,6 +876,9 @@ export const Assets = {
     ConnectionIconActive: ConnectionIconActive,
     Credential: Credential,
     CredentialIconActive: CredentialIconActive,
+    WalletInfo: WalletInfo,
+    WalletConnectionInfo: WalletConnectionInfo,
+    WalletVcInfo: WalletVcInfo,
   },
   img: {
     logoPrimary: {
