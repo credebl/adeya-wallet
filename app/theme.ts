@@ -25,7 +25,6 @@ import IconProofRequestDark from './assets/img/icon-proof-request-dark.svg'
 import Logo from './assets/img/logo-with-text.svg'
 import ProofRequestDeclined from './assets/img/proof-declined.svg'
 import WalletInfo from './assets/img/rafiki.svg'
-
 export interface ISVGAssets {
   appLockout: React.FC<SvgProps>
   biometrics: React.FC<SvgProps>

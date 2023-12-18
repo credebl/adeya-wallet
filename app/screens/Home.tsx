@@ -1,6 +1,7 @@
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { ReactNode } from 'react'
 import { FlatList, StyleSheet, View, Dimensions, Image } from 'react-native'
+import { useTranslation } from 'react-i18next'
 
 import ScanButton from '../components/common/ScanButton'
 import NotificationListItem, { NotificationType } from '../components/listItems/NotificationListItem'
