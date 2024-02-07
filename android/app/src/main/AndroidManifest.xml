@@ -60,6 +60,7 @@
                 <data android:scheme="https" />
 
                 <data android:host="agent.credebl.id" />
+                <data android:host="dev-agent.credebl.id" />
             </intent-filter>
 
         </activity>
