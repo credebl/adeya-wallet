@@ -1,7 +1,6 @@
 import type { StackScreenProps } from '@react-navigation/stack'
 
 import { useProofById, DidExchangeState, deleteConnectionRecordById } from '@adeya/ssi'
-import { useIsFocused } from '@react-navigation/core'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,7 +25,6 @@ import {
   sendProofRequest,
 } from '../../verifier'
 import LoadingIndicator from '../components/animated/LoadingIndicator'
-import Button, { ButtonType } from '../components/buttons/Button'
 import QRRenderer from '../components/misc/QRRenderer'
 import { EventTypes } from '../constants'
 import { useTheme } from '../contexts/theme'
@@ -36,7 +34,6 @@ import { BifoldError } from '../types/error'
 import { ProofRequestsStackParams, Screens } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
 import { createTempConnectionInvitation } from '../utils/helpers'
-import { testIdWithKey } from '../utils/testable'
 
 type ProofRequestingProps = StackScreenProps<ProofRequestsStackParams, Screens.ProofRequesting>
 
@@ -46,13 +43,24 @@ const isTablet = aspectRatio < 1.6 // assume 4:3 for tablets
 const qrContainerSize = isTablet ? width - width * 0.3 : width - 20
 const qrSize = qrContainerSize - 20
 
-const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) => {
-  if (!route?.params) {
-    throw new Error('ProofRequesting route prams were not set properly')
-  }
+const testTemplateId = 'Aries:5:AyanWorksEmploymentVCFullName:0.0.1:indy'
+
+type ProofVerificationStates =
+  | 'generate-qrcode'
+  | 'qrcode-generated'
+  | 'waiting'
+  | 'success'
+  | 'failure'
+  | 'qrcode-generation-failed'
+
+const ProofRequesting: React.FC<ProofRequestingProps> = ({ navigation }) => {
+  // if (!route?.params) {
+  //   throw new Error('ProofRequesting route prams were not set properly')
+  // }
 
   // eslint-disable-next-line no-unsafe-optional-chaining
-  const { templateId, predicateValues } = route?.params
+  // const { templateId, predicateValues } = route?.params
+  const predicateValues = undefined
 
   const { agent } = useAppAgent()
   if (!agent) {
@@ -61,14 +69,13 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
 
   const { t } = useTranslation()
   const { ColorPallet } = useTheme()
-  const isFocused = useIsFocused()
-  const [generating, setGenerating] = useState(true)
+  const [proofVerificationState, setProofVerificationState] = useState<ProofVerificationStates>('generate-qrcode')
   const [message, setMessage] = useState<string | undefined>(undefined)
   const [connectionRecordId, setConnectionRecordId] = useState<string | undefined>(undefined)
   const [proofRecordId, setProofRecordId] = useState<string | undefined>(undefined)
   const record = useConnectionByOutOfBandId(connectionRecordId ?? '')
   const proofRecord = useProofById(proofRecordId ?? '')
-  const template = useTemplate(templateId)
+  const template = useTemplate(testTemplateId)
 
   const goalCode = useOutOfBandByConnectionId(agent, record?.id ?? '')?.outOfBandInvitation.goalCode
 
@@ -126,18 +133,18 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   const createProofRequest = useCallback(async () => {
     try {
       setMessage(undefined)
-      setGenerating(true)
+      setProofVerificationState('waiting')
       const result = await createTempConnectionInvitation(agent, 'verify')
       if (result) {
         setConnectionRecordId(result.record.id)
         setMessage(result.invitationUrl)
+        setProofVerificationState('qrcode-generated')
       }
     } catch (e) {
+      setProofVerificationState('qrcode-generation-failed')
       const error = new BifoldError(t('Error.Title1038'), t('Error.Message1038'), (e as Error).message, 1038)
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
-      navigation.goBack()
-    } finally {
-      setGenerating(false)
+      // navigation.goBack()
     }
   }, [])
 
@@ -155,10 +162,10 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   )
 
   useEffect(() => {
-    if (isFocused) {
+    if (proofVerificationState === 'generate-qrcode') {
       createProofRequest()
     }
-  }, [isFocused])
+  }, [proofVerificationState])
 
   useEffect(() => {
     if (!template) {
@@ -169,14 +176,15 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
       if (record && record.state === DidExchangeState.Completed) {
         //send haptic feedback to verifier that connection is completed
         Vibration.vibrate()
-        setGenerating(true)
+        setProofVerificationState('waiting')
+        // setGenerating(true)
         // send proof logic
         const result = await sendProofRequest(agent, template, record.id, predicateValues)
         if (result?.proofRecord) {
           // verifier side doesn't have access to the goal code so we need to add metadata here
           const metadata = result.proofRecord.metadata.get(ProofMetadata.customMetadata) as ProofCustomMetadata
           result.proofRecord.metadata.set(ProofMetadata.customMetadata, { ...metadata, delete_conn_after_seen: true })
-          linkProofWithTemplate(agent, result.proofRecord, templateId)
+          linkProofWithTemplate(agent, result.proofRecord, testTemplateId)
         }
         setProofRecordId(result?.proofRecord.id)
       }
@@ -185,13 +193,31 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
   }, [record, template])
 
   useEffect(() => {
-    if (proofRecord && (isPresentationReceived(proofRecord) || isPresentationFailed(proofRecord))) {
+    if (proofRecord && isPresentationReceived(proofRecord)) {
       if (goalCode?.endsWith('verify.once')) {
         deleteConnectionRecordById(agent, record?.id ?? '')
       }
 
-      setGenerating(true)
-      navigation.navigate(Screens.ProofDetails, { recordId: proofRecord.id })
+      // setGenerating(false)
+      setProofVerificationState('success')
+
+      setTimeout(() => {
+        setProofVerificationState('generate-qrcode')
+      }, 5000)
+      // navigation.navigate(Screens.ProofDetails, { recordId: proofRecord.id })
+    }
+    if (proofRecord && isPresentationFailed(proofRecord)) {
+      if (goalCode?.endsWith('verify.once')) {
+        deleteConnectionRecordById(agent, record?.id ?? '')
+      }
+
+      // setGenerating(false)
+      setProofVerificationState('failure')
+
+      setTimeout(() => {
+        setProofVerificationState('generate-qrcode')
+      }, 5000)
+      // navigation.navigate(Screens.ProofDetails, { recordId: proofRecord.id })
     }
   }, [proofRecord])
 
@@ -199,15 +225,24 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
       <ScrollView>
         <View style={styles.qrContainer}>
-          {generating && <LoadingIndicator />}
-          {!generating && message && <QRRenderer value={message} size={qrSize} />}
+          {proofVerificationState === 'waiting' && <LoadingIndicator />}
+          {proofVerificationState === 'qrcode-generated' && message && <QRRenderer value={message} size={qrSize} />}
+          {proofVerificationState === 'success' && (
+            <Text style={styles.interopText}>{t('Verifier.ProofRequestSuccess')}</Text>
+          )}
+          {proofVerificationState === 'failure' && (
+            <Text style={styles.interopText}>{t('Verifier.ProofRequestFailure')}</Text>
+          )}
+          {proofVerificationState === 'qrcode-generation-failed' && (
+            <Text style={styles.interopText}>{t('Verifier.ProofRequestFailure')}</Text>
+          )}
         </View>
         <View style={styles.headerContainer}>
           <Text style={styles.primaryHeaderText}>{t('Verifier.ScanQR')}</Text>
           <Text style={styles.secondaryHeaderText}>{t('Verifier.ScanQRComment')}</Text>
         </View>
       </ScrollView>
-      <View style={styles.buttonContainer}>
+      {/* <View style={styles.buttonContainer}>
         <View style={styles.footerButton}>
           <Button
             title={t('Verifier.RefreshQR')}
@@ -218,7 +253,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ route, navigation }) 
             disabled={generating}
           />
         </View>
-      </View>
+      </View> */}
     </SafeAreaView>
   )
 }

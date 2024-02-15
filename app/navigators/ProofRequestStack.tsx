@@ -25,23 +25,6 @@ const ProofRequestStack: React.FC = () => {
   return (
     <Stack.Navigator screenOptions={{ ...defaultStackOptions }}>
       <Stack.Screen
-        name={Screens.ProofRequests}
-        component={ListProofRequests}
-        options={{ title: t('Screens.ChooseProofRequest') }}
-      />
-      <Stack.Screen
-        name={Screens.ProofRequestDetails}
-        component={ProofRequestDetails}
-        options={() => ({
-          title: '',
-        })}
-      />
-      <Stack.Screen
-        name={Screens.ProofChangeCredential}
-        component={ProofChangeCredential}
-        options={{ title: t('Screens.ProofChangeCredential') }}
-      />
-      <Stack.Screen
         name={Screens.ProofRequesting}
         component={ProofRequesting}
         options={({ navigation }) => ({
@@ -87,6 +70,23 @@ const ProofRequestStack: React.FC = () => {
           title: t('Screens.ProofRequestUsageHistory'),
           headerRight: () => <HeaderRightHome />,
         })}
+      />
+      <Stack.Screen
+        name={Screens.ProofRequests}
+        component={ListProofRequests}
+        options={{ title: t('Screens.ChooseProofRequest') }}
+      />
+      <Stack.Screen
+        name={Screens.ProofRequestDetails}
+        component={ProofRequestDetails}
+        options={() => ({
+          title: '',
+        })}
+      />
+      <Stack.Screen
+        name={Screens.ProofChangeCredential}
+        component={ProofChangeCredential}
+        options={{ title: t('Screens.ProofChangeCredential') }}
       />
     </Stack.Navigator>
   )
