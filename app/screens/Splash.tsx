@@ -1,5 +1,4 @@
 import { initializeAgent, ConsoleLogger, LogLevel, InitConfig, getAgentModules } from '@adeya/ssi'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/core'
 import { CommonActions } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
@@ -12,60 +11,17 @@ import indyLedgers from '../../configs/ledgers/indy'
 import InfoBox, { InfoBoxType } from '../components/misc/InfoBox'
 import ProgressBar from '../components/tour/ProgressBar'
 import TipCarousel from '../components/tour/TipCarousel'
-import { LocalStorageKeys } from '../constants'
 import { useAuth } from '../contexts/auth'
-import { useConfiguration } from '../contexts/configuration'
 import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
-import { Screens, Stacks } from '../types/navigators'
-import {
-  LoginAttempt as LoginAttemptState,
-  Preferences as PreferencesState,
-  Onboarding as StoreOnboardingState,
-  Tours as ToursState,
-} from '../types/state'
+import { Stacks } from '../types/navigators'
 import { AdeyaAgent, useAppAgent } from '../utils/agent'
 import { testIdWithKey } from '../utils/testable'
 
 enum InitErrorTypes {
   Onboarding,
   Agent,
-}
-const onboardingComplete = (state: StoreOnboardingState): boolean => {
-  return state.didCompleteTutorial && state.didAgreeToTerms && state.didCreatePIN && state.didConsiderBiometry
-}
-
-const resumeOnboardingAt = (state: StoreOnboardingState, enableWalletNaming: boolean | undefined): Screens => {
-  if (
-    state.didCompleteTutorial &&
-    state.didAgreeToTerms &&
-    state.didCreatePIN &&
-    (state.didNameWallet || !enableWalletNaming) &&
-    !state.didConsiderBiometry
-  ) {
-    return Screens.UseBiometry
-  }
-
-  if (
-    state.didCompleteTutorial &&
-    state.didAgreeToTerms &&
-    state.didCreatePIN &&
-    enableWalletNaming &&
-    !state.didNameWallet
-  ) {
-    return Screens.NameWallet
-  }
-
-  if (state.didCompleteTutorial && state.didAgreeToTerms && !state.didCreatePIN) {
-    return Screens.CreatePIN
-  }
-
-  if (state.didCompleteTutorial && !state.didAgreeToTerms) {
-    return Screens.Terms
-  }
-
-  return Screens.Onboarding
 }
 
 /**
@@ -75,7 +31,6 @@ const resumeOnboardingAt = (state: StoreOnboardingState, enableWalletNaming: boo
  */
 const Splash: React.FC = () => {
   const { width } = useWindowDimensions()
-  const { enableWalletNaming } = useConfiguration()
   const [progressPercent, setProgressPercent] = useState(0)
   const [initOnboardingCount, setInitOnboardingCount] = useState(0)
   const [initAgentCount, setInitAgentCount] = useState(0)
@@ -88,7 +43,7 @@ const Splash: React.FC = () => {
   const { Assets } = useTheme()
   const [store, dispatch] = useStore()
   const navigation = useNavigation()
-  const { getWalletCredentials } = useAuth()
+  const { getWalletCredentials, setPIN, commitPIN, checkPIN } = useAuth()
   const { ColorPallet } = useTheme()
   const steps: string[] = [
     t('Init.Starting'),
@@ -100,6 +55,29 @@ const Splash: React.FC = () => {
     t('Init.SettingAgent'),
     t('Init.Finishing'),
   ]
+
+  useEffect(() => {
+    const initWallet = async () => {
+      try {
+        const credentials = await getWalletCredentials()
+        if (typeof credentials === 'object' && Object.keys(credentials).length === 0) {
+          await setPIN('111111')
+          await commitPIN(false)
+        } else {
+          await checkPIN('111111')
+          dispatch({
+            type: DispatchAction.DID_AUTHENTICATE,
+          })
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log('Error in initWallet: ', e)
+        // todo (WK)
+      }
+    }
+
+    initWallet()
+  }, [])
 
   const setStep = (stepIdx: number) => {
     setStepText(steps[stepIdx])
@@ -141,115 +119,10 @@ const Splash: React.FC = () => {
     },
   })
 
-  const loadAuthAttempts = async (): Promise<LoginAttemptState | undefined> => {
-    try {
-      const attemptsData = await AsyncStorage.getItem(LocalStorageKeys.LoginAttempts)
-      if (attemptsData) {
-        const attempts = JSON.parse(attemptsData) as LoginAttemptState
-        dispatch({
-          type: DispatchAction.ATTEMPT_UPDATED,
-          payload: [attempts],
-        })
-        return attempts
-      }
-    } catch (error) {
-      // todo (WK)
-    }
-  }
-
-  useEffect(() => {
-    const initOnboarding = async (): Promise<void> => {
-      try {
-        setStep(0)
-        if (store.authentication.didAuthenticate) {
-          return
-        }
-
-        setStep(1)
-        // load authentication attempts from storage
-        const attemptData = await loadAuthAttempts()
-
-        setStep(2)
-        const preferencesData = await AsyncStorage.getItem(LocalStorageKeys.Preferences)
-
-        if (preferencesData) {
-          const dataAsJSON = JSON.parse(preferencesData) as PreferencesState
-
-          dispatch({
-            type: DispatchAction.PREFERENCES_UPDATED,
-            payload: [dataAsJSON],
-          })
-        }
-
-        const toursData = await AsyncStorage.getItem(LocalStorageKeys.Tours)
-        if (toursData) {
-          const dataAsJSON = JSON.parse(toursData) as ToursState
-
-          dispatch({
-            type: DispatchAction.TOUR_DATA_UPDATED,
-            payload: [dataAsJSON],
-          })
-        }
-
-        setStep(3)
-        const data = await AsyncStorage.getItem(LocalStorageKeys.Onboarding)
-        if (data) {
-          const dataAsJSON = JSON.parse(data) as StoreOnboardingState
-          dispatch({
-            type: DispatchAction.ONBOARDING_UPDATED,
-            payload: [dataAsJSON],
-          })
-
-          if (onboardingComplete(dataAsJSON) && !attemptData?.lockoutDate) {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: Screens.EnterPIN }],
-              }),
-            )
-            return
-          }
-          if (onboardingComplete(dataAsJSON) && attemptData?.lockoutDate) {
-            // return to lockout screen if lockout date is set
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: Screens.AttemptLockout }],
-              }),
-            )
-            return
-          }
-
-          // If onboarding was interrupted we need to pickup from where we left off.
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: resumeOnboardingAt(dataAsJSON, enableWalletNaming) }],
-            }),
-          )
-
-          return
-        }
-
-        // We have no onboarding state, starting from step zero.
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: Screens.Onboarding }],
-          }),
-        )
-      } catch (e: unknown) {
-        setInitErrorType(InitErrorTypes.Onboarding)
-        setInitError(e as Error)
-      }
-    }
-    initOnboarding()
-  }, [store.authentication.didAuthenticate, initOnboardingCount])
-
   useEffect(() => {
     const initAgent = async (): Promise<void> => {
       try {
-        if (!store.authentication.didAuthenticate || !store.onboarding.didConsiderBiometry) {
+        if (!store.authentication.didAuthenticate) {
           return
         }
 
@@ -285,10 +158,11 @@ const Splash: React.FC = () => {
         setAgent(newAgent)
 
         setStep(7)
+
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: Stacks.TabStack }],
+            routes: [{ name: Stacks.ProofRequestsStack }],
           }),
         )
       } catch (e: unknown) {
@@ -298,7 +172,7 @@ const Splash: React.FC = () => {
     }
 
     initAgent()
-  }, [store.authentication.didAuthenticate, store.onboarding.didConsiderBiometry, initAgentCount])
+  }, [store.authentication.didAuthenticate, initAgentCount])
 
   const handleErrorCallToActionPressed = () => {
     setInitError(null)

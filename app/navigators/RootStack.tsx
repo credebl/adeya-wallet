@@ -1,6 +1,6 @@
 import { deleteConnectionRecordById, ProofState, useProofByState } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
-import { createStackNavigator, StackCardStyleInterpolator, StackNavigationProp } from '@react-navigation/stack'
+import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AppState } from 'react-native'
@@ -15,7 +15,6 @@ import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
 import { useDeepLinks } from '../hooks/deep-links'
-import AttemptLockout from '../screens/AttemptLockout'
 import CreateWallet from '../screens/CreateWallet'
 import Developer from '../screens/Developer'
 import ImportWalletVerify from '../screens/ImportWalletConfirmation'
@@ -23,19 +22,13 @@ import NameWallet from '../screens/NameWallet'
 import Onboarding from '../screens/Onboarding'
 import { createCarouselStyle } from '../screens/OnboardingPages'
 import PINCreate from '../screens/PINCreate'
-import PINEnter from '../screens/PINEnter'
 import { AuthenticateStackParams, Screens, Stacks } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
 import { checkIfAlreadyConnected, connectFromInvitation, getOobDeepLink } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
 import ConnectStack from './ConnectStack'
-import ContactStack from './ContactStack'
-import DeliveryStack from './DeliveryStack'
-import NotificationStack from './NotificationStack'
 import ProofRequestStack from './ProofRequestStack'
-import SettingStack from './SettingStack'
-import TabStack from './TabStack'
 import { createDefaultStackOptions } from './defaultStackOptions'
 
 const RootStack: React.FC = () => {
@@ -51,7 +44,7 @@ const RootStack: React.FC = () => {
   const theme = useTheme()
   const defaultStackOptions = createDefaultStackOptions(theme)
   const OnboardingTheme = theme.OnboardingTheme
-  const { pages, terms, splash, useBiometry, enableWalletNaming } = useConfiguration()
+  const { pages, terms, splash, useBiometry } = useConfiguration()
   useDeepLinks()
 
   // remove connection on mobile verifier proofs if proof is rejected regardless of if it has been opened
@@ -170,77 +163,6 @@ const RootStack: React.FC = () => {
     })
   }
 
-  const authStack = () => {
-    const Stack = createStackNavigator()
-
-    return (
-      <Stack.Navigator initialRouteName={Screens.Splash} screenOptions={{ ...defaultStackOptions, headerShown: false }}>
-        <Stack.Screen name={Screens.Splash} component={splash} />
-        <Stack.Screen
-          name={Screens.EnterPIN}
-          options={() => ({
-            title: t('Screens.EnterPIN'),
-            headerShown: true,
-            headerLeft: () => false,
-            rightLeft: () => false,
-          })}>
-          {props => <PINEnter {...props} setAuthenticated={onAuthenticated} />}
-        </Stack.Screen>
-        <Stack.Screen
-          name={Screens.ImportWalletVerify}
-          options={() => ({
-            title: t('Screens.NameWallet'),
-            headerTintColor: OnboardingTheme.headerTintColor,
-            headerShown: true,
-            headerLeft: () => false,
-            rightLeft: () => false,
-          })}
-          component={ImportWalletVerify}
-        />
-
-        <Stack.Screen
-          name={Screens.AttemptLockout}
-          component={AttemptLockout}
-          options={{ headerShown: true, headerLeft: () => null }}></Stack.Screen>
-      </Stack.Navigator>
-    )
-  }
-
-  const mainStack = () => {
-    const Stack = createStackNavigator()
-
-    // This function is to make the fade in behavior of both iOS and Android consistent for the settings menu
-    const forFade: StackCardStyleInterpolator = ({ current }) => ({
-      cardStyle: {
-        opacity: current.progress,
-      },
-    })
-
-    return (
-      <Stack.Navigator initialRouteName={Screens.Splash} screenOptions={{ ...defaultStackOptions, headerShown: false }}>
-        <Stack.Screen name={Screens.Splash} component={splash} />
-        <Stack.Screen name={Stacks.TabStack} component={TabStack} />
-        <Stack.Screen
-          name={Stacks.ConnectStack}
-          component={ConnectStack}
-          // below is part of the temporary gating of the new scan screen tabs feature
-          options={{ presentation: state.preferences.useConnectionInviterCapability ? 'card' : 'modal' }}
-        />
-        <Stack.Screen
-          name={Stacks.SettingStack}
-          component={SettingStack}
-          options={{
-            cardStyleInterpolator: forFade,
-          }}
-        />
-        <Stack.Screen name={Stacks.ContactStack} component={ContactStack} />
-        <Stack.Screen name={Stacks.NotificationStack} component={NotificationStack} />
-        <Stack.Screen name={Stacks.ConnectionStack} component={DeliveryStack} />
-        <Stack.Screen name={Stacks.ProofRequestsStack} component={ProofRequestStack} />
-      </Stack.Navigator>
-    )
-  }
-
   const onboardingStack = () => {
     const Stack = createStackNavigator()
     const carousel = createCarouselStyle(OnboardingTheme)
@@ -342,18 +264,10 @@ const RootStack: React.FC = () => {
           component={Developer}
           options={{ ...defaultStackOptions, title: t('Screens.Developer'), headerBackTestID: testIdWithKey('Back') }}
         />
+
+        <Stack.Screen name={Stacks.ProofRequestsStack} component={ProofRequestStack} />
       </Stack.Navigator>
     )
-  }
-
-  if (
-    state.onboarding.didAgreeToTerms &&
-    state.onboarding.didCompleteTutorial &&
-    state.onboarding.didCreatePIN &&
-    (!enableWalletNaming || state.onboarding.didNameWallet) &&
-    state.onboarding.didConsiderBiometry
-  ) {
-    return state.authentication.didAuthenticate ? mainStack() : authStack()
   }
 
   return onboardingStack()

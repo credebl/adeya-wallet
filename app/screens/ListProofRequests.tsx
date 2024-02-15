@@ -18,10 +18,10 @@ import { testIdWithKey } from '../utils/testable'
 interface ProofRequestsCardProps {
   navigation: StackNavigationProp<ProofRequestsStackParams>
   template: ProofRequestTemplate
-  connectionId?: string
+  // connectionId?: string
 }
 
-const ProofRequestsCard: React.FC<ProofRequestsCardProps> = ({ navigation, template, connectionId }) => {
+const ProofRequestsCard: React.FC<ProofRequestsCardProps> = ({ navigation, template }) => {
   const { t } = useTranslation()
   const { i18n } = useTranslation()
   const { ListItems } = useTheme()
@@ -79,7 +79,7 @@ const ProofRequestsCard: React.FC<ProofRequestsCardProps> = ({ navigation, templ
   return meta ? (
     <TouchableOpacity
       style={style.card}
-      onPress={() => navigation.navigate(Screens.ProofRequestDetails, { templateId: template.id, connectionId })}
+      onPress={() => navigation.navigate(Screens.ProofRequestDetails, { templateId: template.id })}
       accessibilityLabel={t('Screens.ProofRequestDetails')}
       testID={testIdWithKey('ProofRequestsCard')}>
       <View style={style.textContainer}>
@@ -101,7 +101,7 @@ const ProofRequestsCard: React.FC<ProofRequestsCardProps> = ({ navigation, templ
 
 type ListProofRequestsProps = StackScreenProps<ProofRequestsStackParams, Screens.ProofRequests>
 
-const ListProofRequests: React.FC<ListProofRequestsProps> = ({ navigation, route }) => {
+const ListProofRequests: React.FC<ListProofRequestsProps> = ({ navigation }) => {
   const { t } = useTranslation()
   const { ColorPallet } = useTheme()
   const [store] = useStore()
@@ -114,7 +114,7 @@ const ListProofRequests: React.FC<ListProofRequestsProps> = ({ navigation, route
     },
   })
 
-  const { connectionId } = route?.params
+  // const { connectionId } = route?.params
 
   // if useDevVerifierTemplates not set then exclude dev templates
   const proofRequestTemplates = useTemplates().filter(tem => store.preferences.useDevVerifierTemplates || !tem.devOnly)
@@ -126,7 +126,7 @@ const ListProofRequests: React.FC<ListProofRequestsProps> = ({ navigation, route
         data={proofRequestTemplates}
         keyExtractor={records => records.id}
         renderItem={({ item }) => {
-          return <ProofRequestsCard template={item} connectionId={connectionId} navigation={navigation} />
+          return <ProofRequestsCard template={item} navigation={navigation} />
         }}
         ListEmptyComponent={() => <EmptyList message={t('Verifier.EmptyProofRequestsList')} />}
       />
