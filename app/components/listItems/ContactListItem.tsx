@@ -41,7 +41,6 @@ const ContactListItem: React.FC<Props> = ({ contact, navigation }) => {
   const credentials = useCredentialsByConnectionId(contact.id)
   const proofs = useProofsByConnectionId(contact.id)
   const [message, setMessage] = useState<CondensedMessage>({ text: '', createdAt: contact.createdAt })
-
   const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',

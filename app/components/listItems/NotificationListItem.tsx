@@ -6,12 +6,15 @@ import {
   declineCredentialOffer as declineCredential,
   declineProofRequest as declineProof,
   getProofRequestAgentMessage,
+  ConnectionRecord,
+  getConnectionById,
 } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View, ViewStyle, Text, TextStyle, DeviceEventEmitter, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, ViewStyle, Text, TextStyle, DeviceEventEmitter, TouchableOpacity, Image } from 'react-native'
+import { LinearGradient } from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { markProofAsViewed } from '../../../verifier'
@@ -26,7 +29,6 @@ import { ModalUsage } from '../../types/remove'
 import { useAppAgent } from '../../utils/agent'
 import { parsedSchema } from '../../utils/helpers'
 import { testIdWithKey } from '../../utils/testable'
-import Button, { ButtonType } from '../buttons/Button'
 import { InfoBoxType } from '../misc/InfoBox'
 import CommonRemoveModal from '../modals/CommonRemoveModal'
 
@@ -62,11 +64,12 @@ type StyleConfig = {
 const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificationType, notification }) => {
   const navigation = useNavigation<StackNavigationProp<HomeStackParams>>()
   const { customNotification } = useConfiguration()
-  const [, dispatch] = useStore()
+  const [dispatch] = useStore()
   const { t } = useTranslation()
   const { ColorPallet, TextTheme } = useTheme()
   const { agent } = useAppAgent()
   const [declineModalVisible, setDeclineModalVisible] = useState(false)
+  const [connectionDetail, setConnectionDetail] = useState<ConnectionRecord[]>([])
   const [details, setDetails] = useState<DisplayDetails>({
     type: InfoBoxType.Info,
     title: undefined,
@@ -85,10 +88,17 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
     iconName: 'info',
   })
   const { name, version } = parsedSchema(notification as CredentialExchangeRecord)
+  const getconnection = async () => {
+    const contacts: ConnectionRecord = await getConnectionById(agent, notification.connectionId)
+    setConnectionDetail(contacts)
+  }
+  useEffect(() => {
+    getconnection()
+  }, [])
 
   const styles = StyleSheet.create({
     container: {
-      borderRadius: 5,
+      borderRadius: 10,
       borderWidth: 1,
       padding: 10,
     },
@@ -120,6 +130,39 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
     icon: {
       marginRight: 10,
       alignSelf: 'center',
+    },
+
+    connectionLabelContainer: {
+      width: '65%',
+      marginLeft: 10,
+      marginRight: 5,
+      flexDirection: 'column',
+    },
+    contactItemContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    avatarContactPlaceholder: {
+      ...TextTheme.headingFour,
+    },
+    contactContainer: {
+      fontWeight: '600',
+      color: ColorPallet.grayscale.white,
+      fontSize: 17,
+    },
+    avatarContactImage: {
+      width: 50,
+      height: 50,
+    },
+    avatarContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      borderColor: '#000',
+      borderWidth: 1,
+      flexDirection: 'row',
     },
   })
 
@@ -378,44 +421,46 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
     }
   }, [details])
 
+  const contactLabel = connectionDetail?.theirLabel
+  const contactLabelAbbr = contactLabel?.charAt(0).toUpperCase()
+
   return (
-    <View style={[styles.container, styleConfig.containerStyle]} testID={testIdWithKey('NotificationListItem')}>
-      <View style={styles.headerContainer}>
-        <View style={styles.icon}>
-          <Icon accessible={false} name={styleConfig.iconName} size={iconSize} color={styleConfig.iconColor} />
-        </View>
-        <Text style={[styles.headerText, styleConfig.textStyle]} testID={testIdWithKey('HeaderText')}>
-          {details.title}
-        </Text>
-        {[NotificationType.Custom, NotificationType.ProofRequest, NotificationType.CredentialOffer].includes(
-          notificationType,
-        ) && (
-          <View>
-            <TouchableOpacity
-              accessibilityLabel={t('Global.Dismiss')}
-              accessibilityRole={'button'}
-              testID={testIdWithKey(`Dismiss${notificationType}`)}
-              onPress={onClose}
-              hitSlop={hitSlop}>
-              <Icon name={'close'} size={iconSize} color={styleConfig.iconColor} />
-            </TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
+      <LinearGradient
+        colors={[ColorPallet.notification.gradientPrimary, ColorPallet.notification.gradientSecondary]}
+        style={[styles.container, styleConfig.containerStyle]}
+        testID={testIdWithKey('NotificationListItem')}>
+        <View style={styles.headerContainer}>
+          <View style={styles.avatarContainer}>
+            {connectionDetail?.imageUrl ? (
+              <Image style={styles.avatarContactImage} source={{ uri: connectionDetail?.imageUrl }} />
+            ) : (
+              <Text style={styles.avatarContactPlaceholder}>{contactLabelAbbr}</Text>
+            )}
           </View>
-        )}
-      </View>
-      <View style={styles.bodyContainer}>
-        <Text style={[styles.bodyText, styleConfig.textStyle]} testID={testIdWithKey('BodyText')}>
-          {details.body}
-        </Text>
-        <Button
-          title={details.buttonTitle ?? t('Global.View')}
-          accessibilityLabel={details.buttonTitle ?? t('Global.View')}
-          testID={testIdWithKey(`View${notificationType}${isReceivedProof ? 'Received' : ''}`)}
-          buttonType={ButtonType.Primary}
-          onPress={onPress}
-        />
-      </View>
-      {commonRemoveModal()}
-    </View>
+          <View style={styles.connectionLabelContainer}>
+            <Text style={[styles.contactContainer, { marginTop: 10 }]}>You have {details.title} </Text>
+            <Text style={[styles.contactContainer, { marginTop: 2 }]}>{contactLabel}</Text>
+          </View>
+
+          {[NotificationType.Custom, NotificationType.ProofRequest, NotificationType.CredentialOffer].includes(
+            notificationType,
+          ) && (
+            <View>
+              <TouchableOpacity
+                accessibilityLabel={t('Global.Dismiss')}
+                accessibilityRole={'button'}
+                testID={testIdWithKey(`Dismiss${notificationType}`)}
+                onPress={onClose}
+                hitSlop={hitSlop}>
+                <Icon name={'close'} size={iconSize} color={styleConfig.iconColor} />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+        {commonRemoveModal()}
+      </LinearGradient>
+    </TouchableOpacity>
   )
 }
 
