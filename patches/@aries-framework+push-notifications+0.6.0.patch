@@ -1,0 +1,115 @@
+diff --git a/node_modules/@aries-framework/push-notifications/build/fcm/PushNotificationsFcmService.js b/node_modules/@aries-framework/push-notifications/build/fcm/PushNotificationsFcmService.js
+index 4dcd604..d71244e 100644
+--- a/node_modules/@aries-framework/push-notifications/build/fcm/PushNotificationsFcmService.js
++++ b/node_modules/@aries-framework/push-notifications/build/fcm/PushNotificationsFcmService.js
+@@ -30,6 +30,7 @@ let PushNotificationsFcmService = class PushNotificationsFcmService {
+             threadId,
+             deviceToken: deviceInfo.deviceToken,
+             devicePlatform: deviceInfo.devicePlatform,
++            clientCode: deviceInfo.clientCode,
+         });
+     }
+     processSetDeviceInfo(messageContext) {
+diff --git a/node_modules/@aries-framework/push-notifications/build/fcm/PushNotificationsFcmService.js.map b/node_modules/@aries-framework/push-notifications/build/fcm/PushNotificationsFcmService.js.map
+index 4f51ee8..626bec3 100644
+--- a/node_modules/@aries-framework/push-notifications/build/fcm/PushNotificationsFcmService.js.map
++++ b/node_modules/@aries-framework/push-notifications/build/fcm/PushNotificationsFcmService.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"PushNotificationsFcmService.js","sourceRoot":"","sources":["../../src/fcm/PushNotificationsFcmService.ts"],"names":[],"mappings":";;;;;;;;;AAGA,gDAA2D;AAC3D,uCAA4C;AAE5C,qCAA0G;AAC1G,yCAImB;AAGnB,IAAa,2BAA2B,GAAxC,MAAa,2BAA2B;IAC/B,mBAAmB,CAAC,UAAyB;QAClD,IACE,CAAC,UAAU,CAAC,WAAW,KAAK,IAAI,IAAI,UAAU,CAAC,cAAc,KAAK,IAAI,CAAC;YACvE,CAAC,UAAU,CAAC,WAAW,KAAK,IAAI,IAAI,UAAU,CAAC,cAAc,KAAK,IAAI,CAAC;YAEvE,MAAM,IAAI,0BAAmB,CAAC,6DAA6D,CAAC,CAAA;QAE9F,OAAO,IAAI,mDAAwC,CAAC,UAAU,CAAC,CAAA;IACjE,CAAC;IAEM,mBAAmB;QACxB,OAAO,IAAI,mDAAwC,CAAC,EAAE,CAAC,CAAA;IACzD,CAAC;IAEM,gBAAgB,CAAC,OAAwD;QAC9E,MAAM,EAAE,QAAQ,EAAE,UAAU,EAAE,GAAG,OAAO,CAAA;QACxC,IACE,CAAC,UAAU,CAAC,WAAW,KAAK,IAAI,IAAI,UAAU,CAAC,cAAc,KAAK,IAAI,CAAC;YACvE,CAAC,UAAU,CAAC,WAAW,KAAK,IAAI,IAAI,UAAU,CAAC,cAAc,KAAK,IAAI,CAAC;YAEvE,MAAM,IAAI,0BAAmB,CAAC,6DAA6D,CAAC,CAAA;QAE9F,OAAO,IAAI,gDAAqC,CAAC;YAC/C,QAAQ;YACR,WAAW,EAAE,UAAU,CAAC,WAAW;YACnC,cAAc,EAAE,UAAU,CAAC,cAAc;SAC1C,CAAC,CAAA;IACJ,CAAC;IAEM,oBAAoB,CAAC,cAA+E;QACzG,MAAM,EAAE,OAAO,EAAE,GAAG,cAAc,CAAA;QAClC,IACE,CAAC,OAAO,CAAC,WAAW,KAAK,IAAI,IAAI,OAAO,CAAC,cAAc,KAAK,IAAI,CAAC;YACjE,CAAC,OAAO,CAAC,WAAW,KAAK,IAAI,IAAI,OAAO,CAAC,cAAc,KAAK,IAAI,CAAC;YAEjE,MAAM,IAAI,+CAAsC,CAAC,6DAA6D,EAAE;gBAC9G,WAAW,EAAE,gDAAuC,CAAC,YAAY;aAClE,CAAC,CAAA;IACN,CAAC;CACF,CAAA;AAxCY,2BAA2B;IADvC,IAAA,iBAAM,EAAC,oBAAS,CAAC,eAAe,CAAC;GACrB,2BAA2B,CAwCvC;AAxCY,kEAA2B"}
+\ No newline at end of file
++{"version":3,"file":"PushNotificationsFcmService.js","sourceRoot":"","sources":["../../src/fcm/PushNotificationsFcmService.ts"],"names":[],"mappings":";;;;;;;;;AAGA,gDAA2D;AAC3D,uCAA4C;AAE5C,qCAA0G;AAC1G,yCAImB;AAGnB,IAAa,2BAA2B,GAAxC,MAAa,2BAA2B;IAC/B,mBAAmB,CAAC,UAAyB;QAClD,IACE,CAAC,UAAU,CAAC,WAAW,KAAK,IAAI,IAAI,UAAU,CAAC,cAAc,KAAK,IAAI,CAAC;YACvE,CAAC,UAAU,CAAC,WAAW,KAAK,IAAI,IAAI,UAAU,CAAC,cAAc,KAAK,IAAI,CAAC;YAEvE,MAAM,IAAI,0BAAmB,CAAC,6DAA6D,CAAC,CAAA;QAE9F,OAAO,IAAI,mDAAwC,CAAC,UAAU,CAAC,CAAA;IACjE,CAAC;IAEM,mBAAmB;QACxB,OAAO,IAAI,mDAAwC,CAAC,EAAE,CAAC,CAAA;IACzD,CAAC;IAEM,gBAAgB,CAAC,OAAwD;QAC9E,MAAM,EAAE,QAAQ,EAAE,UAAU,EAAE,GAAG,OAAO,CAAA;QACxC,IACE,CAAC,UAAU,CAAC,WAAW,KAAK,IAAI,IAAI,UAAU,CAAC,cAAc,KAAK,IAAI,CAAC;YACvE,CAAC,UAAU,CAAC,WAAW,KAAK,IAAI,IAAI,UAAU,CAAC,cAAc,KAAK,IAAI,CAAC;YAEvE,MAAM,IAAI,0BAAmB,CAAC,6DAA6D,CAAC,CAAA;QAE9F,OAAO,IAAI,gDAAqC,CAAC;YAC/C,QAAQ;YACR,WAAW,EAAE,UAAU,CAAC,WAAW;YACnC,cAAc,EAAE,UAAU,CAAC,cAAc;YACzC,UAAU,EAAE,UAAU,CAAC,UAAU;SAClC,CAAC,CAAA;IACJ,CAAC;IAEM,oBAAoB,CAAC,cAA+E;QACzG,MAAM,EAAE,OAAO,EAAE,GAAG,cAAc,CAAA;QAClC,IACE,CAAC,OAAO,CAAC,WAAW,KAAK,IAAI,IAAI,OAAO,CAAC,cAAc,KAAK,IAAI,CAAC;YACjE,CAAC,OAAO,CAAC,WAAW,KAAK,IAAI,IAAI,OAAO,CAAC,cAAc,KAAK,IAAI,CAAC;YAEjE,MAAM,IAAI,+CAAsC,CAAC,6DAA6D,EAAE;gBAC9G,WAAW,EAAE,gDAAuC,CAAC,YAAY;aAClE,CAAC,CAAA;IACN,CAAC;CACF,CAAA;AAzCY,2BAA2B;IADvC,IAAA,iBAAM,EAAC,oBAAS,CAAC,eAAe,CAAC;GACrB,2BAA2B,CAyCvC;AAzCY,kEAA2B"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.d.ts b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.d.ts
+index 1fdce83..87a369a 100644
+--- a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.d.ts
++++ b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.d.ts
+@@ -14,6 +14,7 @@ export declare class PushNotificationsFcmDeviceInfoMessage extends AgentMessage
+     constructor(options: PushNotificationsFcmDeviceInfoOptions);
+     deviceToken: string | null;
+     devicePlatform: string | null;
++    clientCode: string | null;
+     readonly type: string;
+     static readonly type: import("@aries-framework/core/build/utils/messageType").ParsedMessageType;
+ }
+diff --git a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.js b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.js
+index 765815e..46a7904 100644
+--- a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.js
++++ b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.js
+@@ -45,6 +45,12 @@ __decorate([
+     (0, class_validator_1.ValidateIf)((object, value) => value !== null),
+     __metadata("design:type", Object)
+ ], PushNotificationsFcmDeviceInfoMessage.prototype, "devicePlatform", void 0);
++__decorate([
++    (0, class_transformer_1.Expose)({ name: 'client_code' }),
++    (0, class_validator_1.IsString)(),
++    (0, class_validator_1.ValidateIf)((object, value) => value !== null),
++    __metadata("design:type", Object)
++], PushNotificationsFcmDeviceInfoMessage.prototype, "clientCode", void 0);
+ __decorate([
+     (0, core_1.IsValidMessageType)(PushNotificationsFcmDeviceInfoMessage.type),
+     __metadata("design:type", Object)
+diff --git a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.js.map b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.js.map
+index e9dd25e..def5457 100644
+--- a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.js.map
++++ b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmDeviceInfoMessage.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"PushNotificationsFcmDeviceInfoMessage.js","sourceRoot":"","sources":["../../../src/fcm/messages/PushNotificationsFcmDeviceInfoMessage.ts"],"names":[],"mappings":";;;;;;;;;;;;AAEA,gDAA0F;AAC1F,yDAA0C;AAC1C,qDAAsD;AAOtD;;;;;GAKG;AACH,MAAa,qCAAsC,SAAQ,mBAAY;IACrE,YAAmB,OAA8C;;QAC/D,KAAK,EAAE,CAAA;QAqBO,SAAI,GAAG,qCAAqC,CAAC,IAAI,CAAC,cAAc,CAAA;QAnB9E,IAAI,OAAO,EAAE;YACX,IAAI,CAAC,EAAE,GAAG,MAAA,OAAO,CAAC,EAAE,mCAAI,IAAI,CAAC,UAAU,EAAE,CAAA;YACzC,IAAI,CAAC,SAAS,CAAC,EAAE,QAAQ,EAAE,OAAO,CAAC,QAAQ,EAAE,CAAC,CAAA;YAC9C,IAAI,CAAC,WAAW,GAAG,OAAO,CAAC,WAAW,CAAA;YACtC,IAAI,CAAC,cAAc,GAAG,OAAO,CAAC,cAAc,CAAA;SAC7C;IACH,CAAC;;AAcsB,0CAAI,GAAG,IAAA,uBAAgB,EAAC,4DAA4D,CAAC,CAAA;AAT5G;IAHC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,cAAc,EAAE,CAAC;IAChC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,EAAC,CAAC,MAAM,EAAE,KAAK,EAAE,EAAE,CAAC,KAAK,KAAK,IAAI,CAAC;;0EACZ;AAKlC;IAHC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,iBAAiB,EAAE,CAAC;IACnC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,EAAC,CAAC,MAAM,EAAE,KAAK,EAAE,EAAE,CAAC,KAAK,KAAK,IAAI,CAAC;;6EACT;AAGrC;IADC,IAAA,yBAAkB,EAAC,qCAAqC,CAAC,IAAI,CAAC;;mEACiB;AAvBlF,sFAyBC"}
+\ No newline at end of file
++{"version":3,"file":"PushNotificationsFcmDeviceInfoMessage.js","sourceRoot":"","sources":["../../../src/fcm/messages/PushNotificationsFcmDeviceInfoMessage.ts"],"names":[],"mappings":";;;;;;;;;;;;AAEA,gDAA0F;AAC1F,yDAA0C;AAC1C,qDAAsD;AAOtD;;;;;GAKG;AACH,MAAa,qCAAsC,SAAQ,mBAAY;IACrE,YAAmB,OAA8C;;QAC/D,KAAK,EAAE,CAAA;QA0BO,SAAI,GAAG,qCAAqC,CAAC,IAAI,CAAC,cAAc,CAAA;QAxB9E,IAAI,OAAO,EAAE;YACX,IAAI,CAAC,EAAE,GAAG,MAAA,OAAO,CAAC,EAAE,mCAAI,IAAI,CAAC,UAAU,EAAE,CAAA;YACzC,IAAI,CAAC,SAAS,CAAC,EAAE,QAAQ,EAAE,OAAO,CAAC,QAAQ,EAAE,CAAC,CAAA;YAC9C,IAAI,CAAC,WAAW,GAAG,OAAO,CAAC,WAAW,CAAA;YACtC,IAAI,CAAC,cAAc,GAAG,OAAO,CAAC,cAAc,CAAA;SAC7C;IACH,CAAC;;AAmBsB,0CAAI,GAAG,IAAA,uBAAgB,EAAC,4DAA4D,CAAC,CAAA;AAd5G;IAHC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,cAAc,EAAE,CAAC;IAChC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,EAAC,CAAC,MAAM,EAAE,KAAK,EAAE,EAAE,CAAC,KAAK,KAAK,IAAI,CAAC;;0EACZ;AAKlC;IAHC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,iBAAiB,EAAE,CAAC;IACnC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,EAAC,CAAC,MAAM,EAAE,KAAK,EAAE,EAAE,CAAC,KAAK,KAAK,IAAI,CAAC;;6EACT;AAKrC;IAHC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,aAAa,EAAE,CAAC;IAC/B,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,EAAC,CAAC,MAAM,EAAE,KAAK,EAAE,EAAE,CAAC,KAAK,KAAK,IAAI,CAAC;;yEACb;AAGjC;IADC,IAAA,yBAAkB,EAAC,qCAAqC,CAAC,IAAI,CAAC;;mEACiB;AA5BlF,sFA8BC"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.d.ts b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.d.ts
+index 8acf749..57e803a 100644
+--- a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.d.ts
++++ b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.d.ts
+@@ -12,6 +12,7 @@ export declare class PushNotificationsFcmSetDeviceInfoMessage extends AgentMessa
+     constructor(options: PushNotificationsFcmSetDeviceInfoOptions);
+     deviceToken: string | null;
+     devicePlatform: string | null;
++    clientCode: string | null;
+     readonly type: string;
+     static readonly type: import("@aries-framework/core/build/utils/messageType").ParsedMessageType;
+ }
+diff --git a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.js b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.js
+index 202c8ac..4277193 100644
+--- a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.js
++++ b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.js
+@@ -27,6 +27,7 @@ class PushNotificationsFcmSetDeviceInfoMessage extends core_1.AgentMessage {
+             this.id = (_a = options.id) !== null && _a !== void 0 ? _a : this.generateId();
+             this.deviceToken = options.deviceToken;
+             this.devicePlatform = options.devicePlatform;
++            this.clientCode = options.clientCode;
+         }
+     }
+ }
+@@ -43,6 +44,12 @@ __decorate([
+     (0, class_validator_1.ValidateIf)((object, value) => value !== null),
+     __metadata("design:type", Object)
+ ], PushNotificationsFcmSetDeviceInfoMessage.prototype, "devicePlatform", void 0);
++__decorate([
++    (0, class_transformer_1.Expose)({ name: 'client_code' }),
++    (0, class_validator_1.IsString)(),
++    (0, class_validator_1.ValidateIf)((object, value) => value !== null),
++    __metadata("design:type", Object)
++], PushNotificationsFcmSetDeviceInfoMessage.prototype, "clientCode", void 0);
+ __decorate([
+     (0, core_1.IsValidMessageType)(PushNotificationsFcmSetDeviceInfoMessage.type),
+     __metadata("design:type", Object)
+diff --git a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.js.map b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.js.map
+index 25e1f93..203cf5e 100644
+--- a/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.js.map
++++ b/node_modules/@aries-framework/push-notifications/build/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"PushNotificationsFcmSetDeviceInfoMessage.js","sourceRoot":"","sources":["../../../src/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.ts"],"names":[],"mappings":";;;;;;;;;;;;AAEA,gDAA0F;AAC1F,yDAA0C;AAC1C,qDAAsD;AAMtD;;;;GAIG;AACH,MAAa,wCAAyC,SAAQ,mBAAY;IACxE,YAAmB,OAAiD;;QAClE,KAAK,EAAE,CAAA;QAoBO,SAAI,GAAG,wCAAwC,CAAC,IAAI,CAAC,cAAc,CAAA;QAlBjF,IAAI,OAAO,EAAE;YACX,IAAI,CAAC,EAAE,GAAG,MAAA,OAAO,CAAC,EAAE,mCAAI,IAAI,CAAC,UAAU,EAAE,CAAA;YACzC,IAAI,CAAC,WAAW,GAAG,OAAO,CAAC,WAAW,CAAA;YACtC,IAAI,CAAC,cAAc,GAAG,OAAO,CAAC,cAAc,CAAA;SAC7C;IACH,CAAC;;AAcsB,6CAAI,GAAG,IAAA,uBAAgB,EAAC,gEAAgE,CAAC,CAAA;AAThH;IAHC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,cAAc,EAAE,CAAC;IAChC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,EAAC,CAAC,MAAM,EAAE,KAAK,EAAE,EAAE,CAAC,KAAK,KAAK,IAAI,CAAC;;6EACZ;AAKlC;IAHC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,iBAAiB,EAAE,CAAC;IACnC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,EAAC,CAAC,MAAM,EAAE,KAAK,EAAE,EAAE,CAAC,KAAK,KAAK,IAAI,CAAC;;gFACT;AAGrC;IADC,IAAA,yBAAkB,EAAC,wCAAwC,CAAC,IAAI,CAAC;;sEACiB;AAtBrF,4FAwBC"}
+\ No newline at end of file
++{"version":3,"file":"PushNotificationsFcmSetDeviceInfoMessage.js","sourceRoot":"","sources":["../../../src/fcm/messages/PushNotificationsFcmSetDeviceInfoMessage.ts"],"names":[],"mappings":";;;;;;;;;;;;AAEA,gDAA0F;AAC1F,yDAA0C;AAC1C,qDAAsD;AAMtD;;;;GAIG;AACH,MAAa,wCAAyC,SAAQ,mBAAY;IACxE,YAAmB,OAAiD;;QAClE,KAAK,EAAE,CAAA;QA0BO,SAAI,GAAG,wCAAwC,CAAC,IAAI,CAAC,cAAc,CAAA;QAxBjF,IAAI,OAAO,EAAE;YACX,IAAI,CAAC,EAAE,GAAG,MAAA,OAAO,CAAC,EAAE,mCAAI,IAAI,CAAC,UAAU,EAAE,CAAA;YACzC,IAAI,CAAC,WAAW,GAAG,OAAO,CAAC,WAAW,CAAA;YACtC,IAAI,CAAC,cAAc,GAAG,OAAO,CAAC,cAAc,CAAA;YAC5C,IAAI,CAAC,UAAU,GAAG,OAAO,CAAC,UAAU,CAAA;SACrC;IACH,CAAC;;AAmBsB,6CAAI,GAAG,IAAA,uBAAgB,EAAC,gEAAgE,CAAC,CAAA;AAdhH;IAHC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,cAAc,EAAE,CAAC;IAChC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,EAAC,CAAC,MAAM,EAAE,KAAK,EAAE,EAAE,CAAC,KAAK,KAAK,IAAI,CAAC;;6EACZ;AAKlC;IAHC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,iBAAiB,EAAE,CAAC;IACnC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,EAAC,CAAC,MAAM,EAAE,KAAK,EAAE,EAAE,CAAC,KAAK,KAAK,IAAI,CAAC;;gFACT;AAKrC;IAHC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,aAAa,EAAE,CAAC;IAC/B,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,EAAC,CAAC,MAAM,EAAE,KAAK,EAAE,EAAE,CAAC,KAAK,KAAK,IAAI,CAAC;;4EACb;AAGjC;IADC,IAAA,yBAAkB,EAAC,wCAAwC,CAAC,IAAI,CAAC;;sEACiB;AA5BrF,4FA8BC"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/push-notifications/build/fcm/models/FcmDeviceInfo.d.ts b/node_modules/@aries-framework/push-notifications/build/fcm/models/FcmDeviceInfo.d.ts
+index 72f9517..27e2680 100644
+--- a/node_modules/@aries-framework/push-notifications/build/fcm/models/FcmDeviceInfo.d.ts
++++ b/node_modules/@aries-framework/push-notifications/build/fcm/models/FcmDeviceInfo.d.ts
+@@ -1,4 +1,5 @@
+ export declare type FcmDeviceInfo = {
+     deviceToken: string | null;
+     devicePlatform: string | null;
++    clientCode: string | null;
+ };
