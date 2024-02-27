@@ -1,12 +1,13 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Text, useWindowDimensions, View, StyleSheet, ImageBackground } from 'react-native'
+import { Text, useWindowDimensions, View, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { AttachTourStep } from '../components/tour/AttachTourStep'
+import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
-import ListContacts from '../screens/ListContacts'
 import { Assets } from '../theme'
 import { TabStackParams, TabStacks } from '../types/navigators'
 import { isTablet, orientation, Orientation } from '../utils/helpers'
@@ -18,6 +19,8 @@ import OrganizationStack from './OrganizationStack'
 
 const TabStack: React.FC = () => {
   const { width, height } = useWindowDimensions()
+  const { useCustomNotifications } = useConfiguration()
+  const { total } = useCustomNotifications()
   const { t } = useTranslation()
   const Tab = createBottomTabNavigator<TabStackParams>()
   const { ColorPallet, TabTheme } = useTheme()
@@ -27,7 +30,6 @@ const TabStack: React.FC = () => {
   const styles = StyleSheet.create({
     tabBarIcon: {
       flex: 1,
-      zIndex: 1,
     },
   })
 
@@ -38,26 +40,15 @@ const TabStack: React.FC = () => {
 
     return 0
   }
-  const CustomTabBar = () => {
-    return (
-      <View>
-        <ImageBackground
-          source={require('../assets/img/Rectangle.png')}
-          style={{
-            height: 30,
-          }}
-        />
-      </View>
-    )
-  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: ColorPallet.brand.primary }}>
       <Tab.Navigator
         screenOptions={{
+          unmountOnBlur: true,
           tabBarStyle: {
             ...TabTheme.tabBarStyle,
           },
-          tabBarBackground: () => <CustomTabBar />,
           tabBarActiveTintColor: TabTheme.tabBarActiveTintColor,
           tabBarInactiveTintColor: TabTheme.tabBarInactiveTintColor,
           header: () => null,
@@ -67,9 +58,9 @@ const TabStack: React.FC = () => {
           component={HomeStack}
           options={{
             tabBarIconStyle: styles.tabBarIcon,
-            tabBarIcon: ({ focused }) => (
+            tabBarIcon: ({ color, focused }) => (
               <View style={{ ...TabTheme.tabBarContainerStyle, justifyContent: showLabels ? 'flex-end' : 'center' }}>
-                {focused ? <Assets.svg.HomeIconActive /> : <Assets.svg.HomeIcon />}
+                <Icon name={focused ? 'home' : 'home-outline'} color={color} size={30} />
                 {showLabels && (
                   <Text
                     style={{
@@ -81,10 +72,12 @@ const TabStack: React.FC = () => {
                 )}
               </View>
             ),
-
             tabBarShowLabel: false,
-            tabBarAccessibilityLabel: `${t('TabStack.Home')} `,
+            tabBarAccessibilityLabel: `${t('TabStack.Home')} (${
+              total === 1 ? t('Home.OneNotification') : t('Home.CountNotifications', { count: total || 0 })
+            })`,
             tabBarTestID: testIdWithKey(t('TabStack.Home')),
+            tabBarBadge: total || undefined,
             tabBarBadgeStyle: {
               marginLeft: leftMarginForDevice(width, height),
               backgroundColor: ColorPallet.semantic.error,
@@ -116,40 +109,14 @@ const TabStack: React.FC = () => {
           }}
         />
         <Tab.Screen
-          name={TabStacks.ContactStack}
-          component={ListContacts}
-          options={{
-            tabBarIconStyle: styles.tabBarIcon,
-            tabBarIcon: ({ focused }) => (
-              <AttachTourStep index={2}>
-                <View style={{ ...TabTheme.tabBarContainerStyle, justifyContent: showLabels ? 'flex-end' : 'center' }}>
-                  {focused ? <Assets.svg.ConnectionIconActive /> : <Assets.svg.Connection />}
-                  {showLabels && (
-                    <Text
-                      style={{
-                        ...TabTheme.tabBarTextStyle,
-                        color: focused ? TabTheme.tabBarActiveTintColor : TabTheme.tabBarInactiveTintColor,
-                      }}>
-                      {t('TabStack.Connections')}
-                    </Text>
-                  )}
-                </View>
-              </AttachTourStep>
-            ),
-            tabBarShowLabel: false,
-            tabBarAccessibilityLabel: t('TabStack.Credentials'),
-            tabBarTestID: testIdWithKey(t('TabStack.Credentials')),
-          }}
-        />
-        <Tab.Screen
           name={TabStacks.CredentialStack}
           component={CredentialStack}
           options={{
             tabBarIconStyle: styles.tabBarIcon,
-            tabBarIcon: ({ focused }) => (
+            tabBarIcon: ({ color, focused }) => (
               <AttachTourStep index={2}>
                 <View style={{ ...TabTheme.tabBarContainerStyle, justifyContent: showLabels ? 'flex-end' : 'center' }}>
-                  {focused ? <Assets.svg.CredentialIconActive /> : <Assets.svg.Credential />}
+                  <Icon name={focused ? 'wallet' : 'wallet-outline'} color={color} size={30} />
                   {showLabels && (
                     <Text
                       style={{
