@@ -68,7 +68,6 @@ export enum TabStacks {
   ConnectStack = 'Tab Connect Stack',
   CredentialStack = 'Tab Credential Stack',
   OrganizationStack = 'Tab OrganizationStack Stack',
-  ContactStack = ' Tab Contacts Stack',
 }
 
 export type RootStackParams = {
@@ -86,7 +85,6 @@ export type TabStackParams = {
   [TabStacks.ConnectStack]: NavigatorScreenParams<ConnectStackParams>
   [TabStacks.CredentialStack]: NavigatorScreenParams<CredentialStackParams>
   [TabStacks.OrganizationStack]: NavigatorScreenParams<OrganizationStackParams>
-  [TabStacks.ContactStack]: NavigatorScreenParams<ContactStackParams>
 }
 
 export type AuthenticateStackParams = {
