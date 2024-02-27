@@ -60,6 +60,7 @@ const CredentialCard: React.FC<CredentialCardProps> = ({
           hasAltCredentials={hasAltCredentials}
           proof
           elevated
+          onPress={onPress}
         />
       )
     }
