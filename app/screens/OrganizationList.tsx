@@ -81,8 +81,8 @@ const OrganizationList: React.FC<ListOrganizationProps> = ({ navigation }) => {
     },
     scanContainer: {
       position: 'absolute',
-      bottom: 1,
-      alignSelf: 'center',
+      bottom: 10,
+      right: 10,
     },
     itemSeparator: {
       backgroundColor: ColorPallet.brand.primaryBackground,
