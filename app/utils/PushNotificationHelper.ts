@@ -154,11 +154,18 @@ const setDeviceInfo = async (agent: AdeyaAgent, blankDeviceToken = false): Promi
   // console.log('token', token)
   const mediator = await _getMediatorConnection(agent)
   if (!mediator) return
+
+  if (!Config.CLIENT_CODE) {
+    agent.config.logger.error('Client code is not set')
+    return
+  }
+
   agent.config.logger.info(`Trying to send device info to mediator with connection [${mediator.id}]`)
   try {
     await setPushNotificationDeviceInfo(agent, mediator.id, {
       deviceToken: token,
       devicePlatform: Platform.OS,
+      clientCode: Config.CLIENT_CODE,
     })
     if (blankDeviceToken) AsyncStorage.setItem(TOKEN_STORAGE_KEY, 'blank')
     else AsyncStorage.setItem(TOKEN_STORAGE_KEY, token)
