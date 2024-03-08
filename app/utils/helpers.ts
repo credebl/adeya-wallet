@@ -830,6 +830,14 @@ export const sortCredentialsForAutoSelect = (
   return credentials
 }
 
+export const isValidUrl = (url: string) => {
+  try {
+    return Boolean(new URL(url))
+  } catch (e) {
+    return false
+  }
+}
+
 /**
  *
  * @param url a redirection URL to retrieve a payload for an invite
@@ -907,6 +915,17 @@ export const createConnectionInvitation = async (agent: AdeyaAgent, goalCode?: s
  */
 export const createTempConnectionInvitation = async (agent: AdeyaAgent, type: 'issue' | 'verify') => {
   return createConnectionInvitation(agent, `aries.vc.${type}.once`)
+}
+
+/**
+ * Fetch data from a URL
+ */
+export const fetchUrlData = async (url: string) => {
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+  })
+  return await res.json()
 }
 
 /**
