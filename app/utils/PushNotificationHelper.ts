@@ -71,7 +71,7 @@ const _requestPermission = async (agent: AdeyaAgent): Promise<void> => {
 const _getMediatorConnection = async (agent: AdeyaAgent): Promise<ConnectionRecord | undefined> => {
   const connections = await getAllConnections(agent)
   for (const connection of connections) {
-    if (connection.theirLabel === Config.MEDIATOR_LABEL) {
+    if (connection.theirLabel?.toUpperCase() === Config.MEDIATOR_LABEL) {
       return connection
     }
   }
