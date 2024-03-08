@@ -1,0 +1,21 @@
+diff --git a/node_modules/@aries-framework/askar/build/utils/askarKeyTypes.js b/node_modules/@aries-framework/askar/build/utils/askarKeyTypes.js
+index 122d1d8..e68a70c 100644
+--- a/node_modules/@aries-framework/askar/build/utils/askarKeyTypes.js
++++ b/node_modules/@aries-framework/askar/build/utils/askarKeyTypes.js
+@@ -10,6 +10,7 @@ const keyTypeToAskarAlg = {
+     [core_1.KeyType.Bls12381g2]: aries_askar_shared_1.KeyAlgs.Bls12381G2,
+     [core_1.KeyType.Bls12381g1g2]: aries_askar_shared_1.KeyAlgs.Bls12381G1G2,
+     [core_1.KeyType.P256]: aries_askar_shared_1.KeyAlgs.EcSecp256r1,
++    [core_1.KeyType.K256]: aries_askar_shared_1.KeyAlgs.EcSecp256k1,
+ };
+ const isKeyTypeSupportedByAskar = (keyType) => keyType in keyTypeToAskarAlg;
+ exports.isKeyTypeSupportedByAskar = isKeyTypeSupportedByAskar;
+diff --git a/node_modules/@aries-framework/askar/build/utils/askarKeyTypes.js.map b/node_modules/@aries-framework/askar/build/utils/askarKeyTypes.js.map
+index 8ff71a0..9ab5e68 100644
+--- a/node_modules/@aries-framework/askar/build/utils/askarKeyTypes.js.map
++++ b/node_modules/@aries-framework/askar/build/utils/askarKeyTypes.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"askarKeyTypes.js","sourceRoot":"","sources":["../../src/utils/askarKeyTypes.ts"],"names":[],"mappings":";;;AAAA,gDAA+C;AAC/C,wEAAyD;AAEzD,MAAM,iBAAiB,GAAG;IACxB,CAAC,cAAO,CAAC,OAAO,CAAC,EAAE,4BAAO,CAAC,OAAO;IAClC,CAAC,cAAO,CAAC,MAAM,CAAC,EAAE,4BAAO,CAAC,MAAM;IAChC,CAAC,cAAO,CAAC,UAAU,CAAC,EAAE,4BAAO,CAAC,UAAU;IACxC,CAAC,cAAO,CAAC,UAAU,CAAC,EAAE,4BAAO,CAAC,UAAU;IACxC,CAAC,cAAO,CAAC,YAAY,CAAC,EAAE,4BAAO,CAAC,YAAY;IAC5C,CAAC,cAAO,CAAC,IAAI,CAAC,EAAE,4BAAO,CAAC,WAAW;CAC3B,CAAA;AAEH,MAAM,yBAAyB,GAAG,CAAC,OAAgB,EAAE,EAAE,CAAC,OAAO,IAAI,iBAAiB,CAAA;AAA9E,QAAA,yBAAyB,6BAAqD;AAE9E,QAAA,wBAAwB,GAAG,MAAM,CAAC,IAAI,CAAC,iBAAiB,CAAc,CAAA"}
+\ No newline at end of file
++{"version":3,"file":"askarKeyTypes.js","sourceRoot":"","sources":["../../src/utils/askarKeyTypes.ts"],"names":[],"mappings":";;;AAAA,gDAA+C;AAC/C,wEAAyD;AAEzD,MAAM,iBAAiB,GAAG;IACxB,CAAC,cAAO,CAAC,OAAO,CAAC,EAAE,4BAAO,CAAC,OAAO;IAClC,CAAC,cAAO,CAAC,MAAM,CAAC,EAAE,4BAAO,CAAC,MAAM;IAChC,CAAC,cAAO,CAAC,UAAU,CAAC,EAAE,4BAAO,CAAC,UAAU;IACxC,CAAC,cAAO,CAAC,UAAU,CAAC,EAAE,4BAAO,CAAC,UAAU;IACxC,CAAC,cAAO,CAAC,YAAY,CAAC,EAAE,4BAAO,CAAC,YAAY;IAC5C,CAAC,cAAO,CAAC,IAAI,CAAC,EAAE,4BAAO,CAAC,WAAW;IACnC,CAAC,cAAO,CAAC,IAAI,CAAC,EAAE,4BAAO,CAAC,WAAW;CAC3B,CAAA;AAEH,MAAM,yBAAyB,GAAG,CAAC,OAAgB,EAAE,EAAE,CAAC,OAAO,IAAI,iBAAiB,CAAA;AAA9E,QAAA,yBAAyB,6BAAqD;AAE9E,QAAA,wBAAwB,GAAG,MAAM,CAAC,IAAI,CAAC,iBAAiB,CAAc,CAAA"}
+\ No newline at end of file

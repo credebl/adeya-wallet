@@ -1,0 +1,2087 @@
+diff --git a/node_modules/@aries-framework/core/build/agent/AgentModules.d.ts b/node_modules/@aries-framework/core/build/agent/AgentModules.d.ts
+index 973ad00..fc56f3d 100644
+--- a/node_modules/@aries-framework/core/build/agent/AgentModules.d.ts
++++ b/node_modules/@aries-framework/core/build/agent/AgentModules.d.ts
+@@ -6,6 +6,7 @@ import { CacheModule } from '../modules/cache';
+ import { ConnectionsModule } from '../modules/connections';
+ import { CredentialsModule } from '../modules/credentials';
+ import { DidsModule } from '../modules/dids';
++import { DifPresentationExchangeModule } from '../modules/dif-presentation-exchange';
+ import { DiscoverFeaturesModule } from '../modules/discover-features';
+ import { GenericRecordsModule } from '../modules/generic-records';
+ import { MessagePickupModule } from '../modules/message-pìckup';
+@@ -106,6 +107,7 @@ declare function getDefaultAgentModules(): {
+     readonly oob: () => OutOfBandModule;
+     readonly w3cCredentials: () => W3cCredentialsModule;
+     readonly cache: () => CacheModule;
++    readonly pex: () => DifPresentationExchangeModule;
+ };
+ /**
+  * Extend the provided modules object with the default agent modules. If the modules property already contains a module with the same
+diff --git a/node_modules/@aries-framework/core/build/agent/AgentModules.js b/node_modules/@aries-framework/core/build/agent/AgentModules.js
+index 01a0b46..f847ba1 100644
+--- a/node_modules/@aries-framework/core/build/agent/AgentModules.js
++++ b/node_modules/@aries-framework/core/build/agent/AgentModules.js
+@@ -6,6 +6,7 @@ const cache_1 = require("../modules/cache");
+ const connections_1 = require("../modules/connections");
+ const credentials_1 = require("../modules/credentials");
+ const dids_1 = require("../modules/dids");
++const dif_presentation_exchange_1 = require("../modules/dif-presentation-exchange");
+ const discover_features_1 = require("../modules/discover-features");
+ const generic_records_1 = require("../modules/generic-records");
+ const message_p_ckup_1 = require("../modules/message-p\u00ECckup");
+@@ -34,6 +35,7 @@ function getDefaultAgentModules() {
+         oob: () => new oob_1.OutOfBandModule(),
+         w3cCredentials: () => new vc_1.W3cCredentialsModule(),
+         cache: () => new cache_1.CacheModule(),
++        pex: () => new dif_presentation_exchange_1.DifPresentationExchangeModule(),
+     };
+ }
+ /**
+diff --git a/node_modules/@aries-framework/core/build/agent/AgentModules.js.map b/node_modules/@aries-framework/core/build/agent/AgentModules.js.map
+index 766ca70..6ea2ae3 100644
+--- a/node_modules/@aries-framework/core/build/agent/AgentModules.js.map
++++ b/node_modules/@aries-framework/core/build/agent/AgentModules.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"AgentModules.js","sourceRoot":"","sources":["../../src/agent/AgentModules.ts"],"names":[],"mappings":";;;AAIA,8DAA+D;AAC/D,4CAA8C;AAC9C,wDAA0D;AAC1D,wDAA0D;AAC1D,0CAA4C;AAC5C,oEAAqE;AACrE,gEAAiE;AACjE,mEAA+D;AAC/D,wCAAgD;AAChD,8CAAgD;AAChD,gDAA6E;AAC7E,sCAAoD;AACpD,sCAAwC;AAiGxC;;;GAGG;AACH,SAAS,sBAAsB;IAC7B,OAAO;QACL,WAAW,EAAE,GAAG,EAAE,CAAC,IAAI,+BAAiB,EAAE;QAC1C,WAAW,EAAE,GAAG,EAAE,CAAC,IAAI,+BAAiB,EAAE;QAC1C,MAAM,EAAE,GAAG,EAAE,CAAC,IAAI,qBAAY,EAAE;QAChC,QAAQ,EAAE,GAAG,EAAE,CAAC,IAAI,wBAAc,EAAE;QACpC,kBAAkB,EAAE,GAAG,EAAE,CAAC,IAAI,kCAAwB,EAAE;QACxD,aAAa,EAAE,GAAG,EAAE,CAAC,IAAI,oCAAmB,EAAE;QAC9C,aAAa,EAAE,GAAG,EAAE,CAAC,IAAI,oCAAmB,EAAE;QAC9C,cAAc,EAAE,GAAG,EAAE,CAAC,IAAI,sCAAoB,EAAE;QAChD,SAAS,EAAE,GAAG,EAAE,CAAC,IAAI,0CAAsB,EAAE;QAC7C,IAAI,EAAE,GAAG,EAAE,CAAC,IAAI,iBAAU,EAAE;QAC5B,MAAM,EAAE,GAAG,EAAE,CAAC,IAAI,qBAAY,EAAE;QAChC,GAAG,EAAE,GAAG,EAAE,CAAC,IAAI,qBAAe,EAAE;QAChC,cAAc,EAAE,GAAG,EAAE,CAAC,IAAI,yBAAoB,EAAE;QAChD,KAAK,EAAE,GAAG,EAAE,CAAC,IAAI,mBAAW,EAAE;KACtB,CAAA;AACZ,CAAC;AAED;;;;;GAKG;AACH,SAAgB,+BAA+B,CAC7C,OAAsB;IAEtB,MAAM,eAAe,qBAAgC,OAAO,CAAE,CAAA;IAC9D,MAAM,mBAAmB,GAAG,sBAAsB,EAAE,CAAA;IAEpD,sDAAsD;IACtD,KAAK,MAAM,CAAC,SAAS,EAAE,mBAAmB,CAAC,IAAI,MAAM,CAAC,OAAO,CAAC,mBAAmB,CAAC,EAAE;QAClF,uDAAuD;QACvD,IAAI,OAAO,IAAI,OAAO,CAAC,SAAS,CAAC;YAAE,SAAQ;QAE3C,eAAe,CAAC,SAAS,CAAC,GAAG,mBAAmB,EAAE,CAAA;KACnD;IAED,OAAO,eAAqD,CAAA;AAC9D,CAAC;AAfD,0EAeC;AAED;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;GAiCG;AACH,SAAgB,WAAW,CACzB,iBAAoC,EACpC,eAA0B,EAAE;IAE5B,yFAAyF;IACzF,oCAAoC;IACpC,MAAM,GAAG,GAAG,MAAM,CAAC,OAAO,CAAC,iBAAiB,CAAC,iBAAiB,CAAC,CAAC,MAAM,CAAC,CAAC,GAAG,EAAE,CAAC,SAAS,EAAE,MAAM,CAAC,EAAE,EAAE;QAClG,oBAAoB;QACpB,IAAI,CAAC,MAAM,CAAC,GAAG;YAAE,OAAO,GAAG,CAAA;QAE3B,MAAM,WAAW,GAAG,iBAAiB,CAAC,OAAO,CAAC,MAAM,CAAC,GAAG,CAAC,CAAA;QAEzD,kBAAkB;QAClB,IAAI,YAAY,CAAC,QAAQ,CAAC,WAAW,CAAC;YAAE,OAAO,GAAG,CAAA;QAClD,uCAAY,GAAG,KAAE,CAAC,SAAS,CAAC,EAAE,WAAW,IAAE;IAC7C,CAAC,EAAE,EAAE,CAA2B,CAAA;IAEhC,OAAO,GAAG,CAAA;AACZ,CAAC;AAlBD,kCAkBC"}
+\ No newline at end of file
++{"version":3,"file":"AgentModules.js","sourceRoot":"","sources":["../../src/agent/AgentModules.ts"],"names":[],"mappings":";;;AAIA,8DAA+D;AAC/D,4CAA8C;AAC9C,wDAA0D;AAC1D,wDAA0D;AAC1D,0CAA4C;AAC5C,oFAAoF;AACpF,oEAAqE;AACrE,gEAAiE;AACjE,mEAA+D;AAC/D,wCAAgD;AAChD,8CAAgD;AAChD,gDAA6E;AAC7E,sCAAoD;AACpD,sCAAwC;AAiGxC;;;GAGG;AACH,SAAS,sBAAsB;IAC7B,OAAO;QACL,WAAW,EAAE,GAAG,EAAE,CAAC,IAAI,+BAAiB,EAAE;QAC1C,WAAW,EAAE,GAAG,EAAE,CAAC,IAAI,+BAAiB,EAAE;QAC1C,MAAM,EAAE,GAAG,EAAE,CAAC,IAAI,qBAAY,EAAE;QAChC,QAAQ,EAAE,GAAG,EAAE,CAAC,IAAI,wBAAc,EAAE;QACpC,kBAAkB,EAAE,GAAG,EAAE,CAAC,IAAI,kCAAwB,EAAE;QACxD,aAAa,EAAE,GAAG,EAAE,CAAC,IAAI,oCAAmB,EAAE;QAC9C,aAAa,EAAE,GAAG,EAAE,CAAC,IAAI,oCAAmB,EAAE;QAC9C,cAAc,EAAE,GAAG,EAAE,CAAC,IAAI,sCAAoB,EAAE;QAChD,SAAS,EAAE,GAAG,EAAE,CAAC,IAAI,0CAAsB,EAAE;QAC7C,IAAI,EAAE,GAAG,EAAE,CAAC,IAAI,iBAAU,EAAE;QAC5B,MAAM,EAAE,GAAG,EAAE,CAAC,IAAI,qBAAY,EAAE;QAChC,GAAG,EAAE,GAAG,EAAE,CAAC,IAAI,qBAAe,EAAE;QAChC,cAAc,EAAE,GAAG,EAAE,CAAC,IAAI,yBAAoB,EAAE;QAChD,KAAK,EAAE,GAAG,EAAE,CAAC,IAAI,mBAAW,EAAE;QAC9B,GAAG,EAAE,GAAG,EAAE,CAAC,IAAI,yDAA6B,EAAE;KACtC,CAAA;AACZ,CAAC;AAED;;;;;GAKG;AACH,SAAgB,+BAA+B,CAC7C,OAAsB;IAEtB,MAAM,eAAe,qBAAgC,OAAO,CAAE,CAAA;IAC9D,MAAM,mBAAmB,GAAG,sBAAsB,EAAE,CAAA;IAEpD,sDAAsD;IACtD,KAAK,MAAM,CAAC,SAAS,EAAE,mBAAmB,CAAC,IAAI,MAAM,CAAC,OAAO,CAAC,mBAAmB,CAAC,EAAE;QAClF,uDAAuD;QACvD,IAAI,OAAO,IAAI,OAAO,CAAC,SAAS,CAAC;YAAE,SAAQ;QAE3C,eAAe,CAAC,SAAS,CAAC,GAAG,mBAAmB,EAAE,CAAA;KACnD;IAED,OAAO,eAAqD,CAAA;AAC9D,CAAC;AAfD,0EAeC;AAED;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;GAiCG;AACH,SAAgB,WAAW,CACzB,iBAAoC,EACpC,eAA0B,EAAE;IAE5B,yFAAyF;IACzF,oCAAoC;IACpC,MAAM,GAAG,GAAG,MAAM,CAAC,OAAO,CAAC,iBAAiB,CAAC,iBAAiB,CAAC,CAAC,MAAM,CAAC,CAAC,GAAG,EAAE,CAAC,SAAS,EAAE,MAAM,CAAC,EAAE,EAAE;QAClG,oBAAoB;QACpB,IAAI,CAAC,MAAM,CAAC,GAAG;YAAE,OAAO,GAAG,CAAA;QAE3B,MAAM,WAAW,GAAG,iBAAiB,CAAC,OAAO,CAAC,MAAM,CAAC,GAAG,CAAC,CAAA;QAEzD,kBAAkB;QAClB,IAAI,YAAY,CAAC,QAAQ,CAAC,WAAW,CAAC;YAAE,OAAO,GAAG,CAAA;QAClD,uCAAY,GAAG,KAAE,CAAC,SAAS,CAAC,EAAE,WAAW,IAAE;IAC7C,CAAC,EAAE,EAAE,CAA2B,CAAA;IAEhC,OAAO,GAAG,CAAA;AACZ,CAAC;AAlBD,kCAkBC"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/constants.d.ts b/node_modules/@aries-framework/core/build/constants.d.ts
+index b33a121..48ef47a 100644
+--- a/node_modules/@aries-framework/core/build/constants.d.ts
++++ b/node_modules/@aries-framework/core/build/constants.d.ts
+@@ -7,5 +7,6 @@ export declare const InjectionSymbols: {
+     Stop$: symbol;
+     FileSystem: symbol;
+     Wallet: symbol;
++    DifPresentationExchangeService: symbol;
+ };
+ export declare const DID_COMM_TRANSPORT_QUEUE = "didcomm:transport/queue";
+diff --git a/node_modules/@aries-framework/core/build/constants.js b/node_modules/@aries-framework/core/build/constants.js
+index c028c7a..cc4651f 100644
+--- a/node_modules/@aries-framework/core/build/constants.js
++++ b/node_modules/@aries-framework/core/build/constants.js
+@@ -10,6 +10,7 @@ exports.InjectionSymbols = {
+     Stop$: Symbol('Stop$'),
+     FileSystem: Symbol('FileSystem'),
+     Wallet: Symbol('Wallet'),
++    DifPresentationExchangeService: Symbol('DifPresentationExchangeService'),
+ };
+ exports.DID_COMM_TRANSPORT_QUEUE = 'didcomm:transport/queue';
+ //# sourceMappingURL=constants.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/constants.js.map b/node_modules/@aries-framework/core/build/constants.js.map
+index 9ef98cf..e22430d 100644
+--- a/node_modules/@aries-framework/core/build/constants.js.map
++++ b/node_modules/@aries-framework/core/build/constants.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"constants.js","sourceRoot":"","sources":["../src/constants.ts"],"names":[],"mappings":";;;AAAa,QAAA,gBAAgB,GAAG;IAC9B,iBAAiB,EAAE,MAAM,CAAC,mBAAmB,CAAC;IAC9C,cAAc,EAAE,MAAM,CAAC,gBAAgB,CAAC;IACxC,MAAM,EAAE,MAAM,CAAC,QAAQ,CAAC;IACxB,oBAAoB,EAAE,MAAM,CAAC,sBAAsB,CAAC;IACpD,iBAAiB,EAAE,MAAM,CAAC,mBAAmB,CAAC;IAC9C,KAAK,EAAE,MAAM,CAAC,OAAO,CAAC;IACtB,UAAU,EAAE,MAAM,CAAC,YAAY,CAAC;IAChC,MAAM,EAAE,MAAM,CAAC,QAAQ,CAAC;CACzB,CAAA;AAEY,QAAA,wBAAwB,GAAG,yBAAyB,CAAA"}
+\ No newline at end of file
++{"version":3,"file":"constants.js","sourceRoot":"","sources":["../src/constants.ts"],"names":[],"mappings":";;;AAAa,QAAA,gBAAgB,GAAG;IAC9B,iBAAiB,EAAE,MAAM,CAAC,mBAAmB,CAAC;IAC9C,cAAc,EAAE,MAAM,CAAC,gBAAgB,CAAC;IACxC,MAAM,EAAE,MAAM,CAAC,QAAQ,CAAC;IACxB,oBAAoB,EAAE,MAAM,CAAC,sBAAsB,CAAC;IACpD,iBAAiB,EAAE,MAAM,CAAC,mBAAmB,CAAC;IAC9C,KAAK,EAAE,MAAM,CAAC,OAAO,CAAC;IACtB,UAAU,EAAE,MAAM,CAAC,YAAY,CAAC;IAChC,MAAM,EAAE,MAAM,CAAC,QAAQ,CAAC;IACxB,8BAA8B,EAAE,MAAM,CAAC,gCAAgC,CAAC;CACzE,CAAA;AAEY,QAAA,wBAAwB,GAAG,yBAAyB,CAAA"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/crypto/KeyType.d.ts b/node_modules/@aries-framework/core/build/crypto/KeyType.d.ts
+index d1369ea..337d40e 100644
+--- a/node_modules/@aries-framework/core/build/crypto/KeyType.d.ts
++++ b/node_modules/@aries-framework/core/build/crypto/KeyType.d.ts
+@@ -6,5 +6,6 @@ export declare enum KeyType {
+     X25519 = "x25519",
+     P256 = "p256",
+     P384 = "p384",
+-    P521 = "p521"
++    P521 = "p521",
++    K256 = "k256"
+ }
+diff --git a/node_modules/@aries-framework/core/build/crypto/KeyType.js b/node_modules/@aries-framework/core/build/crypto/KeyType.js
+index dfb6a39..ebb1896 100644
+--- a/node_modules/@aries-framework/core/build/crypto/KeyType.js
++++ b/node_modules/@aries-framework/core/build/crypto/KeyType.js
+@@ -11,5 +11,6 @@ var KeyType;
+     KeyType["P256"] = "p256";
+     KeyType["P384"] = "p384";
+     KeyType["P521"] = "p521";
++    KeyType["K256"] = "k256";
+ })(KeyType = exports.KeyType || (exports.KeyType = {}));
+ //# sourceMappingURL=KeyType.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/crypto/KeyType.js.map b/node_modules/@aries-framework/core/build/crypto/KeyType.js.map
+index e392656..9f23300 100644
+--- a/node_modules/@aries-framework/core/build/crypto/KeyType.js.map
++++ b/node_modules/@aries-framework/core/build/crypto/KeyType.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"KeyType.js","sourceRoot":"","sources":["../../src/crypto/KeyType.ts"],"names":[],"mappings":";;;AAAA,IAAY,OASX;AATD,WAAY,OAAO;IACjB,8BAAmB,CAAA;IACnB,wCAA6B,CAAA;IAC7B,oCAAyB,CAAA;IACzB,oCAAyB,CAAA;IACzB,4BAAiB,CAAA;IACjB,wBAAa,CAAA;IACb,wBAAa,CAAA;IACb,wBAAa,CAAA;AACf,CAAC,EATW,OAAO,GAAP,eAAO,KAAP,eAAO,QASlB"}
+\ No newline at end of file
++{"version":3,"file":"KeyType.js","sourceRoot":"","sources":["../../src/crypto/KeyType.ts"],"names":[],"mappings":";;;AAAA,IAAY,OAUX;AAVD,WAAY,OAAO;IACjB,8BAAmB,CAAA;IACnB,wCAA6B,CAAA;IAC7B,oCAAyB,CAAA;IACzB,oCAAyB,CAAA;IACzB,4BAAiB,CAAA;IACjB,wBAAa,CAAA;IACb,wBAAa,CAAA;IACb,wBAAa,CAAA;IACb,wBAAa,CAAA;AACf,CAAC,EAVW,OAAO,GAAP,eAAO,KAAP,eAAO,QAUlB"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/crypto/keyUtils.js b/node_modules/@aries-framework/core/build/crypto/keyUtils.js
+index 6963c44..7917482 100644
+--- a/node_modules/@aries-framework/core/build/crypto/keyUtils.js
++++ b/node_modules/@aries-framework/core/build/crypto/keyUtils.js
+@@ -13,6 +13,7 @@ function isValidSeed(seed, keyType) {
+         [KeyType_1.KeyType.P256]: 64,
+         [KeyType_1.KeyType.P384]: 64,
+         [KeyType_1.KeyType.P521]: 64,
++        [KeyType_1.KeyType.K256]: 64,
+     };
+     return utils_1.Buffer.isBuffer(seed) && seed.length >= minimumSeedLength[keyType];
+ }
+@@ -27,6 +28,7 @@ function isValidPrivateKey(privateKey, keyType) {
+         [KeyType_1.KeyType.P256]: 32,
+         [KeyType_1.KeyType.P384]: 48,
+         [KeyType_1.KeyType.P521]: 66,
++        [KeyType_1.KeyType.K256]: 32,
+     };
+     return utils_1.Buffer.isBuffer(privateKey) && privateKey.length === privateKeyLength[keyType];
+ }
+@@ -41,6 +43,7 @@ function isSigningSupportedForKeyType(keyType) {
+         [KeyType_1.KeyType.Bls12381g1]: true,
+         [KeyType_1.KeyType.Bls12381g2]: true,
+         [KeyType_1.KeyType.Bls12381g1g2]: true,
++        [KeyType_1.KeyType.K256]: true,
+     };
+     return keyTypeSigningSupportedMapping[keyType];
+ }
+@@ -55,6 +58,7 @@ function isEncryptionSupportedForKeyType(keyType) {
+         [KeyType_1.KeyType.Bls12381g1]: false,
+         [KeyType_1.KeyType.Bls12381g2]: false,
+         [KeyType_1.KeyType.Bls12381g1g2]: false,
++        [KeyType_1.KeyType.K256]: true,
+     };
+     return keyTypeEncryptionSupportedMapping[keyType];
+ }
+diff --git a/node_modules/@aries-framework/core/build/crypto/keyUtils.js.map b/node_modules/@aries-framework/core/build/crypto/keyUtils.js.map
+index 56f0cc0..9bff8f9 100644
+--- a/node_modules/@aries-framework/core/build/crypto/keyUtils.js.map
++++ b/node_modules/@aries-framework/core/build/crypto/keyUtils.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"keyUtils.js","sourceRoot":"","sources":["../../src/crypto/keyUtils.ts"],"names":[],"mappings":";;;AAAA,oCAAiC;AAEjC,uCAAmC;AAEnC,SAAgB,WAAW,CAAC,IAAY,EAAE,OAAgB;IACxD,MAAM,iBAAiB,GAAG;QACxB,CAAC,iBAAO,CAAC,OAAO,CAAC,EAAE,EAAE;QACrB,CAAC,iBAAO,CAAC,MAAM,CAAC,EAAE,EAAE;QACpB,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,EAAE;QACxB,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,EAAE;QACxB,CAAC,iBAAO,CAAC,YAAY,CAAC,EAAE,EAAE;QAC1B,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,EAAE;QAClB,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,EAAE;QAClB,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,EAAE;KACV,CAAA;IAEV,OAAO,cAAM,CAAC,QAAQ,CAAC,IAAI,CAAC,IAAI,IAAI,CAAC,MAAM,IAAI,iBAAiB,CAAC,OAAO,CAAC,CAAA;AAC3E,CAAC;AAbD,kCAaC;AAED,SAAgB,iBAAiB,CAAC,UAAkB,EAAE,OAAgB;IACpE,MAAM,gBAAgB,GAAG;QACvB,CAAC,iBAAO,CAAC,OAAO,CAAC,EAAE,EAAE;QACrB,CAAC,iBAAO,CAAC,MAAM,CAAC,EAAE,EAAE;QACpB,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,EAAE;QACxB,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,EAAE;QACxB,CAAC,iBAAO,CAAC,YAAY,CAAC,EAAE,EAAE;QAC1B,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,EAAE;QAClB,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,EAAE;QAClB,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,EAAE;KACV,CAAA;IAEV,OAAO,cAAM,CAAC,QAAQ,CAAC,UAAU,CAAC,IAAI,UAAU,CAAC,MAAM,KAAK,gBAAgB,CAAC,OAAO,CAAC,CAAA;AACvF,CAAC;AAbD,8CAaC;AAED,SAAgB,4BAA4B,CAAC,OAAgB;IAC3D,MAAM,8BAA8B,GAAG;QACrC,CAAC,iBAAO,CAAC,OAAO,CAAC,EAAE,IAAI;QACvB,CAAC,iBAAO,CAAC,MAAM,CAAC,EAAE,KAAK;QACvB,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,IAAI;QACpB,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,IAAI;QACpB,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,IAAI;QACpB,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,IAAI;QAC1B,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,IAAI;QAC1B,CAAC,iBAAO,CAAC,YAAY,CAAC,EAAE,IAAI;KACpB,CAAA;IAEV,OAAO,8BAA8B,CAAC,OAAO,CAAC,CAAA;AAChD,CAAC;AAbD,oEAaC;AAED,SAAgB,+BAA+B,CAAC,OAAgB;IAC9D,MAAM,iCAAiC,GAAG;QACxC,CAAC,iBAAO,CAAC,OAAO,CAAC,EAAE,KAAK;QACxB,CAAC,iBAAO,CAAC,MAAM,CAAC,EAAE,IAAI;QACtB,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,IAAI;QACpB,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,IAAI;QACpB,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,IAAI;QACpB,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,KAAK;QAC3B,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,KAAK;QAC3B,CAAC,iBAAO,CAAC,YAAY,CAAC,EAAE,KAAK;KACrB,CAAA;IAEV,OAAO,iCAAiC,CAAC,OAAO,CAAC,CAAA;AACnD,CAAC;AAbD,0EAaC"}
+\ No newline at end of file
++{"version":3,"file":"keyUtils.js","sourceRoot":"","sources":["../../src/crypto/keyUtils.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/crypto/multiCodecKey.js b/node_modules/@aries-framework/core/build/crypto/multiCodecKey.js
+index 3124287..686dbaa 100644
+--- a/node_modules/@aries-framework/core/build/crypto/multiCodecKey.js
++++ b/node_modules/@aries-framework/core/build/crypto/multiCodecKey.js
+@@ -12,6 +12,7 @@ const multiCodecPrefixMap = {
+     4608: KeyType_1.KeyType.P256,
+     4609: KeyType_1.KeyType.P384,
+     4610: KeyType_1.KeyType.P521,
++    231: KeyType_1.KeyType.K256,
+ };
+ function getKeyTypeByMultiCodecPrefix(multiCodecPrefix) {
+     const keyType = multiCodecPrefixMap[multiCodecPrefix];
+diff --git a/node_modules/@aries-framework/core/build/crypto/multiCodecKey.js.map b/node_modules/@aries-framework/core/build/crypto/multiCodecKey.js.map
+index 96a01e5..9cc6970 100644
+--- a/node_modules/@aries-framework/core/build/crypto/multiCodecKey.js.map
++++ b/node_modules/@aries-framework/core/build/crypto/multiCodecKey.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"multiCodecKey.js","sourceRoot":"","sources":["../../src/crypto/multiCodecKey.ts"],"names":[],"mappings":";;;AAAA,uCAAmC;AAEnC,4EAA4E;AAC5E,MAAM,mBAAmB,GAA4B;IACnD,GAAG,EAAE,iBAAO,CAAC,UAAU;IACvB,GAAG,EAAE,iBAAO,CAAC,UAAU;IACvB,GAAG,EAAE,iBAAO,CAAC,MAAM;IACnB,GAAG,EAAE,iBAAO,CAAC,OAAO;IACpB,GAAG,EAAE,iBAAO,CAAC,YAAY;IACzB,IAAI,EAAE,iBAAO,CAAC,IAAI;IAClB,IAAI,EAAE,iBAAO,CAAC,IAAI;IAClB,IAAI,EAAE,iBAAO,CAAC,IAAI;CACnB,CAAA;AAED,SAAgB,4BAA4B,CAAC,gBAAwB;IACnE,MAAM,OAAO,GAAG,mBAAmB,CAAC,gBAAgB,CAAC,CAAA;IAErD,IAAI,CAAC,OAAO,EAAE;QACZ,MAAM,IAAI,KAAK,CAAC,8CAA8C,gBAAgB,GAAG,CAAC,CAAA;KACnF;IAED,OAAO,OAAO,CAAA;AAChB,CAAC;AARD,oEAQC;AAED,SAAgB,4BAA4B,CAAC,OAAgB;IAC3D,MAAM,KAAK,GAAG,MAAM,CAAC,IAAI,CAAC,mBAAmB,CAAC,CAAA;IAC9C,MAAM,IAAI,GAAG,KAAK,CAAC,IAAI,CAAC,CAAC,GAAG,EAAE,EAAE,CAAC,mBAAmB,CAAC,GAAG,CAAC,KAAK,OAAO,CAAC,CAAA;IAEtE,IAAI,CAAC,IAAI,EAAE;QACT,MAAM,IAAI,KAAK,CAAC,kDAAkD,OAAO,GAAG,CAAC,CAAA;KAC9E;IAED,OAAO,MAAM,CAAC,IAAI,CAAC,CAAA;AACrB,CAAC;AATD,oEASC"}
+\ No newline at end of file
++{"version":3,"file":"multiCodecKey.js","sourceRoot":"","sources":["../../src/crypto/multiCodecKey.ts"],"names":[],"mappings":";;;AAAA,uCAAmC;AAEnC,4EAA4E;AAC5E,MAAM,mBAAmB,GAA4B;IACnD,GAAG,EAAE,iBAAO,CAAC,UAAU;IACvB,GAAG,EAAE,iBAAO,CAAC,UAAU;IACvB,GAAG,EAAE,iBAAO,CAAC,MAAM;IACnB,GAAG,EAAE,iBAAO,CAAC,OAAO;IACpB,GAAG,EAAE,iBAAO,CAAC,YAAY;IACzB,IAAI,EAAE,iBAAO,CAAC,IAAI;IAClB,IAAI,EAAE,iBAAO,CAAC,IAAI;IAClB,IAAI,EAAE,iBAAO,CAAC,IAAI;IAClB,GAAG,EAAE,iBAAO,CAAC,IAAI;CAClB,CAAA;AAED,SAAgB,4BAA4B,CAAC,gBAAwB;IACnE,MAAM,OAAO,GAAG,mBAAmB,CAAC,gBAAgB,CAAC,CAAA;IAErD,IAAI,CAAC,OAAO,EAAE;QACZ,MAAM,IAAI,KAAK,CAAC,8CAA8C,gBAAgB,GAAG,CAAC,CAAA;KACnF;IAED,OAAO,OAAO,CAAA;AAChB,CAAC;AARD,oEAQC;AAED,SAAgB,4BAA4B,CAAC,OAAgB;IAC3D,MAAM,KAAK,GAAG,MAAM,CAAC,IAAI,CAAC,mBAAmB,CAAC,CAAA;IAC9C,MAAM,IAAI,GAAG,KAAK,CAAC,IAAI,CAAC,CAAC,GAAG,EAAE,EAAE,CAAC,mBAAmB,CAAC,GAAG,CAAC,KAAK,OAAO,CAAC,CAAA;IAEtE,IAAI,CAAC,IAAI,EAAE;QACT,MAAM,IAAI,KAAK,CAAC,kDAAkD,OAAO,GAAG,CAAC,CAAA;KAC9E;IAED,OAAO,MAAM,CAAC,IAAI,CAAC,CAAA;AACrB,CAAC;AATD,oEASC"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/decorators/attachment/Attachment.d.ts b/node_modules/@aries-framework/core/build/decorators/attachment/Attachment.d.ts
+index 8e10c7e..0605939 100644
+--- a/node_modules/@aries-framework/core/build/decorators/attachment/Attachment.d.ts
++++ b/node_modules/@aries-framework/core/build/decorators/attachment/Attachment.d.ts
+@@ -1,4 +1,5 @@
+ import type { JwsDetachedFormat, JwsFlattenedDetachedFormat } from '../../crypto/JwsTypes';
++import { JsonValue } from '../../types';
+ export interface AttachmentOptions {
+     id?: string;
+     description?: string;
+@@ -10,7 +11,7 @@ export interface AttachmentOptions {
+ }
+ export interface AttachmentDataOptions {
+     base64?: string;
+-    json?: Record<string, unknown>;
++    json?: JsonValue;
+     links?: string[];
+     jws?: JwsDetachedFormat | JwsFlattenedDetachedFormat;
+     sha256?: string;
+@@ -26,7 +27,7 @@ export declare class AttachmentData {
+     /**
+      *  Directly embedded JSON data, when representing content inline instead of via links, and when the content is natively conveyable as JSON. Optional.
+      */
+-    json?: Record<string, unknown>;
++    json?: JsonValue;
+     /**
+      * A list of zero or more locations at which the content may be fetched. Optional.
+      */
+diff --git a/node_modules/@aries-framework/core/build/decorators/attachment/Attachment.js.map b/node_modules/@aries-framework/core/build/decorators/attachment/Attachment.js.map
+index e2db3b8..61c77bc 100644
+--- a/node_modules/@aries-framework/core/build/decorators/attachment/Attachment.js.map
++++ b/node_modules/@aries-framework/core/build/decorators/attachment/Attachment.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"Attachment.js","sourceRoot":"","sources":["../../../src/decorators/attachment/Attachment.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
++{"version":3,"file":"Attachment.js","sourceRoot":"","sources":["../../../src/decorators/attachment/Attachment.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/keyDidMapping.js b/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/keyDidMapping.js
+index cfba351..414c459 100644
+--- a/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/keyDidMapping.js
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/keyDidMapping.js
+@@ -10,6 +10,7 @@ const bls12381g1g2_1 = require("./bls12381g1g2");
+ const bls12381g2_1 = require("./bls12381g2");
+ const ed25519_1 = require("./ed25519");
+ const keyDidJsonWebKey_1 = require("./keyDidJsonWebKey");
++const secp256k1_1 = require("./secp256k1");
+ const x25519_1 = require("./x25519");
+ // TODO: Maybe we should make this dynamically?
+ const keyDidMapping = {
+@@ -21,6 +22,7 @@ const keyDidMapping = {
+     [KeyType_1.KeyType.P256]: keyDidJsonWebKey_1.keyDidJsonWebKey,
+     [KeyType_1.KeyType.P384]: keyDidJsonWebKey_1.keyDidJsonWebKey,
+     [KeyType_1.KeyType.P521]: keyDidJsonWebKey_1.keyDidJsonWebKey,
++    [KeyType_1.KeyType.K256]: secp256k1_1.keyDidSecp256k1,
+ };
+ /**
+  * Dynamically creates a mapping from verification method key type to the key Did interface
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/keyDidMapping.js.map b/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/keyDidMapping.js.map
+index e6f9a12..46769b4 100644
+--- a/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/keyDidMapping.js.map
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/keyDidMapping.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"keyDidMapping.js","sourceRoot":"","sources":["../../../../../src/modules/dids/domain/key-type/keyDidMapping.ts"],"names":[],"mappings":";;;AAGA,wDAAoD;AACpD,qDAA4D;AAC5D,6CAAuD;AACvD,yEAAmH;AAEnH,6CAA+C;AAC/C,iDAAmD;AACnD,6CAA+C;AAC/C,uCAAyC;AACzC,yDAAqD;AACrD,qCAAuC;AAQvC,+CAA+C;AAC/C,MAAM,aAAa,GAAmC;IACpD,CAAC,iBAAO,CAAC,OAAO,CAAC,EAAE,uBAAa;IAChC,CAAC,iBAAO,CAAC,MAAM,CAAC,EAAE,qBAAY;IAC9B,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,6BAAgB;IACtC,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,6BAAgB;IACtC,CAAC,iBAAO,CAAC,YAAY,CAAC,EAAE,iCAAkB;IAC1C,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,mCAAgB;IAChC,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,mCAAgB;IAChC,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,mCAAgB;CACjC,CAAA;AAED;;;;;;;GAOG;AACH,MAAM,+BAA+B,GAAG,MAAM,CAAC,MAAM,CAAC,iBAAO,CAAC,CAAC,MAAM,CACnE,CAAC,OAAO,EAAE,OAAO,EAAE,EAAE;IACnB,MAAM,SAAS,GAAG,aAAa,CAAC,OAAO,CAAC,CAAC,gCAAgC,CAAC,MAAM,CAC9E,CAAC,WAAW,EAAE,cAAc,EAAE,EAAE,CAAC,iCAC5B,WAAW,KACd,CAAC,cAAc,CAAC,EAAE,aAAa,CAAC,OAAO,CAAC,IACxC,EACF,EAAE,CACH,CAAA;IAED,uCACK,OAAO,GACP,SAAS,EACb;AACH,CAAC,EACD,EAAE,CACH,CAAA;AAED,SAAgB,yBAAyB,CAAC,OAAgB;IACxD,MAAM,MAAM,GAAG,aAAa,CAAC,OAAO,CAAC,CAAA;IAErC,IAAI,CAAC,MAAM,EAAE;QACX,MAAM,IAAI,2BAAmB,CAAC,sCAAsC,OAAO,GAAG,CAAC,CAAA;KAChF;IAED,OAAO,MAAM,CAAA;AACf,CAAC;AARD,8DAQC;AAED,SAAgB,4BAA4B,CAAC,kBAAsC;IACjF,iFAAiF;IACjF,IAAI,IAAA,iCAAgB,EAAC,kBAAkB,CAAC,EAAE;QACxC,8CAA8C;QAC9C,IAAI,CAAC,kBAAkB,CAAC,YAAY,EAAE;YACpC,MAAM,IAAI,2BAAmB,CAC3B,yDAAyD,2DAA0C,EAAE,CACtG,CAAA;SACF;QAED,OAAO,IAAA,oBAAc,EAAC,kBAAkB,CAAC,YAAY,CAAC,CAAC,GAAG,CAAA;KAC3D;IAED,MAAM,MAAM,GAAG,+BAA+B,CAAC,kBAAkB,CAAC,IAAI,CAAC,CAAA;IACvE,IAAI,CAAC,MAAM,EAAE;QACX,MAAM,IAAI,2BAAmB,CAAC,sDAAsD,kBAAkB,CAAC,IAAI,GAAG,CAAC,CAAA;KAChH;IAED,OAAO,MAAM,CAAC,4BAA4B,CAAC,kBAAkB,CAAC,CAAA;AAChE,CAAC;AAnBD,oEAmBC;AAED,SAAgB,8CAA8C,CAAC,OAAgB;IAC7E,MAAM,MAAM,GAAG,aAAa,CAAC,OAAO,CAAC,CAAA;IAErC,IAAI,CAAC,MAAM,EAAE;QACX,MAAM,IAAI,2BAAmB,CAAC,sCAAsC,OAAO,GAAG,CAAC,CAAA;KAChF;IAED,OAAO,MAAM,CAAC,gCAAgC,CAAA;AAChD,CAAC;AARD,wGAQC"}
+\ No newline at end of file
++{"version":3,"file":"keyDidMapping.js","sourceRoot":"","sources":["../../../../../src/modules/dids/domain/key-type/keyDidMapping.ts"],"names":[],"mappings":";;;AAGA,wDAAoD;AACpD,qDAA4D;AAC5D,6CAAuD;AACvD,yEAAmH;AAEnH,6CAA+C;AAC/C,iDAAmD;AACnD,6CAA+C;AAC/C,uCAAyC;AACzC,yDAAqD;AACrD,2CAA6C;AAC7C,qCAAuC;AAQvC,+CAA+C;AAC/C,MAAM,aAAa,GAAmC;IACpD,CAAC,iBAAO,CAAC,OAAO,CAAC,EAAE,uBAAa;IAChC,CAAC,iBAAO,CAAC,MAAM,CAAC,EAAE,qBAAY;IAC9B,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,6BAAgB;IACtC,CAAC,iBAAO,CAAC,UAAU,CAAC,EAAE,6BAAgB;IACtC,CAAC,iBAAO,CAAC,YAAY,CAAC,EAAE,iCAAkB;IAC1C,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,mCAAgB;IAChC,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,mCAAgB;IAChC,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,mCAAgB;IAChC,CAAC,iBAAO,CAAC,IAAI,CAAC,EAAE,2BAAe;CAChC,CAAA;AAED;;;;;;;GAOG;AACH,MAAM,+BAA+B,GAAG,MAAM,CAAC,MAAM,CAAC,iBAAO,CAAC,CAAC,MAAM,CACnE,CAAC,OAAO,EAAE,OAAO,EAAE,EAAE;IACnB,MAAM,SAAS,GAAG,aAAa,CAAC,OAAO,CAAC,CAAC,gCAAgC,CAAC,MAAM,CAC9E,CAAC,WAAW,EAAE,cAAc,EAAE,EAAE,CAAC,iCAC5B,WAAW,KACd,CAAC,cAAc,CAAC,EAAE,aAAa,CAAC,OAAO,CAAC,IACxC,EACF,EAAE,CACH,CAAA;IAED,uCACK,OAAO,GACP,SAAS,EACb;AACH,CAAC,EACD,EAAE,CACH,CAAA;AAED,SAAgB,yBAAyB,CAAC,OAAgB;IACxD,MAAM,MAAM,GAAG,aAAa,CAAC,OAAO,CAAC,CAAA;IAErC,IAAI,CAAC,MAAM,EAAE;QACX,MAAM,IAAI,2BAAmB,CAAC,sCAAsC,OAAO,GAAG,CAAC,CAAA;KAChF;IAED,OAAO,MAAM,CAAA;AACf,CAAC;AARD,8DAQC;AAED,SAAgB,4BAA4B,CAAC,kBAAsC;IACjF,iFAAiF;IACjF,IAAI,IAAA,iCAAgB,EAAC,kBAAkB,CAAC,EAAE;QACxC,8CAA8C;QAC9C,IAAI,CAAC,kBAAkB,CAAC,YAAY,EAAE;YACpC,MAAM,IAAI,2BAAmB,CAC3B,yDAAyD,2DAA0C,EAAE,CACtG,CAAA;SACF;QAED,OAAO,IAAA,oBAAc,EAAC,kBAAkB,CAAC,YAAY,CAAC,CAAC,GAAG,CAAA;KAC3D;IAED,MAAM,MAAM,GAAG,+BAA+B,CAAC,kBAAkB,CAAC,IAAI,CAAC,CAAA;IACvE,IAAI,CAAC,MAAM,EAAE;QACX,MAAM,IAAI,2BAAmB,CAAC,sDAAsD,kBAAkB,CAAC,IAAI,GAAG,CAAC,CAAA;KAChH;IAED,OAAO,MAAM,CAAC,4BAA4B,CAAC,kBAAkB,CAAC,CAAA;AAChE,CAAC;AAnBD,oEAmBC;AAED,SAAgB,8CAA8C,CAAC,OAAgB;IAC7E,MAAM,MAAM,GAAG,aAAa,CAAC,OAAO,CAAC,CAAA;IAErC,IAAI,CAAC,MAAM,EAAE;QACX,MAAM,IAAI,2BAAmB,CAAC,sCAAsC,OAAO,GAAG,CAAC,CAAA;KAChF;IAED,OAAO,MAAM,CAAC,gCAAgC,CAAA;AAChD,CAAC;AARD,wGAQC"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/secp256k1.d.ts b/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/secp256k1.d.ts
+new file mode 100644
+index 0000000..2d10f87
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/secp256k1.d.ts
+@@ -0,0 +1,2 @@
++import type { KeyDidMapping } from './keyDidMapping';
++export declare const keyDidSecp256k1: KeyDidMapping;
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/secp256k1.js b/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/secp256k1.js
+new file mode 100644
+index 0000000..991e946
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/secp256k1.js
+@@ -0,0 +1,23 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.keyDidSecp256k1 = void 0;
++const KeyType_1 = require("../../../../crypto/KeyType");
++const error_1 = require("../../../../error");
++const verificationMethod_1 = require("../verificationMethod");
++exports.keyDidSecp256k1 = {
++    supportedVerificationMethodTypes: [
++        verificationMethod_1.VERIFICATION_METHOD_TYPE_ECDSA_SECP256K1_VERIFICATION_KEY_2019,
++        verificationMethod_1.VERIFICATION_METHOD_TYPE_JSON_WEB_KEY_2020,
++    ],
++    getVerificationMethods: (did, key) => [(0, verificationMethod_1.getJsonWebKey2020)({ did, key })],
++    getKeyFromVerificationMethod: (verificationMethod) => {
++        if ((0, verificationMethod_1.isEcdsaSecp256k1VerificationKey2019)(verificationMethod)) {
++            return (0, verificationMethod_1.getKeyFromEcdsaSecp256k1VerificationKey2019)(verificationMethod);
++        }
++        if ((0, verificationMethod_1.isJsonWebKey2020)(verificationMethod)) {
++            return (0, verificationMethod_1.getKeyFromJsonWebKey2020)(verificationMethod);
++        }
++        throw new error_1.AriesFrameworkError(`Verification method with type '${verificationMethod.type}' not supported for key type '${KeyType_1.KeyType.K256}'`);
++    },
++};
++//# sourceMappingURL=secp256k1.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/secp256k1.js.map b/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/secp256k1.js.map
+new file mode 100644
+index 0000000..41acac0
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/key-type/secp256k1.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"secp256k1.js","sourceRoot":"","sources":["../../../../../src/modules/dids/domain/key-type/secp256k1.ts"],"names":[],"mappings":";;;AAGA,wDAAoD;AACpD,6CAAuD;AACvD,8DAQ8B;AAEjB,QAAA,eAAe,GAAkB;IAC5C,gCAAgC,EAAE;QAChC,mFAA8D;QAC9D,+DAA0C;KAC3C;IACD,sBAAsB,EAAE,CAAC,GAAG,EAAE,GAAG,EAAE,EAAE,CAAC,CAAC,IAAA,sCAAiB,EAAC,EAAE,GAAG,EAAE,GAAG,EAAE,CAAC,CAAC;IACvE,4BAA4B,EAAE,CAAC,kBAAsC,EAAE,EAAE;QACvE,IAAI,IAAA,wDAAmC,EAAC,kBAAkB,CAAC,EAAE;YAC3D,OAAO,IAAA,gEAA2C,EAAC,kBAAkB,CAAC,CAAA;SACvE;QAED,IAAI,IAAA,qCAAgB,EAAC,kBAAkB,CAAC,EAAE;YACxC,OAAO,IAAA,6CAAwB,EAAC,kBAAkB,CAAC,CAAA;SACpD;QAED,MAAM,IAAI,2BAAmB,CAC3B,kCAAkC,kBAAkB,CAAC,IAAI,iCAAiC,iBAAO,CAAC,IAAI,GAAG,CAC1G,CAAA;IACH,CAAC;CACF,CAAA"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/keyDidDocument.js b/node_modules/@aries-framework/core/build/modules/dids/domain/keyDidDocument.js
+index efafb05..bead61c 100644
+--- a/node_modules/@aries-framework/core/build/modules/dids/domain/keyDidDocument.js
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/keyDidDocument.js
+@@ -19,6 +19,7 @@ const didDocumentKeyTypeMapping = {
+     [KeyType_1.KeyType.P256]: getJsonWebKey2020DidDocument,
+     [KeyType_1.KeyType.P384]: getJsonWebKey2020DidDocument,
+     [KeyType_1.KeyType.P521]: getJsonWebKey2020DidDocument,
++    [KeyType_1.KeyType.K256]: getSecp256k1DidDoc,
+ };
+ function getDidDocumentForKey(did, key) {
+     const getDidDocument = didDocumentKeyTypeMapping[key.keyType];
+@@ -111,4 +112,7 @@ function getSignatureKeyBase({ did, key, verificationMethod, }) {
+         .addCapabilityDelegation(keyId)
+         .addCapabilityInvocation(keyId);
+ }
++function getSecp256k1DidDoc(id, key) {
++    throw new Error('Method not implemented.');
++}
+ //# sourceMappingURL=keyDidDocument.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/keyDidDocument.js.map b/node_modules/@aries-framework/core/build/modules/dids/domain/keyDidDocument.js.map
+index 2ef248f..cd5dcbd 100644
+--- a/node_modules/@aries-framework/core/build/modules/dids/domain/keyDidDocument.js.map
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/keyDidDocument.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"keyDidDocument.js","sourceRoot":"","sources":["../../../../src/modules/dids/domain/keyDidDocument.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
++{"version":3,"file":"keyDidDocument.js","sourceRoot":"","sources":["../../../../src/modules/dids/domain/keyDidDocument.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/EcdsaSecp256k1VerificationKey2019.d.ts b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/EcdsaSecp256k1VerificationKey2019.d.ts
+new file mode 100644
+index 0000000..4f6a471
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/EcdsaSecp256k1VerificationKey2019.d.ts
+@@ -0,0 +1,23 @@
++import { Key } from '../../../../crypto/Key';
++import { VerificationMethod } from './VerificationMethod';
++export declare const VERIFICATION_METHOD_TYPE_ECDSA_SECP256K1_VERIFICATION_KEY_2019 = "EcdsaSecp256k1VerificationKey2019";
++type EcdsaSecp256k1VerificationKey2019 = VerificationMethod & {
++    type: typeof VERIFICATION_METHOD_TYPE_ECDSA_SECP256K1_VERIFICATION_KEY_2019;
++};
++/**
++ * Get a EcdsaSecp256k1VerificationKey2019 verification method.
++ */
++export declare function getEcdsaSecp256k1VerificationKey2019({ key, id, controller, }: {
++    id: string;
++    key: Key;
++    controller: string;
++}): VerificationMethod;
++/**
++ * Check whether a verification method is a EcdsaSecp256k1VerificationKey2019 verification method.
++ */
++export declare function isEcdsaSecp256k1VerificationKey2019(verificationMethod: VerificationMethod): verificationMethod is EcdsaSecp256k1VerificationKey2019;
++/**
++ * Get a key from a EcdsaSecp256k1VerificationKey2019 verification method.
++ */
++export declare function getKeyFromEcdsaSecp256k1VerificationKey2019(verificationMethod: EcdsaSecp256k1VerificationKey2019): Key;
++export {};
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/EcdsaSecp256k1VerificationKey2019.js b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/EcdsaSecp256k1VerificationKey2019.js
+new file mode 100644
+index 0000000..a01f168
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/EcdsaSecp256k1VerificationKey2019.js
+@@ -0,0 +1,38 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.getKeyFromEcdsaSecp256k1VerificationKey2019 = exports.isEcdsaSecp256k1VerificationKey2019 = exports.getEcdsaSecp256k1VerificationKey2019 = exports.VERIFICATION_METHOD_TYPE_ECDSA_SECP256K1_VERIFICATION_KEY_2019 = void 0;
++const Key_1 = require("../../../../crypto/Key");
++const KeyType_1 = require("../../../../crypto/KeyType");
++const error_1 = require("../../../../error");
++const VerificationMethod_1 = require("./VerificationMethod");
++exports.VERIFICATION_METHOD_TYPE_ECDSA_SECP256K1_VERIFICATION_KEY_2019 = 'EcdsaSecp256k1VerificationKey2019';
++/**
++ * Get a EcdsaSecp256k1VerificationKey2019 verification method.
++ */
++function getEcdsaSecp256k1VerificationKey2019({ key, id, controller, }) {
++    return new VerificationMethod_1.VerificationMethod({
++        id,
++        type: exports.VERIFICATION_METHOD_TYPE_ECDSA_SECP256K1_VERIFICATION_KEY_2019,
++        controller,
++        publicKeyBase58: key.publicKeyBase58,
++    });
++}
++exports.getEcdsaSecp256k1VerificationKey2019 = getEcdsaSecp256k1VerificationKey2019;
++/**
++ * Check whether a verification method is a EcdsaSecp256k1VerificationKey2019 verification method.
++ */
++function isEcdsaSecp256k1VerificationKey2019(verificationMethod) {
++    return verificationMethod.type === exports.VERIFICATION_METHOD_TYPE_ECDSA_SECP256K1_VERIFICATION_KEY_2019;
++}
++exports.isEcdsaSecp256k1VerificationKey2019 = isEcdsaSecp256k1VerificationKey2019;
++/**
++ * Get a key from a EcdsaSecp256k1VerificationKey2019 verification method.
++ */
++function getKeyFromEcdsaSecp256k1VerificationKey2019(verificationMethod) {
++    if (!verificationMethod.publicKeyBase58) {
++        throw new error_1.AriesFrameworkError('verification method is missing publicKeyBase58');
++    }
++    return Key_1.Key.fromPublicKeyBase58(verificationMethod.publicKeyBase58, KeyType_1.KeyType.K256);
++}
++exports.getKeyFromEcdsaSecp256k1VerificationKey2019 = getKeyFromEcdsaSecp256k1VerificationKey2019;
++//# sourceMappingURL=EcdsaSecp256k1VerificationKey2019.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/EcdsaSecp256k1VerificationKey2019.js.map b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/EcdsaSecp256k1VerificationKey2019.js.map
+new file mode 100644
+index 0000000..a60ec26
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/EcdsaSecp256k1VerificationKey2019.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"EcdsaSecp256k1VerificationKey2019.js","sourceRoot":"","sources":["../../../../../src/modules/dids/domain/verificationMethod/EcdsaSecp256k1VerificationKey2019.ts"],"names":[],"mappings":";;;AAAA,gDAA4C;AAC5C,wDAAoD;AACpD,6CAAuD;AAEvD,6DAAyD;AAE5C,QAAA,8DAA8D,GAAG,mCAAmC,CAAA;AAMjH;;GAEG;AACH,SAAgB,oCAAoC,CAAC,EACnD,GAAG,EACH,EAAE,EACF,UAAU,GAKX;IACC,OAAO,IAAI,uCAAkB,CAAC;QAC5B,EAAE;QACF,IAAI,EAAE,sEAA8D;QACpE,UAAU;QACV,eAAe,EAAE,GAAG,CAAC,eAAe;KACrC,CAAC,CAAA;AACJ,CAAC;AAfD,oFAeC;AAED;;GAEG;AACH,SAAgB,mCAAmC,CACjD,kBAAsC;IAEtC,OAAO,kBAAkB,CAAC,IAAI,KAAK,sEAA8D,CAAA;AACnG,CAAC;AAJD,kFAIC;AAED;;GAEG;AACH,SAAgB,2CAA2C,CAAC,kBAAqD;IAC/G,IAAI,CAAC,kBAAkB,CAAC,eAAe,EAAE;QACvC,MAAM,IAAI,2BAAmB,CAAC,gDAAgD,CAAC,CAAA;KAChF;IAED,OAAO,SAAG,CAAC,mBAAmB,CAAC,kBAAkB,CAAC,eAAe,EAAE,iBAAO,CAAC,IAAI,CAAC,CAAA;AAClF,CAAC;AAND,kGAMC"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.d.ts b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.d.ts
+index c5d1f5d..3297e2e 100644
+--- a/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.d.ts
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.d.ts
+@@ -4,5 +4,6 @@ export * from './Bls12381G1Key2020';
+ export * from './Bls12381G2Key2020';
+ export * from './Ed25519VerificationKey2018';
+ export * from './Ed25519VerificationKey2020';
++export * from './EcdsaSecp256k1VerificationKey2019';
+ export * from './JsonWebKey2020';
+ export * from './X25519KeyAgreementKey2019';
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.js b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.js
+index fe7774c..03ca5d0 100644
+--- a/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.js
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.js
+@@ -24,6 +24,7 @@ __exportStar(require("./Bls12381G1Key2020"), exports);
+ __exportStar(require("./Bls12381G2Key2020"), exports);
+ __exportStar(require("./Ed25519VerificationKey2018"), exports);
+ __exportStar(require("./Ed25519VerificationKey2020"), exports);
++__exportStar(require("./EcdsaSecp256k1VerificationKey2019"), exports);
+ __exportStar(require("./JsonWebKey2020"), exports);
+ __exportStar(require("./X25519KeyAgreementKey2019"), exports);
+ //# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.js.map b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.js.map
+index ef7616f..6bc9831 100644
+--- a/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.js.map
++++ b/node_modules/@aries-framework/core/build/modules/dids/domain/verificationMethod/index.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../../src/modules/dids/domain/verificationMethod/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;AAAA,2DAAyD;AAAhD,wHAAA,kBAAkB,OAAA;AAC3B,iFAA6G;AAApG,8IAAA,6BAA6B,OAAA;AAAE,6IAAA,4BAA4B,OAAA;AAEpE,sDAAmC;AACnC,sDAAmC;AACnC,+DAA4C;AAC5C,+DAA4C;AAC5C,mDAAgC;AAChC,8DAA2C"}
+\ No newline at end of file
++{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../../src/modules/dids/domain/verificationMethod/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;AAAA,2DAAyD;AAAhD,wHAAA,kBAAkB,OAAA;AAC3B,iFAA6G;AAApG,8IAAA,6BAA6B,OAAA;AAAE,6IAAA,4BAA4B,OAAA;AAEpE,sDAAmC;AACnC,sDAAmC;AACnC,+DAA4C;AAC5C,+DAA4C;AAC5C,sEAAmD;AACnD,mDAAgC;AAChC,8DAA2C"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeError.d.ts b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeError.d.ts
+new file mode 100644
+index 0000000..0b09fe4
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeError.d.ts
+@@ -0,0 +1,8 @@
++import { AriesFrameworkError } from '../../error';
++export declare class DifPresentationExchangeError extends AriesFrameworkError {
++    additionalMessages?: Array<string>;
++    constructor(message: string, { cause, additionalMessages }?: {
++        cause?: Error;
++        additionalMessages?: Array<string>;
++    });
++}
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeError.js b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeError.js
+new file mode 100644
+index 0000000..67f9e18
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeError.js
+@@ -0,0 +1,12 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.DifPresentationExchangeError = void 0;
++const error_1 = require("../../error");
++class DifPresentationExchangeError extends error_1.AriesFrameworkError {
++    constructor(message, { cause, additionalMessages } = {}) {
++        super(message, { cause });
++        this.additionalMessages = additionalMessages;
++    }
++}
++exports.DifPresentationExchangeError = DifPresentationExchangeError;
++//# sourceMappingURL=DifPresentationExchangeError.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeError.js.map b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeError.js.map
+new file mode 100644
+index 0000000..08431f4
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeError.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"DifPresentationExchangeError.js","sourceRoot":"","sources":["../../../src/modules/dif-presentation-exchange/DifPresentationExchangeError.ts"],"names":[],"mappings":";;;AAAA,uCAAiD;AAEjD,MAAa,4BAA6B,SAAQ,2BAAmB;IAGnE,YACE,OAAe,EACf,EAAE,KAAK,EAAE,kBAAkB,KAA4D,EAAE;QAEzF,KAAK,CAAC,OAAO,EAAE,EAAE,KAAK,EAAE,CAAC,CAAA;QACzB,IAAI,CAAC,kBAAkB,GAAG,kBAAkB,CAAA;IAC9C,CAAC;CACF;AAVD,oEAUC"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeModule.d.ts b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeModule.d.ts
+new file mode 100644
+index 0000000..9839690
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeModule.d.ts
+@@ -0,0 +1,10 @@
++import type { DependencyManager, Module } from '../../plugins';
++/**
++ * @public
++ */
++export declare class DifPresentationExchangeModule implements Module {
++    /**
++     * Registers the dependencies of the presentation-exchange module on the dependency manager.
++     */
++    register(dependencyManager: DependencyManager): void;
++}
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeModule.js b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeModule.js
+new file mode 100644
+index 0000000..2e4b176
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeModule.js
+@@ -0,0 +1,23 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.DifPresentationExchangeModule = void 0;
++const AgentConfig_1 = require("../../agent/AgentConfig");
++const DifPresentationExchangeService_1 = require("./DifPresentationExchangeService");
++/**
++ * @public
++ */
++class DifPresentationExchangeModule {
++    /**
++     * Registers the dependencies of the presentation-exchange module on the dependency manager.
++     */
++    register(dependencyManager) {
++        // Warn about experimental module
++        dependencyManager
++            .resolve(AgentConfig_1.AgentConfig)
++            .logger.warn("The 'DifPresentationExchangeModule' module is experimental and could have unexpected breaking changes. When using this module, make sure to use strict versions for all @aries-framework packages.");
++        // service
++        dependencyManager.registerSingleton(DifPresentationExchangeService_1.DifPresentationExchangeService);
++    }
++}
++exports.DifPresentationExchangeModule = DifPresentationExchangeModule;
++//# sourceMappingURL=DifPresentationExchangeModule.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeModule.js.map b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeModule.js.map
+new file mode 100644
+index 0000000..f4a7691
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeModule.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"DifPresentationExchangeModule.js","sourceRoot":"","sources":["../../../src/modules/dif-presentation-exchange/DifPresentationExchangeModule.ts"],"names":[],"mappings":";;;AAEA,yDAAqD;AAErD,qFAAiF;AAEjF;;GAEG;AACH,MAAa,6BAA6B;IACxC;;OAEG;IACI,QAAQ,CAAC,iBAAoC;QAClD,iCAAiC;QACjC,iBAAiB;aACd,OAAO,CAAC,yBAAW,CAAC;aACpB,MAAM,CAAC,IAAI,CACV,oMAAoM,CACrM,CAAA;QAEH,UAAU;QACV,iBAAiB,CAAC,iBAAiB,CAAC,+DAA8B,CAAC,CAAA;IACrE,CAAC;CACF;AAfD,sEAeC"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeService.d.ts b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeService.d.ts
+new file mode 100644
+index 0000000..5feab4f
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeService.d.ts
+@@ -0,0 +1,49 @@
++import type { DifPexInputDescriptorToCredentials, DifPexCredentialsForRequest, DifPresentationExchangeDefinition, DifPresentationExchangeSubmission } from './models';
++import type { AgentContext } from '../../agent';
++import type { VerificationMethod } from '../dids';
++import type { W3cVerifiableCredential, W3cVerifiablePresentation } from '../vc';
++import type { PresentationSignCallBackParams } from '@sphereon/pex';
++import { ClaimFormat } from '../vc';
++import { DifPresentationExchangeSubmissionLocation } from './models';
++export type ProofStructure = Record<string, Record<string, Array<W3cVerifiableCredential>>>;
++export declare class DifPresentationExchangeService {
++    private pex;
++    getCredentialsForRequest(agentContext: AgentContext, presentationDefinition: DifPresentationExchangeDefinition): Promise<DifPexCredentialsForRequest>;
++    /**
++     * Selects the credentials to use based on the output from `getCredentialsForRequest`
++     * Use this method if you don't want to manually select the credentials yourself.
++     */
++    selectCredentialsForRequest(credentialsForRequest: DifPexCredentialsForRequest): DifPexInputDescriptorToCredentials;
++    validatePresentationDefinition(presentationDefinition: DifPresentationExchangeDefinition): void;
++    validatePresentationSubmission(presentationSubmission: DifPresentationExchangeSubmission): void;
++    validatePresentation(presentationDefinition: DifPresentationExchangeDefinition, presentation: W3cVerifiablePresentation): void;
++    private formatValidated;
++    /**
++     * Queries the wallet for credentials that match the given presentation definition. This only does an initial query based on the
++     * schema of the input descriptors. It does not do any further filtering based on the constraints in the input descriptors.
++     */
++    private queryCredentialForPresentationDefinition;
++    private addCredentialToSubjectInputDescriptor;
++    private getPresentationFormat;
++    createPresentation(agentContext: AgentContext, options: {
++        credentialsForInputDescriptor: DifPexInputDescriptorToCredentials;
++        presentationDefinition: DifPresentationExchangeDefinition;
++        /**
++         * Defaults to {@link DifPresentationExchangeSubmissionLocation.PRESENTATION}
++         */
++        presentationSubmissionLocation?: DifPresentationExchangeSubmissionLocation;
++        challenge?: string;
++        domain?: string;
++        nonce?: string;
++    }): Promise<{
++        verifiablePresentations: (import("../vc").W3cJsonLdVerifiablePresentation | import("../vc").W3cJwtVerifiablePresentation)[];
++        presentationSubmission: import("@sphereon/pex-models").PresentationSubmission;
++        presentationSubmissionLocation: DifPresentationExchangeSubmissionLocation;
++    }>;
++    private getSigningAlgorithmFromVerificationMethod;
++    private getSigningAlgorithmsForPresentationDefinitionAndInputDescriptors;
++    private getSigningAlgorithmForJwtVc;
++    private getProofTypeForLdpVc;
++    getPresentationSignCallback(agentContext: AgentContext, verificationMethod: VerificationMethod, vpFormat: ClaimFormat.LdpVp | ClaimFormat.JwtVp): (callBackParams: PresentationSignCallBackParams) => Promise<import("@sphereon/ssi-types").W3CVerifiablePresentation>;
++    private getVerificationMethodForSubjectId;
++}
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeService.js b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeService.js
+new file mode 100644
+index 0000000..cf9edff
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeService.js
+@@ -0,0 +1,352 @@
++"use strict";
++var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
++    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
++    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
++    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
++    return c > 3 && r && Object.defineProperty(target, key, r), r;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.DifPresentationExchangeService = void 0;
++const pex_1 = require("@sphereon/pex");
++const tsyringe_1 = require("tsyringe");
++const crypto_1 = require("../../crypto");
++const error_1 = require("../../error");
++const utils_1 = require("../../utils");
++const dids_1 = require("../dids");
++const vc_1 = require("../vc");
++const DifPresentationExchangeError_1 = require("./DifPresentationExchangeError");
++const models_1 = require("./models");
++const utils_2 = require("./utils");
++let DifPresentationExchangeService = class DifPresentationExchangeService {
++    constructor() {
++        this.pex = new pex_1.PEX();
++    }
++    async getCredentialsForRequest(agentContext, presentationDefinition) {
++        const credentialRecords = await this.queryCredentialForPresentationDefinition(agentContext, presentationDefinition);
++        // FIXME: why are we resolving all created dids here?
++        // If we want to do this we should extract all dids from the credential records and only
++        // fetch the dids for the queried credential records
++        const didsApi = agentContext.dependencyManager.resolve(dids_1.DidsApi);
++        const didRecords = await didsApi.getCreatedDids();
++        const holderDids = didRecords.map((didRecord) => didRecord.did);
++        return (0, utils_2.getCredentialsForRequest)(presentationDefinition, credentialRecords, holderDids);
++    }
++    /**
++     * Selects the credentials to use based on the output from `getCredentialsForRequest`
++     * Use this method if you don't want to manually select the credentials yourself.
++     */
++    selectCredentialsForRequest(credentialsForRequest) {
++        if (!credentialsForRequest.areRequirementsSatisfied) {
++            throw new error_1.AriesFrameworkError('Could not find the required credentials for the presentation submission');
++        }
++        const credentials = {};
++        for (const requirement of credentialsForRequest.requirements) {
++            for (const submission of requirement.submissionEntry) {
++                if (!credentials[submission.inputDescriptorId]) {
++                    credentials[submission.inputDescriptorId] = [];
++                }
++                // We pick the first matching VC if we are auto-selecting
++                credentials[submission.inputDescriptorId].push(submission.verifiableCredentials[0].credential);
++            }
++        }
++        return credentials;
++    }
++    validatePresentationDefinition(presentationDefinition) {
++        const validation = pex_1.PEX.validateDefinition(presentationDefinition);
++        const errorMessages = this.formatValidated(validation);
++        if (errorMessages.length > 0) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Invalid presentation definition`, { additionalMessages: errorMessages });
++        }
++    }
++    validatePresentationSubmission(presentationSubmission) {
++        const validation = pex_1.PEX.validateSubmission(presentationSubmission);
++        const errorMessages = this.formatValidated(validation);
++        if (errorMessages.length > 0) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Invalid presentation submission`, { additionalMessages: errorMessages });
++        }
++    }
++    validatePresentation(presentationDefinition, presentation) {
++        const { errors } = this.pex.evaluatePresentation(presentationDefinition, presentation.encoded);
++        if (errors) {
++            const errorMessages = this.formatValidated(errors);
++            if (errorMessages.length > 0) {
++                throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Invalid presentation`, { additionalMessages: errorMessages });
++            }
++        }
++    }
++    formatValidated(v) {
++        const validated = Array.isArray(v) ? v : [v];
++        return validated
++            .filter((r) => r.tag === pex_1.Status.ERROR)
++            .map((r) => r.message)
++            .filter((r) => Boolean(r));
++    }
++    /**
++     * Queries the wallet for credentials that match the given presentation definition. This only does an initial query based on the
++     * schema of the input descriptors. It does not do any further filtering based on the constraints in the input descriptors.
++     */
++    async queryCredentialForPresentationDefinition(agentContext, presentationDefinition) {
++        const w3cCredentialRepository = agentContext.dependencyManager.resolve(vc_1.W3cCredentialRepository);
++        const query = [];
++        const presentationDefinitionVersion = pex_1.PEX.definitionVersionDiscovery(presentationDefinition);
++        if (!presentationDefinitionVersion.version) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Unable to determine the Presentation Exchange version from the presentation definition
++        `, presentationDefinitionVersion.error ? { additionalMessages: [presentationDefinitionVersion.error] } : {});
++        }
++        if (presentationDefinitionVersion.version === pex_1.PEVersion.v1) {
++            const pd = presentationDefinition;
++            // The schema.uri can contain either an expanded type, or a context uri
++            for (const inputDescriptor of pd.input_descriptors) {
++                for (const schema of inputDescriptor.schema) {
++                    query.push({
++                        $or: [{ expandedType: [schema.uri] }, { contexts: [schema.uri] }, { type: [schema.uri] }],
++                    });
++                }
++            }
++        }
++        else if (presentationDefinitionVersion.version === pex_1.PEVersion.v2) {
++            // FIXME: As PE version 2 does not have the `schema` anymore, we can't query by schema anymore.
++            // For now we retrieve ALL credentials, as we did the same for V1 with JWT credentials. We probably need
++            // to find some way to do initial filtering, hopefully if there's a filter on the `type` field or something.
++        }
++        else {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Unsupported presentation definition version ${presentationDefinitionVersion.version}`);
++        }
++        // query the wallet ourselves first to avoid the need to query the pex library for all
++        // credentials for every proof request
++        const credentialRecords = query.length > 0
++            ? await w3cCredentialRepository.findByQuery(agentContext, {
++                $or: query,
++            })
++            : await w3cCredentialRepository.getAll(agentContext);
++        return credentialRecords;
++    }
++    addCredentialToSubjectInputDescriptor(subjectsToInputDescriptors, subjectId, inputDescriptorId, credential) {
++        var _a, _b;
++        const inputDescriptorsToCredentials = (_a = subjectsToInputDescriptors[subjectId]) !== null && _a !== void 0 ? _a : {};
++        const credentials = (_b = inputDescriptorsToCredentials[inputDescriptorId]) !== null && _b !== void 0 ? _b : [];
++        credentials.push(credential);
++        inputDescriptorsToCredentials[inputDescriptorId] = credentials;
++        subjectsToInputDescriptors[subjectId] = inputDescriptorsToCredentials;
++    }
++    getPresentationFormat(presentationDefinition, credentials) {
++        const allCredentialsAreJwtVc = credentials === null || credentials === void 0 ? void 0 : credentials.every((c) => typeof c === 'string');
++        const allCredentialsAreLdpVc = credentials === null || credentials === void 0 ? void 0 : credentials.every((c) => typeof c !== 'string');
++        const inputDescriptorsNotSupportingJwtVc = presentationDefinition.input_descriptors.filter((d) => d.format && d.format.jwt_vc === undefined);
++        const inputDescriptorsNotSupportingLdpVc = presentationDefinition.input_descriptors.filter((d) => d.format && d.format.ldp_vc === undefined);
++        if (allCredentialsAreJwtVc &&
++            (presentationDefinition.format === undefined || presentationDefinition.format.jwt_vc) &&
++            inputDescriptorsNotSupportingJwtVc.length === 0) {
++            return vc_1.ClaimFormat.JwtVp;
++        }
++        else if (allCredentialsAreLdpVc &&
++            (presentationDefinition.format === undefined || presentationDefinition.format.ldp_vc) &&
++            inputDescriptorsNotSupportingLdpVc.length === 0) {
++            return vc_1.ClaimFormat.LdpVp;
++        }
++        else {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError('No suitable presentation format found for the given presentation definition, and credentials');
++        }
++    }
++    async createPresentation(agentContext, options) {
++        const { presentationDefinition, challenge, nonce, domain, presentationSubmissionLocation } = options;
++        const proofStructure = {};
++        Object.entries(options.credentialsForInputDescriptor).forEach(([inputDescriptorId, credentials]) => {
++            credentials.forEach((credential) => {
++                const subjectId = credential.credentialSubjectIds[0];
++                if (!subjectId) {
++                    throw new DifPresentationExchangeError_1.DifPresentationExchangeError('Missing required credential subject for creating the presentation.');
++                }
++                this.addCredentialToSubjectInputDescriptor(proofStructure, subjectId, inputDescriptorId, credential);
++            });
++        });
++        const verifiablePresentationResultsWithFormat = [];
++        const subjectToInputDescriptors = Object.entries(proofStructure);
++        for (const [subjectId, subjectInputDescriptorsToCredentials] of subjectToInputDescriptors) {
++            // Determine a suitable verification method for the presentation
++            const verificationMethod = await this.getVerificationMethodForSubjectId(agentContext, subjectId);
++            if (!verificationMethod) {
++                throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`No verification method found for subject id '${subjectId}'.`);
++            }
++            // We create a presentation for each subject
++            // Thus for each subject we need to filter all the related input descriptors and credentials
++            // FIXME: cast to V1, as tsc errors for strange reasons if not
++            const inputDescriptorsForSubject = presentationDefinition.input_descriptors.filter((inputDescriptor) => inputDescriptor.id in subjectInputDescriptorsToCredentials);
++            // Get all the credentials associated with the input descriptors
++            const credentialsForSubject = Object.values(subjectInputDescriptorsToCredentials)
++                .flat()
++                .map(utils_2.getSphereonOriginalVerifiableCredential);
++            const presentationDefinitionForSubject = Object.assign(Object.assign({}, presentationDefinition), { input_descriptors: inputDescriptorsForSubject,
++                // We remove the submission requirements, as it will otherwise fail to create the VP
++                submission_requirements: undefined });
++            const format = this.getPresentationFormat(presentationDefinitionForSubject, credentialsForSubject);
++            // FIXME: Q1: is holder always subject id, what if there are multiple subjects???
++            // FIXME: Q2: What about proofType, proofPurpose verification method for multiple subjects?
++            const verifiablePresentationResult = await this.pex.verifiablePresentationFrom(presentationDefinitionForSubject, credentialsForSubject, this.getPresentationSignCallback(agentContext, verificationMethod, format), {
++                holderDID: subjectId,
++                proofOptions: { challenge, domain, nonce },
++                signatureOptions: { verificationMethod: verificationMethod === null || verificationMethod === void 0 ? void 0 : verificationMethod.id },
++                presentationSubmissionLocation: presentationSubmissionLocation !== null && presentationSubmissionLocation !== void 0 ? presentationSubmissionLocation : models_1.DifPresentationExchangeSubmissionLocation.PRESENTATION,
++            });
++            verifiablePresentationResultsWithFormat.push({ verifiablePresentationResult, format });
++        }
++        if (!verifiablePresentationResultsWithFormat[0]) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError('No verifiable presentations created');
++        }
++        if (subjectToInputDescriptors.length !== verifiablePresentationResultsWithFormat.length) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError('Invalid amount of verifiable presentations created');
++        }
++        const presentationSubmission = {
++            id: verifiablePresentationResultsWithFormat[0].verifiablePresentationResult.presentationSubmission.id,
++            definition_id: verifiablePresentationResultsWithFormat[0].verifiablePresentationResult.presentationSubmission.definition_id,
++            descriptor_map: [],
++        };
++        for (const vpf of verifiablePresentationResultsWithFormat) {
++            const { verifiablePresentationResult } = vpf;
++            presentationSubmission.descriptor_map.push(...verifiablePresentationResult.presentationSubmission.descriptor_map);
++        }
++        return {
++            verifiablePresentations: verifiablePresentationResultsWithFormat.map((r) => (0, utils_2.getW3cVerifiablePresentationInstance)(r.verifiablePresentationResult.verifiablePresentation)),
++            presentationSubmission,
++            presentationSubmissionLocation: verifiablePresentationResultsWithFormat[0].verifiablePresentationResult.presentationSubmissionLocation,
++        };
++    }
++    getSigningAlgorithmFromVerificationMethod(verificationMethod, suitableAlgorithms) {
++        const key = (0, dids_1.getKeyFromVerificationMethod)(verificationMethod);
++        const jwk = (0, crypto_1.getJwkFromKey)(key);
++        if (suitableAlgorithms) {
++            const possibleAlgorithms = jwk.supportedSignatureAlgorithms.filter((alg) => suitableAlgorithms === null || suitableAlgorithms === void 0 ? void 0 : suitableAlgorithms.includes(alg));
++            if (!possibleAlgorithms || possibleAlgorithms.length === 0) {
++                throw new DifPresentationExchangeError_1.DifPresentationExchangeError([
++                    `Found no suitable signing algorithm.`,
++                    `Algorithms supported by Verification method: ${jwk.supportedSignatureAlgorithms.join(', ')}`,
++                    `Suitable algorithms: ${suitableAlgorithms.join(', ')}`,
++                ].join('\n'));
++            }
++        }
++        const alg = jwk.supportedSignatureAlgorithms[0];
++        if (!alg)
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`No supported algs for key type: ${key.keyType}`);
++        return alg;
++    }
++    getSigningAlgorithmsForPresentationDefinitionAndInputDescriptors(algorithmsSatisfyingDefinition, inputDescriptorAlgorithms) {
++        const allDescriptorAlgorithms = inputDescriptorAlgorithms.flat();
++        const algorithmsSatisfyingDescriptors = allDescriptorAlgorithms.filter((alg) => inputDescriptorAlgorithms.every((descriptorAlgorithmSet) => descriptorAlgorithmSet.includes(alg)));
++        const algorithmsSatisfyingPdAndDescriptorRestrictions = algorithmsSatisfyingDefinition.filter((alg) => algorithmsSatisfyingDescriptors.includes(alg));
++        if (algorithmsSatisfyingDefinition.length > 0 &&
++            algorithmsSatisfyingDescriptors.length > 0 &&
++            algorithmsSatisfyingPdAndDescriptorRestrictions.length === 0) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`No signature algorithm found for satisfying restrictions of the presentation definition and input descriptors`);
++        }
++        if (allDescriptorAlgorithms.length > 0 && algorithmsSatisfyingDescriptors.length === 0) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`No signature algorithm found for satisfying restrictions of the input descriptors`);
++        }
++        let suitableAlgorithms;
++        if (algorithmsSatisfyingPdAndDescriptorRestrictions.length > 0) {
++            suitableAlgorithms = algorithmsSatisfyingPdAndDescriptorRestrictions;
++        }
++        else if (algorithmsSatisfyingDescriptors.length > 0) {
++            suitableAlgorithms = algorithmsSatisfyingDescriptors;
++        }
++        else if (algorithmsSatisfyingDefinition.length > 0) {
++            suitableAlgorithms = algorithmsSatisfyingDefinition;
++        }
++        return suitableAlgorithms;
++    }
++    getSigningAlgorithmForJwtVc(presentationDefinition, verificationMethod) {
++        var _a, _b, _c;
++        const algorithmsSatisfyingDefinition = (_c = (_b = (_a = presentationDefinition.format) === null || _a === void 0 ? void 0 : _a.jwt_vc) === null || _b === void 0 ? void 0 : _b.alg) !== null && _c !== void 0 ? _c : [];
++        const inputDescriptorAlgorithms = presentationDefinition.input_descriptors
++            .map((descriptor) => { var _a, _b, _c; return (_c = (_b = (_a = descriptor.format) === null || _a === void 0 ? void 0 : _a.jwt_vc) === null || _b === void 0 ? void 0 : _b.alg) !== null && _c !== void 0 ? _c : []; })
++            .filter((alg) => alg.length > 0);
++        const suitableAlgorithms = this.getSigningAlgorithmsForPresentationDefinitionAndInputDescriptors(algorithmsSatisfyingDefinition, inputDescriptorAlgorithms);
++        return this.getSigningAlgorithmFromVerificationMethod(verificationMethod, suitableAlgorithms);
++    }
++    getProofTypeForLdpVc(agentContext, presentationDefinition, verificationMethod) {
++        var _a, _b, _c;
++        const algorithmsSatisfyingDefinition = (_c = (_b = (_a = presentationDefinition.format) === null || _a === void 0 ? void 0 : _a.ldp_vc) === null || _b === void 0 ? void 0 : _b.proof_type) !== null && _c !== void 0 ? _c : [];
++        const inputDescriptorAlgorithms = presentationDefinition.input_descriptors
++            .map((descriptor) => { var _a, _b, _c; return (_c = (_b = (_a = descriptor.format) === null || _a === void 0 ? void 0 : _a.ldp_vc) === null || _b === void 0 ? void 0 : _b.proof_type) !== null && _c !== void 0 ? _c : []; })
++            .filter((alg) => alg.length > 0);
++        const suitableSignatureSuites = this.getSigningAlgorithmsForPresentationDefinitionAndInputDescriptors(algorithmsSatisfyingDefinition, inputDescriptorAlgorithms);
++        // For each of the supported algs, find the key types, then find the proof types
++        const signatureSuiteRegistry = agentContext.dependencyManager.resolve(vc_1.SignatureSuiteRegistry);
++        const supportedSignatureSuite = signatureSuiteRegistry.getByVerificationMethodType(verificationMethod.type);
++        if (!supportedSignatureSuite) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Couldn't find a supported signature suite for the given verification method type '${verificationMethod.type}'`);
++        }
++        if (suitableSignatureSuites) {
++            if (suitableSignatureSuites.includes(supportedSignatureSuite.proofType) === false) {
++                throw new DifPresentationExchangeError_1.DifPresentationExchangeError([
++                    'No possible signature suite found for the given verification method.',
++                    `Verification method type: ${verificationMethod.type}`,
++                    `SupportedSignatureSuite '${supportedSignatureSuite.proofType}'`,
++                    `SuitableSignatureSuites: ${suitableSignatureSuites.join(', ')}`,
++                ].join('\n'));
++            }
++            return supportedSignatureSuite.proofType;
++        }
++        return supportedSignatureSuite.proofType;
++    }
++    getPresentationSignCallback(agentContext, verificationMethod, vpFormat) {
++        const w3cCredentialService = agentContext.dependencyManager.resolve(vc_1.W3cCredentialService);
++        return async (callBackParams) => {
++            var _a, _b, _c, _d;
++            // The created partial proof and presentation, as well as original supplied options
++            const { presentation: presentationJson, options, presentationDefinition } = callBackParams;
++            const { challenge, domain, nonce } = (_a = options.proofOptions) !== null && _a !== void 0 ? _a : {};
++            const { verificationMethod: verificationMethodId } = (_b = options.signatureOptions) !== null && _b !== void 0 ? _b : {};
++            if (verificationMethodId && verificationMethodId !== verificationMethod.id) {
++                throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Verification method from signing options ${verificationMethodId} does not match verification method ${verificationMethod.id}`);
++            }
++            let signedPresentation;
++            if (vpFormat === 'jwt_vp') {
++                signedPresentation = await w3cCredentialService.signPresentation(agentContext, {
++                    format: vc_1.ClaimFormat.JwtVp,
++                    alg: this.getSigningAlgorithmForJwtVc(presentationDefinition, verificationMethod),
++                    verificationMethod: verificationMethod.id,
++                    presentation: utils_1.JsonTransformer.fromJSON(presentationJson, vc_1.W3cPresentation),
++                    challenge: (_c = challenge !== null && challenge !== void 0 ? challenge : nonce) !== null && _c !== void 0 ? _c : (await agentContext.wallet.generateNonce()),
++                    domain,
++                });
++            }
++            else if (vpFormat === 'ldp_vp') {
++                signedPresentation = await w3cCredentialService.signPresentation(agentContext, {
++                    format: vc_1.ClaimFormat.LdpVp,
++                    proofType: this.getProofTypeForLdpVc(agentContext, presentationDefinition, verificationMethod),
++                    proofPurpose: 'authentication',
++                    verificationMethod: verificationMethod.id,
++                    presentation: utils_1.JsonTransformer.fromJSON(presentationJson, vc_1.W3cPresentation),
++                    challenge: (_d = challenge !== null && challenge !== void 0 ? challenge : nonce) !== null && _d !== void 0 ? _d : (await agentContext.wallet.generateNonce()),
++                    domain,
++                });
++            }
++            else {
++                throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Only JWT credentials or JSONLD credentials are supported for a single presentation`);
++            }
++            return (0, utils_2.getSphereonW3cVerifiablePresentation)(signedPresentation);
++        };
++    }
++    async getVerificationMethodForSubjectId(agentContext, subjectId) {
++        const didsApi = agentContext.dependencyManager.resolve(dids_1.DidsApi);
++        if (!subjectId.startsWith('did:')) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Only dids are supported as credentialSubject id. ${subjectId} is not a valid did`);
++        }
++        const didDocument = await didsApi.resolveDidDocument(subjectId);
++        if (!didDocument.authentication || didDocument.authentication.length === 0) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`No authentication verificationMethods found for did ${subjectId} in did document`);
++        }
++        // the signature suite to use for the presentation is dependant on the credentials we share.
++        // 1. Get the verification method for this given proof purpose in this DID document
++        let [verificationMethod] = didDocument.authentication;
++        if (typeof verificationMethod === 'string') {
++            verificationMethod = didDocument.dereferenceKey(verificationMethod, ['authentication']);
++        }
++        return verificationMethod;
++    }
++};
++DifPresentationExchangeService = __decorate([
++    (0, tsyringe_1.injectable)()
++], DifPresentationExchangeService);
++exports.DifPresentationExchangeService = DifPresentationExchangeService;
++//# sourceMappingURL=DifPresentationExchangeService.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeService.js.map b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeService.js.map
+new file mode 100644
+index 0000000..4b90e21
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/DifPresentationExchangeService.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"DifPresentationExchangeService.js","sourceRoot":"","sources":["../../../src/modules/dif-presentation-exchange/DifPresentationExchangeService.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/index.d.ts b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/index.d.ts
+new file mode 100644
+index 0000000..e6c1a65
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/index.d.ts
+@@ -0,0 +1,4 @@
++export * from './DifPresentationExchangeError';
++export * from './DifPresentationExchangeModule';
++export * from './DifPresentationExchangeService';
++export * from './models';
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/index.js b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/index.js
+new file mode 100644
+index 0000000..6167e74
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/index.js
+@@ -0,0 +1,21 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __exportStar = (this && this.__exportStar) || function(m, exports) {
++    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++__exportStar(require("./DifPresentationExchangeError"), exports);
++__exportStar(require("./DifPresentationExchangeModule"), exports);
++__exportStar(require("./DifPresentationExchangeService"), exports);
++__exportStar(require("./models"), exports);
++//# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/index.js.map b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/index.js.map
+new file mode 100644
+index 0000000..66e3a9d
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/index.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../src/modules/dif-presentation-exchange/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;AAAA,iEAA8C;AAC9C,kEAA+C;AAC/C,mEAAgD;AAChD,2CAAwB"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/DifPexCredentialsForRequest.d.ts b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/DifPexCredentialsForRequest.d.ts
+new file mode 100644
+index 0000000..02571e1
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/DifPexCredentialsForRequest.d.ts
+@@ -0,0 +1,104 @@
++import type { W3cCredentialRecord, W3cVerifiableCredential } from '../../vc';
++export interface DifPexCredentialsForRequest {
++    /**
++     * Whether all requirements have been satisfied by the credentials in the wallet.
++     */
++    areRequirementsSatisfied: boolean;
++    /**
++     * The requirements for the presentation definition. If the `areRequirementsSatisfied` value
++     * is `false`, this list will still be populated with requirements, but won't contain credentials
++     * for all requirements. This can be useful to display the missing credentials for a presentation
++     * definition to be satisfied.
++     *
++     * NOTE: Presentation definition requirements can be really complex as there's a lot of different
++     * combinations that are possible. The structure doesn't include all possible combinations yet that
++     * could satisfy a presentation definition.
++     */
++    requirements: DifPexCredentialsForRequestRequirement[];
++    /**
++     * Name of the presentation definition
++     */
++    name?: string;
++    /**
++     * Purpose of the presentation definition.
++     */
++    purpose?: string;
++}
++/**
++ * A requirement for the presentation submission. A requirement
++ * is a group of input descriptors that together fulfill a requirement
++ * from the presentation definition.
++ *
++ * Each submission represents a input descriptor.
++ */
++export interface DifPexCredentialsForRequestRequirement {
++    /**
++     * Whether the requirement is satisfied.
++     *
++     * If the requirement is not satisfied, the submission will still contain
++     * entries, but the `verifiableCredentials` list will be empty.
++     */
++    isRequirementSatisfied: boolean;
++    /**
++     * Name of the requirement
++     */
++    name?: string;
++    /**
++     * Purpose of the requirement
++     */
++    purpose?: string;
++    /**
++     * Array of objects, where each entry contains one or more credentials that will be part
++     * of the submission.
++     *
++     * NOTE: if the `isRequirementSatisfied` is `false` the submission list will
++     * contain entries where the verifiable credential list is empty. In this case it could also
++     * contain more entries than are actually needed (as you sometimes can choose from
++     * e.g. 4 types of credentials and need to submit at least two). If
++     * `isRequirementSatisfied` is `false`, make sure to check the `needsCount` value
++     * to see how many of those submissions needed.
++     */
++    submissionEntry: DifPexCredentialsForRequestSubmissionEntry[];
++    /**
++     * The number of submission entries that are needed to fulfill the requirement.
++     * If `isRequirementSatisfied` is `true`, the submission list will always be equal
++     * to the number of `needsCount`. If `isRequirementSatisfied` is `false` the list of
++     * submissions could be longer.
++     */
++    needsCount: number;
++    /**
++     * The rule that is used to select the credentials for the submission.
++     * If the rule is `pick`, the user can select which credentials to use for the submission.
++     * If the rule is `all`, all credentials that satisfy the input descriptor will be used.
++     */
++    rule: 'pick' | 'all';
++}
++/**
++ * A submission entry that satisfies a specific input descriptor from the
++ * presentation definition.
++ */
++export interface DifPexCredentialsForRequestSubmissionEntry {
++    /**
++     * The id of the input descriptor
++     */
++    inputDescriptorId: string;
++    /**
++     * Name of the input descriptor
++     */
++    name?: string;
++    /**
++     * Purpose of the input descriptor
++     */
++    purpose?: string;
++    /**
++     * The verifiable credentials that satisfy the input descriptor.
++     *
++     * If the value is an empty list, it means the input descriptor could
++     * not be satisfied.
++     */
++    verifiableCredentials: W3cCredentialRecord[];
++}
++/**
++ * Mapping of selected credentials for an input descriptor
++ */
++export type DifPexInputDescriptorToCredentials = Record<string, Array<W3cVerifiableCredential>>;
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/DifPexCredentialsForRequest.js b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/DifPexCredentialsForRequest.js
+new file mode 100644
+index 0000000..b050f2a
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/DifPexCredentialsForRequest.js
+@@ -0,0 +1,3 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++//# sourceMappingURL=DifPexCredentialsForRequest.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/DifPexCredentialsForRequest.js.map b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/DifPexCredentialsForRequest.js.map
+new file mode 100644
+index 0000000..8a95b90
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/DifPexCredentialsForRequest.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"DifPexCredentialsForRequest.js","sourceRoot":"","sources":["../../../../src/modules/dif-presentation-exchange/models/DifPexCredentialsForRequest.ts"],"names":[],"mappings":""}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/index.d.ts b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/index.d.ts
+new file mode 100644
+index 0000000..0e8834e
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/index.d.ts
+@@ -0,0 +1,8 @@
++export * from './DifPexCredentialsForRequest';
++import type { PresentationDefinitionV1, PresentationDefinitionV2, PresentationSubmission } from '@sphereon/pex-models';
++import { PresentationSubmissionLocation } from '@sphereon/pex';
++export type DifPresentationExchangeDefinition = PresentationDefinitionV1 | PresentationDefinitionV2;
++export type DifPresentationExchangeDefinitionV1 = PresentationDefinitionV1;
++export type DifPresentationExchangeDefinitionV2 = PresentationDefinitionV2;
++export type DifPresentationExchangeSubmission = PresentationSubmission;
++export { PresentationSubmissionLocation as DifPresentationExchangeSubmissionLocation };
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/index.js b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/index.js
+new file mode 100644
+index 0000000..8b8a7ea
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/index.js
+@@ -0,0 +1,21 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __exportStar = (this && this.__exportStar) || function(m, exports) {
++    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.DifPresentationExchangeSubmissionLocation = void 0;
++__exportStar(require("./DifPexCredentialsForRequest"), exports);
++const pex_1 = require("@sphereon/pex");
++Object.defineProperty(exports, "DifPresentationExchangeSubmissionLocation", { enumerable: true, get: function () { return pex_1.PresentationSubmissionLocation; } });
++//# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/index.js.map b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/index.js.map
+new file mode 100644
+index 0000000..bcbf103
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/models/index.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../src/modules/dif-presentation-exchange/models/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;AAAA,gEAA6C;AAG7C,uCAA8D;AAOnB,0HAPlC,oCAA8B,OAO6C"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/credentialSelection.d.ts b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/credentialSelection.d.ts
+new file mode 100644
+index 0000000..77456aa
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/credentialSelection.d.ts
+@@ -0,0 +1,10 @@
++import type { W3cCredentialRecord } from '../../vc';
++import type { DifPexCredentialsForRequest } from '../models';
++import type { IPresentationDefinition, SelectResults } from '@sphereon/pex';
++export declare function getCredentialsForRequest(presentationDefinition: IPresentationDefinition, credentialRecords: Array<W3cCredentialRecord>, holderDIDs: Array<string>): Promise<DifPexCredentialsForRequest>;
++/**
++ * Custom SelectResults that include the W3cCredentialRecord instead of the encoded verifiable credential
++ */
++export type W3cCredentialRecordSelectResults = Omit<SelectResults, 'verifiableCredential'> & {
++    verifiableCredential?: Array<W3cCredentialRecord>;
++};
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/credentialSelection.js b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/credentialSelection.js
+new file mode 100644
+index 0000000..93eb91b
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/credentialSelection.js
+@@ -0,0 +1,207 @@
++"use strict";
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.getCredentialsForRequest = void 0;
++const pex_1 = require("@sphereon/pex");
++const pex_models_1 = require("@sphereon/pex-models");
++const jsonpath_1 = __importDefault(require("jsonpath"));
++const utils_1 = require("../../../utils");
++const DifPresentationExchangeError_1 = require("../DifPresentationExchangeError");
++const transform_1 = require("./transform");
++async function getCredentialsForRequest(presentationDefinition, credentialRecords, holderDIDs) {
++    var _a;
++    if (!presentationDefinition) {
++        throw new DifPresentationExchangeError_1.DifPresentationExchangeError('Presentation Definition is required to select credentials for submission.');
++    }
++    const pex = new pex_1.PEX();
++    const encodedCredentials = credentialRecords.map((c) => (0, transform_1.getSphereonOriginalVerifiableCredential)(c.credential));
++    // FIXME: there is a function for this in the VP library, but it is not usable atm
++    const selectResultsRaw = pex.selectFrom(presentationDefinition, encodedCredentials, {
++        holderDIDs,
++        // limitDisclosureSignatureSuites: [],
++        // restrictToDIDMethods,
++        // restrictToFormats
++    });
++    const selectResults = Object.assign(Object.assign({}, selectResultsRaw), {
++        // Map the encoded credential to their respective w3c credential record
++        verifiableCredential: (_a = selectResultsRaw.verifiableCredential) === null || _a === void 0 ? void 0 : _a.map((encoded) => {
++            const credentialRecord = credentialRecords.find((record) => {
++                const originalVc = (0, transform_1.getSphereonOriginalVerifiableCredential)(record.credential);
++                return (0, utils_1.deepEquality)(originalVc, encoded);
++            });
++            if (!credentialRecord) {
++                throw new DifPresentationExchangeError_1.DifPresentationExchangeError('Unable to find credential in credential records.');
++            }
++            return credentialRecord;
++        }) });
++    const presentationSubmission = {
++        requirements: [],
++        areRequirementsSatisfied: false,
++        name: presentationDefinition.name,
++        purpose: presentationDefinition.purpose,
++    };
++    // If there's no submission requirements, ALL input descriptors MUST be satisfied
++    if (!presentationDefinition.submission_requirements || presentationDefinition.submission_requirements.length === 0) {
++        presentationSubmission.requirements = getSubmissionRequirementsForAllInputDescriptors(presentationDefinition.input_descriptors, selectResults);
++    }
++    else {
++        presentationSubmission.requirements = getSubmissionRequirements(presentationDefinition, selectResults);
++    }
++    // There may be no requirements if we filter out all optional ones. To not makes things too complicated, we see it as an error
++    // for now if a request is made that has no required requirements (but only e.g. min: 0, which means we don't need to disclose anything)
++    // I see this more as the fault of the presentation definition, as it should have at least some requirements.
++    if (presentationSubmission.requirements.length === 0) {
++        throw new DifPresentationExchangeError_1.DifPresentationExchangeError('Presentation Definition does not require any credentials. Optional credentials are not included in the presentation submission.');
++    }
++    if (selectResultsRaw.areRequiredCredentialsPresent === 'error') {
++        return presentationSubmission;
++    }
++    return Object.assign(Object.assign({}, presentationSubmission), {
++        // If all requirements are satisfied, the presentation submission is satisfied
++        areRequirementsSatisfied: presentationSubmission.requirements.every((requirement) => requirement.isRequirementSatisfied) });
++}
++exports.getCredentialsForRequest = getCredentialsForRequest;
++function getSubmissionRequirements(presentationDefinition, selectResults) {
++    var _a;
++    const submissionRequirements = [];
++    // There are submission requirements, so we need to select the input_descriptors
++    // based on the submission requirements
++    for (const submissionRequirement of (_a = presentationDefinition.submission_requirements) !== null && _a !== void 0 ? _a : []) {
++        // Check: if the submissionRequirement uses `from_nested`, as we don't support this yet
++        if (submissionRequirement.from_nested) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError("Presentation definition contains requirement using 'from_nested', which is not supported yet.");
++        }
++        // Check if there's a 'from'. If not the structure is not as we expect it
++        if (!submissionRequirement.from) {
++            throw new DifPresentationExchangeError_1.DifPresentationExchangeError("Missing 'from' in submission requirement match");
++        }
++        if (submissionRequirement.rule === pex_models_1.Rules.All) {
++            const selectedSubmission = getSubmissionRequirementRuleAll(submissionRequirement, presentationDefinition, selectResults);
++            submissionRequirements.push(selectedSubmission);
++        }
++        else {
++            const selectedSubmission = getSubmissionRequirementRulePick(submissionRequirement, presentationDefinition, selectResults);
++            submissionRequirements.push(selectedSubmission);
++        }
++    }
++    // Submission may have requirement that doesn't require a credential to be submitted (e.g. min: 0)
++    // We use minimization strategy, and thus only disclose the minimum amount of information
++    const requirementsWithCredentials = submissionRequirements.filter((requirement) => requirement.needsCount > 0);
++    return requirementsWithCredentials;
++}
++function getSubmissionRequirementsForAllInputDescriptors(inputDescriptors, selectResults) {
++    const submissionRequirements = [];
++    for (const inputDescriptor of inputDescriptors) {
++        const submission = getSubmissionForInputDescriptor(inputDescriptor, selectResults);
++        submissionRequirements.push({
++            rule: pex_models_1.Rules.Pick,
++            needsCount: 1,
++            submissionEntry: [submission],
++            isRequirementSatisfied: submission.verifiableCredentials.length >= 1,
++        });
++    }
++    return submissionRequirements;
++}
++function getSubmissionRequirementRuleAll(submissionRequirement, presentationDefinition, selectResults) {
++    var _a;
++    // Check if there's a 'from'. If not the structure is not as we expect it
++    if (!submissionRequirement.from)
++        throw new DifPresentationExchangeError_1.DifPresentationExchangeError("Missing 'from' in submission requirement match.");
++    const selectedSubmission = {
++        rule: pex_models_1.Rules.All,
++        needsCount: 0,
++        name: submissionRequirement.name,
++        purpose: submissionRequirement.purpose,
++        submissionEntry: [],
++        isRequirementSatisfied: false,
++    };
++    for (const inputDescriptor of presentationDefinition.input_descriptors) {
++        // We only want to get the submission if the input descriptor belongs to the group
++        if (!((_a = inputDescriptor.group) === null || _a === void 0 ? void 0 : _a.includes(submissionRequirement.from)))
++            continue;
++        const submission = getSubmissionForInputDescriptor(inputDescriptor, selectResults);
++        // Rule ALL, so for every input descriptor that matches in this group, we need to add it
++        selectedSubmission.needsCount += 1;
++        selectedSubmission.submissionEntry.push(submission);
++    }
++    return Object.assign(Object.assign({}, selectedSubmission), {
++        // If all submissions have a credential, the requirement is satisfied
++        isRequirementSatisfied: selectedSubmission.submissionEntry.every((submission) => submission.verifiableCredentials.length >= 1) });
++}
++function getSubmissionRequirementRulePick(submissionRequirement, presentationDefinition, selectResults) {
++    var _a, _b, _c;
++    // Check if there's a 'from'. If not the structure is not as we expect it
++    if (!submissionRequirement.from) {
++        throw new DifPresentationExchangeError_1.DifPresentationExchangeError("Missing 'from' in submission requirement match.");
++    }
++    const selectedSubmission = {
++        rule: pex_models_1.Rules.Pick,
++        needsCount: (_b = (_a = submissionRequirement.count) !== null && _a !== void 0 ? _a : submissionRequirement.min) !== null && _b !== void 0 ? _b : 1,
++        name: submissionRequirement.name,
++        purpose: submissionRequirement.purpose,
++        // If there's no count, min, or max we assume one credential is required for submission
++        // however, the exact behavior is not specified in the spec
++        submissionEntry: [],
++        isRequirementSatisfied: false,
++    };
++    const satisfiedSubmissions = [];
++    const unsatisfiedSubmissions = [];
++    for (const inputDescriptor of presentationDefinition.input_descriptors) {
++        // We only want to get the submission if the input descriptor belongs to the group
++        if (!((_c = inputDescriptor.group) === null || _c === void 0 ? void 0 : _c.includes(submissionRequirement.from)))
++            continue;
++        const submission = getSubmissionForInputDescriptor(inputDescriptor, selectResults);
++        if (submission.verifiableCredentials.length >= 1) {
++            satisfiedSubmissions.push(submission);
++        }
++        else {
++            unsatisfiedSubmissions.push(submission);
++        }
++        // If we have found enough credentials to satisfy the requirement, we could stop
++        // but the user may not want the first x that match, so we continue and return all matches
++        // if (satisfiedSubmissions.length === selectedSubmission.needsCount) break
++    }
++    return Object.assign(Object.assign({}, selectedSubmission), {
++        // If there are enough satisfied submissions, the requirement is satisfied
++        isRequirementSatisfied: satisfiedSubmissions.length >= selectedSubmission.needsCount,
++        // if the requirement is satisfied, we only need to return the satisfied submissions
++        // however if the requirement is not satisfied, we include all entries so the wallet could
++        // render which credentials are missing.
++        submission: satisfiedSubmissions.length >= selectedSubmission.needsCount
++            ? satisfiedSubmissions
++            : [...satisfiedSubmissions, ...unsatisfiedSubmissions] });
++}
++function getSubmissionForInputDescriptor(inputDescriptor, selectResults) {
++    var _a;
++    // https://github.com/Sphereon-Opensource/PEX/issues/116
++    // If the input descriptor doesn't contain a name, the name of the match will be the id of the input descriptor that satisfied it
++    const matchesForInputDescriptor = (_a = selectResults.matches) === null || _a === void 0 ? void 0 : _a.filter((m) => m.name === inputDescriptor.id ||
++        // FIXME: this is not collision proof as the name doesn't have to be unique
++        m.name === inputDescriptor.name);
++    const submissionEntry = {
++        inputDescriptorId: inputDescriptor.id,
++        name: inputDescriptor.name,
++        purpose: inputDescriptor.purpose,
++        verifiableCredentials: [],
++    };
++    // return early if no matches.
++    if (!(matchesForInputDescriptor === null || matchesForInputDescriptor === void 0 ? void 0 : matchesForInputDescriptor.length))
++        return submissionEntry;
++    // FIXME: This can return multiple credentials for multiple input_descriptors,
++    // which I think is a bug in the PEX library
++    // Extract all credentials from the match
++    const verifiableCredentials = matchesForInputDescriptor.flatMap((matchForInputDescriptor) => extractCredentialsFromMatch(matchForInputDescriptor, selectResults.verifiableCredential));
++    submissionEntry.verifiableCredentials = verifiableCredentials;
++    return submissionEntry;
++}
++function extractCredentialsFromMatch(match, availableCredentials) {
++    const verifiableCredentials = [];
++    for (const vcPath of match.vc_path) {
++        const [verifiableCredential] = jsonpath_1.default.query({ verifiableCredential: availableCredentials }, vcPath);
++        verifiableCredentials.push(verifiableCredential);
++    }
++    return verifiableCredentials;
++}
++//# sourceMappingURL=credentialSelection.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/credentialSelection.js.map b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/credentialSelection.js.map
+new file mode 100644
+index 0000000..47a20ca
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/credentialSelection.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"credentialSelection.js","sourceRoot":"","sources":["../../../../src/modules/dif-presentation-exchange/utils/credentialSelection.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/index.d.ts b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/index.d.ts
+new file mode 100644
+index 0000000..d141a0f
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/index.d.ts
+@@ -0,0 +1,2 @@
++export * from './transform';
++export * from './credentialSelection';
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/index.js b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/index.js
+new file mode 100644
+index 0000000..5c88430
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/index.js
+@@ -0,0 +1,19 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __exportStar = (this && this.__exportStar) || function(m, exports) {
++    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++__exportStar(require("./transform"), exports);
++__exportStar(require("./credentialSelection"), exports);
++//# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/index.js.map b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/index.js.map
+new file mode 100644
+index 0000000..b16782e
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/index.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../src/modules/dif-presentation-exchange/utils/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;AAAA,8CAA2B;AAC3B,wDAAqC"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/transform.d.ts b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/transform.d.ts
+new file mode 100644
+index 0000000..254815f
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/transform.d.ts
+@@ -0,0 +1,7 @@
++import type { W3cVerifiableCredential, W3cVerifiablePresentation } from '../../vc';
++import type { OriginalVerifiableCredential as SphereonOriginalVerifiableCredential, W3CVerifiableCredential as SphereonW3cVerifiableCredential, W3CVerifiablePresentation as SphereonW3cVerifiablePresentation } from '@sphereon/ssi-types';
++export declare function getSphereonOriginalVerifiableCredential(w3cVerifiableCredential: W3cVerifiableCredential): SphereonOriginalVerifiableCredential;
++export declare function getSphereonW3cVerifiableCredential(w3cVerifiableCredential: W3cVerifiableCredential): SphereonW3cVerifiableCredential;
++export declare function getSphereonW3cVerifiablePresentation(w3cVerifiablePresentation: W3cVerifiablePresentation): SphereonW3cVerifiablePresentation;
++export declare function getW3cVerifiablePresentationInstance(w3cVerifiablePresentation: SphereonW3cVerifiablePresentation): W3cVerifiablePresentation;
++export declare function getW3cVerifiableCredentialInstance(w3cVerifiableCredential: SphereonW3cVerifiableCredential): W3cVerifiableCredential;
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/transform.js b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/transform.js
+new file mode 100644
+index 0000000..3ad2b25
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/transform.js
+@@ -0,0 +1,61 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.getW3cVerifiableCredentialInstance = exports.getW3cVerifiablePresentationInstance = exports.getSphereonW3cVerifiablePresentation = exports.getSphereonW3cVerifiableCredential = exports.getSphereonOriginalVerifiableCredential = void 0;
++const utils_1 = require("../../../utils");
++const vc_1 = require("../../vc");
++const DifPresentationExchangeError_1 = require("../DifPresentationExchangeError");
++function getSphereonOriginalVerifiableCredential(w3cVerifiableCredential) {
++    if (w3cVerifiableCredential.claimFormat === vc_1.ClaimFormat.LdpVc) {
++        return utils_1.JsonTransformer.toJSON(w3cVerifiableCredential);
++    }
++    else if (w3cVerifiableCredential.claimFormat === vc_1.ClaimFormat.JwtVc) {
++        return w3cVerifiableCredential.serializedJwt;
++    }
++    else {
++        throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Unsupported claim format. Only ${vc_1.ClaimFormat.LdpVc} and ${vc_1.ClaimFormat.JwtVc} are supported.`);
++    }
++}
++exports.getSphereonOriginalVerifiableCredential = getSphereonOriginalVerifiableCredential;
++function getSphereonW3cVerifiableCredential(w3cVerifiableCredential) {
++    if (w3cVerifiableCredential.claimFormat === vc_1.ClaimFormat.LdpVc) {
++        return utils_1.JsonTransformer.toJSON(w3cVerifiableCredential);
++    }
++    else if (w3cVerifiableCredential.claimFormat === vc_1.ClaimFormat.JwtVc) {
++        return w3cVerifiableCredential.serializedJwt;
++    }
++    else {
++        throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Unsupported claim format. Only ${vc_1.ClaimFormat.LdpVc} and ${vc_1.ClaimFormat.JwtVc} are supported.`);
++    }
++}
++exports.getSphereonW3cVerifiableCredential = getSphereonW3cVerifiableCredential;
++function getSphereonW3cVerifiablePresentation(w3cVerifiablePresentation) {
++    if (w3cVerifiablePresentation instanceof vc_1.W3cJsonLdVerifiablePresentation) {
++        return utils_1.JsonTransformer.toJSON(w3cVerifiablePresentation);
++    }
++    else if (w3cVerifiablePresentation instanceof vc_1.W3cJwtVerifiablePresentation) {
++        return w3cVerifiablePresentation.serializedJwt;
++    }
++    else {
++        throw new DifPresentationExchangeError_1.DifPresentationExchangeError(`Unsupported claim format. Only ${vc_1.ClaimFormat.LdpVc} and ${vc_1.ClaimFormat.JwtVc} are supported.`);
++    }
++}
++exports.getSphereonW3cVerifiablePresentation = getSphereonW3cVerifiablePresentation;
++function getW3cVerifiablePresentationInstance(w3cVerifiablePresentation) {
++    if (typeof w3cVerifiablePresentation === 'string') {
++        return vc_1.W3cJwtVerifiablePresentation.fromSerializedJwt(w3cVerifiablePresentation);
++    }
++    else {
++        return utils_1.JsonTransformer.fromJSON(w3cVerifiablePresentation, vc_1.W3cJsonLdVerifiablePresentation);
++    }
++}
++exports.getW3cVerifiablePresentationInstance = getW3cVerifiablePresentationInstance;
++function getW3cVerifiableCredentialInstance(w3cVerifiableCredential) {
++    if (typeof w3cVerifiableCredential === 'string') {
++        return vc_1.W3cJwtVerifiableCredential.fromSerializedJwt(w3cVerifiableCredential);
++    }
++    else {
++        return utils_1.JsonTransformer.fromJSON(w3cVerifiableCredential, vc_1.W3cJsonLdVerifiableCredential);
++    }
++}
++exports.getW3cVerifiableCredentialInstance = getW3cVerifiableCredentialInstance;
++//# sourceMappingURL=transform.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/transform.js.map b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/transform.js.map
+new file mode 100644
+index 0000000..8ed72f7
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/dif-presentation-exchange/utils/transform.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"transform.js","sourceRoot":"","sources":["../../../../src/modules/dif-presentation-exchange/utils/transform.ts"],"names":[],"mappings":";;;AAOA,0CAAgD;AAChD,iCAMiB;AACjB,kFAA8E;AAE9E,SAAgB,uCAAuC,CACrD,uBAAgD;IAEhD,IAAI,uBAAuB,CAAC,WAAW,KAAK,gBAAW,CAAC,KAAK,EAAE;QAC7D,OAAO,uBAAe,CAAC,MAAM,CAAC,uBAAuB,CAAyC,CAAA;KAC/F;SAAM,IAAI,uBAAuB,CAAC,WAAW,KAAK,gBAAW,CAAC,KAAK,EAAE;QACpE,OAAO,uBAAuB,CAAC,aAAa,CAAA;KAC7C;SAAM;QACL,MAAM,IAAI,2DAA4B,CACpC,kCAAkC,gBAAW,CAAC,KAAK,QAAQ,gBAAW,CAAC,KAAK,iBAAiB,CAC9F,CAAA;KACF;AACH,CAAC;AAZD,0FAYC;AAED,SAAgB,kCAAkC,CAChD,uBAAgD;IAEhD,IAAI,uBAAuB,CAAC,WAAW,KAAK,gBAAW,CAAC,KAAK,EAAE;QAC7D,OAAO,uBAAe,CAAC,MAAM,CAAC,uBAAuB,CAAoC,CAAA;KAC1F;SAAM,IAAI,uBAAuB,CAAC,WAAW,KAAK,gBAAW,CAAC,KAAK,EAAE;QACpE,OAAO,uBAAuB,CAAC,aAAa,CAAA;KAC7C;SAAM;QACL,MAAM,IAAI,2DAA4B,CACpC,kCAAkC,gBAAW,CAAC,KAAK,QAAQ,gBAAW,CAAC,KAAK,iBAAiB,CAC9F,CAAA;KACF;AACH,CAAC;AAZD,gFAYC;AAED,SAAgB,oCAAoC,CAClD,yBAAoD;IAEpD,IAAI,yBAAyB,YAAY,oCAA+B,EAAE;QACxE,OAAO,uBAAe,CAAC,MAAM,CAAC,yBAAyB,CAAsC,CAAA;KAC9F;SAAM,IAAI,yBAAyB,YAAY,iCAA4B,EAAE;QAC5E,OAAO,yBAAyB,CAAC,aAAa,CAAA;KAC/C;SAAM;QACL,MAAM,IAAI,2DAA4B,CACpC,kCAAkC,gBAAW,CAAC,KAAK,QAAQ,gBAAW,CAAC,KAAK,iBAAiB,CAC9F,CAAA;KACF;AACH,CAAC;AAZD,oFAYC;AAED,SAAgB,oCAAoC,CAClD,yBAA4D;IAE5D,IAAI,OAAO,yBAAyB,KAAK,QAAQ,EAAE;QACjD,OAAO,iCAA4B,CAAC,iBAAiB,CAAC,yBAAyB,CAAC,CAAA;KACjF;SAAM;QACL,OAAO,uBAAe,CAAC,QAAQ,CAAC,yBAAyB,EAAE,oCAA+B,CAAC,CAAA;KAC5F;AACH,CAAC;AARD,oFAQC;AAED,SAAgB,kCAAkC,CAChD,uBAAwD;IAExD,IAAI,OAAO,uBAAuB,KAAK,QAAQ,EAAE;QAC/C,OAAO,+BAA0B,CAAC,iBAAiB,CAAC,uBAAuB,CAAC,CAAA;KAC7E;SAAM;QACL,OAAO,uBAAe,CAAC,QAAQ,CAAC,uBAAuB,EAAE,kCAA6B,CAAC,CAAA;KACxF;AACH,CAAC;AARD,gFAQC"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormat.d.ts b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormat.d.ts
+new file mode 100644
+index 0000000..17afab0
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormat.d.ts
+@@ -0,0 +1,51 @@
++import type { DifPexInputDescriptorToCredentials, DifPexCredentialsForRequest, DifPresentationExchangeDefinitionV1 } from '../../../dif-presentation-exchange';
++import type { W3cJsonPresentation } from '../../../vc/models/presentation/W3cJsonPresentation';
++import type { ProofFormat } from '../ProofFormat';
++export type DifPresentationExchangeProposal = DifPresentationExchangeDefinitionV1;
++export type DifPresentationExchangeRequest = {
++    options?: {
++        challenge?: string;
++        domain?: string;
++    };
++    presentation_definition: DifPresentationExchangeDefinitionV1;
++};
++export type DifPresentationExchangePresentation = W3cJsonPresentation | string;
++export interface DifPresentationExchangeProofFormat extends ProofFormat {
++    formatKey: 'presentationExchange';
++    proofFormats: {
++        createProposal: {
++            presentationDefinition: DifPresentationExchangeDefinitionV1;
++        };
++        acceptProposal: {
++            options?: {
++                challenge?: string;
++                domain?: string;
++            };
++        };
++        createRequest: {
++            presentationDefinition: DifPresentationExchangeDefinitionV1;
++            options?: {
++                challenge?: string;
++                domain?: string;
++            };
++        };
++        acceptRequest: {
++            credentials?: DifPexInputDescriptorToCredentials;
++        };
++        getCredentialsForRequest: {
++            input: never;
++            output: DifPexCredentialsForRequest;
++        };
++        selectCredentialsForRequest: {
++            input: never;
++            output: {
++                credentials: DifPexInputDescriptorToCredentials;
++            };
++        };
++    };
++    formatData: {
++        proposal: DifPresentationExchangeProposal;
++        request: DifPresentationExchangeRequest;
++        presentation: DifPresentationExchangePresentation;
++    };
++}
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormat.js b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormat.js
+new file mode 100644
+index 0000000..0da0713
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormat.js
+@@ -0,0 +1,3 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++//# sourceMappingURL=DifPresentationExchangeProofFormat.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormat.js.map b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormat.js.map
+new file mode 100644
+index 0000000..35b56d7
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormat.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"DifPresentationExchangeProofFormat.js","sourceRoot":"","sources":["../../../../../src/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormat.ts"],"names":[],"mappings":""}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormatService.d.ts b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormatService.d.ts
+new file mode 100644
+index 0000000..48bee05
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormatService.d.ts
+@@ -0,0 +1,31 @@
++import type { DifPresentationExchangeProofFormat } from './DifPresentationExchangeProofFormat';
++import type { AgentContext } from '../../../../agent';
++import type { DifPexInputDescriptorToCredentials } from '../../../dif-presentation-exchange';
++import type { ProofFormatService } from '../ProofFormatService';
++import type { ProofFormatCreateProposalOptions, ProofFormatCreateReturn, ProofFormatProcessOptions, ProofFormatAcceptProposalOptions, FormatCreateRequestOptions, ProofFormatAcceptRequestOptions, ProofFormatProcessPresentationOptions, ProofFormatGetCredentialsForRequestOptions, ProofFormatSelectCredentialsForRequestOptions, ProofFormatAutoRespondProposalOptions, ProofFormatAutoRespondRequestOptions, ProofFormatAutoRespondPresentationOptions } from '../ProofFormatServiceOptions';
++export declare class PresentationExchangeProofFormatService implements ProofFormatService<DifPresentationExchangeProofFormat> {
++    readonly formatKey: "presentationExchange";
++    private presentationExchangeService;
++    supportsFormat(formatIdentifier: string): boolean;
++    createProposal(agentContext: AgentContext, { proofFormats, attachmentId }: ProofFormatCreateProposalOptions<DifPresentationExchangeProofFormat>): Promise<ProofFormatCreateReturn>;
++    processProposal(agentContext: AgentContext, { attachment }: ProofFormatProcessOptions): Promise<void>;
++    acceptProposal(agentContext: AgentContext, { attachmentId, proposalAttachment, proofFormats, }: ProofFormatAcceptProposalOptions<DifPresentationExchangeProofFormat>): Promise<ProofFormatCreateReturn>;
++    createRequest(agentContext: AgentContext, { attachmentId, proofFormats }: FormatCreateRequestOptions<DifPresentationExchangeProofFormat>): Promise<ProofFormatCreateReturn>;
++    processRequest(agentContext: AgentContext, { attachment }: ProofFormatProcessOptions): Promise<void>;
++    acceptRequest(agentContext: AgentContext, { attachmentId, requestAttachment, proofFormats, }: ProofFormatAcceptRequestOptions<DifPresentationExchangeProofFormat>): Promise<ProofFormatCreateReturn>;
++    processPresentation(agentContext: AgentContext, { requestAttachment, attachment }: ProofFormatProcessPresentationOptions): Promise<boolean>;
++    getCredentialsForRequest(agentContext: AgentContext, { requestAttachment }: ProofFormatGetCredentialsForRequestOptions<DifPresentationExchangeProofFormat>): Promise<import("../../../dif-presentation-exchange").DifPexCredentialsForRequest>;
++    selectCredentialsForRequest(agentContext: AgentContext, { requestAttachment }: ProofFormatSelectCredentialsForRequestOptions<DifPresentationExchangeProofFormat>): Promise<{
++        credentials: DifPexInputDescriptorToCredentials;
++    }>;
++    shouldAutoRespondToProposal(_agentContext: AgentContext, { requestAttachment, proposalAttachment }: ProofFormatAutoRespondProposalOptions): Promise<boolean>;
++    shouldAutoRespondToRequest(_agentContext: AgentContext, { requestAttachment, proposalAttachment }: ProofFormatAutoRespondRequestOptions): Promise<boolean>;
++    /**
++     *
++     * The presentation is already verified in processPresentation, so we can just return true here.
++     * It's only an ack, so it's just that we received the presentation.
++     *
++     */
++    shouldAutoRespondToPresentation(_agentContext: AgentContext, _options: ProofFormatAutoRespondPresentationOptions): Promise<boolean>;
++    private getFormatData;
++}
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormatService.js b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormatService.js
+new file mode 100644
+index 0000000..7cf9991
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormatService.js
+@@ -0,0 +1,238 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.PresentationExchangeProofFormatService = void 0;
++const Attachment_1 = require("../../../../decorators/attachment/Attachment");
++const error_1 = require("../../../../error");
++const utils_1 = require("../../../../utils");
++const dif_presentation_exchange_1 = require("../../../dif-presentation-exchange");
++const vc_1 = require("../../../vc");
++const models_1 = require("../../models");
++const PRESENTATION_EXCHANGE_PRESENTATION_PROPOSAL = 'dif/presentation-exchange/definitions@v1.0';
++const PRESENTATION_EXCHANGE_PRESENTATION_REQUEST = 'dif/presentation-exchange/definitions@v1.0';
++const PRESENTATION_EXCHANGE_PRESENTATION = 'dif/presentation-exchange/submission@v1.0';
++class PresentationExchangeProofFormatService {
++    constructor() {
++        this.formatKey = 'presentationExchange';
++    }
++    presentationExchangeService(agentContext) {
++        if (!agentContext.dependencyManager.isRegistered(dif_presentation_exchange_1.DifPresentationExchangeService)) {
++            throw new error_1.AriesFrameworkError('DifPresentationExchangeService is not registered on the Agent. Please provide the PresentationExchangeModule as a module on the agent');
++        }
++        return agentContext.dependencyManager.resolve(dif_presentation_exchange_1.DifPresentationExchangeService);
++    }
++    supportsFormat(formatIdentifier) {
++        return [
++            PRESENTATION_EXCHANGE_PRESENTATION_PROPOSAL,
++            PRESENTATION_EXCHANGE_PRESENTATION_REQUEST,
++            PRESENTATION_EXCHANGE_PRESENTATION,
++        ].includes(formatIdentifier);
++    }
++    async createProposal(agentContext, { proofFormats, attachmentId }) {
++        const ps = this.presentationExchangeService(agentContext);
++        const pexFormat = proofFormats.presentationExchange;
++        if (!pexFormat) {
++            throw new error_1.AriesFrameworkError('Missing Presentation Exchange format in create proposal attachment format');
++        }
++        const { presentationDefinition } = pexFormat;
++        ps.validatePresentationDefinition(presentationDefinition);
++        const format = new models_1.ProofFormatSpec({ format: PRESENTATION_EXCHANGE_PRESENTATION_PROPOSAL, attachmentId });
++        const attachment = this.getFormatData(presentationDefinition, format.attachmentId);
++        return { format, attachment };
++    }
++    async processProposal(agentContext, { attachment }) {
++        const ps = this.presentationExchangeService(agentContext);
++        const proposal = attachment.getDataAsJson();
++        ps.validatePresentationDefinition(proposal);
++    }
++    async acceptProposal(agentContext, { attachmentId, proposalAttachment, proofFormats, }) {
++        var _a, _b, _c;
++        const ps = this.presentationExchangeService(agentContext);
++        const presentationExchangeFormat = proofFormats === null || proofFormats === void 0 ? void 0 : proofFormats.presentationExchange;
++        const format = new models_1.ProofFormatSpec({
++            format: PRESENTATION_EXCHANGE_PRESENTATION_REQUEST,
++            attachmentId,
++        });
++        const presentationDefinition = proposalAttachment.getDataAsJson();
++        ps.validatePresentationDefinition(presentationDefinition);
++        const attachment = this.getFormatData({
++            presentation_definition: presentationDefinition,
++            options: {
++                // NOTE: we always want to include a challenge to prevent replay attacks
++                challenge: (_b = (_a = presentationExchangeFormat === null || presentationExchangeFormat === void 0 ? void 0 : presentationExchangeFormat.options) === null || _a === void 0 ? void 0 : _a.challenge) !== null && _b !== void 0 ? _b : (await agentContext.wallet.generateNonce()),
++                domain: (_c = presentationExchangeFormat === null || presentationExchangeFormat === void 0 ? void 0 : presentationExchangeFormat.options) === null || _c === void 0 ? void 0 : _c.domain,
++            },
++        }, format.attachmentId);
++        return { format, attachment };
++    }
++    async createRequest(agentContext, { attachmentId, proofFormats }) {
++        var _a;
++        const ps = this.presentationExchangeService(agentContext);
++        const presentationExchangeFormat = proofFormats.presentationExchange;
++        if (!presentationExchangeFormat) {
++            throw Error('Missing presentation exchange format in create request attachment format');
++        }
++        const { presentationDefinition, options } = presentationExchangeFormat;
++        ps.validatePresentationDefinition(presentationDefinition);
++        const format = new models_1.ProofFormatSpec({
++            format: PRESENTATION_EXCHANGE_PRESENTATION_REQUEST,
++            attachmentId,
++        });
++        const attachment = this.getFormatData({
++            presentation_definition: presentationDefinition,
++            options: {
++                // NOTE: we always want to include a challenge to prevent replay attacks
++                challenge: (_a = options === null || options === void 0 ? void 0 : options.challenge) !== null && _a !== void 0 ? _a : (await agentContext.wallet.generateNonce()),
++                domain: options === null || options === void 0 ? void 0 : options.domain,
++            },
++        }, format.attachmentId);
++        return { attachment, format };
++    }
++    async processRequest(agentContext, { attachment }) {
++        const ps = this.presentationExchangeService(agentContext);
++        const { presentation_definition: presentationDefinition } = attachment.getDataAsJson();
++        ps.validatePresentationDefinition(presentationDefinition);
++    }
++    async acceptRequest(agentContext, { attachmentId, requestAttachment, proofFormats, }) {
++        var _a, _b;
++        const ps = this.presentationExchangeService(agentContext);
++        const format = new models_1.ProofFormatSpec({
++            format: PRESENTATION_EXCHANGE_PRESENTATION,
++            attachmentId,
++        });
++        const { presentation_definition: presentationDefinition, options } = requestAttachment.getDataAsJson();
++        const credentials = (_b = (_a = proofFormats === null || proofFormats === void 0 ? void 0 : proofFormats.presentationExchange) === null || _a === void 0 ? void 0 : _a.credentials) !== null && _b !== void 0 ? _b : {};
++        if (Object.keys(credentials).length === 0) {
++            const { areRequirementsSatisfied, requirements } = await ps.getCredentialsForRequest(agentContext, presentationDefinition);
++            if (!areRequirementsSatisfied) {
++                throw new error_1.AriesFrameworkError('Requirements of the presentation definition could not be satisfied');
++            }
++            requirements.forEach((r) => {
++                r.submissionEntry.forEach((r) => {
++                    credentials[r.inputDescriptorId] = r.verifiableCredentials.map((c) => c.credential);
++                });
++            });
++        }
++        const presentation = await ps.createPresentation(agentContext, {
++            presentationDefinition,
++            credentialsForInputDescriptor: credentials,
++            challenge: options === null || options === void 0 ? void 0 : options.challenge,
++            domain: options === null || options === void 0 ? void 0 : options.domain,
++        });
++        if (presentation.verifiablePresentations.length > 1) {
++            throw new error_1.AriesFrameworkError('Invalid amount of verifiable presentations. Only one is allowed.');
++        }
++        const firstPresentation = presentation.verifiablePresentations[0];
++        const attachmentData = firstPresentation.encoded;
++        const attachment = this.getFormatData(attachmentData, format.attachmentId);
++        return { attachment, format };
++    }
++    async processPresentation(agentContext, { requestAttachment, attachment }) {
++        var _a;
++        const ps = this.presentationExchangeService(agentContext);
++        const w3cCredentialService = agentContext.dependencyManager.resolve(vc_1.W3cCredentialService);
++        const request = requestAttachment.getDataAsJson();
++        const presentation = attachment.getDataAsJson();
++        let parsedPresentation;
++        let jsonPresentation;
++        // TODO: we should probably move this transformation logic into the VC module, so it
++        // can be reused in AFJ when we need to go from encoded -> parsed
++        if (typeof presentation === 'string') {
++            parsedPresentation = vc_1.W3cJwtVerifiablePresentation.fromSerializedJwt(presentation);
++            jsonPresentation = parsedPresentation.presentation.toJSON();
++        }
++        else {
++            parsedPresentation = utils_1.JsonTransformer.fromJSON(presentation, vc_1.W3cJsonLdVerifiablePresentation);
++            jsonPresentation = parsedPresentation.toJSON();
++        }
++        if (!jsonPresentation.presentation_submission) {
++            agentContext.config.logger.error('Received presentation in PEX proof format without presentation submission. This should not happen.');
++            return false;
++        }
++        if (!((_a = request.options) === null || _a === void 0 ? void 0 : _a.challenge)) {
++            agentContext.config.logger.error('Received presentation in PEX proof format without challenge. This should not happen.');
++            return false;
++        }
++        try {
++            ps.validatePresentationDefinition(request.presentation_definition);
++            ps.validatePresentationSubmission(jsonPresentation.presentation_submission);
++            ps.validatePresentation(request.presentation_definition, parsedPresentation);
++            let verificationResult;
++            // FIXME: for some reason it won't accept the input if it doesn't know
++            // whether it's a JWT or JSON-LD VP even though the input is the same.
++            // Not sure how to fix
++            if (parsedPresentation.claimFormat === vc_1.ClaimFormat.JwtVp) {
++                verificationResult = await w3cCredentialService.verifyPresentation(agentContext, {
++                    presentation: parsedPresentation,
++                    challenge: request.options.challenge,
++                    domain: request.options.domain,
++                });
++            }
++            else {
++                verificationResult = await w3cCredentialService.verifyPresentation(agentContext, {
++                    presentation: parsedPresentation,
++                    challenge: request.options.challenge,
++                    domain: request.options.domain,
++                });
++            }
++            if (!verificationResult.isValid) {
++                agentContext.config.logger.error(`Received presentation in PEX proof format that could not be verified: ${verificationResult.error}`, { verificationResult });
++                return false;
++            }
++            return true;
++        }
++        catch (e) {
++            agentContext.config.logger.error(`Failed to verify presentation in PEX proof format service: ${e.message}`, {
++                cause: e,
++            });
++            return false;
++        }
++    }
++    async getCredentialsForRequest(agentContext, { requestAttachment }) {
++        const ps = this.presentationExchangeService(agentContext);
++        const { presentation_definition: presentationDefinition } = requestAttachment.getDataAsJson();
++        ps.validatePresentationDefinition(presentationDefinition);
++        const presentationSubmission = await ps.getCredentialsForRequest(agentContext, presentationDefinition);
++        return presentationSubmission;
++    }
++    async selectCredentialsForRequest(agentContext, { requestAttachment }) {
++        const ps = this.presentationExchangeService(agentContext);
++        const { presentation_definition: presentationDefinition } = requestAttachment.getDataAsJson();
++        const credentialsForRequest = await ps.getCredentialsForRequest(agentContext, presentationDefinition);
++        return { credentials: ps.selectCredentialsForRequest(credentialsForRequest) };
++    }
++    async shouldAutoRespondToProposal(_agentContext, { requestAttachment, proposalAttachment }) {
++        const proposalData = proposalAttachment.getDataAsJson();
++        const requestData = requestAttachment.getDataAsJson();
++        return (0, utils_1.deepEquality)(requestData.presentation_definition, proposalData);
++    }
++    async shouldAutoRespondToRequest(_agentContext, { requestAttachment, proposalAttachment }) {
++        const proposalData = proposalAttachment.getDataAsJson();
++        const requestData = requestAttachment.getDataAsJson();
++        return (0, utils_1.deepEquality)(requestData.presentation_definition, proposalData);
++    }
++    /**
++     *
++     * The presentation is already verified in processPresentation, so we can just return true here.
++     * It's only an ack, so it's just that we received the presentation.
++     *
++     */
++    async shouldAutoRespondToPresentation(
++    // eslint-disable-next-line @typescript-eslint/no-unused-vars
++    _agentContext,
++    // eslint-disable-next-line @typescript-eslint/no-unused-vars
++    _options) {
++        return true;
++    }
++    getFormatData(data, id) {
++        const attachment = new Attachment_1.Attachment({
++            id,
++            mimeType: 'application/json',
++            data: new Attachment_1.AttachmentData({
++                json: data,
++            }),
++        });
++        return attachment;
++    }
++}
++exports.PresentationExchangeProofFormatService = PresentationExchangeProofFormatService;
++//# sourceMappingURL=DifPresentationExchangeProofFormatService.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormatService.js.map b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormatService.js.map
+new file mode 100644
+index 0000000..a08f1ef
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormatService.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"DifPresentationExchangeProofFormatService.js","sourceRoot":"","sources":["../../../../../src/modules/proofs/formats/dif-presentation-exchange/DifPresentationExchangeProofFormatService.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/index.d.ts b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/index.d.ts
+new file mode 100644
+index 0000000..af8096b
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/index.d.ts
+@@ -0,0 +1,2 @@
++export * from './DifPresentationExchangeProofFormat';
++export * from './DifPresentationExchangeProofFormatService';
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/index.js b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/index.js
+new file mode 100644
+index 0000000..9a5dcd9
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/index.js
+@@ -0,0 +1,19 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __exportStar = (this && this.__exportStar) || function(m, exports) {
++    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++__exportStar(require("./DifPresentationExchangeProofFormat"), exports);
++__exportStar(require("./DifPresentationExchangeProofFormatService"), exports);
++//# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/index.js.map b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/index.js.map
+new file mode 100644
+index 0000000..43bc748
+--- /dev/null
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/dif-presentation-exchange/index.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../../src/modules/proofs/formats/dif-presentation-exchange/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;AAAA,uEAAoD;AACpD,8EAA2D"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/index.d.ts b/node_modules/@aries-framework/core/build/modules/proofs/formats/index.d.ts
+index 7a7a220..2312524 100644
+--- a/node_modules/@aries-framework/core/build/modules/proofs/formats/index.d.ts
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/index.d.ts
+@@ -1,5 +1,6 @@
+ export * from './ProofFormat';
+ export * from './ProofFormatService';
+ export * from './ProofFormatServiceOptions';
++export * from './dif-presentation-exchange';
+ import * as ProofFormatServiceOptions from './ProofFormatServiceOptions';
+ export { ProofFormatServiceOptions };
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/index.js b/node_modules/@aries-framework/core/build/modules/proofs/formats/index.js
+index b87adf1..5f422e8 100644
+--- a/node_modules/@aries-framework/core/build/modules/proofs/formats/index.js
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/index.js
+@@ -30,6 +30,7 @@ exports.ProofFormatServiceOptions = void 0;
+ __exportStar(require("./ProofFormat"), exports);
+ __exportStar(require("./ProofFormatService"), exports);
+ __exportStar(require("./ProofFormatServiceOptions"), exports);
++__exportStar(require("./dif-presentation-exchange"), exports);
+ const ProofFormatServiceOptions = __importStar(require("./ProofFormatServiceOptions"));
+ exports.ProofFormatServiceOptions = ProofFormatServiceOptions;
+ //# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/proofs/formats/index.js.map b/node_modules/@aries-framework/core/build/modules/proofs/formats/index.js.map
+index 6164f1c..af2da36 100644
+--- a/node_modules/@aries-framework/core/build/modules/proofs/formats/index.js.map
++++ b/node_modules/@aries-framework/core/build/modules/proofs/formats/index.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../src/modules/proofs/formats/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA,gDAA6B;AAC7B,uDAAoC;AACpC,8DAA2C;AAE3C,uFAAwE;AAE/D,8DAAyB"}
+\ No newline at end of file
++{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../src/modules/proofs/formats/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA,gDAA6B;AAC7B,uDAAoC;AACpC,8DAA2C;AAE3C,8DAA2C;AAE3C,uFAAwE;AAE/D,8DAAyB"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/vc/index.d.ts b/node_modules/@aries-framework/core/build/modules/vc/index.d.ts
+index c0162b1..c9a3600 100644
+--- a/node_modules/@aries-framework/core/build/modules/vc/index.d.ts
++++ b/node_modules/@aries-framework/core/build/modules/vc/index.d.ts
+@@ -1,6 +1,6 @@
+ export * from './W3cCredentialService';
+ export * from './W3cCredentialServiceOptions';
+-export * from './repository/W3cCredentialRecord';
++export * from './repository';
+ export * from './W3cCredentialsModule';
+ export * from './W3cCredentialsApi';
+ export * from './models';
+diff --git a/node_modules/@aries-framework/core/build/modules/vc/index.js b/node_modules/@aries-framework/core/build/modules/vc/index.js
+index ae6f096..1a8fd9d 100644
+--- a/node_modules/@aries-framework/core/build/modules/vc/index.js
++++ b/node_modules/@aries-framework/core/build/modules/vc/index.js
+@@ -17,7 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.w3cDate = void 0;
+ __exportStar(require("./W3cCredentialService"), exports);
+ __exportStar(require("./W3cCredentialServiceOptions"), exports);
+-__exportStar(require("./repository/W3cCredentialRecord"), exports);
++__exportStar(require("./repository"), exports);
+ __exportStar(require("./W3cCredentialsModule"), exports);
+ __exportStar(require("./W3cCredentialsApi"), exports);
+ __exportStar(require("./models"), exports);
+diff --git a/node_modules/@aries-framework/core/build/modules/vc/index.js.map b/node_modules/@aries-framework/core/build/modules/vc/index.js.map
+index 4ea7ae3..fa8f2a8 100644
+--- a/node_modules/@aries-framework/core/build/modules/vc/index.js.map
++++ b/node_modules/@aries-framework/core/build/modules/vc/index.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../src/modules/vc/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;AAAA,yDAAsC;AACtC,gEAA6C;AAC7C,mEAAgD;AAChD,yDAAsC;AACtC,sDAAmC;AACnC,2CAAwB;AACxB,mDAAgC;AAChC,2CAAwB;AACxB,8CAA2B;AAC3B,+BAAgC;AAAvB,+FAAA,OAAO,OAAA"}
+\ No newline at end of file
++{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../src/modules/vc/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;AAAA,yDAAsC;AACtC,gEAA6C;AAC7C,+CAA4B;AAC5B,yDAAsC;AACtC,sDAAmC;AACnC,2CAAwB;AACxB,mDAAgC;AAChC,2CAAwB;AACxB,8CAA2B;AAC3B,+BAAgC;AAAvB,+FAAA,OAAO,OAAA"}
+\ No newline at end of file
+diff --git a/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cJsonPresentation.d.ts b/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cJsonPresentation.d.ts
+index 70bfd9c..066c561 100644
+--- a/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cJsonPresentation.d.ts
++++ b/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cJsonPresentation.d.ts
+@@ -1,4 +1,5 @@
+ import type { JsonObject } from '../../../../types';
++import type { DifPresentationExchangeSubmission } from '../../../dif-presentation-exchange';
+ import type { W3cJsonCredential } from '../credential/W3cJsonCredential';
+ export interface W3cJsonPresentation {
+     '@context': Array<string | JsonObject>;
+@@ -8,5 +9,6 @@ export interface W3cJsonPresentation {
+         id?: string;
+     };
+     verifiableCredential: Array<W3cJsonCredential | string>;
++    presentation_submission?: DifPresentationExchangeSubmission;
+     [key: string]: unknown;
+ }
+diff --git a/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.d.ts b/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.d.ts
+index a9bca05..e9bc594 100644
+--- a/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.d.ts
++++ b/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.d.ts
+@@ -1,4 +1,5 @@
+ import type { W3cHolderOptions } from './W3cHolder';
++import type { W3cJsonPresentation } from './W3cJsonPresentation';
+ import type { JsonObject } from '../../../../types';
+ import type { W3cVerifiableCredential } from '../credential/W3cVerifiableCredential';
+ import type { ValidationOptions } from 'class-validator';
+@@ -19,5 +20,6 @@ export declare class W3cPresentation {
+     holder?: string | W3cHolder;
+     verifiableCredential: SingleOrArray<W3cVerifiableCredential>;
+     get holderId(): string | null;
++    toJSON(): W3cJsonPresentation;
+ }
+ export declare function IsVerifiablePresentationType(validationOptions?: ValidationOptions): PropertyDecorator;
+diff --git a/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.js b/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.js
+index 479dfe1..ab201fb 100644
+--- a/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.js
++++ b/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.js
+@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.IsVerifiablePresentationType = exports.W3cPresentation = void 0;
+ const class_transformer_1 = require("class-transformer");
+ const class_validator_1 = require("class-validator");
++const utils_1 = require("../../../../utils");
+ const validators_1 = require("../../../../utils/validators");
+ const constants_1 = require("../../constants");
+ const W3cJsonLdVerifiableCredential_1 = require("../../data-integrity/models/W3cJsonLdVerifiableCredential");
+@@ -37,6 +38,9 @@ class W3cPresentation {
+             return null;
+         return this.holder instanceof W3cHolder_1.W3cHolder ? this.holder.id : this.holder;
+     }
++    toJSON() {
++        return utils_1.JsonTransformer.toJSON(this);
++    }
+ }
+ __decorate([
+     (0, class_transformer_1.Expose)({ name: '@context' }),
+diff --git a/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.js.map b/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.js.map
+index 91e4a29..9782198 100644
+--- a/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.js.map
++++ b/node_modules/@aries-framework/core/build/modules/vc/models/presentation/W3cPresentation.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"W3cPresentation.js","sourceRoot":"","sources":["../../../../../src/modules/vc/models/presentation/W3cPresentation.ts"],"names":[],"mappings":";;;;;;;;;;;;AAKA,yDAA0C;AAC1C,qDAAsF;AAGtF,6DAAkF;AAClF,+CAA0F;AAC1F,6GAAyG;AACzG,wFAAoF;AACpF,iDAA4D;AAC5D,mFAA0F;AAE1F,2CAA0E;AAU1E,MAAa,eAAe;IAC1B,YAAmB,OAA+B;;QAChD,IAAI,OAAO,EAAE;YACX,IAAI,CAAC,EAAE,GAAG,OAAO,CAAC,EAAE,CAAA;YACpB,IAAI,CAAC,OAAO,GAAG,MAAA,OAAO,CAAC,OAAO,mCAAI,CAAC,sCAA0B,CAAC,CAAA;YAC9D,IAAI,CAAC,IAAI,GAAG,MAAA,OAAO,CAAC,IAAI,mCAAI,CAAC,wCAA4B,CAAC,CAAA;YAC1D,IAAI,CAAC,oBAAoB,GAAG,OAAO,CAAC,oBAAoB,CAAA;YAExD,IAAI,OAAO,CAAC,MAAM,EAAE;gBAClB,IAAI,CAAC,MAAM,GAAG,OAAO,OAAO,CAAC,MAAM,KAAK,QAAQ,CAAC,CAAC,CAAC,OAAO,CAAC,MAAM,CAAC,CAAC,CAAC,IAAI,qBAAS,CAAC,OAAO,CAAC,MAAM,CAAC,CAAA;aAClG;SACF;IACH,CAAC;IAuBD,IAAW,QAAQ;QACjB,IAAI,CAAC,IAAI,CAAC,MAAM;YAAE,OAAO,IAAI,CAAA;QAE7B,OAAO,IAAI,CAAC,MAAM,YAAY,qBAAS,CAAC,CAAC,CAAC,IAAI,CAAC,MAAM,CAAC,EAAE,CAAC,CAAC,CAAC,IAAI,CAAC,MAAM,CAAA;IACxE,CAAC;CACF;AA1BC;IAAC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,UAAU,EAAE,CAAC;IAC5B,IAAA,sCAAyB,GAAE;8BACX,KAAK;gDAAqB;AAE3C;IAAC,IAAA,4BAAU,GAAE;IACZ,IAAA,kBAAK,GAAE;;2CACU;AAElB;IAAC,4BAA4B,EAAE;8BACjB,KAAK;6CAAQ;AAE3B;IAAC,IAAA,gCAAoB,GAAE;IACtB,IAAA,uBAAW,GAAE;IACb,IAAA,4BAAU,GAAE;;+CACqB;AAElC;IAAC,IAAA,4DAAkC,GAAE;IACpC,IAAA,yCAA4B,EAAC,EAAE,SAAS,EAAE,CAAC,6DAA6B,EAAE,uDAA0B,CAAC,EAAE,CAAC;IACxG,IAAA,gCAAc,EAAC,EAAE,IAAI,EAAE,IAAI,EAAE,CAAC;;6DACqC;AAjCtE,0CAwCC;AAED,oBAAoB;AAEpB,SAAgB,4BAA4B,CAAC,iBAAqC;IAChF,OAAO,IAAA,4BAAU,EACf;QACE,IAAI,EAAE,8BAA8B;QACpC,SAAS,EAAE;YACT,QAAQ,EAAE,CAAC,KAAK,EAAW,EAAE;gBAC3B,IAAI,KAAK,CAAC,OAAO,CAAC,KAAK,CAAC,EAAE;oBACxB,OAAO,KAAK,CAAC,QAAQ,CAAC,wCAA4B,CAAC,CAAA;iBACpD;gBACD,OAAO,KAAK,CAAA;YACd,CAAC;YACD,cAAc,EAAE,IAAA,8BAAY,EAC1B,CAAC,UAAU,EAAE,EAAE,CAAC,UAAU,GAAG,+EAA+E,EAC5G,iBAAiB,CAClB;SACF;KACF,EACD,iBAAiB,CAClB,CAAA;AACH,CAAC;AAnBD,oEAmBC"}
+\ No newline at end of file
++{"version":3,"file":"W3cPresentation.js","sourceRoot":"","sources":["../../../../../src/modules/vc/models/presentation/W3cPresentation.ts"],"names":[],"mappings":";;;;;;;;;;;;AAMA,yDAA0C;AAC1C,qDAAsF;AAEtF,6CAAmD;AAEnD,6DAAkF;AAClF,+CAA0F;AAC1F,6GAAyG;AACzG,wFAAoF;AACpF,iDAA4D;AAC5D,mFAA0F;AAE1F,2CAA0E;AAU1E,MAAa,eAAe;IAC1B,YAAmB,OAA+B;;QAChD,IAAI,OAAO,EAAE;YACX,IAAI,CAAC,EAAE,GAAG,OAAO,CAAC,EAAE,CAAA;YACpB,IAAI,CAAC,OAAO,GAAG,MAAA,OAAO,CAAC,OAAO,mCAAI,CAAC,sCAA0B,CAAC,CAAA;YAC9D,IAAI,CAAC,IAAI,GAAG,MAAA,OAAO,CAAC,IAAI,mCAAI,CAAC,wCAA4B,CAAC,CAAA;YAC1D,IAAI,CAAC,oBAAoB,GAAG,OAAO,CAAC,oBAAoB,CAAA;YAExD,IAAI,OAAO,CAAC,MAAM,EAAE;gBAClB,IAAI,CAAC,MAAM,GAAG,OAAO,OAAO,CAAC,MAAM,KAAK,QAAQ,CAAC,CAAC,CAAC,OAAO,CAAC,MAAM,CAAC,CAAC,CAAC,IAAI,qBAAS,CAAC,OAAO,CAAC,MAAM,CAAC,CAAA;aAClG;SACF;IACH,CAAC;IAuBD,IAAW,QAAQ;QACjB,IAAI,CAAC,IAAI,CAAC,MAAM;YAAE,OAAO,IAAI,CAAA;QAE7B,OAAO,IAAI,CAAC,MAAM,YAAY,qBAAS,CAAC,CAAC,CAAC,IAAI,CAAC,MAAM,CAAC,EAAE,CAAC,CAAC,CAAC,IAAI,CAAC,MAAM,CAAA;IACxE,CAAC;IAEM,MAAM;QACX,OAAO,uBAAe,CAAC,MAAM,CAAC,IAAI,CAAwB,CAAA;IAC5D,CAAC;CACF;AA9BC;IAAC,IAAA,0BAAM,EAAC,EAAE,IAAI,EAAE,UAAU,EAAE,CAAC;IAC5B,IAAA,sCAAyB,GAAE;8BACX,KAAK;gDAAqB;AAE3C;IAAC,IAAA,4BAAU,GAAE;IACZ,IAAA,kBAAK,GAAE;;2CACU;AAElB;IAAC,4BAA4B,EAAE;8BACjB,KAAK;6CAAQ;AAE3B;IAAC,IAAA,gCAAoB,GAAE;IACtB,IAAA,uBAAW,GAAE;IACb,IAAA,4BAAU,GAAE;;+CACqB;AAElC;IAAC,IAAA,4DAAkC,GAAE;IACpC,IAAA,yCAA4B,EAAC,EAAE,SAAS,EAAE,CAAC,6DAA6B,EAAE,uDAA0B,CAAC,EAAE,CAAC;IACxG,IAAA,gCAAc,EAAC,EAAE,IAAI,EAAE,IAAI,EAAE,CAAC;;6DACqC;AAjCtE,0CA4CC;AAED,oBAAoB;AAEpB,SAAgB,4BAA4B,CAAC,iBAAqC;IAChF,OAAO,IAAA,4BAAU,EACf;QACE,IAAI,EAAE,8BAA8B;QACpC,SAAS,EAAE;YACT,QAAQ,EAAE,CAAC,KAAK,EAAW,EAAE;gBAC3B,IAAI,KAAK,CAAC,OAAO,CAAC,KAAK,CAAC,EAAE;oBACxB,OAAO,KAAK,CAAC,QAAQ,CAAC,wCAA4B,CAAC,CAAA;iBACpD;gBACD,OAAO,KAAK,CAAA;YACd,CAAC;YACD,cAAc,EAAE,IAAA,8BAAY,EAC1B,CAAC,UAAU,EAAE,EAAE,CAAC,UAAU,GAAG,+EAA+E,EAC5G,iBAAiB,CAClB;SACF;KACF,EACD,iBAAiB,CAClB,CAAA;AACH,CAAC;AAnBD,oEAmBC"}
+\ No newline at end of file
