@@ -43,7 +43,7 @@ import {
   isValidAnonCredsCredential,
   toImageSource,
 } from '../utils/credential'
-import { formatTime, getCredentialConnectionLabel } from '../utils/helpers'
+import { createConnectionInvitation, formatTime, getCredentialConnectionLabel } from '../utils/helpers'
 import { buildFieldsFromAnonCredsCredential } from '../utils/oca'
 import { useSocialShare } from '../utils/social-share'
 import { testIdWithKey } from '../utils/testable'
@@ -62,23 +62,19 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
   const { credential } = route?.params
 
   const credentialId = credential.id
-  const schemaId = credential?.metadata?.data['_anoncreds/credential']?.schemaId
+  const schemaId = credential?.metadata?.data['_anoncreds/credential']?.schemaId as string
+  const credDefId = credential?.metadata?.data['_anoncreds/credential']?.credentialDefinitionId as string
   const attributes = credential?.credentialAttributes?.map(attribute => ({
     name: attribute.name,
     value: attribute.value,
   }))
-
-  const shareData = {
-    credentialId,
-    schemaId,
-    attributes,
-  }
 
   const { agent } = useAppAgent()
   const { t, i18n } = useTranslation()
   const { TextTheme, ColorPallet } = useTheme()
   const { OCABundleResolver } = useConfiguration()
   const [isRevoked, setIsRevoked] = useState<boolean>(false)
+  const [invitation, setInvitation] = useState<string>('')
   const [revocationDate, setRevocationDate] = useState<string>('')
   const [preciseRevocationDate, setPreciseRevocationDate] = useState<string>('')
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState<boolean>(false)
@@ -143,6 +139,21 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
       right: 20,
     },
   })
+
+  const shareData = {
+    credentialId,
+    schemaId,
+    attributes,
+    credDefId,
+  }
+
+  useEffect(() => {
+    const fetchInvitation = async () => {
+      const { invitationUrl } = await createConnectionInvitation(agent)
+      setInvitation(invitationUrl)
+    }
+    fetchInvitation()
+  }, [])
 
   useEffect(() => {
     if (!agent) {
@@ -353,7 +364,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
           ) : (
             <View style={styles.shareIcon}>
               {!isPresentationFieldsEmpty && (
-                <TouchableOpacity onPress={() => socialShare(shareData)}>
+                <TouchableOpacity onPress={() => socialShare({ ...shareData, invitationUrl: invitation })}>
                   <Icon size={30} name="share-variant-outline" color={ColorPallet.grayscale.white} />
                 </TouchableOpacity>
               )}

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Config } from 'react-native-config'
 import Share from 'react-native-share'
 import Toast from 'react-native-toast-message'
 
@@ -13,7 +12,7 @@ export const useSocialShare = () => {
   const socialShare = async (credentialData: CredentialData) => {
     setLoading(true)
     try {
-      const url = `${Config.PUBLIC_ORG}${USER_CERTIFICATE}`
+      const url = `https://verify-api.credebl.id${USER_CERTIFICATE}`
       const headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -37,7 +36,7 @@ export const useSocialShare = () => {
       }
 
       const data = await response.json()
-      const shareOptions = { message: data?.label, url: data?.data, mimeType: 'image/jpeg' }
+      const shareOptions = { message: data?.label, url: data?.data.certificate, mimeType: 'image/jpeg' }
       await Share.open(shareOptions)
       return data
     } catch (error) {
