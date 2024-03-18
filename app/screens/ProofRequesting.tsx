@@ -24,6 +24,7 @@ import {
   linkProofWithTemplate,
   sendProofRequest,
 } from '../../verifier'
+import useZeroConfSwitch from '../api/verificationApi'
 import LoadingIndicator from '../components/animated/LoadingIndicator'
 import QRRenderer from '../components/misc/QRRenderer'
 import { EventTypes } from '../constants'
@@ -61,6 +62,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ navigation }) => {
   // eslint-disable-next-line no-unsafe-optional-chaining
   // const { templateId, predicateValues } = route?.params
   const predicateValues = undefined
+  const { setDeviceData } = useZeroConfSwitch()
 
   const { agent } = useAppAgent()
   if (!agent) {
@@ -192,33 +194,45 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ navigation }) => {
     sendAsyncProof()
   }, [record, template])
 
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
   useEffect(() => {
-    if (proofRecord && isPresentationReceived(proofRecord)) {
-      if (goalCode?.endsWith('verify.once')) {
-        deleteConnectionRecordById(agent, record?.id ?? '')
-      }
+    const fetchData = async () => {
+      if (proofRecord && isPresentationReceived(proofRecord)) {
+        if (goalCode?.endsWith('verify.once')) {
+          deleteConnectionRecordById(agent, record?.id ?? '')
+        }
 
-      // setGenerating(false)
-      setProofVerificationState('success')
+        setProofRecordId(undefined)
+        // setGenerating(false)
+        setProofVerificationState('success')
 
-      setTimeout(() => {
+        await setDeviceData('off')
+        await delay(20000)
+
+        await setDeviceData('on')
+
+        // setTimeout(() => {
         setProofVerificationState('generate-qrcode')
-      }, 5000)
-      // navigation.navigate(Screens.ProofDetails, { recordId: proofRecord.id })
-    }
-    if (proofRecord && isPresentationFailed(proofRecord)) {
-      if (goalCode?.endsWith('verify.once')) {
-        deleteConnectionRecordById(agent, record?.id ?? '')
+        // }, 10000)
+        // navigation.navigate(Screens.ProofDetails, { recordId: proofRecord.id })
       }
+      if (proofRecord && isPresentationFailed(proofRecord)) {
+        if (goalCode?.endsWith('verify.once')) {
+          deleteConnectionRecordById(agent, record?.id ?? '')
+        }
 
-      // setGenerating(false)
-      setProofVerificationState('failure')
+        // setGenerating(false)
+        setProofVerificationState('failure')
 
-      setTimeout(() => {
-        setProofVerificationState('generate-qrcode')
-      }, 5000)
-      // navigation.navigate(Screens.ProofDetails, { recordId: proofRecord.id })
+        setTimeout(() => {
+          setProofVerificationState('generate-qrcode')
+        }, 5000)
+        // navigation.navigate(Screens.ProofDetails, { recordId: proofRecord.id })
+      }
     }
+
+    fetchData()
   }, [proofRecord])
 
   return (

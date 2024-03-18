@@ -3,7 +3,7 @@ import Toast from 'react-native-toast-message'
 
 import { ToastType } from '../components/toast/BaseToast'
 
-import { ORG_DETAILS, ORG_PROFILE } from './api-constants'
+import { ORG_DETAILS, ORG_PROFILE, ZERO_CONF_SWITCH } from './api-constants'
 
 interface OrganizationParams {
   pageNumber?: number
@@ -39,6 +39,32 @@ export const fetchOrganizationData = async ({ pageNumber, pageSize, searchText }
 export const fetchOrganizationDetail = async (orgName: string) => {
   try {
     const response = await fetch(`${Config.PUBLIC_ORG}${ORG_DETAILS}${orgName}`)
+    const data = await response.json()
+    return data
+  } catch (error) {
+    Toast.show({
+      type: ToastType.Error,
+      text1: 'Error fetching organization data',
+    })
+  }
+}
+
+export type ZeroConfSwitchBody = {
+  deviceid: string
+  data: {
+    switch: 'off' | 'on'
+  }
+}
+
+export const setZeroConfDevice = async (body: ZeroConfSwitchBody) => {
+  try {
+    const response = await fetch(`http://192.168.1.20:8081${ZERO_CONF_SWITCH}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
     const data = await response.json()
     return data
   } catch (error) {
