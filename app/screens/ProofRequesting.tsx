@@ -208,7 +208,7 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ navigation }) => {
         setProofVerificationState('success')
 
         await setDeviceData('off')
-        await delay(20000)
+        await delay(5000)
 
         await setDeviceData('on')
 
