@@ -31,6 +31,7 @@ import { EventTypes } from '../constants'
 import { useTheme } from '../contexts/theme'
 import { useConnectionByOutOfBandId, useOutOfBandByConnectionId } from '../hooks/connections'
 import { useTemplate } from '../hooks/proof-request-templates'
+import { Assets } from '../theme'
 import { BifoldError } from '../types/error'
 import { ProofRequestsStackParams, Screens } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
@@ -242,7 +243,8 @@ const ProofRequesting: React.FC<ProofRequestingProps> = ({ navigation }) => {
           {proofVerificationState === 'waiting' && <LoadingIndicator />}
           {proofVerificationState === 'qrcode-generated' && message && <QRRenderer value={message} size={qrSize} />}
           {proofVerificationState === 'success' && (
-            <Text style={styles.interopText}>{t('Verifier.ProofRequestSuccess')}</Text>
+            // <Tex style={styles.interopText}>{t('Verifier.ProofRequestSuccess')}</Tex
+            <Assets.svg.BackupSuccess height={225} width={230} />
           )}
           {proofVerificationState === 'failure' && (
             <Text style={styles.interopText}>{t('Verifier.ProofRequestFailure')}</Text>

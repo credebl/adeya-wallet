@@ -58,7 +58,7 @@ export type ZeroConfSwitchBody = {
 
 export const setZeroConfDevice = async (body: ZeroConfSwitchBody) => {
   try {
-    const response = await fetch(`http://192.168.0.107:8081${ZERO_CONF_SWITCH}`, {
+    const response = await fetch(`http://192.168.0.100:8081${ZERO_CONF_SWITCH}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

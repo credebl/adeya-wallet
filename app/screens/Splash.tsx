@@ -1,4 +1,12 @@
-import { initializeAgent, ConsoleLogger, LogLevel, InitConfig, getAgentModules } from '@adeya/ssi'
+import {
+  initializeAgent,
+  ConsoleLogger,
+  LogLevel,
+  InitConfig,
+  getAgentModules,
+  CacheModule,
+  SingleContextStorageLruCache,
+} from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { CommonActions } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
@@ -151,7 +159,14 @@ const Splash: React.FC = () => {
 
         const newAgent = (await initializeAgent({
           agentConfig,
-          modules: getAgentModules(Config.MEDIATOR_URL, indyLedgers),
+          modules: {
+            ...getAgentModules(Config.MEDIATOR_URL, indyLedgers),
+            cache: new CacheModule({
+              cache: new SingleContextStorageLruCache({
+                limit: 50,
+              }),
+            }),
+          },
         })) as unknown as AdeyaAgent
 
         setStep(6)
