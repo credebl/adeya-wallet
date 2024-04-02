@@ -492,8 +492,7 @@ const translation = {
     "Home": "Home",
     "Scan": "Scan",
     "Credentials": "Credentials",
-    "Explore":"Explore",
-    "Connections": "Connections",
+    "Explore":"Explore"
   },
   "RootStack": {
     "Contacts": "Contacts",
