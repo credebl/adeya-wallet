@@ -5,7 +5,12 @@ import {
   InitConfig,
   getAgentModules,
   isWalletImportable,
+  DidsModule,
+  IndyVdrIndyDidResolver,
+  SingleContextStorageLruCache,
+  CacheModule,
 } from '@adeya/ssi'
+import { PolygonDidResolver, PolygonModule } from '@ayanworks/credo-polygon-w3c-module'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import {
@@ -150,7 +155,18 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
       const agent = await importWalletWithAgent({
         agentConfig,
         importConfig,
-        modules: getAgentModules(Config.MEDIATOR_URL!, indyLedgers),
+        modules: {
+          ...getAgentModules(Config.MEDIATOR_URL!, indyLedgers),
+          polygon: new PolygonModule({}),
+          dids: new DidsModule({
+            resolvers: [new PolygonDidResolver(), new IndyVdrIndyDidResolver()],
+          }),
+          cache: new CacheModule({
+            cache: new SingleContextStorageLruCache({
+              limit: 50,
+            }),
+          }),
+        },
       })
 
       setAgent(agent!)
