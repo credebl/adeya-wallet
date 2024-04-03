@@ -20,8 +20,10 @@ import { useAppAgent } from '../utils/agent'
 import {
   checkIfAlreadyConnected,
   connectFromInvitation,
+  fetchUrlData,
   getJson,
   getUrl,
+  isValidUrl,
   receiveMessageFromUrlRedirect,
 } from '../utils/helpers'
 
@@ -63,12 +65,12 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
         params: { connectionId: connectionRecord?.id },
       })
     } catch (err: unknown) {
-      setLoading(false)
       try {
         // if scanned value is json -> pass into AFJ as is
         const json = getJson(value)
         if (json) {
           await agent?.receiveMessage(json)
+          setLoading(false)
           navigation.getParent()?.navigate(Stacks.ConnectionStack, {
             screen: Screens.Connection,
             params: { threadId: json['@id'] },
@@ -76,17 +78,49 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
           return
         }
 
+        const urlData = await fetchUrlData(value)
+        const isValidURL = isValidUrl(urlData)
+
+        if (isValidURL) {
+          const isAlreadyConnected = await checkIfAlreadyConnected(agent, urlData)
+
+          if (isAlreadyConnected) {
+            setLoading(false)
+
+            Toast.show({
+              type: ToastType.Warn,
+              text1: t('Contacts.AlreadyConnected'),
+            })
+            navigation.goBack()
+            return
+          }
+
+          const { connectionRecord } = await connectFromInvitation(agent, urlData)
+
+          setLoading(false)
+          navigation.getParent()?.navigate(Stacks.ConnectionStack, {
+            screen: Screens.Connection,
+            params: { connectionId: connectionRecord?.id },
+          })
+          return
+        }
         // if scanned value is url -> receive message from it
+
         const url = getUrl(value)
+
         if (url) {
           const message = await receiveMessageFromUrlRedirect(value, agent)
+          setLoading(false)
           navigation.getParent()?.navigate(Stacks.ConnectionStack, {
             screen: Screens.Connection,
             params: { threadId: message['@id'] },
           })
           return
         }
+
+        setLoading(false)
       } catch (err: unknown) {
+        setLoading(false)
         const error = new BifoldError(t('Error.Title1031'), t('Error.Message1031'), (err as Error).message, 1031)
         throw error
       }

@@ -13,7 +13,15 @@ import { useTheme } from '../contexts/theme'
 import { BifoldError } from '../types/error'
 import { Screens, Stacks } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
-import { connectFromInvitation, getJson, getUrl, receiveMessageFromUrlRedirect } from '../utils/helpers'
+import {
+  checkIfAlreadyConnected,
+  connectFromInvitation,
+  fetchUrlData,
+  getJson,
+  getUrl,
+  isValidUrl,
+  receiveMessageFromUrlRedirect,
+} from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
 interface OrganizationDetailProps {
@@ -161,6 +169,30 @@ const OrganizationDetails: React.FC = () => {
           navigation.getParent()?.navigate(Stacks.ConnectionStack, {
             screen: Screens.Connection,
             params: { threadId: json['@id'] },
+          })
+          return
+        }
+
+        const urlData = await fetchUrlData(value)
+        const isValidURL = isValidUrl(urlData)
+
+        if (isValidURL) {
+          const isAlreadyConnected = await checkIfAlreadyConnected(agent, urlData)
+
+          if (isAlreadyConnected) {
+            Toast.show({
+              type: ToastType.Warn,
+              text1: t('Contacts.AlreadyConnected'),
+            })
+            navigation.goBack()
+            return
+          }
+
+          const { connectionRecord } = await connectFromInvitation(agent, urlData)
+
+          navigation.getParent()?.navigate(Stacks.ConnectionStack, {
+            screen: Screens.Connection,
+            params: { connectionId: connectionRecord?.id },
           })
           return
         }
