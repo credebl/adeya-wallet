@@ -1,5 +1,15 @@
-import { initializeAgent, ConsoleLogger, LogLevel, InitConfig, getAgentModules } from '@adeya/ssi'
-import { PolygonModule } from '@ayanworks/credo-polygon-w3c-module'
+import {
+  initializeAgent,
+  ConsoleLogger,
+  LogLevel,
+  InitConfig,
+  getAgentModules,
+  DidsModule,
+  IndyVdrIndyDidResolver,
+  CacheModule,
+  SingleContextStorageLruCache,
+} from '@adeya/ssi'
+import { PolygonDidResolver, PolygonModule } from '@ayanworks/credo-polygon-w3c-module'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/core'
 import { CommonActions } from '@react-navigation/native'
@@ -279,7 +289,18 @@ const Splash: React.FC = () => {
 
         const newAgent = (await initializeAgent({
           agentConfig,
-          modules: { ...getAgentModules(Config.MEDIATOR_URL, indyLedgers), polygon: new PolygonModule({}) },
+          modules: {
+            ...getAgentModules(Config.MEDIATOR_URL, indyLedgers),
+            polygon: new PolygonModule({}),
+            dids: new DidsModule({
+              resolvers: [new PolygonDidResolver(), new IndyVdrIndyDidResolver()],
+            }),
+            cache: new CacheModule({
+              cache: new SingleContextStorageLruCache({
+                limit: 50,
+              }),
+            }),
+          },
         })) as unknown as AdeyaAgent
 
         setStep(6)
