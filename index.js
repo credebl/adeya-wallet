@@ -1,5 +1,5 @@
-import './shim'
 import 'react-native-get-random-values'
+import '@ethersproject/shims'
 import 'react-native-gesture-handler'
 
 import '@formatjs/intl-getcanonicallocales/polyfill'
