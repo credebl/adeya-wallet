@@ -1,5 +1,5 @@
 <div align="center">
-  <h1><img align="center" src="./assets/adeya.png" height="52" /> ADEYA SSI Wallet</h1>
+  <h1><img align="center" src="./assets/adeya.png" height="120" /> ADEYA SSI Wallet</h1>
 
 <a align="center" href="https://play.google.com/store/apps/details?id=id.credebl.adeya"><img align="center" src="./assets/store_badge_android.png" height="50" /></a>
 <a align="center" href="https://apps.apple.com/in/app/adeya-ssi-wallet/id6463845498"><img align="center" src="./assets/store_badge_apple.png" height="52" /></a>
