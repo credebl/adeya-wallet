@@ -41,6 +41,7 @@
 			<array>
 				<string>agent.credebl.id</string>
 				<string>dev-agent.credebl.id</string>
+				<string>s3.ap-south-1.amazonaws.com</string>
 			</array>
 		</dict>
 	</array>

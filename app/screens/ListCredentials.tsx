@@ -54,7 +54,7 @@ const ListCredentials: React.FC = () => {
 
       const updatedCredentials = await Promise.all(
         credentials.map(async credential => {
-          if (isW3CCredential(credential)) {
+          if (!isW3CCredential(credential)) {
             const credentialRecordId = credential.credentials[0].credentialRecordId
             try {
               const record = await getW3cCredentialRecordById(agent, credentialRecordId)
