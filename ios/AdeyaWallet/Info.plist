@@ -41,6 +41,9 @@
 			<array>
 				<string>agent.credebl.id</string>
 				<string>dev-agent.credebl.id</string>
+				<string>link-dev.credebl.id</string>
+				<string>link-qa.credebl.id</string>
+				<string>link.credebl.id</string>
 			</array>
 		</dict>
 	</array>

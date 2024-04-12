@@ -61,6 +61,9 @@
 
                 <data android:host="agent.credebl.id" />
                 <data android:host="dev-agent.credebl.id" />
+                <data android:host="link-dev.credebl.id" />
+                <data android:host="link-qa.credebl.id" />
+                <data android:host="link.credebl.id" />
             </intent-filter>
 
         </activity>
