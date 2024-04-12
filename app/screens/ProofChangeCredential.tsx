@@ -157,7 +157,7 @@ const ProofChangeCredential: React.FC<ProofChangeProps> = ({ route, navigation }
                     ...(item.attributes ?? []),
                     ...evaluatePredicates(getCredentialsFields(), item.credId)(item),
                   ]}
-                  credName={item.credName}
+                  credName={item.credName.substring(item.credName.lastIndexOf('/') + 1)}
                   existsInWallet={true}
                   satisfiedPredicates={hasSatisfiedPredicates(getCredentialsFields(), item.credId)}
                   proof={true}
