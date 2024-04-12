@@ -118,10 +118,8 @@ const SharedDataCard: React.FC<{ sharedData: GroupedSharedProofDataItem }> = ({ 
     return (
       <View key={item.name} style={[styles.attributeContainer]}>
         <Text style={styles.attributeName}>{item.label || item.name}</Text>
-        {!parsedPredicate && <AttributeValue style={styles.attributeValue} field={item as Attribute} shown={true} />}
-        {item instanceof Predicate && (
-          <Text style={styles.attributeValue}>{`${parsedPredicate?.pType} ${parsedPredicate?.pValue}`}</Text>
-        )}
+        {!item?.pType && <AttributeValue style={styles.attributeValue} field={item as Attribute} shown={true} />}
+        {item?.pType && <Text style={styles.attributeValue}>{`${item?.pType} ${item?.pValue}`}</Text>}
       </View>
     )
   }

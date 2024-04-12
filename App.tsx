@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+global.Buffer = require('buffer').Buffer
+
 import { AdeyaAgentProvider } from '@adeya/ssi'
 import * as React from 'react'
 import { useEffect, useMemo } from 'react'
