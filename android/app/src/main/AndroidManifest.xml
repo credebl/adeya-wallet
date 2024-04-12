@@ -61,6 +61,7 @@
 
                 <data android:host="agent.credebl.id" />
                 <data android:host="dev-agent.credebl.id" />
+                <data android:host="s3.ap-south-1.amazonaws.com" />
             </intent-filter>
 
         </activity>
