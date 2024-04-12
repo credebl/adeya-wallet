@@ -8,7 +8,8 @@ import { luminanceForHexColor } from './luminance'
 export const isValidAnonCredsCredential = (credential: CredentialExchangeRecord) => {
   return (
     credential &&
-    (credential.state === CredentialState.OfferReceived || credential.metadata.get(AnonCredsCredentialMetadataKey))
+    (credential.state === CredentialState.OfferReceived ||
+      credential.credentials.find(c => c.credentialRecordType !== 'anoncreds'))
   )
 }
 
@@ -36,7 +37,7 @@ export const getCredentialIdentifiers = (credential: CredentialExchangeRecord) =
 }
 
 export const isW3CCredential = (credential: CredentialExchangeRecord) => {
-  return credential && !credential.metadata.get(AnonCredsCredentialMetadataKey)
+  return credential && credential.credentials.find(c => c.credentialRecordType === 'w3c')
 }
 
 export const sanitizeString = (str: string) => {
