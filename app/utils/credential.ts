@@ -9,7 +9,9 @@ export const isValidAnonCredsCredential = (credential: CredentialExchangeRecord)
   return (
     credential &&
     (credential.state === CredentialState.OfferReceived ||
-      credential.credentials.find(c => c.credentialRecordType !== 'anoncreds'))
+      credential.credentials.find(c => c.credentialRecordType !== 'w3c')) &&
+    credential.credentialAttributes &&
+    credential.credentialAttributes?.length > 0
   )
 }
 
@@ -37,7 +39,11 @@ export const getCredentialIdentifiers = (credential: CredentialExchangeRecord) =
 }
 
 export const isW3CCredential = (credential: CredentialExchangeRecord) => {
-  return credential && credential.credentials.find(c => c.credentialRecordType === 'w3c')
+  return (
+    credential &&
+    credential.credentials.find(c => c.credentialRecordType === 'w3c') &&
+    credential.credentialAttributes?.length === 0
+  )
 }
 
 export const sanitizeString = (str: string) => {
