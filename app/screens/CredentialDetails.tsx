@@ -37,7 +37,7 @@ import { CredentialMetadata, customMetadata } from '../types/metadata'
 import { CredentialStackParams, Screens } from '../types/navigators'
 import { ModalUsage } from '../types/remove'
 import { useAppAgent } from '../utils/agent'
-import { credentialTextColor, getCredentialIdentifiers, isW3CCredential, toImageSource } from '../utils/credential'
+import { credentialTextColor, getCredentialIdentifiers, toImageSource } from '../utils/credential'
 import { formatTime, getCredentialConnectionLabel } from '../utils/helpers'
 import { buildFieldsFromAnonCredsCredential } from '../utils/oca'
 import { useSocialShare } from '../utils/social-share'
@@ -158,7 +158,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
   }, [])
 
   useEffect(() => {
-    if (isW3CCredential(credential)) {
+    if (!credential) {
       return
     }
 
