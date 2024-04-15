@@ -33,12 +33,7 @@ import { TabStacks, NotificationStackParams, Screens } from '../types/navigators
 import { W3CCredentialAttributeField } from '../types/record'
 import { ModalUsage } from '../types/remove'
 import { useAppAgent } from '../utils/agent'
-import {
-  buildFieldsFromJSONLDCredential,
-  formatCredentialSubject,
-  getCredentialIdentifiers,
-  isValidAnonCredsCredential,
-} from '../utils/credential'
+import { buildFieldsFromJSONLDCredential, formatCredentialSubject, getCredentialIdentifiers } from '../utils/credential'
 import { getCredentialConnectionLabel } from '../utils/helpers'
 import { buildFieldsFromAnonCredsCredential } from '../utils/oca'
 import { testIdWithKey } from '../utils/testable'
@@ -106,7 +101,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
   }, [])
 
   useEffect(() => {
-    if (!(credential && isValidAnonCredsCredential(credential))) {
+    if (!credential) {
       return
     }
 
