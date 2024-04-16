@@ -6,7 +6,7 @@ import {
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeviceEventEmitter, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { DeviceEventEmitter, FlatList, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import RecordLoading from '../components/animated/RecordLoading'
@@ -146,10 +146,9 @@ const ProofChangeCredential: React.FC<ProofChangeProps> = ({ route, navigation }
         renderItem={({ item }) => {
           return (
             <View style={styles.pageMargin}>
-              <TouchableOpacity
+              <View
                 testID={testIdWithKey(`select:${item.credId}`)}
-                onPress={() => changeCred(item.credId ?? '')}
-                style={[item.credId === selectedCred ? styles.selectedCred : undefined, { marginBottom: 10 }]}>
+                style={[item.credId === selectedCred ? styles.selectedCred : {}, { marginBottom: 10 }]}>
                 <CredentialCard
                   credential={item.credExchangeRecord}
                   credDefId={item.credDefId}
@@ -158,11 +157,13 @@ const ProofChangeCredential: React.FC<ProofChangeProps> = ({ route, navigation }
                     ...(item.attributes ?? []),
                     ...evaluatePredicates(getCredentialsFields(), item.credId)(item),
                   ]}
-                  credName={item.credName}
+                  credName={item.credName.substring(item.credName.lastIndexOf('/') + 1)}
                   existsInWallet={true}
                   satisfiedPredicates={hasSatisfiedPredicates(getCredentialsFields(), item.credId)}
-                  proof={true}></CredentialCard>
-              </TouchableOpacity>
+                  proof={true}
+                  onPress={() => changeCred(item.credId ?? '')}
+                />
+              </View>
             </View>
           )
         }}></FlatList>

@@ -7,6 +7,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:agent.credebl.id</string>
+		<string>applinks:dev-agent.credebl.id</string>
 	</array>
 </dict>
 </plist>

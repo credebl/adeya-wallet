@@ -1,3 +1,4 @@
+// import { useAdeyaAgent,TypedArrayEncoder } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -21,9 +22,24 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   const { useCustomNotifications } = useConfiguration()
   const { notifications } = useCustomNotifications()
   const { t } = useTranslation()
+  // const { agent } = useAdeyaAgent()
   // This syntax is required for the jest mocks to work
   // eslint-disable-next-line import/no-named-as-default-member
   const { HomeTheme } = useTheme()
+
+  // const createDid = async () => {
+  //   const holderDid = await agent.dids.create({
+  //     method: 'key',
+  //     options: {
+  //       keyType: 'ed25519',
+  //     },
+  //     secret: {
+  //       privateKey: TypedArrayEncoder.fromString('afjdemoverysecure000000000000key'),
+  //     },
+  //   })
+  //   // eslint-disable-next-line no-console
+  //   console.log('holderDid', holderDid)
+  // }
 
   const styles = StyleSheet.create({
     container: {
@@ -143,6 +159,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       <View style={styles.messageContainer}>
         <Image source={require('../assets/img/homeimage.png')} resizeMode="contain" style={styles.homeImage} />
       </View>
+      {/* <Button title="Create did" onPress={createDid} /> */}
       <View style={styles.fabContainer}>
         <ScanButton />
       </View>

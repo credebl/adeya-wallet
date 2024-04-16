@@ -3,6 +3,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { SvgProps } from 'react-native-svg'
 
 import Arrow from './assets/icons/large-arrow.svg'
+import ExploreIconActive from './assets/img/active-explore-icon.svg'
 import AppLockout from './assets/img/app-lockout.svg'
 import BackupSuccess from './assets/img/backup-success.svg'
 import Biometrics from './assets/img/biometrics.svg'
@@ -30,6 +31,7 @@ export interface ISVGAssets {
   iconProofRequestDark: React.FC<SvgProps>
   IconInfoSentDark: React.FC<SvgProps>
   ExploreIcon: React.FC<SvgProps>
+  ExploreIconActive: React.FC<SvgProps>
 }
 
 export interface IFontAttributes {
@@ -845,6 +847,7 @@ export const Assets = {
     iconProofRequestDark: IconProofRequestDark,
     IconInfoSentDark: IconInfoSentDark,
     ExploreIcon: ExploreIcon,
+    ExploreIconActive: ExploreIconActive,
   },
   img: {
     logoPrimary: {

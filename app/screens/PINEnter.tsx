@@ -34,7 +34,6 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
   const { t } = useTranslation()
   const { checkPIN, getWalletCredentials, isBiometricsActive, disableBiometrics } = useAuth()
   const [store, dispatch] = useStore()
-  const [PIN, setPIN] = useState<string>('')
   const [continueEnabled, setContinueEnabled] = useState(true)
   const [displayLockoutWarning, setDisplayLockoutWarning] = useState(false)
   const [biometricsErr, setBiometricsErr] = useState(false)
@@ -261,19 +260,22 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
     }
   }
 
-  const onPINInputCompleted = async (PIN: string) => {
-    try {
-      setContinueEnabled(false)
+  const handlePinInput = async (PIN: string) => {
+    if (PIN.length === minPINLength) {
+      try {
+        Keyboard.dismiss()
+        setContinueEnabled(false)
 
-      if (usage === PINEntryUsage.PINCheck) {
-        await verifyPIN(PIN)
-      }
+        if (usage === PINEntryUsage.PINCheck) {
+          await verifyPIN(PIN)
+        }
 
-      if (usage === PINEntryUsage.WalletUnlock) {
-        await unlockWalletWithPIN(PIN)
+        if (usage === PINEntryUsage.WalletUnlock) {
+          await unlockWalletWithPIN(PIN)
+        }
+      } catch (error: unknown) {
+        // TODO:(jl) process error
       }
-    } catch (error: unknown) {
-      // TODO:(jl) process error
     }
   }
 
@@ -324,12 +326,7 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
             <Text style={[TextTheme.normal, { alignSelf: 'center', marginBottom: 16 }]}>{t('PINEnter.EnterPIN')}</Text>
           )}
           <PINInput
-            onPINChanged={(p: string) => {
-              setPIN(p)
-              if (p.length === minPINLength) {
-                Keyboard.dismiss()
-              }
-            }}
+            onPINChanged={(p: string) => handlePinInput(p)}
             testID={testIdWithKey('EnterPIN')}
             accessibilityLabel={t('PINEnter.EnterPIN')}
             autoFocus={true}
@@ -359,12 +356,8 @@ const PINEnter: React.FC<PINEnterProps> = ({ setAuthenticated, usage = PINEntryU
               title={t('PINEnter.Unlock')}
               buttonType={ButtonType.Primary}
               testID={testIdWithKey('Enter')}
-              disabled={!continueEnabled}
-              accessibilityLabel={t('PINEnter.Unlock')}
-              onPress={() => {
-                Keyboard.dismiss()
-                onPINInputCompleted(PIN)
-              }}>
+              disabled={continueEnabled}
+              accessibilityLabel={t('PINEnter.Unlock')}>
               {!continueEnabled && <ButtonLoading />}
             </Button>
           </View>
