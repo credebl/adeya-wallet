@@ -55,6 +55,18 @@ export const AttributeValue: React.FC<AttributeValueParams> = ({ field, style, s
   )
 }
 
+const isJsonString = (value: string) => {
+  if (typeof value !== 'string' || Number(value)) {
+    return false
+  }
+  try {
+    JSON.parse(value)
+  } catch (e) {
+    return false
+  }
+  return true
+}
+
 const RecordField: React.FC<RecordFieldProps> = ({
   field,
   hideFieldValue = false,
@@ -92,18 +104,7 @@ const RecordField: React.FC<RecordFieldProps> = ({
     },
   })
 
-  const isJSON = (text: string) => {
-    if (typeof text !== 'string') {
-      return false
-    }
-    try {
-      JSON.parse(text)
-      return true
-    } catch (error) {
-      return false
-    }
-  }
-  if (isJSON(field.value)) {
+  if (isJsonString(field?.value)) {
     return
   }
 
