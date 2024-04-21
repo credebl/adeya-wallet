@@ -28,6 +28,8 @@ const styles = StyleSheet.create({
   },
 })
 
+const BADGE_SCHEMA_IDS = ['DTfarUsUUsrRw2CT3Hg8F:2:OpenBadgeCredential:1.0']
+
 const ListBadges: React.FC = () => {
   const { t } = useTranslation()
   const { agent } = useAppAgent()
@@ -84,6 +86,10 @@ const ListBadges: React.FC = () => {
         data={credentialList?.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf())}
         keyExtractor={credential => credential.id}
         renderItem={({ item: credential }) => {
+          if (!BADGE_SCHEMA_IDS.includes(credential?.metadata?.data['_anoncreds/credential']?.schemaId)) {
+            return null
+          }
+
           return (
             <View
               style={{
