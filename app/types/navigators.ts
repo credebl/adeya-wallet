@@ -11,6 +11,7 @@ export enum Screens {
   Home = 'Home',
   Scan = 'Scan',
   Credentials = 'Credentials',
+  Badges = 'Badges',
   CredentialDetails = 'Credential Details',
   Notifications = 'Notifications',
   CredentialOffer = 'Credential Offer',
@@ -61,12 +62,14 @@ export enum Stacks {
   ProofRequestsStack = 'Proof Requests Stack',
   NotificationStack = 'Notifications Stack',
   ConnectionStack = 'Connection Stack',
+  BadgeStack = 'Badge Stack',
 }
 
 export enum TabStacks {
   HomeStack = 'Tab Home Stack',
   ConnectStack = 'Tab Connect Stack',
   CredentialStack = 'Tab Credential Stack',
+  BadgeStack = 'Tab Badge Stack',
   OrganizationStack = 'Tab OrganizationStack Stack',
 }
 
@@ -85,6 +88,7 @@ export type TabStackParams = {
   [TabStacks.ConnectStack]: NavigatorScreenParams<ConnectStackParams>
   [TabStacks.CredentialStack]: NavigatorScreenParams<CredentialStackParams>
   [TabStacks.OrganizationStack]: NavigatorScreenParams<OrganizationStackParams>
+  [TabStacks.BadgeStack]: NavigatorScreenParams<BadgeStackParams>
 }
 
 export type AuthenticateStackParams = {
@@ -137,6 +141,14 @@ export type CredentialStackParams = {
   [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
   [Screens.Scan]: undefined
 }
+
+export type BadgeStackParams = {
+  [Screens.Badges]: undefined
+  [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
+  [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
+  [Screens.Scan]: undefined
+}
+
 export type OrganizationStackParams = {
   [Screens.Explore]: undefined
   [Screens.OrganizationDetails]: {

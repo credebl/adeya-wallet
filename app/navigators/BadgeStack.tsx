@@ -1,0 +1,49 @@
+import { createStackNavigator } from '@react-navigation/stack'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+
+import SettingsMenu from '../components/buttons/SettingsMenu'
+import { useConfiguration } from '../contexts/configuration'
+import { useTheme } from '../contexts/theme'
+import CredentialDetails from '../screens/CredentialDetails'
+import CredentialDetailsW3C from '../screens/CredentialDetailsW3C'
+import ListBadges from '../screens/ListBadges'
+import Scan from '../screens/Scan'
+import { BadgeStackParams, Screens } from '../types/navigators'
+
+import { createDefaultStackOptions } from './defaultStackOptions'
+
+const BadgeStack: React.FC = () => {
+  const Stack = createStackNavigator<BadgeStackParams>()
+  const theme = useTheme()
+  const { t } = useTranslation()
+  const { credentialListHeaderRight: CredentialListHeaderRight } = useConfiguration()
+  const defaultStackOptions = createDefaultStackOptions(theme)
+
+  return (
+    <Stack.Navigator screenOptions={{ ...defaultStackOptions }}>
+      <Stack.Screen
+        name={Screens.Badges}
+        component={ListBadges}
+        options={() => ({
+          title: t('Screens.Badges'),
+          headerRight: () => <CredentialListHeaderRight />,
+          headerLeft: () => <SettingsMenu />,
+        })}
+      />
+      <Stack.Screen
+        name={Screens.CredentialDetails}
+        component={CredentialDetails}
+        options={{ title: t('Screens.CredentialDetails') }}
+      />
+      <Stack.Screen
+        name={Screens.CredentialDetailsW3C}
+        component={CredentialDetailsW3C}
+        options={{ title: t('Screens.CredentialDetailsW3C') }}
+      />
+      <Stack.Screen name={Screens.Scan} component={Scan} />
+    </Stack.Navigator>
+  )
+}
+
+export default BadgeStack

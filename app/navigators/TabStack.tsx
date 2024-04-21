@@ -13,6 +13,7 @@ import { TabStackParams, TabStacks } from '../types/navigators'
 import { isTablet, orientation, Orientation } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
+import BadgeStack from './BadgeStack'
 import CredentialStack from './CredentialStack'
 import HomeStack from './HomeStack'
 import OrganizationStack from './OrganizationStack'
@@ -132,6 +133,32 @@ const TabStack: React.FC = () => {
             tabBarShowLabel: false,
             tabBarAccessibilityLabel: t('TabStack.Credentials'),
             tabBarTestID: testIdWithKey(t('TabStack.Credentials')),
+          }}
+        />
+        <Tab.Screen
+          name={TabStacks.BadgeStack}
+          component={BadgeStack}
+          options={{
+            tabBarIconStyle: styles.tabBarIcon,
+            tabBarIcon: ({ color, focused }) => (
+              <AttachTourStep index={2}>
+                <View style={{ ...TabTheme.tabBarContainerStyle, justifyContent: showLabels ? 'flex-end' : 'center' }}>
+                  <Icon name={focused ? 'certificate' : 'certificate-outline'} color={color} size={30} />
+                  {showLabels && (
+                    <Text
+                      style={{
+                        ...TabTheme.tabBarTextStyle,
+                        color: focused ? TabTheme.tabBarActiveTintColor : TabTheme.tabBarInactiveTintColor,
+                      }}>
+                      {t('TabStack.Badges')}
+                    </Text>
+                  )}
+                </View>
+              </AttachTourStep>
+            ),
+            tabBarShowLabel: false,
+            tabBarAccessibilityLabel: t('TabStack.Badges'),
+            tabBarTestID: testIdWithKey(t('TabStack.Badges')),
           }}
         />
       </Tab.Navigator>
