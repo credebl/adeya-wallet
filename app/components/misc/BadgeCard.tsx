@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     paddingBottom: 5,
     borderRadius: 20,
-    elevation: 3,
   },
 })
 
@@ -44,7 +43,10 @@ const BadgeCard: React.FC<CredentialCardProps> = ({ credential, onPress = undefi
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      <Image source={{ uri: imageData.value }} style={{ height: 200, width: 200, borderRadius: 20 }} />
+      <Image
+        source={{ uri: imageData.value }}
+        style={{ height: 200, width: 200, borderRadius: 20, resizeMode: 'contain' }}
+      />
     </TouchableOpacity>
   )
 }

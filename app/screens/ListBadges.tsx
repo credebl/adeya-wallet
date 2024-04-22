@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
 })
 
-const BADGE_SCHEMA_IDS = ['DTfarUsUUsrRw2CT3Hg8F:2:OpenBadgeCredential:1.0']
+export const BADGE_SCHEMA_IDS = ['DTfarUsUUsrRw2CT3Hg8F:2:OpenBadgeCredential:1.0']
 
 const ListBadges: React.FC = () => {
   const { t } = useTranslation()
@@ -81,7 +81,7 @@ const ListBadges: React.FC = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        numColumns={2}
+        // numColumns={2}
         style={{ backgroundColor: ColorPallet.brand.primaryBackground }}
         data={credentialList?.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf())}
         keyExtractor={credential => credential.id}
@@ -108,6 +108,7 @@ const ListBadges: React.FC = () => {
           )
         }}
         ListEmptyComponent={() => <CredentialEmptyList message={t('Credentials.EmptyCredentailsList')} />}
+        ItemSeparatorComponent={() => <View style={{ height: 2, backgroundColor: 'grey' }} />}
       />
       <CredentialListOptions />
       <View style={styles.scanContainer}>

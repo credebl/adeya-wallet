@@ -21,6 +21,8 @@ import { CredentialStackParams, Screens } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
 import { isW3CCredential } from '../utils/credential'
 
+import { BADGE_SCHEMA_IDS } from './ListBadges'
+
 interface EnhancedW3CRecord extends W3cCredentialRecord {
   connectionLabel?: string
 }
@@ -87,6 +89,9 @@ const ListCredentials: React.FC = () => {
         data={credentialList?.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf())}
         keyExtractor={credential => credential.id}
         renderItem={({ item: credential, index }) => {
+          if (BADGE_SCHEMA_IDS.includes(credential?.metadata?.data['_anoncreds/credential']?.schemaId)) {
+            return null
+          }
           return (
             <View
               style={{
