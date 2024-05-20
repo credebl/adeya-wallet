@@ -103,7 +103,8 @@ const RecordField: React.FC<RecordFieldProps> = ({
       return false
     }
   }
-  if (isJSON(field.value)) {
+
+  if (isJSON(field?.value)) {
     return
   }
 

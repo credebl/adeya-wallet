@@ -506,7 +506,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
                       ...(item.attributes ?? []),
                       ...evaluatePredicates(getCredentialsFields(), item.credId)(item),
                     ]}
-                    credName={item.credName}
+                    credName={item.credName.substring(item.credName.lastIndexOf('/') + 1)}
                     existsInWallet={item.credDefId !== undefined}
                     satisfiedPredicates={hasSatisfiedPredicates(getCredentialsFields(), item.credId)}
                     hasAltCredentials={item.altCredentials && item.altCredentials.length > 1}
