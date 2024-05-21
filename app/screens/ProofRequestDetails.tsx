@@ -262,7 +262,10 @@ const ProofRequestDetails: React.FC<ProofRequestDetailsProps> = ({ route, naviga
     if (!template) {
       return
     }
-    const attributes = template.payload.type === ProofRequestType.AnonCreds ? template.payload.data : []
+    const attributes =
+      template.payload.type === ProofRequestType.AnonCreds || template.payload.type === ProofRequestType.Indy
+        ? template.payload.data
+        : []
 
     OCABundleResolver.resolve({ identifiers: { templateId }, language: i18n.language }).then(bundle => {
       const metaOverlay =
