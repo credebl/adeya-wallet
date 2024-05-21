@@ -107,6 +107,13 @@ We welcome contributions from the community to improve ADEYA SSI Wallet. If you'
 
 ---
 
+## Join the community
+
+* Connect and get the latest updates: <a href="https://discord.gg/w4hnQT7NJG">Discord</a> | <a href="https://twitter.com/credebl" target="_blank">Twitter</a>
+* Get help, request features and report bugs: <a href="https://github.com/orgs/credebl/discussions" target="_blank">GitHub Discussions</a> | <a href="https://docs.credebl.id" target="_blank">docs.credebl.id</a>
+
+
+
 ## License
 
 This project is licensed under the Apache License - see the [LICENSE](./LICENSE.md) file for details.
