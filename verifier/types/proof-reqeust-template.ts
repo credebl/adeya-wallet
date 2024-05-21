@@ -26,8 +26,14 @@ export interface AnonCredsProofRequestTemplatePayloadData {
 }
 
 export enum ProofRequestType {
+  Indy = 'indy',
   AnonCreds = 'anoncreds',
   DIF = 'dif',
+}
+
+export interface IndyProofRequestTemplatePayload {
+  type: ProofRequestType.Indy
+  data: Array<AnonCredsProofRequestTemplatePayloadData>
 }
 
 export interface AnonCredsProofRequestTemplatePayload {
@@ -49,5 +55,5 @@ export interface ProofRequestTemplate {
   description: string
   version: string
   devOnly?: boolean
-  payload: AnonCredsProofRequestTemplatePayload | DifProofRequestTemplatePayload
+  payload: IndyProofRequestTemplatePayload | AnonCredsProofRequestTemplatePayload | DifProofRequestTemplatePayload
 }
