@@ -1,6 +1,7 @@
 import { exportWallet as exportAdeyaWallet } from '@adeya/ssi'
 import { useNavigation, useRoute } from '@react-navigation/core'
 import shuffle from 'lodash.shuffle'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -8,16 +9,15 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  PermissionsAndroid,
-  Platform,
-  Share,
   Dimensions,
   PixelRatio,
   StyleSheet,
+  Platform,
+  Share,
 } from 'react-native'
-import { DownloadDirectoryPath, exists, mkdir, unlink } from 'react-native-fs'
+import * as RNFS from 'react-native-fs'
 import Toast from 'react-native-toast-message'
-import RNFetchBlob from 'rn-fetch-blob'
+import { zip } from 'react-native-zip-archive'
 
 import ButtonLoading from '../components/animated/ButtonLoading'
 import Button, { ButtonType } from '../components/buttons/Button'
@@ -136,19 +136,29 @@ function ExportWalletConfirmation() {
     const encodeHash = seed
 
     try {
-      const documentDirectory: string = DownloadDirectoryPath
-      const backupDirectory = `${documentDirectory}/Wallet_Backup`
-      const destFileExists = await exists(backupDirectory)
-      if (destFileExists) {
-        await unlink(backupDirectory)
+      let downloadDirectory = ''
+      if (Platform.OS === 'ios') {
+        downloadDirectory = RNFS.DocumentDirectoryPath
+      } else {
+        downloadDirectory = RNFS.DownloadDirectoryPath
       }
-      const date = new Date()
-      const dformat = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
-      const WALLET_FILE_NAME = `SSI_Wallet_${dformat}`
 
-      await mkdir(backupDirectory)
+      const backupTimeStamp = moment().format('YYYY-MM-DD-HH-mm-ss')
+      // const backupDirectory = `${documentDirectory}/Wallet_Backup`
+      const zipUpDirectory = `${downloadDirectory}/ADEYA-Wallet-${backupTimeStamp}`
+
+      const destFileExists = await RNFS.exists(zipUpDirectory)
+      if (destFileExists) {
+        await RNFS.unlink(zipUpDirectory)
+      }
+
+      const WALLET_FILE_NAME = 'ADEYA_WALLET'
+
+      const zipFileName = `${WALLET_FILE_NAME}-${backupTimeStamp}.zip`
+      await RNFS.mkdir(zipUpDirectory)
       const encryptedFileName = `${WALLET_FILE_NAME}.wallet`
-      const encryptedFileLocation = `${backupDirectory}/${encryptedFileName}`
+      const encryptedFileLocation = `${zipUpDirectory}/${encryptedFileName}`
+      const destinationZipPath = `${downloadDirectory}/${zipFileName}`
 
       const exportConfig = {
         key: encodeHash,
@@ -157,67 +167,23 @@ function ExportWalletConfirmation() {
 
       await exportAdeyaWallet(agent, exportConfig)
 
-      Toast.show({
-        type: ToastType.Success,
-        text1: 'Backup successfully',
-      })
-      setMatchPhrase(true)
-      navigation.navigate(Screens.Success, { encryptedFileLocation })
-    } catch (e) {
-      Toast.show({
-        type: ToastType.Error,
-        text1: 'Backup failed',
-      })
-    }
-  }
-  const exportWalletIOS = async (seed: string) => {
-    setMatchPhrase(true)
+      await zip(zipUpDirectory, destinationZipPath)
 
-    const encodeHash = seed
-    const { fs } = RNFetchBlob
-    try {
-      const documentDirectory = fs.dirs.DocumentDir
-
-      const zipDirectory = `${documentDirectory}/Wallet_Backup`
-
-      const destFileExists = await fs.exists(zipDirectory)
-      if (destFileExists) {
-        await fs.unlink(zipDirectory)
-      }
-
-      const date = new Date()
-      const dformat = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
-      const WALLET_FILE_NAME = `SSI_Wallet_${dformat}`
-
-      await fs.mkdir(zipDirectory).catch(err =>
-        Toast.show({
-          type: ToastType.Error,
-          text1: err,
-        }),
-      )
-      const encryptedFileName = `${WALLET_FILE_NAME}.wallet`
-      const encryptedFileLocation = `${zipDirectory}/${encryptedFileName}`
-
-      const exportConfig = {
-        key: encodeHash,
-        path: encryptedFileLocation,
-      }
-
-      await exportAdeyaWallet(agent, exportConfig)
+      await RNFS.unlink(zipUpDirectory)
 
       if (Platform.OS === 'ios') {
         await Share.share({
-          title: 'Share file',
-          url: encryptedFileLocation,
+          title: 'Share backup zip file',
+          url: destinationZipPath,
         })
       }
 
       Toast.show({
         type: ToastType.Success,
-        text1: 'Backup successfully',
+        text1: 'Backup successfully completed',
       })
       setMatchPhrase(true)
-      navigation.navigate(Screens.Success, { encryptedFileLocation })
+      navigation.navigate(Screens.Success, { encryptedFileLocation: destinationZipPath })
     } catch (e) {
       Toast.show({
         type: ToastType.Error,
@@ -248,36 +214,14 @@ function ExportWalletConfirmation() {
     setNextPhraseIndex(index)
   }
 
-  const askPermission = async (sysPassPhrase: string) => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
-          title: 'Permission',
-          message: 'ADEYA Wallet needs to write to storage',
-          buttonPositive: '',
-        })
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          await exportWallet(sysPassPhrase)
-        }
-      } catch (error) {
-        Toast.show({
-          type: ToastType.Error,
-          text1: `${error}`,
-        })
-      }
-    } else {
-      await exportWalletIOS(sysPassPhrase)
-    }
-  }
-
-  const verifyPhrase = () => {
+  const verifyPhrase = async () => {
     const addedPassPhraseData = arraySetPhraseData.join('')
     const displayedPassphrase = parms?.params?.phraseData.map(item => item).join('')
     if (displayedPassphrase.trim() !== '') {
       const sysPassPhrase = addedPassPhraseData.trim()
       const userPassphrase = displayedPassphrase.trim()
       if (sysPassPhrase === userPassphrase) {
-        askPermission(sysPassPhrase)
+        await exportWallet(sysPassPhrase)
       } else {
         Toast.show({
           type: ToastType.Error,
