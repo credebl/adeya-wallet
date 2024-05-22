@@ -1,3 +1,4 @@
+import { addWalletRecord, findWalletRecordsByQuery, useAdeyaAgent, utils } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { generateMnemonic } from 'bip39'
 import React, { useEffect, useState } from 'react'
@@ -13,6 +14,7 @@ const ExportWallet: React.FC = () => {
   const navigation = useNavigation()
   const { t } = useTranslation()
   const [phraseData, setPhraseData] = useState<string[]>([])
+  const { agent } = useAdeyaAgent()
 
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -86,15 +88,42 @@ const ExportWallet: React.FC = () => {
   })
 
   useEffect(() => {
-    const mnemonic = generateMnemonic(128)
-    const mnemonicArray = mnemonic.split(' ')
+    const createMnemonic = async () => {
+      const mnemonicRecord = await findWalletRecordsByQuery(agent, { type: 'mnemonic' })
+      if (mnemonicRecord?.length > 0) {
+        const mnemonic = mnemonicRecord[0].content.mnemonic as string
+        const mnemonicArray = mnemonic.split(' ')
 
-    const mnemonicIndividualWordsArray: string[] = []
-    mnemonicArray.forEach(word => {
-      mnemonicIndividualWordsArray.push(word)
-    })
+        const mnemonicIndividualWordsArray: string[] = []
+        mnemonicArray.forEach(word => {
+          mnemonicIndividualWordsArray.push(word)
+        })
 
-    setPhraseData(mnemonicIndividualWordsArray.splice(1, 8))
+        setPhraseData(mnemonicIndividualWordsArray.splice(1, 8))
+      } else {
+        const mnemonic = generateMnemonic(128)
+        const mnemonicArray = mnemonic.split(' ')
+
+        const mnemonicIndividualWordsArray: string[] = []
+        mnemonicArray.forEach(word => {
+          mnemonicIndividualWordsArray.push(word)
+        })
+
+        await addWalletRecord(agent, {
+          id: utils.uuid(),
+          content: {
+            mnemonic,
+          },
+          tags: {
+            type: 'mnemonic',
+          },
+        })
+
+        setPhraseData(mnemonicIndividualWordsArray.splice(1, 8))
+      }
+    }
+
+    createMnemonic()
   }, [])
 
   return (
