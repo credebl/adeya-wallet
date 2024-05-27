@@ -8,6 +8,7 @@ import {
   IndyVdrIndyDidResolver,
   CacheModule,
   SingleContextStorageLruCache,
+  MediatorPickupStrategy,
 } from '@adeya/ssi'
 import { PolygonDidResolver, PolygonModule } from '@ayanworks/credo-polygon-w3c-module'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -290,7 +291,11 @@ const Splash: React.FC = () => {
         const newAgent = (await initializeAgent({
           agentConfig,
           modules: {
-            ...getAgentModules(Config.MEDIATOR_URL, indyLedgers),
+            ...getAgentModules({
+              indyNetworks: indyLedgers,
+              mediatorInvitationUrl: Config.MEDIATOR_URL,
+              mediatorPickupStrategy: MediatorPickupStrategy.PickUpV2LiveMode,
+            }),
             polygon: new PolygonModule({}),
             dids: new DidsModule({
               resolvers: [new PolygonDidResolver(), new IndyVdrIndyDidResolver()],
