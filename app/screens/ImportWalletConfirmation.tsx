@@ -8,6 +8,7 @@ import {
   IndyVdrIndyDidResolver,
   SingleContextStorageLruCache,
   CacheModule,
+  MediatorPickupStrategy,
 } from '@adeya/ssi'
 import { PolygonDidResolver, PolygonModule } from '@ayanworks/credo-polygon-w3c-module'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -151,7 +152,11 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
         agentConfig,
         importConfig,
         modules: {
-          ...getAgentModules(Config.MEDIATOR_URL!, indyLedgers),
+          ...getAgentModules({
+            indyNetworks: indyLedgers,
+            mediatorInvitationUrl: Config.MEDIATOR_URL!,
+            mediatorPickupStrategy: MediatorPickupStrategy.PickUpV2LiveMode,
+          }),
           polygon: new PolygonModule({}),
           dids: new DidsModule({
             resolvers: [new PolygonDidResolver(), new IndyVdrIndyDidResolver()],
