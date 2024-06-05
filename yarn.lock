@@ -7,10 +7,10 @@
   resolved "https://registry.npmjs.org/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
-"@adeya/ssi@0.0.1-alpha.28":
-  version "0.0.1-alpha.28"
-  resolved "https://registry.yarnpkg.com/@adeya/ssi/-/ssi-0.0.1-alpha.28.tgz#19066aaef3021ae005b8212b0accc9d794e6ff91"
-  integrity sha512-VR8N5XRfN3ZFl8W8bEvG/McHNIbwYWNj7T9l8lC90Pnpi0GcNV+7aHgWUOaSFSbYJNjX9JR3AHh2EIIaamJxew==
+"@adeya/ssi@0.0.1-alpha.29":
+  version "0.0.1-alpha.29"
+  resolved "https://registry.yarnpkg.com/@adeya/ssi/-/ssi-0.0.1-alpha.29.tgz#154534a74a5ebbcd94f61d5d70d5f7ab9d69d9d3"
+  integrity sha512-OETGUdrlLpVWYBkrvGaRUOXjjdPGS+XCXLU06Y8hR0rlj6pY5Yijj0S1GL+VvZnjPHtkGFr5AdIqX5ENtMADFw==
   dependencies:
     "@credo-ts/anoncreds" "0.5.3"
     "@credo-ts/askar" "0.5.3"
@@ -2826,6 +2826,11 @@
   integrity sha512-5QXuGCtB+HL3VtKL2JN3+6t4qh8VXizK+aGDAv6Dqiq3MLrzgZHb4tjVgtEWMd8CcDtD/JqaAI1b6/EaYGtFIA==
   dependencies:
     merge-options "^3.0.4"
+
+"@react-native-clipboard/clipboard@^1.14.1":
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/@react-native-clipboard/clipboard/-/clipboard-1.14.1.tgz#835f82fc86881a0808a8405f2576617bb5383554"
+  integrity sha512-SM3el0A28SwoeJljVNhF217o0nI4E7RfalLmuRQcT1/7tGcxUjgFa3jyrEndYUct8/uxxK5EUNGUu1YEDqzxqw==
 
 "@react-native-community/cli-clean@11.3.5":
   version "11.3.5"

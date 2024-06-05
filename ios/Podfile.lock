@@ -599,6 +599,8 @@ PODS:
     - React-Core
   - RNCAsyncStorage (1.19.1):
     - React-Core
+  - RNCClipboard (1.14.1):
+    - React-Core
   - RNCMaskedView (0.1.11):
     - React
   - RNDeviceInfo (10.8.0):
@@ -733,6 +735,7 @@ DEPENDENCIES:
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNArgon2 (from `../node_modules/react-native-argon2`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
@@ -882,6 +885,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-argon2"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCClipboard:
+    :path: "../node_modules/@react-native-clipboard/clipboard"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
   RNDeviceInfo:
@@ -988,6 +993,7 @@ SPEC CHECKSUMS:
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNArgon2: 1481820722fd4af1575c09f7fc9ad67c00ee8a42
   RNCAsyncStorage: f47fe18526970a69c34b548883e1aeceb115e3e1
+  RNCClipboard: 0a720adef5ec193aa0e3de24c3977222c7e52a37
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNDeviceInfo: 5795b418ed3451ebcaf39384e6cf51f60cb931c9
   RNFBApp: a0bc818210d2c452461842f7a0a4e456c11ed831

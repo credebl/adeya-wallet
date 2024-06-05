@@ -27,6 +27,9 @@ import {
   AnonCredsRequestedAttribute,
   parseInvitationFromUrl,
   findByReceivedInvitationId,
+  DidRecord,
+  DidRepository,
+  KeyType,
 } from '@adeya/ssi'
 import { CaptureBaseAttributeType } from '@hyperledger/aries-oca'
 import { TFunction } from 'i18next'
@@ -1070,4 +1073,41 @@ export function generateRandomWalletName() {
       .slice(1),
   )
   return name
+}
+
+export const getDefaultHolderDidDocument = async (agent: AdeyaAgent) => {
+  try {
+    let defaultDidRecord: DidRecord | null
+    const didRepository = await agent.dependencyManager.resolve(DidRepository)
+
+    defaultDidRecord = await didRepository.findSingleByQuery(agent.context, {
+      isDefault: true,
+    })
+
+    if (!defaultDidRecord) {
+      const did = await agent.dids.create({
+        method: 'key',
+        options: {
+          keyType: KeyType.Ed25519,
+        },
+      })
+
+      const [didRecord] = await agent.dids.getCreatedDids({
+        did: did.didState.did,
+        method: 'key',
+      })
+
+      didRecord.setTag('isDefault', true)
+
+      await didRepository.update(agent.context, didRecord)
+      defaultDidRecord = didRecord
+    }
+
+    const resolvedDidDocument = await agent.dids.resolveDidDocument(defaultDidRecord.did)
+
+    return resolvedDidDocument
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Error did create', error)
+  }
 }
