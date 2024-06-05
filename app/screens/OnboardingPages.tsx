@@ -1,5 +1,3 @@
-/* eslint-disable import/order */
-
 import React from 'react'
 import { Image, ScrollView, StyleSheet, Text, View, ImageBackground } from 'react-native'
 import { SvgProps } from 'react-native-svg'
@@ -9,10 +7,8 @@ import onBoardingDataSafe from '../assets/img/onBoardingdatasafe.svg'
 import Button, { ButtonType } from '../components/buttons/Button'
 import { useStore } from '../contexts/store'
 import { styles } from '../onboardingStyles'
-
 import { ITheme, theme } from '../theme'
 import { GenericFn } from '../types/fn'
-
 import { testIdWithKey } from '../utils/testable'
 
 import { OnboardingStyleSheet } from './Onboarding'
