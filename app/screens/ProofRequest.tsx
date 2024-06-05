@@ -8,7 +8,6 @@ import {
   AnonCredsRequestedPredicateMatch,
   deleteConnectionRecordById,
   getProofFormatData,
-  selectCredentialsForProofRequest,
   acceptProofRequest,
   declineProofRequest,
   sendProofProblemReport,
@@ -297,6 +296,21 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
   const hasSatisfiedPredicates = (fields: Fields, credId?: string) =>
     activeCreds.flatMap(item => evaluatePredicates(fields, credId)(item)).every(p => p.satisfied)
 
+  const formatCredentials = (
+    retrievedItems: Record<string, (AnonCredsRequestedAttributeMatch | AnonCredsRequestedPredicateMatch)[]>,
+    credList: string[],
+  ) => {
+    return Object.keys(retrievedItems)
+      .map(key => {
+        return {
+          [key]: retrievedItems[key].find(cred => credList.includes(cred.credentialId)),
+        }
+      })
+      .reduce((prev, current) => {
+        return { ...prev, ...current }
+      }, {})
+  }
+
   const handleAcceptPress = async () => {
     try {
       if (!(agent && proof && assertConnectedNetwork())) {
@@ -312,14 +326,19 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
 
       const formatToUse = format.request?.anoncreds ? 'anoncreds' : 'indy'
 
-      const automaticRequestedCreds =
-        retrievedCredentials &&
-        (await selectCredentialsForProofRequest(agent, {
-          proofRecordId: proof.id,
-          proofFormats: {
-            [formatToUse]: {},
-          },
-        }))
+      const credObject = {
+        ...retrievedCredentials,
+        attributes: formatCredentials(
+          retrievedCredentials.attributes,
+          activeCreds.map(item => item.credId),
+        ),
+        predicates: formatCredentials(
+          retrievedCredentials.predicates,
+          activeCreds.map(item => item.credId),
+        ),
+        selfAttestedAttributes: {},
+      }
+      const automaticRequestedCreds = { proofFormats: { [formatToUse]: { ...credObject } } }
 
       if (!automaticRequestedCreds) {
         throw new Error(t('ProofRequest.RequestedCredentialsCouldNotBeFound'))

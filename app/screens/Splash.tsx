@@ -56,7 +56,7 @@ const resumeOnboardingAt = (state: StoreOnboardingState, enableWalletNaming: boo
     (state.didNameWallet || !enableWalletNaming) &&
     !state.didConsiderBiometry
   ) {
-    return Screens.UseBiometry
+    return Screens.WalletOptions
   }
 
   if (
