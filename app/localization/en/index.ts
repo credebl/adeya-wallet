@@ -711,6 +711,9 @@ const translation = {
     "NotAvailable": " (Not Available)",
     "Title": "Notifications",
     "PushNotifications": "Push Notifications",
+  },
+  "DIDs":{
+    "Dids": "My DID",
   }
 }
 
