@@ -1,4 +1,4 @@
-import { ConnectionRecord, ConnectionType, useConnections } from '@adeya/ssi'
+import { ConnectionRecord, ConnectionType, DidExchangeState, useConnections } from '@adeya/ssi'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -31,10 +31,12 @@ const ListContacts: React.FC<ListContactsProps> = ({ navigation }) => {
   })
   const { records } = useConnections()
   const [store] = useStore()
-  // Filter out mediator agents
+  // Filter out mediator agents and connections that are not completed
   let connections: ConnectionRecord[] = records
   if (!store.preferences.developerModeEnabled) {
-    connections = records.filter(r => !r.connectionTypes.includes(ConnectionType.Mediator))
+    connections = records.filter(
+      r => !r.connectionTypes.includes(ConnectionType.Mediator) && r.state === DidExchangeState.Completed,
+    )
   }
 
   const onPressAddContact = () => {
