@@ -8,14 +8,13 @@ import {
   deleteCredentialExchangeRecordById,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
-import { BrandingOverlayType, CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
+import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
-import CredentialCard from '../components/misc/CredentialCard'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
 import W3CCredentialRecord from '../components/record/W3CCredentialRecord'
 import { ToastType } from '../components/toast/BaseToast'
@@ -103,16 +102,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   })
 
   useEffect(() => {
-    if (!agent) {
-      DeviceEventEmitter.emit(
-        EventTypes.ERROR_ADDED,
-        new BifoldError(t('Error.Title1033'), t('Error.Message1033'), t('CredentialDetails.CredentialNotFound'), 1033),
-      )
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!credential) {
+    if (!agent || !credential) {
       DeviceEventEmitter.emit(
         EventTypes.ERROR_ADDED,
         new BifoldError(t('Error.Title1033'), t('Error.Message1033'), t('CredentialDetails.CredentialNotFound'), 1033),
@@ -148,7 +138,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
         credentialDefinitionId: w3cCredential.credential.type[1],
       },
       meta: {
-        alias: w3cCredential.credential.issuerId,
+        alias: w3cCredential?.connectionLabel ?? w3cCredential.credential.issuerId,
         credConnectionId: w3cCredential.credential.issuerId,
         credName: w3cCredential.credential.type[1],
       },
@@ -270,13 +260,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   }
 
   const header = () => {
-    return OCABundleResolver.getBrandingOverlayType() === BrandingOverlayType.Branding10 ? (
-      <View>
-        {credential && (
-          <CredentialCard schemaId={w3cCredential?.credential.context[1] as string} style={{ margin: 16 }} />
-        )}
-      </View>
-    ) : (
+    return (
       <View style={styles.container}>
         <CredentialDetailSecondaryHeader />
         <CredentialCardLogo />
@@ -297,7 +281,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
           }}>
           <Text testID={testIdWithKey('IssuerName')}>
             <Text style={TextTheme.title}>{t('CredentialDetails.IssuedBy') + ' '}</Text>
-            <Text style={TextTheme.normal}>{w3cCredential?.credential.issuerId ?? ''}</Text>
+            <Text style={TextTheme.normal}>{w3cCredential?.connectionLabel ?? ''}</Text>
           </Text>
         </View>
       </View>

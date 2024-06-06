@@ -128,16 +128,7 @@ const ProofRequest: React.FC<ProofRequestProps> = ({ navigation, route }) => {
   })
 
   useEffect(() => {
-    if (!agent) {
-      DeviceEventEmitter.emit(
-        EventTypes.ERROR_ADDED,
-        new BifoldError(t('Error.Title1034'), t('Error.Message1034'), t('ProofRequest.ProofRequestNotFound'), 1034),
-      )
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!proof) {
+    if (!agent && !proof) {
       DeviceEventEmitter.emit(
         EventTypes.ERROR_ADDED,
         new BifoldError(t('Error.Title1034'), t('Error.Message1034'), t('ProofRequest.ProofRequestNotFound'), 1034),
