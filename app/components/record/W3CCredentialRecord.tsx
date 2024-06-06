@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import Icon from 'react-native-vector-icons/Feather'
 
 import { useTheme } from '../../contexts/theme'
 import { Field, W3CCredentialAttributeField } from '../../types/record'
@@ -37,6 +36,10 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({ header, footer, fields, hi
       minHeight: TextTheme.normal.fontSize,
       paddingVertical: 2,
     },
+    container: {
+      padding: 16,
+      flexDirection: 'row',
+    },
   })
 
   const resetShown = (): void => {
@@ -60,8 +63,7 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({ header, footer, fields, hi
       keyExtractor={({ title }, index) => title || index.toString()}
       renderItem={({ item: table, index }) => (
         <View style={{}}>
-          <View style={{ paddingVertical: 10, flexDirection: 'row' }}>
-            {table.depth > 1 && <Icon style={{ color: 'red' }} name="corner-down-right" size={30} />}
+          <View style={styles.container}>
             {table.title && (
               <Text
                 style={[ListItems.recordAttributeLabel, { fontWeight: 'bold', paddingLeft: 10 }]}
