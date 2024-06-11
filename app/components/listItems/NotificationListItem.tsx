@@ -7,6 +7,8 @@ import {
   declineProofRequest as declineProof,
   getProofRequestAgentMessage,
 } from '@adeya/ssi'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { V2RequestPresentationMessage } from '@credo-ts/core'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react'
@@ -67,6 +69,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
   const { ColorPallet, TextTheme } = useTheme()
   const { agent } = useAppAgent()
   const [declineModalVisible, setDeclineModalVisible] = useState(false)
+  const [notificationDetails, setNotificationDetails] = useState<V2RequestPresentationMessage | null>(null)
   const [details, setDetails] = useState<DisplayDetails>({
     type: InfoBoxType.Info,
     title: undefined,
@@ -215,6 +218,7 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
         case NotificationType.ProofRequest: {
           const proofId = (notification as ProofExchangeRecord).id
           getProofRequestAgentMessage(agent, proofId).then(message => {
+            setNotificationDetails(message)
             if (message instanceof V1RequestPresentationMessage && message.indyProofRequest) {
               resolve({
                 type: InfoBoxType.Info,
@@ -277,10 +281,18 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
           }
         } else {
           onPress = () => {
-            navigation.getParent()?.navigate(Stacks.NotificationStack, {
-              screen: Screens.ProofRequest,
-              params: { proofId: (notification as ProofExchangeRecord).id },
-            })
+            // Added this check to navigate to different screen if proof request is of presentation exchange format
+            if (notificationDetails?.formats[0].format.includes('dif/presentation-exchange')) {
+              navigation.getParent()?.navigate(Stacks.NotificationStack, {
+                screen: Screens.ProofRequestW3C,
+                params: { proofId: (notification as ProofExchangeRecord).id },
+              })
+            } else {
+              navigation.getParent()?.navigate(Stacks.NotificationStack, {
+                screen: Screens.ProofRequest,
+                params: { proofId: (notification as ProofExchangeRecord).id },
+              })
+            }
           }
         }
         onClose = toggleDeclineModalVisible

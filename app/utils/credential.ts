@@ -74,7 +74,7 @@ export const formatCredentialSubject = (
 
     if (!value) return // omit properties with no value
 
-    if (typeof value === 'string') {
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
       stringRows.push({
         key: sanitizeString(key),
         value: value,

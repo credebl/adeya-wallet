@@ -21,7 +21,6 @@ import {
   acceptInvitationFromUrl,
   createInvitation,
   AnonCredsRequestedPredicate,
-  getProofFormatData,
   getCredentialsForProofRequest,
   AnonCredsPredicateType,
   AnonCredsRequestedAttribute,
@@ -30,6 +29,9 @@ import {
   DidRecord,
   DidRepository,
   KeyType,
+  DifPexCredentialsForRequest,
+  JsonTransformer,
+  utils,
 } from '@adeya/ssi'
 import { CaptureBaseAttributeType } from '@hyperledger/aries-oca'
 import { TFunction } from 'i18next'
@@ -43,7 +45,13 @@ import { EventTypes, domain } from '../constants'
 import { i18n } from '../localization/index'
 import { Role } from '../types/chat'
 import { BifoldError } from '../types/error'
-import { ProofCredentialAttributes, ProofCredentialItems, ProofCredentialPredicates } from '../types/proof-items'
+import {
+  FormattedSubmission,
+  ProofCredentialAttributes,
+  ProofCredentialItems,
+  ProofCredentialPredicates,
+  W3cCredentialJson,
+} from '../types/proof-items'
 import { Attribute, Predicate } from '../types/record'
 import { ChildFn } from '../types/tour'
 
@@ -713,6 +721,86 @@ export const processProofPredicates = (
   return processedPredicates
 }
 
+export function formatDifPexCredentialsForRequest(
+  credentialsForRequest: DifPexCredentialsForRequest,
+  inputDescriptors: any[],
+): FormattedSubmission {
+  const entries = credentialsForRequest.requirements.flatMap(requirement => {
+    return requirement.submissionEntry.map(submission => {
+      const allVerifiableCredentials = submission.verifiableCredentials
+      if (allVerifiableCredentials[0]) {
+        const allValues = allVerifiableCredentials.map(cred => {
+          const credential = JsonTransformer.toJSON(cred.credentialRecord.credential) as W3cCredentialJson
+          const credentialAttributes = Array.isArray(cred.credentialSubject)
+            ? cred.credentialSubject[0] ?? {}
+            : cred.credentialSubject
+
+          const requestedAttributes = credential?.credentialSubject
+            ? credential?.credentialSubject
+            : Object.keys(credentialAttributes)
+
+          return {
+            credentialRecordId: cred.credentialRecord.id,
+            credentialRecords: cred.credentialRecord,
+            credential,
+            requestedAttributes,
+          }
+        })
+
+        return {
+          id: utils.uuid(),
+          name: submission?.name ?? 'Unknown',
+          description: submission?.purpose,
+          isSatisfied: true,
+          credentialName: allValues[0].credential?.type[1],
+          credentialRecordIds: allValues.map(value => value.credentialRecordId),
+          credentialRecords: allValues.map(value => value.credentialRecords),
+          issuerName: 'display.issuer.name',
+          requestedAttributes: allValues.map(value => value.requestedAttributes),
+          selectedCredentialIndex: 0,
+          inputDescriptorId: submission.inputDescriptorId,
+        }
+      }
+
+      const requestedAttrs: any[] = []
+
+      const inputDescriptor = inputDescriptors.find(i => i.id === submission.inputDescriptorId)
+      inputDescriptor.constraints.fields.forEach(field => {
+        field?.path?.forEach((path: string) => {
+          const constraints = path.match(/\['(.*?)'\]/g)
+          if (constraints) {
+            constraints.forEach((match: string) => {
+              const key = match.slice(2, -2)
+              requestedAttrs[0] = { ...requestedAttrs[0], [key]: '' }
+            })
+          }
+        })
+      })
+
+      return {
+        id: utils.uuid(),
+        name: submission.name ?? 'Unknown',
+        description: submission.purpose,
+        isSatisfied: false,
+        // fallback to submission name because there is no credential
+        credentialName: submission?.name ?? 'Credential',
+        issuerName: 'display.issuer.name',
+        requestedAttributes: requestedAttrs,
+        selectedCredentialIndex: 0,
+        inputDescriptorId: submission.inputDescriptorId,
+        credentialRecordIds: [],
+      }
+    })
+  })
+
+  return {
+    areAllSatisfied: entries.every(entry => entry.isSatisfied),
+    name: credentialsForRequest?.name ?? 'Unknown',
+    purpose: credentialsForRequest?.purpose ?? 'Unknown',
+    entries,
+  }
+}
+
 export const retrieveCredentialsForProof = async (
   agent: AdeyaAgent,
   proof: ProofExchangeRecord,
@@ -720,7 +808,8 @@ export const retrieveCredentialsForProof = async (
   t: TFunction<'translation', undefined>,
 ) => {
   try {
-    const format = await getProofFormatData(agent, proof.id)
+    const format = await agent.proofs.getFormatData(proof.id)
+    const hasPresentationExchange = format.request?.presentationExchange !== undefined
     const hasAnonCreds = format.request?.anoncreds !== undefined
     const hasIndy = format.request?.indy !== undefined
     const credentials = await getCredentialsForProofRequest(agent, {
@@ -751,6 +840,7 @@ export const retrieveCredentialsForProof = async (
               },
             }
           : {}),
+        ...(hasPresentationExchange ? { presentationExchange: {} } : {}),
       },
     })
     if (!credentials) {
@@ -763,6 +853,54 @@ export const retrieveCredentialsForProof = async (
 
     if (!(format && credentials && fullCredentials)) {
       return
+    }
+
+    if (hasPresentationExchange) {
+      // FIXME: non revocation requirements
+      const presentationExchange = format.request?.presentationExchange
+      const difPexCredentialsForRequest = credentials.proofFormats.presentationExchange
+
+      if (!difPexCredentialsForRequest || !presentationExchange) throw new Error('Invalid presentation request')
+
+      const presentationExchangeData = formatDifPexCredentialsForRequest(
+        credentials.proofFormats.presentationExchange,
+        difPexCredentialsForRequest?.presentation_definition?.input_descriptors,
+      )
+
+      return presentationExchangeData
+
+      // const presentationDefinition = presentationExchange.presentation_definition
+
+      // const descriptorMetadata = getDescriptorMetadata(difPexCredentialsForRequest)
+      // const anonCredsProofRequest = createAnonCredsProofRequest(presentationDefinition, descriptorMetadata)
+
+      // const anonCredsCredentialsForRequest = await getCredentialsForAnonCredsProofRequest(
+      //   agent.context,
+      //   anonCredsProofRequest,
+      //   { filterByNonRevocationRequirements: false }
+      // )
+
+      // const filtered = filterInvalidProofRequestMatches(anonCredsCredentialsForRequest, descriptorMetadata)
+      // const processedAttributes = processProofAttributes(
+      //   anonCredsProofRequest,
+      //   filtered,
+      //   fullCredentials,
+      //   groupByReferent
+      // )
+      // const processedPredicates = processProofPredicates(
+      //   anonCredsProofRequest,
+      //   filtered,
+      //   fullCredentials,
+      //   groupByReferent
+      // )
+      // const groupedProof = Object.values(mergeAttributesAndPredicates(processedAttributes, processedPredicates))
+
+      // return {
+      //   groupedProof,
+      //   retrievedCredentials: filtered,
+      //   fullCredentials,
+      //   descriptorMetadata,
+      // }
     }
 
     const proofFormat = credentials.proofFormats.anoncreds ?? credentials.proofFormats.indy

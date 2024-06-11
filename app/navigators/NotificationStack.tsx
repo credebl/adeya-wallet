@@ -7,6 +7,7 @@ import { useTheme } from '../contexts/theme'
 import CredentialDetails from '../screens/CredentialDetails'
 import CredentialOffer from '../screens/CredentialOffer'
 import ProofRequest from '../screens/ProofRequest'
+import ProofRequestW3C from '../screens/ProofRequestW3C'
 import { NotificationStackParams, Screens } from '../types/navigators'
 
 import { createDefaultStackOptions } from './defaultStackOptions'
@@ -33,6 +34,11 @@ const NotificationStack: React.FC = () => {
       <Stack.Screen
         name={Screens.ProofRequest}
         component={ProofRequest}
+        options={{ title: t('Screens.ProofRequest') }}
+      />
+      <Stack.Screen
+        name={Screens.ProofRequestW3C}
+        component={ProofRequestW3C}
         options={{ title: t('Screens.ProofRequest') }}
       />
       <Stack.Screen

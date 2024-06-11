@@ -15,6 +15,7 @@ export enum Screens {
   Notifications = 'Notifications',
   CredentialOffer = 'Credential Offer',
   ProofRequest = 'Proof Request',
+  ProofRequestW3C = 'Proof Request W3C',
   ProofRequestDetails = 'Proof Request Details',
   ProofRequestUsageHistory = 'Proof Request Usage History',
   Settings = 'Settings',
@@ -114,6 +115,7 @@ export type ContactStackParams = {
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean }
   [Screens.ProofRequest]: { proofId: string }
+  [Screens.ProofRequestW3C]: { proofId: string }
   [Screens.Home]: undefined
 }
 
@@ -180,6 +182,7 @@ export type NotificationStackParams = {
   [Screens.CredentialDetails]: { credentialId: string }
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofRequest]: { proofId: string }
+  [Screens.ProofRequestW3C]: { proofId: string }
   [Screens.CustomNotification]: undefined
   [Screens.ProofDetails]: { recordId: string }
 }

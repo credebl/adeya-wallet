@@ -15,6 +15,7 @@ import Home from '../screens/Home'
 import ListContacts from '../screens/ListContacts'
 import ProofDetails from '../screens/ProofDetails'
 import ProofRequest from '../screens/ProofRequest'
+import ProofRequestW3C from '../screens/ProofRequestW3C'
 import WhatAreContacts from '../screens/WhatAreContacts'
 import { ContactStackParams, Screens } from '../types/navigators'
 import { testIdWithKey } from '../utils/testable'
@@ -79,6 +80,11 @@ const ContactStack: React.FC = () => {
       <Stack.Screen
         name={Screens.ProofRequest}
         component={ProofRequest}
+        options={{ title: t('Screens.ProofRequest') }}
+      />
+      <Stack.Screen
+        name={Screens.ProofRequestW3C}
+        component={ProofRequestW3C}
         options={{ title: t('Screens.ProofRequest') }}
       />
       <Stack.Screen
