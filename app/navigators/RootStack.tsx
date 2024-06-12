@@ -26,7 +26,15 @@ import PINCreate from '../screens/PINCreate'
 import PINEnter from '../screens/PINEnter'
 import { AuthenticateStackParams, Screens, Stacks } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
-import { checkIfAlreadyConnected, connectFromInvitation, getOobDeepLink } from '../utils/helpers'
+import {
+  checkIfAlreadyConnected,
+  connectFromInvitation,
+  fetchUrlData,
+  getJson,
+  getUrl,
+  isValidUrl,
+  receiveMessageFromUrlRedirect,
+} from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
 import ConnectStack from './ConnectStack'
@@ -87,9 +95,15 @@ const RootStack: React.FC = () => {
   // handle deeplink events
   useEffect(() => {
     async function handleDeepLink(deepLink: string) {
+      let invitationUrl = deepLink
       try {
+        if (invitationUrl.includes('?url=')) {
+          const parts = invitationUrl.split('=')
+          invitationUrl = parts[1]
+        }
+
         // check if connection already exists
-        const isAlreadyConnected = await checkIfAlreadyConnected(agent, deepLink)
+        const isAlreadyConnected = await checkIfAlreadyConnected(agent, invitationUrl)
 
         if (isAlreadyConnected) {
           Toast.show({
@@ -100,25 +114,64 @@ const RootStack: React.FC = () => {
         }
 
         // Try connection based
-        const { connectionRecord } = await connectFromInvitation(agent, deepLink)
+        const { connectionRecord } = await connectFromInvitation(agent, invitationUrl)
         navigation.navigate(Stacks.ConnectionStack as any, {
           screen: Screens.Connection,
           params: { connectionId: connectionRecord?.id },
         })
       } catch {
         try {
-          // Try connectionless here
-          const message = await getOobDeepLink(deepLink, agent)
-          navigation.navigate(Stacks.ConnectionStack as any, {
-            screen: Screens.Connection,
-            params: { threadId: message['@id'] },
-          })
+          const json = getJson(invitationUrl)
+          if (json) {
+            await agent?.receiveMessage(json)
+            navigation.getParent()?.navigate(Stacks.ConnectionStack, {
+              screen: Screens.Connection,
+              params: { threadId: json['@id'] },
+            })
+            return
+          }
+
+          const urlData = await fetchUrlData(invitationUrl)
+          const isValidURL = isValidUrl(urlData)
+
+          if (isValidURL) {
+            const isAlreadyConnected = await checkIfAlreadyConnected(agent, urlData)
+
+            if (isAlreadyConnected) {
+              Toast.show({
+                type: ToastType.Warn,
+                text1: t('Contacts.AlreadyConnected'),
+              })
+              navigation.goBack()
+              return
+            }
+
+            const { connectionRecord } = await connectFromInvitation(agent, urlData)
+
+            navigation.getParent()?.navigate(Stacks.ConnectionStack, {
+              screen: Screens.Connection,
+              params: { connectionId: connectionRecord?.id },
+            })
+            return
+          }
+          // if scanned value is url -> receive message from it
+
+          const url = getUrl(invitationUrl)
+
+          if (url) {
+            const message = await receiveMessageFromUrlRedirect(invitationUrl, agent)
+            navigation.getParent()?.navigate(Stacks.ConnectionStack, {
+              screen: Screens.Connection,
+              params: { threadId: message['@id'] },
+            })
+            return
+          }
         } catch (error) {
           // TODO:(am add error handling here)
         }
       }
 
-      // set deeplink as inactive
+      // set deep link as inactive
       dispatch({
         type: DispatchAction.ACTIVE_DEEP_LINK,
         payload: [undefined],
