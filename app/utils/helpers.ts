@@ -30,6 +30,8 @@ import {
   DidRecord,
   DidRepository,
   KeyType,
+  useAdeyaAgent,
+  findConnectionById,
 } from '@adeya/ssi'
 import { CaptureBaseAttributeType } from '@hyperledger/aries-oca'
 import { TFunction } from 'i18next'
@@ -309,8 +311,11 @@ export function getCredentialConnectionLabel(credential?: CredentialExchangeReco
   }
 
   if (credential.connectionId) {
-    const connection = useConnectionById(credential.connectionId)
-    return connection?.alias || connection?.theirLabel || credential.connectionId
+    const { agent } = useAdeyaAgent()
+    findConnectionById
+    findConnectionById(agent, credential.connectionId).then(connection => {
+      return connection?.alias || connection?.theirLabel || credential.connectionId
+    })
   }
 
   return 'Unknown Contact'
