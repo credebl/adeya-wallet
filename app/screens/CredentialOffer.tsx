@@ -8,6 +8,7 @@ import {
   acceptCredentialOffer,
   declineCredentialOffer,
   sendCredentialProblemReport,
+  AutoAcceptCredential,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
@@ -34,7 +35,7 @@ import { W3CCredentialAttributeField } from '../types/record'
 import { ModalUsage } from '../types/remove'
 import { useAppAgent } from '../utils/agent'
 import { buildFieldsFromJSONLDCredential, formatCredentialSubject, getCredentialIdentifiers } from '../utils/credential'
-import { getCredentialConnectionLabel } from '../utils/helpers'
+import { getCredentialConnectionLabel, getDefaultHolderDidDocument } from '../utils/helpers'
 import { buildFieldsFromAnonCredsCredential } from '../utils/oca'
 import { testIdWithKey } from '../utils/testable'
 
@@ -152,7 +153,35 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
         return
       }
       setAcceptModalVisible(true)
-      await acceptCredentialOffer(agent, { credentialRecordId: credential.id })
+
+      const credentialFormatData = await getFormattedCredentialData(agent, credential.id)
+
+      // Added holder did as id if did is not present and negotiate offer
+      if (!credentialFormatData?.offer?.jsonld?.credential?.credentialSubject?.id) {
+        const holderDid = await getDefaultHolderDidDocument(agent)
+        await agent.credentials.negotiateOffer({
+          credentialFormats: {
+            jsonld: {
+              credential: {
+                ...credentialFormatData?.offer?.jsonld?.credential,
+                credentialSubject: {
+                  ...credentialFormatData?.offer?.jsonld?.credential?.credentialSubject,
+                  // Added holder did as id if did is not present
+                  id: holderDid?.id,
+                },
+              },
+              options: {
+                ...credentialFormatData?.offer?.jsonld?.options,
+              },
+            },
+          },
+          credentialRecordId: credential.id,
+          // we added auto accept credential to always accept the credential further flows
+          autoAcceptCredential: AutoAcceptCredential.Always,
+        })
+      } else {
+        await acceptCredentialOffer(agent, { credentialRecordId: credential.id })
+      }
     } catch (err: unknown) {
       setButtonsVisible(true)
       const error = new BifoldError(t('Error.Title1024'), t('Error.Message1024'), (err as Error).message, 1024)
