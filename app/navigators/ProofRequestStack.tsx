@@ -7,6 +7,7 @@ import HeaderRightHome from '../components/buttons/HeaderHome'
 import { useTheme } from '../contexts/theme'
 import ListProofRequests from '../screens/ListProofRequests'
 import ProofChangeCredential from '../screens/ProofChangeCredential'
+import ProofChangeCredentialW3C from '../screens/ProofChangeCredentialW3C'
 import ProofDetails from '../screens/ProofDetails'
 import ProofRequestDetails from '../screens/ProofRequestDetails'
 import ProofRequestUsageHistory from '../screens/ProofRequestUsageHistory'
@@ -40,6 +41,11 @@ const ProofRequestStack: React.FC = () => {
         name={Screens.ProofChangeCredential}
         component={ProofChangeCredential}
         options={{ title: t('Screens.ProofChangeCredential') }}
+      />
+      <Stack.Screen
+        name={Screens.ProofChangeCredentialW3C}
+        component={ProofChangeCredentialW3C}
+        options={{ title: t('Screens.ProofChangeCredentialW3C') }}
       />
       <Stack.Screen
         name={Screens.ProofRequesting}

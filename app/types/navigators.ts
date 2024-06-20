@@ -47,6 +47,7 @@ export enum Screens {
   ImportSuccess = 'Import Success',
   CredentialDetailsW3C = 'Credential Details W3C',
   ProofChangeCredential = 'Choose a credential',
+  ProofChangeCredentialW3C = 'Choose a W3C credential',
   DataRetention = 'Data Retention',
   Explore = 'Explore',
   OrganizationDetails = 'Organization Details',
@@ -126,6 +127,12 @@ export type ProofRequestsStackParams = {
   [Screens.ProofRequestDetails]: { templateId: string; connectionId?: string }
   [Screens.ProofRequestUsageHistory]: { templateId: string }
   [Screens.ProofChangeCredential]: {
+    selectedCred: string
+    altCredentials: string[]
+    proofId: string
+    onCredChange: (arg: string) => void
+  }
+  [Screens.ProofChangeCredentialW3C]: {
     selectedCred: string
     altCredentials: string[]
     proofId: string

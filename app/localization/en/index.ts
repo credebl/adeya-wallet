@@ -566,6 +566,7 @@ const translation = {
     "Explore": "Explore",
     "OrganizationDetails": "Organization Details",
     "ProofChangeCredential": "Choose a credential",
+    "ProofChangeCredentialW3C": "Choose a W3C credential",
     "DataRetention": "Data retention",
     "Organization": "Explore",
     "OrganizationConnection": "Connection"

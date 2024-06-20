@@ -282,7 +282,10 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
         } else {
           onPress = () => {
             // Added this check to navigate to different screen if proof request is of presentation exchange format
-            if (notificationDetails?.formats[0].format.includes('dif/presentation-exchange')) {
+            if (
+              notificationDetails?.formats?.length > 0 &&
+              notificationDetails?.formats[0].format.includes('dif/presentation-exchange')
+            ) {
               navigation.getParent()?.navigate(Stacks.NotificationStack, {
                 screen: Screens.ProofRequestW3C,
                 params: { proofId: (notification as ProofExchangeRecord).id },

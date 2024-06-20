@@ -85,26 +85,26 @@
   dependencies:
     static-eval "2.0.2"
 
-"@ayanworks/credo-polygon-w3c-module@0.0.2-alpha.10":
-  version "0.0.2-alpha.10"
-  resolved "https://registry.yarnpkg.com/@ayanworks/credo-polygon-w3c-module/-/credo-polygon-w3c-module-0.0.2-alpha.10.tgz#41d2a493aeed0fec4a92e3bd5d2f70d5e044e6c2"
-  integrity sha512-M2IWdeEZxHwT7+oW3Pm/ycOSxad9VnJx315Wd1+PPZdonwSYKK6U2YdvLe3CiozevhjWReDjnIatRnCmk38Xnw==
+"@ayanworks/credo-polygon-w3c-module@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@ayanworks/credo-polygon-w3c-module/-/credo-polygon-w3c-module-1.0.0.tgz#e48dcb48f8708b2959ebe02fcf3a5e08b168d479"
+  integrity sha512-dqcPI07bxzzGlOUkSHsyTe6DNAcXC3kvVdzH6BtOzrRyQ6Pujtr+6Fwn9VAFEKI88Pdxsk2upHAtlj1TmaeFRw==
   dependencies:
-    "@ayanworks/polygon-did-registrar" "0.0.16-alpha.20"
-    "@ayanworks/polygon-did-resolver" "0.0.16-alpha.15"
-    "@ayanworks/polygon-schema-manager" "0.0.2-alpha.9"
+    "@ayanworks/polygon-did-registrar" "1.0.0"
+    "@ayanworks/polygon-did-resolver" "1.0.0"
+    "@ayanworks/polygon-schema-manager" "1.0.0"
     "@credo-ts/askar" "0.5.3"
     "@credo-ts/core" "0.5.3"
     did-resolver "^4.1.0"
     ethers "^6.9.0"
 
-"@ayanworks/polygon-did-registrar@0.0.16-alpha.20":
-  version "0.0.16-alpha.20"
-  resolved "https://registry.yarnpkg.com/@ayanworks/polygon-did-registrar/-/polygon-did-registrar-0.0.16-alpha.20.tgz#c17fc082db84959cf1fd745515ad41c16a810236"
-  integrity sha512-4gH4Vq01fEtkgOzn43J/3B7sWs4N+KvkL2tvrtOF3cfELlUE4UuRx97JAXJlX9ayGWIspTYg+GMbnkvfTLT8GQ==
+"@ayanworks/polygon-did-registrar@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@ayanworks/polygon-did-registrar/-/polygon-did-registrar-1.0.0.tgz#6704a51b154e12c9484c90581a1c9dc41e01dcd3"
+  integrity sha512-pK6WELi9avhxFk7BGioMFu9U/VL6GLvW6n18QFq8G4EMPMWsAvTfiiqUadTVWU8nuHSOrgpBBW8kN5DPWwJPFg==
   dependencies:
-    "@ayanworks/polygon-did-registry-contract" "2.0.1-alpha.7"
-    "@ayanworks/polygon-did-resolver" "^0.0.16-alpha.15"
+    "@ayanworks/polygon-did-registry-contract" "3.0.0"
+    "@ayanworks/polygon-did-resolver" "1.0.0"
     "@credo-ts/core" "0.5.3"
     "@ethersproject/basex" "^5.7.0"
     "@ethersproject/signing-key" "^5.7.0"
@@ -114,27 +114,27 @@
     ethers "^6.9.0"
     uuid "^9.0.1"
 
-"@ayanworks/polygon-did-registry-contract@2.0.1-alpha.7":
-  version "2.0.1-alpha.7"
-  resolved "https://registry.yarnpkg.com/@ayanworks/polygon-did-registry-contract/-/polygon-did-registry-contract-2.0.1-alpha.7.tgz#4f694602701ac1f7b0503c150a8764a289b0294c"
-  integrity sha512-pwX45XsGT3LrIBpnIJ6FrzPuB3gSTWiNVSyGGniL0ofUgcsNGqXOv2g3WQSDcG9b7/+AGeoJ6tYqshCbnjsmvQ==
+"@ayanworks/polygon-did-registry-contract@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@ayanworks/polygon-did-registry-contract/-/polygon-did-registry-contract-3.0.0.tgz#52b18768b887e933d44a9713b33dc2efbb1dcf53"
+  integrity sha512-RnW31nkDIMG1YzuOycxGGrJFpgTcpBwS/UZR6/wMPrsJBKBEN28k2CZImwXkbgaknyTfL7xe1u3C8NxfDvhI4Q==
 
-"@ayanworks/polygon-did-resolver@0.0.16-alpha.15", "@ayanworks/polygon-did-resolver@^0.0.16-alpha.15":
-  version "0.0.16-alpha.15"
-  resolved "https://registry.yarnpkg.com/@ayanworks/polygon-did-resolver/-/polygon-did-resolver-0.0.16-alpha.15.tgz#f12969e6d7b7eba2432ccd2f6d9b4a1de5f3dcf9"
-  integrity sha512-JyjgFaWWSQzzj1LKsopYVvIJjeo6lzqfVIheILmgxcxvTo1/skFatthocBNmyQ4Vc8QyKc05s5AbTUkm74wNbg==
+"@ayanworks/polygon-did-resolver@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@ayanworks/polygon-did-resolver/-/polygon-did-resolver-1.0.0.tgz#4d267004a509fad9a75bb18c6f449f6c51e1f198"
+  integrity sha512-mzYh3XNQ4HJ0GakP1QD7UOW8PjMAhdtu/TXzeOqMtHLhWktFMQcgJuqNMNxMGbJFdIe12qFJROlle6p1BjF01g==
   dependencies:
-    "@ayanworks/polygon-did-registry-contract" "2.0.1-alpha.7"
+    "@ayanworks/polygon-did-registry-contract" "3.0.0"
     did-resolver "^4.1.0"
     ethers "^5.1.0"
 
-"@ayanworks/polygon-schema-manager@0.0.2-alpha.9":
-  version "0.0.2-alpha.9"
-  resolved "https://registry.yarnpkg.com/@ayanworks/polygon-schema-manager/-/polygon-schema-manager-0.0.2-alpha.9.tgz#24566f6d41bffc16d0483576df8b766217312fef"
-  integrity sha512-eHGNWQE8sYEPzYynnDswSLUlkF+BHMDHN5iSIfupbxPObScfMXPtYO/qSu0V4F+QmmmqH5WUpZ7qGBgOyi7j8Q==
+"@ayanworks/polygon-schema-manager@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@ayanworks/polygon-schema-manager/-/polygon-schema-manager-1.0.0.tgz#5f71320d93e874477906df15be1aacc32906d6aa"
+  integrity sha512-XByf/mydccNEnfiW83K9WlayvPgrRpLVqX7CwuHtdBTSlrhed+Vc9FnZLIQUsGGnlbowQVLaPteSaKg/lEYUzw==
   dependencies:
-    "@ayanworks/polygon-did-registry-contract" "2.0.1-alpha.7"
-    "@ayanworks/polygon-did-resolver" "^0.0.16-alpha.15"
+    "@ayanworks/polygon-did-registry-contract" "3.0.0"
+    "@ayanworks/polygon-did-resolver" "1.0.0"
     "@nomicfoundation/hardhat-verify" "^2.0.3"
     axios "^1.6.3"
     did-resolver "^4.1.0"
