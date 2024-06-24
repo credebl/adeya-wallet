@@ -151,7 +151,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
           title: store.preferences.walletName,
           accessibilityLabel: t('Screens.NameWallet'),
           testID: testIdWithKey('NameWallet'),
-          onPress: copyToClipboard,
+          onPress: () => navigation.navigate(Screens.NameWallet as never),
           value: 'Edit',
         },
       ],

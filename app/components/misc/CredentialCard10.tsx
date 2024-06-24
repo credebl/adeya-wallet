@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord } from '@adeya/ssi'
+import { CredentialExchangeRecord, useConnections } from '@adeya/ssi'
 import { LegacyBrandingOverlay } from '@hyperledger/aries-oca'
 import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
 import React, { useEffect, useState } from 'react'
@@ -75,7 +75,8 @@ const CredentialCard10: React.FC<CredentialCard10Props> = ({ credential, style =
   const { OCABundleResolver } = useConfiguration()
   const [overlay, setOverlay] = useState<CredentialOverlay<LegacyBrandingOverlay>>({})
   const [isRevoked, setIsRevoked] = useState<boolean>(false)
-  const credentialConnectionLabel = getCredentialConnectionLabel(credential)
+  const { records } = useConnections()
+  const credentialConnectionLabel = getCredentialConnectionLabel(records, credential)
 
   const styles = StyleSheet.create({
     container: {

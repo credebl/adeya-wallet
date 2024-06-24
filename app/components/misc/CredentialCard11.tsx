@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord } from '@adeya/ssi'
+import { CredentialExchangeRecord, useConnections } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { Attribute, CredentialOverlay, Predicate } from '@hyperledger/aries-oca/build/legacy'
 import startCase from 'lodash.startcase'
@@ -91,7 +91,8 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
   const { ColorPallet, TextTheme, ListItems } = useTheme()
   const { OCABundleResolver } = useConfiguration()
   const [isRevoked, setIsRevoked] = useState<boolean>(credential?.revocationNotification !== undefined)
-  const credentialConnectionLabel = getCredentialConnectionLabel(credential, connectionLabel)
+  const { records } = useConnections()
+  const credentialConnectionLabel = getCredentialConnectionLabel(records, credential, connectionLabel)
   const [isProofRevoked, setIsProofRevoked] = useState<boolean>(
     credential?.revocationNotification !== undefined && !!proof,
   )
