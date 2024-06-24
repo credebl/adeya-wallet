@@ -31,8 +31,6 @@ import {
   KeyType,
   DifPresentationExchangeProofFormatService,
   W3cCredentialRecord,
-  useAdeyaAgent,
-  findConnectionById,
 } from '@adeya/ssi'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { DifPresentationExchangeProofFormat, DifPresentationExchangeDefinitionV1 } from '@credo-ts/core'
@@ -305,7 +303,11 @@ export function getConnectionName(connection: ConnectionRecord | void): string |
   return connection?.alias || connection?.theirLabel
 }
 
-export function getCredentialConnectionLabel(credential?: CredentialExchangeRecord, connectionLabel?: string) {
+export function getCredentialConnectionLabel(
+  connections: ConnectionRecord[],
+  credential?: CredentialExchangeRecord,
+  connectionLabel?: string,
+) {
   if (!credential) {
     if (connectionLabel) {
       return connectionLabel
@@ -314,10 +316,8 @@ export function getCredentialConnectionLabel(credential?: CredentialExchangeReco
   }
 
   if (credential.connectionId) {
-    const { agent } = useAdeyaAgent()
-    findConnectionById(agent, credential.connectionId).then(connection => {
-      return connection?.alias || connection?.theirLabel || credential.connectionId
-    })
+    const connection = connections.find(connection => connection.id === credential.connectionId)
+    return connection?.alias || connection?.theirLabel || credential.connectionId
   }
 
   return 'Unknown Contact'

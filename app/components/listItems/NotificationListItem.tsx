@@ -226,6 +226,17 @@ const NotificationListItem: React.FC<NotificationListItemProps> = ({ notificatio
                 body: message.indyProofRequest.name,
                 buttonTitle: undefined,
               })
+            } else if (
+              message instanceof V2RequestPresentationMessage &&
+              message?.formats?.length > 0 &&
+              message?.formats[0].format.includes('dif/presentation-exchange')
+            ) {
+              resolve({
+                type: InfoBoxType.Info,
+                title: t('ProofRequest.NewProofRequest'),
+                body: message?.requestAttachments[0]?.data?.json?.presentation_definition?.name ?? 'Proof Request',
+                buttonTitle: undefined,
+              })
             } else {
               //TODO:(jl) Should we have a default message or stick with an empty string?
               resolve({

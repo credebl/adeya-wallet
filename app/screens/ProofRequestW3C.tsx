@@ -75,7 +75,10 @@ const ProofRequestW3C: React.FC<ProofRequestProps> = ({ navigation, route }) => 
   const [selectedCredentials, setSelectedCredentials] = useState<string[]>([])
   const credProofPromise = useAllCredentialsForProof(proofId)
 
-  const hasMatchingCredDef = useMemo(() => activeCreds.some(cred => cred.credId !== undefined), [activeCreds])
+  const hasMatchingCredDef = useMemo(
+    () => activeCreds.some(cred => cred.credExchangeRecord !== undefined),
+    [activeCreds],
+  )
   const styles = StyleSheet.create({
     pageContainer: {
       flex: 1,
@@ -446,7 +449,7 @@ const ProofRequestW3C: React.FC<ProofRequestProps> = ({ navigation, route }) => 
           <CredentialList
             header={proofPageHeader()}
             footer={hasAvailableCredentials ? proofPageFooter() : undefined}
-            items={activeCreds ?? []}
+            items={activeCreds.filter(cred => cred.credExchangeRecord === undefined)?.length > 0 ? [] : activeCreds}
           />
           {!hasAvailableCredentials && (
             <CredentialList
@@ -476,7 +479,7 @@ const ProofRequestW3C: React.FC<ProofRequestProps> = ({ navigation, route }) => 
                 </View>
               }
               footer={proofPageFooter()}
-              items={activeCreds.filter(cred => cred.credDefId === undefined) ?? []}
+              items={activeCreds.filter(cred => cred.credExchangeRecord === undefined) ?? []}
             />
           )}
         </View>
