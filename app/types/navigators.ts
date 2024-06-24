@@ -49,6 +49,7 @@ export enum Screens {
   DataRetention = 'Data Retention',
   Explore = 'Explore',
   OrganizationDetails = 'Organization Details',
+  GoogleDriveSignIn = 'Google Drive Sign In',
 }
 
 export enum Stacks {

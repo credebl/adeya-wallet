@@ -2,7 +2,9 @@
 import 'reflect-metadata'
 
 import { isWalletPinCorrect } from '@adeya/ssi'
-import React, { PropsWithChildren, createContext, useContext, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
+import React, { PropsWithChildren, createContext, useContext, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter } from 'react-native'
 
@@ -29,14 +31,42 @@ export interface AuthContext {
   setPIN: (PIN: string) => Promise<void>
   commitPIN: (useBiometry: boolean) => Promise<boolean>
   isBiometricsActive: () => Promise<boolean>
+  isSignedIn: boolean
+  signIn: () => Promise<void>
+  signOut: () => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContext>(null as unknown as AuthContext)
 
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [walletSecret, setWalletSecret] = useState<WalletSecret>()
+  const [isSignedIn, setIsSignedIn] = useState(false)
   const [, dispatch] = useStore()
   const { t } = useTranslation()
+
+  useEffect(() => {
+    const checkSignInStatus = async () => {
+      const userInfo = await AsyncStorage.getItem('userInfo')
+      setIsSignedIn(userInfo !== null)
+    }
+    checkSignInStatus()
+  }, [])
+
+  const signIn = async (): Promise<void> => {
+    // const userInfo = await GoogleSignin.signIn()
+    // await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo))
+    setIsSignedIn(true)
+  }
+
+  const signOut = async (): Promise<void> => {
+    try {
+      await GoogleSignin.signOut()
+      await AsyncStorage.removeItem('userInfo')
+      setIsSignedIn(false)
+    } catch (error) {
+      // error message
+    }
+  }
 
   const setPIN = async (PIN: string): Promise<void> => {
     const secret = await secretForPIN(PIN)
@@ -128,6 +158,9 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         commitPIN,
         setPIN,
         isBiometricsActive,
+        isSignedIn,
+        signIn,
+        signOut,
       }}>
       {children}
     </AuthContext.Provider>

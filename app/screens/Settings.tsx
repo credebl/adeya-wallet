@@ -19,6 +19,7 @@ import Toast from 'react-native-toast-message'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { ToastType } from '../components/toast/BaseToast'
+import { useAuth } from '../contexts/auth'
 import { useConfiguration } from '../contexts/configuration'
 import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
@@ -46,6 +47,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   const [enablePushNotifications, setEnablePushNotifications] = useState(false)
   const [pushNotificationCapable, setPushNotificationCapable] = useState(true)
   const [holderDid, setHolderDid] = useState('')
+  const { isSignedIn, signOut } = useAuth()
 
   const languages = [{ id: Locales.en, value: t('Language.English') }]
 
@@ -208,7 +210,35 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
           onPress: () => navigation.navigate(Screens.ExportWallet as never),
           value: undefined,
         },
-      ],
+        {
+          title: t('Backup.backup_google_drive'),
+          accessibilityLabel: t('Settings.GoogleDriveBackup'),
+          testID: testIdWithKey('BackupGoogleDrive'),
+          onPress: async () => {
+            if (isSignedIn) {
+              navigation.navigate(Screens.ExportWallet, { backupType: 'google_drive' })
+            } else {
+              navigation.navigate(Screens.GoogleDriveSignIn as never)
+            }
+          },
+          value: undefined,
+        },
+        isSignedIn && {
+          title: t('GoogleDrive.SignOutGoogle'),
+          accessibilityLabel: t('GoogleDrive.SignOutGoogle'),
+          testID: testIdWithKey('SignOutGoogleAccount'),
+          onPress: async () => {
+            await signOut()
+            Toast.show({
+              type: ToastType.Success,
+              text1: t('GoogleDrive.SignOutGoogleSuccess'),
+              position: 'bottom',
+            })
+            navigation.navigate(Screens.Settings)
+          },
+          value: undefined,
+        },
+      ].filter(Boolean),
     },
 
     {
