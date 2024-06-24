@@ -10,6 +10,7 @@ import Connection from '../screens/Connection'
 import ContactDetails from '../screens/ContactDetails'
 import CredentialOffer from '../screens/CredentialOffer'
 import ProofRequest from '../screens/ProofRequest'
+import ProofRequestW3C from '../screens/ProofRequestW3C'
 import { DeliveryStackParams, Screens, TabStacks } from '../types/navigators'
 import { testIdWithKey } from '../utils/testable'
 
@@ -36,6 +37,11 @@ const DeliveryStack: React.FC = () => {
       <Stack.Screen
         name={Screens.ProofRequest}
         component={ProofRequest}
+        options={{ title: t('Screens.ProofRequest') }}
+      />
+      <Stack.Screen
+        name={Screens.ProofRequestW3C}
+        component={ProofRequestW3C}
         options={{ title: t('Screens.ProofRequest') }}
       />
       <Stack.Screen
