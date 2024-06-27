@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
+import RecordRemove from '../components/record/RecordRemove'
 import W3CCredentialRecord from '../components/record/W3CCredentialRecord'
 import { ToastType } from '../components/toast/BaseToast'
 import { EventTypes } from '../constants'
@@ -181,6 +182,11 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     setIsRemoveModalDisplayed(false)
   }
 
+  const handleOnRemove = () => {
+    setIsRemoveModalDisplayed(true)
+  }
+
+  const callOnRemove = useCallback(() => handleOnRemove(), [])
   const callSubmitRemove = useCallback(() => handleSubmitRemove(), [])
   const callCancelRemove = useCallback(() => handleCancelRemove(), [])
 
@@ -284,6 +290,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
             <Text style={TextTheme.normal}>{w3cCredential?.connectionLabel ?? ''}</Text>
           </Text>
         </View>
+        <RecordRemove onRemove={callOnRemove} />
       </View>
     )
   }

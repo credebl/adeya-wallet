@@ -15,6 +15,7 @@ export enum Screens {
   Notifications = 'Notifications',
   CredentialOffer = 'Credential Offer',
   ProofRequest = 'Proof Request',
+  ProofRequestW3C = 'Proof Request W3C',
   ProofRequestDetails = 'Proof Request Details',
   ProofRequestUsageHistory = 'Proof Request Usage History',
   Settings = 'Settings',
@@ -46,6 +47,7 @@ export enum Screens {
   ImportSuccess = 'Import Success',
   CredentialDetailsW3C = 'Credential Details W3C',
   ProofChangeCredential = 'Choose a credential',
+  ProofChangeCredentialW3C = 'Choose a W3C credential',
   DataRetention = 'Data Retention',
   Explore = 'Explore',
   OrganizationDetails = 'Organization Details',
@@ -115,6 +117,7 @@ export type ContactStackParams = {
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean }
   [Screens.ProofRequest]: { proofId: string }
+  [Screens.ProofRequestW3C]: { proofId: string }
   [Screens.Home]: undefined
 }
 
@@ -125,6 +128,12 @@ export type ProofRequestsStackParams = {
   [Screens.ProofRequestDetails]: { templateId: string; connectionId?: string }
   [Screens.ProofRequestUsageHistory]: { templateId: string }
   [Screens.ProofChangeCredential]: {
+    selectedCred: string
+    altCredentials: string[]
+    proofId: string
+    onCredChange: (arg: string) => void
+  }
+  [Screens.ProofChangeCredentialW3C]: {
     selectedCred: string
     altCredentials: string[]
     proofId: string
@@ -181,6 +190,7 @@ export type NotificationStackParams = {
   [Screens.CredentialDetails]: { credentialId: string }
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofRequest]: { proofId: string }
+  [Screens.ProofRequestW3C]: { proofId: string }
   [Screens.CustomNotification]: undefined
   [Screens.ProofDetails]: { recordId: string }
 }

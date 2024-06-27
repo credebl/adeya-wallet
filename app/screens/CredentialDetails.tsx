@@ -4,6 +4,7 @@ import {
   CredentialExchangeRecord,
   updateCredentialExchangeRecord,
   deleteCredentialExchangeRecordById,
+  useConnections,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { BrandingOverlayType, CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
@@ -89,7 +90,8 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     brandingOverlay: undefined,
   })
 
-  const credentialConnectionLabel = getCredentialConnectionLabel(credential)
+  const { records } = useConnections()
+  const credentialConnectionLabel = getCredentialConnectionLabel(records, credential)
   const isPresentationFieldsEmpty = !overlay.brandingOverlay?.digest
   const styles = StyleSheet.create({
     container: {
