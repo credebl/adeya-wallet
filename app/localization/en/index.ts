@@ -720,6 +720,8 @@ const translation = {
     "SignInError": "An error occurred during sign-in",
     "SignOutGoogle": "Sign Out of Google Account",
     "SignOutGoogleSuccess": "Google Sign Out Successful",
+    "BackupFailed": "Backup failed to upload to Google Drive. Please try again later.",
+    "BackupSuccess": "Backup successfully uploaded to Google Drive.",
   },
 }
 
