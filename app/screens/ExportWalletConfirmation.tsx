@@ -1,5 +1,7 @@
 import { exportWallet as exportAdeyaWallet } from '@adeya/ssi'
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
 import { useNavigation, useRoute } from '@react-navigation/core'
+import { GDrive, ListQueryBuilder, MimeTypes } from '@robinbobin/react-native-google-drive-api-wrapper'
 import shuffle from 'lodash.shuffle'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -171,11 +173,67 @@ function ExportWalletConfirmation() {
 
       await RNFS.unlink(zipUpDirectory)
 
-      if (Platform.OS === 'ios') {
-        await Share.share({
-          title: 'Share backup zip file',
-          url: destinationZipPath,
-        })
+      if (parms?.params?.backupType === 'google_drive') {
+        const gdrive = new GDrive()
+        gdrive.accessToken = (await GoogleSignin.getTokens()).accessToken
+        gdrive.fetchCoercesTypes = true
+        gdrive.fetchRejectsOnHttpErrors = true
+        gdrive.fetchTimeout = 15000
+
+        const zipFileData = await RNFS.readFile(destinationZipPath, 'base64')
+        try {
+          const { result } = await gdrive.files.createIfNotExists(
+            {
+              q: new ListQueryBuilder()
+                .e('name', 'ADEYA Wallet Backups')
+                .and()
+                .e('mimeType', MimeTypes.FOLDER)
+                .and()
+                .in('root', 'parents'),
+            },
+            gdrive.files.newMetadataOnlyUploader().setRequestBody({
+              name: 'ADEYA Wallet Backups',
+              mimeType: MimeTypes.FOLDER,
+              parents: ['root'],
+            }),
+          )
+
+          const response = await gdrive.files
+            .newMultipartUploader()
+            .setData(zipFileData, 'application/zip')
+            .setIsBase64(true)
+            .setRequestBody({
+              name: zipFileName,
+              parents: [result.id],
+            })
+            .execute()
+
+          const folderData = await gdrive.files.getMetadata(result.id)
+          const fileData = await gdrive.files.getMetadata(response.id)
+          Toast.show({
+            type: ToastType.Success,
+            text1: t('GoogleDrive.BackupSuccess'),
+          })
+          setMatchPhrase(true)
+          navigation.navigate(Screens.Success, {
+            encryptedFileLocation: `Backup file uploaded successfully to Google Drive\n\nFolder: ${folderData.name}\n\nFile: ${fileData.name}`,
+          })
+          return
+        } catch (e) {
+          Toast.show({
+            type: ToastType.Error,
+            text1: t('GoogleDrive.BackupFailed'),
+            position: 'bottom',
+          })
+          return
+        }
+      } else {
+        if (Platform.OS === 'ios') {
+          await Share.share({
+            title: 'Share backup zip file',
+            url: destinationZipPath,
+          })
+        }
       }
 
       Toast.show({

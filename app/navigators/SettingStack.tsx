@@ -10,6 +10,7 @@ import CreateWallet from '../screens/CreateWallet'
 import DataRetention from '../screens/DataRetention'
 import ExportWallet from '../screens/ExportWallet'
 import ExportWalletConfirmation from '../screens/ExportWalletConfirmation'
+import GoogleDriveSignIn from '../screens/GoogleDriveSignIn'
 import ImportSuccess from '../screens/ImportSuccess'
 import ImportWalletVerify from '../screens/ImportWalletConfirmation'
 import Language from '../screens/Language'
@@ -136,6 +137,11 @@ const SettingStack: React.FC = () => {
         name={Screens.WalletOptions}
         component={CreateWallet}
         options={{ title: t('Screens.CreateWallet') }}
+      />
+      <Stack.Screen
+        name={Screens.GoogleDriveSignIn}
+        component={GoogleDriveSignIn}
+        options={{ title: t('Screens.GoogleDriveSignIn') }}
       />
     </Stack.Navigator>
   )

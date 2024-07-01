@@ -68,3 +68,5 @@ yarn-error.log
 .env
 google-services.json
 
+# VS Code
+.vscode/
