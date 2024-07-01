@@ -1,3 +1,4 @@
+import { W3cCredentialRecord } from '@adeya/ssi'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -16,13 +17,27 @@ export interface RecordProps {
   fields: Field[]
   hideFieldValues?: boolean
   tables: W3CCredentialAttributeField[]
+  w3cCredential?: Pick<W3cCredentialRecord, 'credential'> & {
+    credential: Pick<Pick<W3cCredentialRecord, 'credential'>, 'credential'> & {
+      prettyVc?: string
+    }
+  }
+  renderCertificate?: () => void
 }
 
-const W3CCredentialRecord: React.FC<RecordProps> = ({ header, footer, fields, hideFieldValues = false, tables }) => {
+const W3CCredentialRecord: React.FC<RecordProps> = ({
+  header,
+  footer,
+  fields,
+  hideFieldValues = false,
+  tables,
+  w3cCredential,
+  renderCertificate,
+}) => {
   const { t } = useTranslation()
   const [shown, setShown] = useState<boolean[]>([])
   const [showAll, setShowAll] = useState<boolean>(false)
-  const { ListItems, TextTheme } = useTheme()
+  const { ListItems, TextTheme, ColorPallet } = useTheme()
 
   const styles = StyleSheet.create({
     linkContainer: {
@@ -39,6 +54,14 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({ header, footer, fields, hi
     container: {
       padding: 16,
       flexDirection: 'row',
+    },
+    rowContainer: {
+      flexDirection: 'row',
+      justifyContent: w3cCredential?.credential?.prettyVc ? 'space-between' : 'flex-end',
+      backgroundColor: ColorPallet.grayscale.white,
+    },
+    linkText: {
+      fontWeight: 'bold',
     },
   })
 
@@ -102,19 +125,35 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({ header, footer, fields, hi
         header ? (
           <RecordHeader>
             {header()}
-            {hideFieldValues ? (
-              <View style={styles.linkContainer}>
-                <TouchableOpacity
-                  style={styles.link}
-                  activeOpacity={1}
-                  onPress={() => resetShown()}
-                  testID={testIdWithKey('HideAll')}
-                  accessible={true}
-                  accessibilityLabel={showAll ? t('Record.ShowAll') : t('Record.HideAll')}>
-                  <Text style={ListItems.recordLink}>{showAll ? t('Record.ShowAll') : t('Record.HideAll')}</Text>
-                </TouchableOpacity>
-              </View>
-            ) : null}
+            <View style={styles.rowContainer}>
+              {w3cCredential?.credential?.prettyVc ? (
+                <View style={styles.linkContainer}>
+                  <TouchableOpacity
+                    style={styles.link}
+                    activeOpacity={1}
+                    onPress={renderCertificate}
+                    testID={testIdWithKey('ViewCertificate')}
+                    accessible={true}
+                    accessibilityLabel={t('Record.ViewCertificate')}>
+                    <Text style={[ListItems.recordLink, styles.linkText]}>{t('Record.ViewCertificate')}</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+
+              {hideFieldValues ? (
+                <View style={styles.linkContainer}>
+                  <TouchableOpacity
+                    style={styles.link}
+                    activeOpacity={1}
+                    onPress={() => resetShown()}
+                    testID={testIdWithKey('HideAll')}
+                    accessible={true}
+                    accessibilityLabel={showAll ? t('Record.ShowAll') : t('Record.HideAll')}>
+                    <Text style={ListItems.recordLink}>{showAll ? t('Record.ShowAll') : t('Record.HideAll')}</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+            </View>
           </RecordHeader>
         ) : null
       }

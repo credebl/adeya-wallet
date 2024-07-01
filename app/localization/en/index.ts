@@ -521,6 +521,7 @@ const translation = {
     "Hidden": "Hidden",
     "InvalidDate": "Invalid Date: ",
     "Zoom": "Zoom",
+    "ViewCertificate": "View Certificate",
   },
   "Screens": {
     "Splash": "Splash",
@@ -576,7 +577,8 @@ const translation = {
     "ProofChangeCredentialW3C": "Choose a W3C credential",
     "DataRetention": "Data retention",
     "Organization": "Explore",
-    "OrganizationConnection": "Connection"
+    "OrganizationConnection": "Connection",
+    "RenderCertificate": "Certificate"
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",
