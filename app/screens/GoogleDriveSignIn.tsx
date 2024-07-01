@@ -14,7 +14,7 @@ const GoogleDriveSignIn: React.FC = () => {
   const { ColorPallet } = useTheme()
   const navigation = useNavigation()
   const { t } = useTranslation()
-  const { signIn } = useAuth()
+  const { googleSignIn } = useAuth()
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -27,10 +27,10 @@ const GoogleDriveSignIn: React.FC = () => {
   const authenticateWithGoogle = async () => {
     try {
       await GoogleSignin.hasPlayServices()
-      const userInfo = await GoogleSignin.signIn()
-      setUserInfo(userInfo)
-      await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo))
-      signIn()
+      const googleUserInfo = await GoogleSignin.signIn()
+      setUserInfo(googleUserInfo)
+      await AsyncStorage.setItem('googleUserInfo', JSON.stringify(googleUserInfo))
+      googleSignIn()
       navigation.replace(Screens.ExportWallet, { backupType: 'google_drive' })
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {

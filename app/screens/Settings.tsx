@@ -47,7 +47,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   const [enablePushNotifications, setEnablePushNotifications] = useState(false)
   const [pushNotificationCapable, setPushNotificationCapable] = useState(true)
   const [holderDid, setHolderDid] = useState('')
-  const { isSignedIn, signOut } = useAuth()
+  const { isGoogleAccountSignedIn, googleSignOut } = useAuth()
 
   const languages = [{ id: Locales.en, value: t('Language.English') }]
 
@@ -215,7 +215,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
           accessibilityLabel: t('Settings.GoogleDriveBackup'),
           testID: testIdWithKey('BackupGoogleDrive'),
           onPress: async () => {
-            if (isSignedIn) {
+            if (isGoogleAccountSignedIn) {
               navigation.navigate(Screens.ExportWallet, { backupType: 'google_drive' })
             } else {
               navigation.navigate(Screens.GoogleDriveSignIn as never)
@@ -223,17 +223,12 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
           },
           value: undefined,
         },
-        isSignedIn && {
+        isGoogleAccountSignedIn && {
           title: t('GoogleDrive.SignOutGoogle'),
           accessibilityLabel: t('GoogleDrive.SignOutGoogle'),
           testID: testIdWithKey('SignOutGoogleAccount'),
           onPress: async () => {
-            await signOut()
-            Toast.show({
-              type: ToastType.Success,
-              text1: t('GoogleDrive.SignOutGoogleSuccess'),
-              position: 'bottom',
-            })
+            await googleSignOut()
             navigation.navigate(Screens.Settings)
           },
           value: undefined,
