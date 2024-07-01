@@ -30,7 +30,11 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   useEffect(() => {
     if (!agent) return
 
-    getDefaultHolderDidDocument(agent)
+    const setupDefaultDid = async () => {
+      await getDefaultHolderDidDocument(agent)
+    }
+
+    setupDefaultDid()
   }, [agent])
 
   const styles = StyleSheet.create({
