@@ -51,6 +51,7 @@ export enum Screens {
   DataRetention = 'Data Retention',
   Explore = 'Explore',
   OrganizationDetails = 'Organization Details',
+  RenderCertificate = 'Render Certificate',
   GoogleDriveSignIn = 'Google Drive Sign In',
 }
 
@@ -145,6 +146,7 @@ export type CredentialStackParams = {
   [Screens.Credentials]: undefined
   [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
   [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
+  [Screens.RenderCertificate]: { credential: Pick<W3cCredentialRecord, 'credential'> }
   [Screens.Scan]: undefined
 }
 export type OrganizationStackParams = {

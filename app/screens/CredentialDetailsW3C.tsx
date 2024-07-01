@@ -295,6 +295,12 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     )
   }
 
+  const navigateToRenderCertificate = () => {
+    navigation.navigate(Screens.RenderCertificate, {
+      credential: w3cCredential as W3cCredentialRecord,
+    })
+  }
+
   return (
     <SafeAreaView style={{ flexGrow: 1 }} edges={['left', 'right']}>
       {w3cCredential && (
@@ -304,6 +310,8 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
           hideFieldValues
           header={header}
           footer={footer}
+          w3cCredential={w3cCredential}
+          renderCertificate={navigateToRenderCertificate}
         />
       )}
       <CommonRemoveModal

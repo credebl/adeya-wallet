@@ -515,6 +515,7 @@ const translation = {
     "Hidden": "Hidden",
     "InvalidDate": "Invalid Date: ",
     "Zoom": "Zoom",
+    "ViewCertificate": "View Certificate",
   },
   "Screens": {
     "Splash": "Splash",
@@ -571,6 +572,7 @@ const translation = {
     "DataRetention": "Data retention",
     "Organization": "Explore",
     "OrganizationConnection": "Connection",
+    "RenderCertificate": "Certificate",
     "GoogleDriveSignIn": "Google Drive Sign In",
   },
   "Loading": {
