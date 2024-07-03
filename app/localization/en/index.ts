@@ -493,6 +493,7 @@ const translation = {
     "ScanMyQR": "Scan my QR code",
     "Developer": "Developer options",
     "Backup": "backup wallet",
+    "GoogleDriveBackup": "Google Drive Backup",
     "Confirmation"  : 'Confirmation'
   },
   "TabStack": {
@@ -578,7 +579,8 @@ const translation = {
     "DataRetention": "Data retention",
     "Organization": "Explore",
     "OrganizationConnection": "Connection",
-    "RenderCertificate": "Certificate"
+    "RenderCertificate": "Certificate",
+    "GoogleDriveSignIn": "Google Drive Sign In",
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",
@@ -702,6 +704,7 @@ const translation = {
     "you_have_successfully": 'You have successfully selected the words.',
     "complete_backup": 'Complete Backup',
     "backup_wallet": 'Backup Wallet',
+    "backup_google_drive": 'Backup to Google Drive',
   },
   "PushNotifications": {
     "BulletFour": "new messages",
@@ -717,7 +720,19 @@ const translation = {
   },
   "DIDs":{
     "Dids": "My DID",
-  }
+  },
+  "GoogleDrive": {
+    "Backup": "Backup to Google Drive",
+    "BackupTitle": "Backup to Google Drive",
+    "SignInCancelled": "User cancelled the login flow",
+    "SignInProgress": "Operation is in progress already",
+    "PlayServicesNotAvailable": "Play services not available or outdated",
+    "SignInError": "An error occurred during sign-in",
+    "SignOutGoogle": "Sign Out of Google Account",
+    "SignOutGoogleSuccess": "Google Sign Out Successful",
+    "BackupFailed": "Backup failed to upload to Google Drive. Please try again later.",
+    "BackupSuccess": "Backup successfully uploaded to Google Drive.",
+  },
 }
 
 export default translation
