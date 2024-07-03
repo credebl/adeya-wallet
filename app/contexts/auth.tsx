@@ -2,7 +2,9 @@
 import 'reflect-metadata'
 
 import { isWalletPinCorrect } from '@adeya/ssi'
-import React, { PropsWithChildren, createContext, useContext, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
+import React, { PropsWithChildren, createContext, useContext, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter } from 'react-native'
 
@@ -29,14 +31,40 @@ export interface AuthContext {
   setPIN: (PIN: string) => Promise<void>
   commitPIN: (useBiometry: boolean) => Promise<boolean>
   isBiometricsActive: () => Promise<boolean>
+  isGoogleAccountSignedIn: boolean
+  googleSignIn: () => Promise<void>
+  googleSignOut: () => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContext>(null as unknown as AuthContext)
 
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [walletSecret, setWalletSecret] = useState<WalletSecret>()
+  const [isGoogleAccountSignedIn, setIsGoogleAccountSignedIn] = useState(false)
   const [, dispatch] = useStore()
   const { t } = useTranslation()
+
+  useEffect(() => {
+    const checkGoogleSignInStatus = async () => {
+      const googleUserInfo = await AsyncStorage.getItem('googleUserInfo')
+      setIsGoogleAccountSignedIn(googleUserInfo !== null)
+    }
+    checkGoogleSignInStatus()
+  }, [])
+
+  const googleSignIn = async (): Promise<void> => {
+    setIsGoogleAccountSignedIn(true)
+  }
+
+  const googleSignOut = async (): Promise<void> => {
+    try {
+      await GoogleSignin.signOut()
+      await AsyncStorage.removeItem('googleUserInfo')
+      setIsGoogleAccountSignedIn(false)
+    } catch (error) {
+      // error message
+    }
+  }
 
   const setPIN = async (PIN: string): Promise<void> => {
     const secret = await secretForPIN(PIN)
@@ -128,6 +156,9 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         commitPIN,
         setPIN,
         isBiometricsActive,
+        isGoogleAccountSignedIn,
+        googleSignIn,
+        googleSignOut,
       }}>
       {children}
     </AuthContext.Provider>

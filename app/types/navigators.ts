@@ -52,6 +52,7 @@ export enum Screens {
   Explore = 'Explore',
   OrganizationDetails = 'Organization Details',
   RenderCertificate = 'Render Certificate',
+  GoogleDriveSignIn = 'Google Drive Sign In',
 }
 
 export enum Stacks {
