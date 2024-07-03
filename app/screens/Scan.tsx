@@ -24,6 +24,7 @@ import {
   getJson,
   getUrl,
   isValidUrl,
+  parseInvitationUrl,
   receiveMessageFromUrlRedirect,
 } from '../utils/helpers'
 
@@ -41,9 +42,34 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
     defaultToConnect = route.params['defaultToConnect']
   }
 
+  const handleInvitationUrls = (url: string) => {
+    return parseInvitationUrl(url)
+  }
+
   const handleInvitation = async (value: string): Promise<void> => {
     try {
       setLoading(true)
+
+      const response = handleInvitationUrls(value)
+
+      if (response.success) {
+        const invitationData = response.result
+        if (invitationData.type === 'openid-credential-offer') {
+          const uri = invitationData.format === 'url' ? (invitationData.data as string) : undefined
+          const data =
+            invitationData.format === 'parsed' ? encodeURIComponent(JSON.stringify(invitationData.data)) : undefined
+          setLoading(false)
+          navigation.getParent()?.navigate(Stacks.NotificationStack, {
+            screen: Screens.OpenIdCredentialOffer,
+            params: { uri, data },
+          })
+        }
+        // if (invitationData.type === 'openid-authorization-request') {
+        //   const uri = invitationData.format === 'url' ? encodeURIComponent(invitationData.data as string) : undefined
+        // }
+
+        return
+      }
 
       const isAlreadyConnected = await checkIfAlreadyConnected(agent, value)
 

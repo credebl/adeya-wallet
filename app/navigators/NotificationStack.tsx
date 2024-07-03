@@ -6,6 +6,7 @@ import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import CredentialDetails from '../screens/CredentialDetails'
 import CredentialOffer from '../screens/CredentialOffer'
+import OpenIdCredentialOffer from '../screens/OpenIdCredentialOffer'
 import ProofRequest from '../screens/ProofRequest'
 import ProofRequestW3C from '../screens/ProofRequestW3C'
 import { NotificationStackParams, Screens } from '../types/navigators'
@@ -29,6 +30,11 @@ const NotificationStack: React.FC = () => {
       <Stack.Screen
         name={Screens.CredentialOffer}
         component={CredentialOffer}
+        options={{ title: t('Screens.CredentialOffer') }}
+      />
+      <Stack.Screen
+        name={Screens.OpenIdCredentialOffer}
+        component={OpenIdCredentialOffer}
         options={{ title: t('Screens.CredentialOffer') }}
       />
       <Stack.Screen

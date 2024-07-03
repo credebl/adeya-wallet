@@ -1,3 +1,5 @@
+import type { EndpointMetadataResult } from '@sphereon/oid4vci-common'
+
 import {
   useConnectionById,
   AnonCredsCredentialsForProofRequest,
@@ -31,9 +33,27 @@ import {
   KeyType,
   DifPresentationExchangeProofFormatService,
   W3cCredentialRecord,
+  JwkDidCreateOptions,
+  KeyDidCreateOptions,
 } from '@adeya/ssi'
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { DifPresentationExchangeProofFormat, DifPresentationExchangeDefinitionV1 } from '@credo-ts/core'
+import {
+  DifPresentationExchangeProofFormat,
+  DifPresentationExchangeDefinitionV1,
+  DidJwk,
+  DidKey,
+  JwaSignatureAlgorithm,
+  SdJwtVcRecord,
+  SdJwtVcRepository,
+  W3cCredentialRepository,
+  getJwkFromKey,
+} from '@credo-ts/core'
+import {
+  OpenId4VciCredentialFormatProfile,
+  OpenId4VciCredentialSupported,
+  OpenId4VciCredentialSupportedWithId,
+  OpenId4VciIssuerMetadataDisplay,
+} from '@credo-ts/openid4vc'
 import { CaptureBaseAttributeType } from '@hyperledger/aries-oca'
 import { TFunction } from 'i18next'
 import moment from 'moment'
@@ -53,6 +73,7 @@ import { ChildFn } from '../types/tour'
 export { parsedCredDefNameFromCredential } from './cred-def'
 import { AdeyaAgent } from './agent'
 import { parseCredDefFromId } from './cred-def'
+import { sanitizeString } from './credential'
 
 export { parsedCredDefName } from './cred-def'
 export { parsedSchema } from './schema'
@@ -1260,5 +1281,445 @@ export const getDefaultHolderDidDocument = async (agent: AdeyaAgent) => {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log('Error did create', error)
+  }
+}
+
+export enum InvitationQrTypesSupported {
+  OPENID = 'openid://',
+  OPENID_INITIATE_ISSUANCE = 'openid-initiate-issuance://',
+  OPENID_CREDENTIAL_OFFER = 'openid-credential-offer://',
+  OPENID4VP = 'openid4vp://',
+  OPENID_VC = 'openid-vc://',
+}
+
+export type ParseInvitationResult =
+  | {
+      success: true
+      result: ParsedInvitation
+    }
+  | {
+      success: false
+      error: string
+    }
+
+export type ParsedInvitation = {
+  type: 'openid-credential-offer' | 'openid-authorization-request'
+  format: 'url' | 'parsed'
+  data: string | Record<string, unknown>
+}
+
+export const isOpenIdCredentialOffer = (url: string) => {
+  if (
+    url.startsWith(InvitationQrTypesSupported.OPENID_INITIATE_ISSUANCE) ||
+    url.startsWith(InvitationQrTypesSupported.OPENID_CREDENTIAL_OFFER)
+  ) {
+    return true
+  }
+
+  if (url.includes('credential_offer_uri=') || url.includes('credential_offer=')) {
+    return true
+  }
+
+  return false
+}
+
+export const isOpenIdPresentationRequest = (url: string) => {
+  if (
+    url.startsWith(InvitationQrTypesSupported.OPENID) ||
+    url.startsWith(InvitationQrTypesSupported.OPENID_VC) ||
+    url.startsWith(InvitationQrTypesSupported.OPENID4VP)
+  ) {
+    return true
+  }
+
+  if (url.includes('request_uri=') || url.includes('request=')) {
+    return true
+  }
+
+  return false
+}
+
+export function parseInvitationUrl(invitationUrl: string): ParseInvitationResult {
+  if (isOpenIdCredentialOffer(invitationUrl)) {
+    return {
+      success: true,
+      result: {
+        format: 'url',
+        type: 'openid-credential-offer',
+        data: invitationUrl,
+      },
+    }
+  }
+
+  if (isOpenIdPresentationRequest(invitationUrl)) {
+    return {
+      success: true,
+      result: {
+        format: 'url',
+        type: 'openid-authorization-request',
+        data: invitationUrl,
+      },
+    }
+  }
+
+  return {
+    success: false,
+    error: 'Invitation not recognized.',
+  }
+}
+
+export interface OpenId4VcCredentialMetadata {
+  credential: {
+    display?: OpenId4VciCredentialSupported['display']
+    order?: OpenId4VciCredentialSupported['order']
+  }
+  issuer: {
+    display?: OpenId4VciIssuerMetadataDisplay[]
+    id: string
+  }
+}
+
+const openId4VcCredentialMetadataKey = '_adeya/openId4VcCredentialMetadata'
+
+export function extractOpenId4VcCredentialMetadata(
+  credentialMetadata: OpenId4VciCredentialSupported,
+  serverMetadata: EndpointMetadataResult,
+): OpenId4VcCredentialMetadata {
+  return {
+    credential: {
+      display: credentialMetadata.display,
+      order: credentialMetadata.order,
+    },
+    issuer: {
+      display: serverMetadata.credentialIssuerMetadata?.display,
+      id: serverMetadata.issuer,
+    },
+  }
+}
+
+export function setOpenId4VcCredentialMetadata(
+  credentialRecord: W3cCredentialRecord | SdJwtVcRecord,
+  metadata: OpenId4VcCredentialMetadata,
+) {
+  credentialRecord.metadata.set(openId4VcCredentialMetadataKey, metadata)
+}
+
+export function getOpenId4VcCredentialMetadata(
+  credentialRecord: W3cCredentialRecord | SdJwtVcRecord,
+): OpenId4VcCredentialMetadata | null {
+  return credentialRecord.metadata.get(openId4VcCredentialMetadataKey)
+}
+
+export const receiveCredentialFromOpenId4VciOffer = async ({
+  agent,
+  data,
+  uri,
+}: {
+  agent: AdeyaAgent
+  // Either data itself (the offer) or uri can be passed
+  data?: string
+  uri?: string
+}) => {
+  let offerUri = uri
+
+  if (!offerUri && data) {
+    // FIXME: Credo only support credential offer string, but we already parsed it before. So we construct an offer here
+    // but in the future we need to support the parsed offer in Credo directly
+    offerUri = `openid-credential-offer://credential_offer=${encodeURIComponent(JSON.stringify(data))}`
+  } else if (!offerUri) {
+    throw new Error('either data or uri must be provided')
+  }
+
+  agent.config.logger.info(`Receiving openid uri ${offerUri}`, {
+    offerUri,
+    data,
+    uri,
+  })
+  const resolvedCredentialOffer = await agent.modules.openId4VcHolder.resolveCredentialOffer(offerUri)
+
+  // FIXME: return credential_supported entry for credential so it's easy to store metadata
+  const credentials = await agent.modules.openId4VcHolder.acceptCredentialOfferUsingPreAuthorizedCode(
+    resolvedCredentialOffer,
+    {
+      credentialBindingResolver: async ({
+        supportedDidMethods,
+        keyType,
+        supportsAllDidMethods,
+        supportsJwk,
+        credentialFormat,
+      }) => {
+        // First, we try to pick a did method
+        // Prefer did:jwk, otherwise use did:key, otherwise use undefined
+        let didMethod: 'key' | 'jwk' | undefined =
+          supportsAllDidMethods || supportedDidMethods?.includes('did:jwk')
+            ? 'jwk'
+            : supportedDidMethods?.includes('did:key')
+            ? 'key'
+            : undefined
+
+        // If supportedDidMethods is undefined, and supportsJwk is false, we will default to did:key
+        // this is important as part of MATTR launchpad support which MUST use did:key but doesn't
+        // define which did methods they support
+        if (!supportedDidMethods && !supportsJwk) {
+          didMethod = 'key'
+        }
+
+        if (didMethod) {
+          const didResult = await agent.dids.create<JwkDidCreateOptions | KeyDidCreateOptions>({
+            method: didMethod,
+            options: {
+              keyType,
+            },
+          })
+
+          if (didResult.didState.state !== 'finished') {
+            throw new Error('DID creation failed.')
+          }
+
+          let verificationMethodId: string
+          if (didMethod === 'jwk') {
+            const didJwk = DidJwk.fromDid(didResult.didState.did)
+            verificationMethodId = didJwk.verificationMethodId
+          } else {
+            const didKey = DidKey.fromDid(didResult.didState.did)
+            verificationMethodId = `${didKey.did}#${didKey.key.fingerprint}`
+          }
+
+          return {
+            didUrl: verificationMethodId,
+            method: 'did',
+          }
+        }
+
+        // Otherwise we also support plain jwk for sd-jwt only
+        if (supportsJwk && credentialFormat === OpenId4VciCredentialFormatProfile.SdJwtVc) {
+          const key = await agent.wallet.createKey({
+            keyType,
+          })
+          return {
+            method: 'jwk',
+            jwk: getJwkFromKey(key),
+          }
+        }
+
+        throw new Error(
+          `No supported binding method could be found. Supported methods are did:key and did:jwk, or plain jwk for sd-jwt. Issuer supports ${
+            supportsJwk ? 'jwk, ' : ''
+          }${supportedDidMethods?.join(', ') ?? 'Unknown'}`,
+        )
+      },
+
+      verifyCredentialStatus: false,
+      allowedProofOfPossessionSignatureAlgorithms: [
+        // NOTE: MATTR launchpad for JFF MUST use EdDSA. So it is important that the default (first allowed one)
+        // is EdDSA. The list is ordered by preference, so if no suites are defined by the issuer, the first one
+        // will be used
+        JwaSignatureAlgorithm.EdDSA,
+        JwaSignatureAlgorithm.ES256,
+      ],
+    },
+  )
+
+  const [firstCredential] = credentials
+  if (!firstCredential) throw new Error('Error retrieving credential using pre authorized flow.')
+
+  let record: SdJwtVcRecord | W3cCredentialRecord
+
+  // TODO: add claimFormat to SdJwtVc
+
+  if ('compact' in firstCredential) {
+    record = new SdJwtVcRecord({
+      compactSdJwtVc: firstCredential.compact,
+    })
+  } else {
+    record = new W3cCredentialRecord({
+      credential: firstCredential,
+      // We don't support expanded types right now, but would become problem when we support JSON-LD
+      tags: {},
+    })
+  }
+
+  const openId4VcMetadata = extractOpenId4VcCredentialMetadata(
+    resolvedCredentialOffer.offeredCredentials[0] as OpenId4VciCredentialSupportedWithId,
+    resolvedCredentialOffer.metadata,
+  )
+
+  setOpenId4VcCredentialMetadata(record, openId4VcMetadata)
+
+  return record
+}
+
+export interface DisplayImage {
+  url?: string
+  altText?: string
+}
+
+export interface CredentialDisplay {
+  name: string
+  locale?: string
+  description?: string
+  textColor?: string
+  backgroundColor?: string
+  backgroundImage?: DisplayImage
+  issuer: CredentialIssuerDisplay
+}
+
+export interface CredentialIssuerDisplay {
+  name: string
+  locale?: string
+  logo?: DisplayImage
+}
+
+function findDisplay<Display extends { locale?: string }>(display?: Display[]): Display | undefined {
+  if (!display) return undefined
+
+  let item = display.find(d => d.locale?.startsWith('en-'))
+  if (!item) item = display.find(d => !d.locale)
+  if (!item) item = display[0]
+
+  return item
+}
+
+const urlRegex = /^(.*:)\/\/([A-Za-z0-9-.]+)(:[0-9]+)?(.*)$/
+
+export function getHostNameFromUrl(url: string) {
+  const parts = urlRegex.exec(url)
+  return parts ? parts[2] : undefined
+}
+
+export function getW3cIssuerDisplay(
+  credential: W3cCredentialJson,
+  openId4VcMetadata?: OpenId4VcCredentialMetadata | null,
+): CredentialIssuerDisplay {
+  const issuerDisplay: Partial<CredentialIssuerDisplay> = {}
+
+  // Try to extract from openid metadata first
+  if (openId4VcMetadata) {
+    const openidIssuerDisplay = findDisplay(openId4VcMetadata.issuer.display)
+
+    if (openidIssuerDisplay) {
+      issuerDisplay.name = openidIssuerDisplay.name
+
+      if (openidIssuerDisplay.logo) {
+        issuerDisplay.logo = {
+          url: openidIssuerDisplay.logo?.url,
+          altText: openidIssuerDisplay.logo?.alt_text,
+        }
+      }
+    }
+
+    // If the credentialDisplay contains a logo, and the issuerDisplay does not, use the logo from the credentialDisplay
+    const openidCredentialDisplay = findDisplay(openId4VcMetadata.credential.display)
+    if (openidCredentialDisplay && !issuerDisplay.logo && openidCredentialDisplay.logo) {
+      issuerDisplay.logo = {
+        url: openidCredentialDisplay.logo?.url,
+        altText: openidCredentialDisplay.logo?.alt_text,
+      }
+    }
+  }
+
+  // If openid metadata is not available, try to extract display metadata from the credential based on JFF metadata
+  const jffCredential = credential as any
+  const issuerJson = typeof jffCredential.issuer === 'string' ? undefined : jffCredential.issuer
+
+  // Issuer Display from JFF
+  if (!issuerDisplay.logo || !issuerDisplay.logo.url) {
+    if (issuerJson?.logoUrl) {
+      issuerDisplay.logo = {
+        url: issuerJson?.logoUrl,
+      }
+    } else if (issuerJson?.image) {
+      issuerDisplay.logo = {
+        url: typeof issuerJson.image === 'string' ? issuerJson.image : issuerJson.image.id,
+      }
+    }
+  }
+
+  // Issuer name from JFF
+  if (!issuerDisplay.name) {
+    issuerDisplay.name = issuerJson?.name
+  }
+
+  // Last fallback: use issuer id from openid4vc
+  if (!issuerDisplay.name && openId4VcMetadata?.issuer.id) {
+    issuerDisplay.name = getHostNameFromUrl(openId4VcMetadata.issuer.id)
+  }
+
+  return {
+    ...issuerDisplay,
+    name: issuerDisplay.name ?? 'Unknown',
+  }
+}
+
+export type W3cIssuerJson = {
+  id: string
+}
+
+export type W3cCredentialSubjectJson = {
+  id?: string
+  [key: string]: unknown
+}
+
+export type W3cCredentialJson = {
+  type: Array<string>
+  issuer: W3cIssuerJson
+  issuanceDate: string
+  expiryDate?: string
+  credentialSubject: W3cCredentialSubjectJson | W3cCredentialSubjectJson[]
+}
+
+export function getW3cCredentialDisplay(
+  credential: W3cCredentialJson,
+  openId4VcMetadata?: OpenId4VcCredentialMetadata | null,
+) {
+  const credentialDisplay: Partial<CredentialDisplay> = {}
+
+  if (openId4VcMetadata) {
+    const openidCredentialDisplay = findDisplay(openId4VcMetadata.credential.display)
+
+    if (openidCredentialDisplay) {
+      credentialDisplay.name = openidCredentialDisplay.name
+      credentialDisplay.description = openidCredentialDisplay.description
+      credentialDisplay.textColor = openidCredentialDisplay.text_color
+      credentialDisplay.backgroundColor = openidCredentialDisplay.background_color
+
+      if (openidCredentialDisplay.background_image) {
+        credentialDisplay.backgroundImage = {
+          url: openidCredentialDisplay.background_image.url,
+          altText: openidCredentialDisplay.background_image.alt_text,
+        }
+      }
+
+      // NOTE: logo is used in issuer display (not sure if that's right though)
+    }
+  }
+
+  // If openid metadata is not available, try to extract display metadata from the credential based on JFF metadata
+  const jffCredential = credential as any
+
+  if (!credentialDisplay.name) {
+    credentialDisplay.name = jffCredential.name
+  }
+
+  // If there's no name for the credential, we extract it from the last type
+  // and sanitize it. This is not optimal. But provides at least something.
+  if (!credentialDisplay.name && jffCredential.type.length > 1) {
+    const lastType = jffCredential.type[jffCredential.type.length - 1]
+    if (lastType && !lastType.startsWith('http')) {
+      credentialDisplay.name = sanitizeString(lastType)
+    }
+  }
+
+  return {
+    ...credentialDisplay,
+    name: credentialDisplay.name ?? 'Credential',
+  }
+}
+
+export async function storeCredential(agent: AdeyaAgent, credentialRecord: W3cCredentialRecord | SdJwtVcRecord) {
+  if (credentialRecord instanceof W3cCredentialRecord) {
+    await agent.dependencyManager.resolve(W3cCredentialRepository).save(agent.context, credentialRecord)
+  } else {
+    await agent.dependencyManager.resolve(SdJwtVcRepository).save(agent.context, credentialRecord)
   }
 }

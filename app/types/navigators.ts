@@ -52,6 +52,7 @@ export enum Screens {
   Explore = 'Explore',
   OrganizationDetails = 'Organization Details',
   RenderCertificate = 'Render Certificate',
+  OpenIdCredentialOffer = 'Open Id Credential Offer',
 }
 
 export enum Stacks {
@@ -194,6 +195,7 @@ export type NotificationStackParams = {
   [Screens.ProofRequestW3C]: { proofId: string }
   [Screens.CustomNotification]: undefined
   [Screens.ProofDetails]: { recordId: string }
+  [Screens.OpenIdCredentialOffer]: { uri: string }
 }
 
 export type DeliveryStackParams = {
