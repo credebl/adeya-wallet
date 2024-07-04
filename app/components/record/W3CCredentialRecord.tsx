@@ -28,15 +28,14 @@ export interface RecordProps {
 const W3CCredentialRecord: React.FC<RecordProps> = ({
   header,
   footer,
-  fields,
   hideFieldValues = false,
   tables,
   w3cCredential,
   renderCertificate,
 }) => {
   const { t } = useTranslation()
-  const [shown, setShown] = useState<boolean[]>([])
-  const [showAll, setShowAll] = useState<boolean>(false)
+  const [shown, setShown] = useState<boolean[][]>([])
+  const [showAll, setShowAll] = useState<boolean>(true)
   const { ListItems, TextTheme, ColorPallet } = useTheme()
 
   const styles = StyleSheet.create({
@@ -66,19 +65,13 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({
   })
 
   const resetShown = (): void => {
-    setShown(fields.map(() => showAll))
+    setShown(tables.map(table => table.rows.map(() => showAll)))
     setShowAll(!showAll)
-  }
-
-  const toggleShownState = (newShowStates: boolean[]): void => {
-    if (newShowStates.filter(shownState => shownState === showAll).length > Math.floor(fields.length / 2)) {
-      setShowAll(!showAll)
-    }
   }
 
   useEffect(() => {
     resetShown()
-  }, [])
+  }, [tables])
 
   return (
     <FlatList
@@ -110,11 +103,10 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({
                 hideFieldValue={hideFieldValues}
                 onToggleViewPressed={() => {
                   const newShowState = [...shown]
-                  newShowState[index] = !shown[index]
+                  newShowState[index][idx] = !shown[index][idx]
                   setShown(newShowState)
-                  toggleShownState(newShowState)
                 }}
-                shown={hideFieldValues ? !!shown[index] : true}
+                shown={hideFieldValues ? !!(shown?.[index]?.[idx] ?? false) : true}
                 hideBottomBorder={idx === table.rows.length - 1}
               />
             ))}

@@ -9,6 +9,7 @@ import {
   SingleContextStorageLruCache,
   CacheModule,
   MediatorPickupStrategy,
+  WebDidResolver,
 } from '@adeya/ssi'
 import { PolygonDidResolver, PolygonModule } from '@ayanworks/credo-polygon-w3c-module'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -159,7 +160,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
           }),
           polygon: new PolygonModule({}),
           dids: new DidsModule({
-            resolvers: [new PolygonDidResolver(), new IndyVdrIndyDidResolver()],
+            resolvers: [new PolygonDidResolver(), new IndyVdrIndyDidResolver(), new WebDidResolver()],
           }),
           cache: new CacheModule({
             cache: new SingleContextStorageLruCache({
