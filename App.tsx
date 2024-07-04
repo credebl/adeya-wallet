@@ -40,12 +40,15 @@ const App = () => {
     // Hide the native splash / loading screen so that our
     // RN version can be displayed
     SplashScreen.hide()
-    GoogleSignin.configure({
-      webClientId: Config.GOOGLE_WEB_CLIENT_ID,
-      iosClientId: Config.GOOGLE_IOS_CLIENT_ID,
-      offlineAccess: true,
-      scopes: ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive.metadata'],
-    })
+
+    if (Config.GOOGLE_WEB_CLIENT_ID && Config.GOOGLE_IOS_CLIENT_ID) {
+      GoogleSignin.configure({
+        webClientId: Config.GOOGLE_WEB_CLIENT_ID,
+        iosClientId: Config.GOOGLE_IOS_CLIENT_ID,
+        offlineAccess: true,
+        scopes: ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive.metadata'],
+      })
+    }
   }, [])
 
   return (
