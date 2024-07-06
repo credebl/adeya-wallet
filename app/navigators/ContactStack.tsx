@@ -62,7 +62,7 @@ const ContactStack: React.FC = () => {
       <Stack.Screen
         name={Screens.CredentialDetailsW3C}
         component={CredentialDetailsW3C}
-        options={{ title: t('Screens.CredentialDetailsW3C') }}
+        options={{ title: t('Screens.CredentialDetails') }}
       />
       <Stack.Screen
         name={Screens.CredentialOffer}

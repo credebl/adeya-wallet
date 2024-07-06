@@ -4,8 +4,8 @@ import {
   useCredentialByState,
   CredentialExchangeRecord,
   CredentialState,
-  findConnectionById,
-  getW3cCredentialRecordById,
+  useConnections,
+  getAllW3cCredentialRecords,
 } from '@adeya/ssi'
 import { useNavigation } from '@react-navigation/core'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -42,6 +42,7 @@ const ListCredentials: React.FC = () => {
     ...useCredentialByState(CredentialState.Done),
   ]
   const [credentialList, setCredentialList] = useState<(CredentialExchangeRecord | EnhancedW3CRecord)[] | undefined>([])
+  const { records: connectionRecords } = useConnections()
 
   const navigation = useNavigation<StackNavigationProp<CredentialStackParams>>()
   const { ColorPallet } = useTheme()
@@ -52,33 +53,33 @@ const ListCredentials: React.FC = () => {
         return
       }
 
-      const updatedCredentials = await Promise.all(
-        credentials.map(async credential => {
-          if (isW3CCredential(credential)) {
-            const credentialRecordId = credential.credentials[0].credentialRecordId
-            try {
-              const record = await getW3cCredentialRecordById(agent, credentialRecordId)
-              if (!credential?.connectionId) {
-                throw new Error('Connection Id notfound')
-              }
-              const connection = await findConnectionById(agent, credential?.connectionId)
-              const enhancedRecord = record as EnhancedW3CRecord
-              enhancedRecord.connectionLabel = connection?.theirLabel
-              return enhancedRecord
-            } catch (e: unknown) {
-              throw new Error(`${e}`)
+      const w3cCredentialRecords = await getAllW3cCredentialRecords(agent)
+
+      const updatedCredentials = credentials.map(credential => {
+        if (isW3CCredential(credential)) {
+          const credentialRecordId = credential.credentials[0].credentialRecordId
+          try {
+            const record = w3cCredentialRecords.find(record => record.id === credentialRecordId)
+            if (!credential?.connectionId) {
+              throw new Error('Connection Id notfound')
             }
+            const connection = connectionRecords.find(connection => connection.id === credential?.connectionId)
+            const enhancedRecord = record as EnhancedW3CRecord
+            enhancedRecord.connectionLabel = connection?.theirLabel
+            return enhancedRecord
+          } catch (e: unknown) {
+            throw new Error(`${e}`)
           }
-          return credential
-        }),
-      )
+        }
+        return credential
+      })
       return updatedCredentials
     }
 
     updateCredentials().then(updatedCredentials => {
       setCredentialList(updatedCredentials)
     })
-  }, [])
+  }, [credentials])
 
   return (
     <View style={styles.container}>
