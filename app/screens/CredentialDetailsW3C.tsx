@@ -4,8 +4,9 @@ import {
   CredentialExchangeRecord,
   W3cCredentialRecord,
   getW3cCredentialRecordById,
-  getAllCredentialExchangeRecords,
   deleteCredentialExchangeRecordById,
+  useCredentialByState,
+  CredentialState,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
@@ -54,6 +55,8 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState<boolean>(false)
   const [tables, setTables] = useState<W3CCredentialAttributeField[]>([])
   const [w3cCredential, setW3cCredential] = useState<W3cCredentialRecord>()
+  const credentialsList = useCredentialByState(CredentialState.Done)
+  const [isDeletingCredential, setIsDeletingCredential] = useState<boolean>(false)
 
   const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay>>({
     bundle: undefined,
@@ -160,18 +163,25 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
       if (!(agent && credential)) {
         return
       }
-      const credentialList = await getAllCredentialExchangeRecords(agent)
-      const rec = credentialList.find(cred => cred.credentials[0]?.credentialRecordId === credential.id)
+      const rec = credentialsList.find(cred => cred.credentials[0]?.credentialRecordId === credential.id)
+      setIsDeletingCredential(true)
       if (rec) {
-        await deleteCredentialExchangeRecordById(agent, rec.id)
+        await deleteCredentialExchangeRecordById(agent, rec.id, {
+          deleteAssociatedCredentials: true,
+        })
       }
+      setIsDeletingCredential(false)
+      navigation.pop()
+
+      // FIXME: This delay is a hack so that the toast doesn't appear until the modal is dismissed
+      await new Promise(resolve => setTimeout(resolve, 50))
+
       Toast.show({
         type: ToastType.Success,
         text1: t('CredentialDetails.CredentialRemoved'),
       })
-
-      navigation.pop()
     } catch (err: unknown) {
+      setIsDeletingCredential(false)
       const error = new BifoldError(t('Error.Title1032'), t('Error.Message1032'), (err as Error).message, 1025)
 
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
@@ -319,6 +329,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
         visible={isRemoveModalDisplayed}
         onSubmit={callSubmitRemove}
         onCancel={callCancelRemove}
+        disabled={isDeletingCredential}
       />
     </SafeAreaView>
   )
