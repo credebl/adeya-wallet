@@ -12,7 +12,8 @@ import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import { DeviceEventEmitter, Image, ImageBackground, Platform, StyleSheet, Text, View } from 'react-native'
+import RNHTMLtoPDF from 'react-native-html-to-pdf'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
@@ -57,6 +58,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const [w3cCredential, setW3cCredential] = useState<W3cCredentialRecord>()
   const credentialsList = useCredentialByState(CredentialState.Done)
   const [isDeletingCredential, setIsDeletingCredential] = useState<boolean>(false)
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState<boolean>(false)
 
   const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay>>({
     bundle: undefined,
@@ -305,10 +307,50 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     )
   }
 
-  const navigateToRenderCertificate = () => {
-    navigation.navigate(Screens.RenderCertificate, {
-      credential: w3cCredential as W3cCredentialRecord,
-    })
+  const navigateToRenderCertificate = async () => {
+    try {
+      setIsGeneratingPdf(true)
+
+      const certificateAttributes = w3cCredential?.credential.credentialSubject.claims
+
+      let content = w3cCredential?.credential.prettyVc
+
+      Object.keys(certificateAttributes).forEach(key => {
+        // Statically picking the value of placeholder
+        const placeholder = `{{credential['${key}']}}`
+        // Escaping the placeholder to avoid regex issues
+        const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        // Replacing the placeholder with the actual value
+        content = content.replace(new RegExp(escapedPlaceholder, 'g'), certificateAttributes[key])
+      })
+
+      const options: RNHTMLtoPDF.Options = {
+        html: content,
+        fileName: w3cCredential?.credential.type[1],
+        directory: 'Documents',
+        // add height and width to the options of a4 paper size
+        height: 595,
+        width: 842,
+      }
+
+      const file = await RNHTMLtoPDF.convert(options)
+
+      let filePath = file.filePath as string
+
+      if (Platform.OS === 'android') {
+        filePath = 'file://' + filePath
+      }
+
+      navigation.navigate(Screens.RenderCertificate, {
+        filePath,
+      })
+
+      setIsGeneratingPdf(false)
+    } catch (error) {
+      setIsGeneratingPdf(false)
+      // eslint-disable-next-line no-console
+      console.log('Error generating pdf : ', error)
+    }
   }
 
   return (
@@ -322,6 +364,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
           footer={footer}
           w3cCredential={w3cCredential}
           renderCertificate={navigateToRenderCertificate}
+          isCertificateLoading={isGeneratingPdf}
         />
       )}
       <CommonRemoveModal
