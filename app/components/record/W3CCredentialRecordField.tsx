@@ -98,7 +98,7 @@ const W3CCredentialRecordField: React.FC<W3CCredentialRecordFieldProps> = ({
           ) : null}
         </>
       </View>
-      {<View style={[styles.border, hideBottomBorder && { borderBottomWidth: 0 }]} />}
+      <View style={[styles.border, hideBottomBorder && { borderBottomWidth: 0 }]} />
     </View>
   )
 }
