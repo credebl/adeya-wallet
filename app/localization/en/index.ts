@@ -726,6 +726,11 @@ const translation = {
     "BackupFailed": "Backup failed to upload to Google Drive. Please try again later.",
     "BackupSuccess": "Backup successfully uploaded to Google Drive.",
   },
+  "Restore": {
+    "RestoreWallet": "Restore Wallet",
+    "RestoreInstructions": "Note: To restore your wallet, you can use a backup from your cloud storage or local device. Please ensure that the Google Drive app is installed on your device and you are signed in.",
+    "RestoreInstructionsIOS": "If you can't see Google Drive in the file picker, open the Files app --> tap on the three dots at the top --> select 'Edit' --> enable Google Drive.",
+  },
 }
 
 export default translation
