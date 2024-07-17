@@ -13,7 +13,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@adeya/ssi": "0.0.1-alpha.29",
+    "@adeya/ssi": "0.0.1-alpha.30",
     "@ayanworks/credo-polygon-w3c-module": "1.0.0",
     "@ethersproject/shims": "^5.7.0",
     "@formatjs/intl-datetimeformat": "^6.10.0",
@@ -51,6 +51,7 @@
     "lodash.startcase": "^4.4.0",
     "moment": "^2.29.4",
     "process": "^0.11.0",
+    "qrcode": "^1.5.3",
     "query-string": "^8.1.0",
     "react": "18.2.0",
     "react-i18next": "^13.0.3",
@@ -109,6 +110,7 @@
     "@types/lodash.merge": "^4.6.7",
     "@types/lodash.shuffle": "^4.2.7",
     "@types/lodash.startcase": "^4.4.7",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^18.0.24",
     "@types/react-native": "^0.72.2",
     "@types/react-native-html-to-pdf": "^0.8.3",

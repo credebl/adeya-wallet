@@ -7,9 +7,11 @@ import {
   deleteCredentialExchangeRecordById,
   useCredentialByState,
   CredentialState,
+  createInvitation,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
+import { toString as toQRCodeString } from 'qrcode'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, Image, ImageBackground, Platform, StyleSheet, Text, View } from 'react-native'
@@ -307,13 +309,40 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     )
   }
 
+  const getA4Sizes = (type: 'landscape' | 'portrait') => {
+    return {
+      width: type === 'landscape' ? 842 : 595,
+      height: type === 'landscape' ? 595 : 842,
+    }
+  }
+
+  const generateQRCodeString = async (text: string) => {
+    return toQRCodeString(text, {
+      width: 150,
+      margin: 1,
+      color: {
+        light: '#0000',
+      },
+    })
+  }
+
   const navigateToRenderCertificate = async () => {
     try {
       setIsGeneratingPdf(true)
 
+      const invitation = await createInvitation(agent, 'https://adeya.com')
+
+      const qrCodeSvg = await generateQRCodeString(invitation.invitationUrl)
+
       const certificateAttributes = w3cCredential?.credential.credentialSubject.claims
 
-      let content = w3cCredential?.credential.prettyVc
+      const prettyVc = w3cCredential?.credential.prettyVc
+      let content = prettyVc.certificate
+
+      const invitationUrlPlaceholder = '{{invitationUrl}}'
+      const invitationUrlEscapedPlaceholder = invitationUrlPlaceholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+      content = content.replace(new RegExp(invitationUrlEscapedPlaceholder, 'g'), qrCodeSvg)
 
       Object.keys(certificateAttributes).forEach(key => {
         // Statically picking the value of placeholder
@@ -329,8 +358,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
         fileName: w3cCredential?.credential.type[1],
         directory: 'Documents',
         // add height and width to the options of a4 paper size
-        height: 595,
-        width: 842,
+        ...getA4Sizes(prettyVc.orientation),
       }
 
       const file = await RNHTMLtoPDF.convert(options)
