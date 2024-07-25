@@ -7,10 +7,10 @@ import {
   deleteCredentialExchangeRecordById,
   useCredentialByState,
   CredentialState,
-  createInvitation,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
+import * as CryptoJS from 'crypto-js'
 import { toString as toQRCodeString } from 'qrcode'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -330,19 +330,25 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     try {
       setIsGeneratingPdf(true)
 
-      const invitation = await createInvitation(agent, 'https://adeya.com')
-
-      const qrCodeSvg = await generateQRCodeString(invitation.invitationUrl)
-
       const certificateAttributes = w3cCredential?.credential.credentialSubject.claims
+
+      const dataToEncrypt = JSON.stringify({
+        email: certificateAttributes['email'] ?? 'email',
+        schemaUrl: w3cCredential?.credential.type[1],
+      })
+
+      // eslint-disable-next-line import/namespace
+      const encryptedToken = CryptoJS.AES.encrypt(dataToEncrypt, 'dataEncryptionKey').toString()
+
+      const qrCodeSvg = await generateQRCodeString(encryptedToken)
 
       const prettyVc = w3cCredential?.credential.prettyVc
       let content = prettyVc.certificate
 
-      const invitationUrlPlaceholder = '{{invitationUrl}}'
-      const invitationUrlEscapedPlaceholder = invitationUrlPlaceholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const contactDetailsPlaceholder = '{{qrcode}}'
+      const contactDetailsEscapedPlaceholder = contactDetailsPlaceholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-      content = content.replace(new RegExp(invitationUrlEscapedPlaceholder, 'g'), qrCodeSvg)
+      content = content.replace(new RegExp(contactDetailsEscapedPlaceholder, 'g'), qrCodeSvg)
 
       Object.keys(certificateAttributes).forEach(key => {
         // Statically picking the value of placeholder
