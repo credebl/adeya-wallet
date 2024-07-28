@@ -334,7 +334,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
 
       const dataToEncrypt = JSON.stringify({
         email: certificateAttributes['email'] ?? 'email',
-        schemaUrl: w3cCredential?.credential.type[1],
+        schemaUrl: w3cCredential?.credential.contexts[1],
       })
 
       // eslint-disable-next-line import/namespace
