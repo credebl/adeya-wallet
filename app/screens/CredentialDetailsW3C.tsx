@@ -318,7 +318,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
 
   const generateQRCodeString = async (text: string) => {
     return toQRCodeString(text, {
-      width: 150,
+      width: 95,
       margin: 1,
       color: {
         light: '#0000',
