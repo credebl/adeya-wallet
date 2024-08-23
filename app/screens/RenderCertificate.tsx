@@ -46,7 +46,7 @@ const RenderCertificate: React.FC<RenderCertificateProps> = ({ navigation, route
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={downloadPdf} style={{ marginRight: 20 }}>
-          <Icon style={{ color: ColorPallet.grayscale.white }} size={25} name="download" />
+          <Icon style={{ color: ColorPallet.grayscale.white }} size={25} name="share" />
         </TouchableOpacity>
       ),
     })

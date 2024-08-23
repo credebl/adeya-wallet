@@ -137,7 +137,7 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
     },
     primaryBodyContainer: {
       flexGrow: 1,
-      padding,
+      padding: 15,
     },
     imageAttr: {
       height: 150,
@@ -309,6 +309,7 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
               styles.textContainer,
               {
                 lineHeight: 24,
+                width: '85%',
                 fontWeight: 'bold',
               },
             ]}
@@ -380,7 +381,7 @@ const CredentialCard11: React.FC<CredentialCard11Props> = ({
                   {
                     fontWeight: 'bold',
                     lineHeight: 24,
-                    flex: 1,
+                    width: '85%',
                     flexWrap: 'wrap',
                   },
                 ]}>
