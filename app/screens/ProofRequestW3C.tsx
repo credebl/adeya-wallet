@@ -427,7 +427,7 @@ const ProofRequestW3C: React.FC<ProofRequestProps> = ({ navigation, route }) => 
                         ? CREDENTIAL
                         : item.credName.substring(item.credName.lastIndexOf('/') + 1)
                     }
-                    existsInWallet={item.credDefId !== undefined}
+                    existsInWallet={item?.inputDescriptorIds}
                     satisfiedPredicates={item.credId !== undefined}
                     hasAltCredentials={item.altCredentials && item.altCredentials.length > 1}
                     handleAltCredChange={
