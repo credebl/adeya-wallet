@@ -114,10 +114,10 @@ const RootStack: React.FC = () => {
         }
 
         // Try connection based
-        const { connectionRecord } = await connectFromInvitation(agent, invitationUrl)
+        const { connectionRecord, outOfBandRecord } = await connectFromInvitation(agent, invitationUrl)
         navigation.navigate(Stacks.ConnectionStack as any, {
           screen: Screens.Connection,
-          params: { connectionId: connectionRecord?.id },
+          params: { connectionId: connectionRecord?.id, outOfBandId: outOfBandRecord.id },
         })
       } catch {
         try {
@@ -146,11 +146,11 @@ const RootStack: React.FC = () => {
               return
             }
 
-            const { connectionRecord } = await connectFromInvitation(agent, urlData)
+            const { connectionRecord, outOfBandRecord } = await connectFromInvitation(agent, urlData)
 
             navigation.getParent()?.navigate(Stacks.ConnectionStack, {
               screen: Screens.Connection,
-              params: { connectionId: connectionRecord?.id },
+              params: { connectionId: connectionRecord?.id, outOfBandId: outOfBandRecord.id },
             })
             return
           }
