@@ -155,11 +155,11 @@ const OrganizationDetails: React.FC = () => {
 
   const handleInvitation = async (value: string): Promise<void> => {
     try {
-      const { connectionRecord } = await connectFromInvitation(agent, value)
+      const { connectionRecord, outOfBandRecord } = await connectFromInvitation(agent, value)
 
       navigation.getParent()?.navigate(Stacks.ConnectionStack, {
         screen: Screens.Connection,
-        params: { connectionId: connectionRecord?.id },
+        params: { connectionId: connectionRecord?.id, outOfBandId: outOfBandRecord.id },
       })
     } catch (err: unknown) {
       try {
@@ -188,11 +188,11 @@ const OrganizationDetails: React.FC = () => {
             return
           }
 
-          const { connectionRecord } = await connectFromInvitation(agent, urlData)
+          const { connectionRecord, outOfBandRecord } = await connectFromInvitation(agent, urlData)
 
           navigation.getParent()?.navigate(Stacks.ConnectionStack, {
             screen: Screens.Connection,
-            params: { connectionId: connectionRecord?.id },
+            params: { connectionId: connectionRecord?.id, outOfBandId: outOfBandRecord.id },
           })
           return
         }

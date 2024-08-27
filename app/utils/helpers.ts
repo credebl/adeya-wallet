@@ -1047,7 +1047,9 @@ export const checkIfAlreadyConnected = async (agent: AdeyaAgent, invitationUrl: 
  * @returns a connection record from parsing and receiving the invitation
  */
 export const connectFromInvitation = async (agent: AdeyaAgent, uri: string) => {
-  return await acceptInvitationFromUrl(agent, uri)
+  return await acceptInvitationFromUrl(agent, uri, {
+    reuseConnection: true,
+  })
 }
 
 /**
