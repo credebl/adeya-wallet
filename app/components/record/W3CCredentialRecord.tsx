@@ -40,6 +40,9 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({
   const [showAll, setShowAll] = useState<boolean>(true)
   const { ListItems, TextTheme, ColorPallet } = useTheme()
 
+  const isPrettyVcAvailable =
+    w3cCredential?.credential?.prettyVc && Object.keys(w3cCredential?.credential?.prettyVc).length > 0
+
   const styles = StyleSheet.create({
     linkContainer: {
       ...ListItems.recordContainer,
@@ -58,7 +61,7 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({
     },
     rowContainer: {
       flexDirection: 'row',
-      justifyContent: w3cCredential?.credential?.prettyVc ? 'space-between' : 'flex-end',
+      justifyContent: isPrettyVcAvailable ? 'space-between' : 'flex-end',
       backgroundColor: ColorPallet.grayscale.white,
     },
     linkText: {
@@ -120,7 +123,7 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({
           <RecordHeader>
             {header()}
             <View style={styles.rowContainer}>
-              {w3cCredential?.credential?.prettyVc && (
+              {isPrettyVcAvailable && (
                 <View style={styles.linkContainer}>
                   {isCertificateLoading ? (
                     <ActivityIndicator size={'small'} />
