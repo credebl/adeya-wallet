@@ -7,6 +7,7 @@ import {
   deleteCredentialExchangeRecordById,
   useCredentialByState,
   CredentialState,
+  useConnections,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
@@ -61,6 +62,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const credentialsList = useCredentialByState(CredentialState.Done)
   const [isDeletingCredential, setIsDeletingCredential] = useState<boolean>(false)
   const [isGeneratingPdf, setIsGeneratingPdf] = useState<boolean>(false)
+  const { records: connectionRecords } = useConnections()
 
   const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay>>({
     bundle: undefined,
@@ -129,6 +131,8 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
         } else if (credential instanceof CredentialExchangeRecord) {
           const credentialRecordId = credential.credentials[0].credentialRecordId
           const record = await getW3cCredentialRecordById(agent, credentialRecordId)
+          const connection = connectionRecords.find(connection => connection.id === credential?.connectionId)
+          record.connectionLabel = connection?.theirLabel
           return record
         }
       }
