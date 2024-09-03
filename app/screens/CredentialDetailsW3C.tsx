@@ -16,6 +16,7 @@ import { toString as toQRCodeString } from 'qrcode'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, Image, ImageBackground, Platform, StyleSheet, Text, View } from 'react-native'
+import { Config } from 'react-native-config'
 import RNHTMLtoPDF from 'react-native-html-to-pdf'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
@@ -342,7 +343,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
       })
 
       // eslint-disable-next-line import/namespace
-      const encryptedToken = CryptoJS.AES.encrypt(dataToEncrypt, 'dataEncryptionKey').toString()
+      const encryptedToken = CryptoJS.AES.encrypt(dataToEncrypt, Config.DATA_ENCRYPTION_KEY!).toString()
 
       const qrCodeSvg = await generateQRCodeString(encryptedToken)
 
