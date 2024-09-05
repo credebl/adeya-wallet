@@ -8,6 +8,8 @@ import {
   IndyVdrIndyDidResolver,
   CacheModule,
   SingleContextStorageLruCache,
+  MediatorPickupStrategy,
+  WebDidResolver,
 } from '@adeya/ssi'
 import { PolygonDidResolver, PolygonModule } from '@ayanworks/credo-polygon-w3c-module'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -55,7 +57,7 @@ const resumeOnboardingAt = (state: StoreOnboardingState, enableWalletNaming: boo
     (state.didNameWallet || !enableWalletNaming) &&
     !state.didConsiderBiometry
   ) {
-    return Screens.UseBiometry
+    return Screens.WalletOptions
   }
 
   if (
@@ -290,10 +292,14 @@ const Splash: React.FC = () => {
         const newAgent = (await initializeAgent({
           agentConfig,
           modules: {
-            ...getAgentModules(Config.MEDIATOR_URL, indyLedgers),
+            ...getAgentModules({
+              indyNetworks: indyLedgers,
+              mediatorInvitationUrl: Config.MEDIATOR_URL,
+              mediatorPickupStrategy: MediatorPickupStrategy.PickUpV2LiveMode,
+            }),
             polygon: new PolygonModule({}),
             dids: new DidsModule({
-              resolvers: [new PolygonDidResolver(), new IndyVdrIndyDidResolver()],
+              resolvers: [new PolygonDidResolver(), new IndyVdrIndyDidResolver(), new WebDidResolver()],
             }),
             cache: new CacheModule({
               cache: new SingleContextStorageLruCache({

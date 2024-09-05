@@ -75,7 +75,7 @@ export class Predicate extends Field {
 
 export type W3CCredentialAttribute = {
   key: string
-  value: string
+  value: string | number | boolean
 }
 
 export type W3CCredentialAttributeField = {

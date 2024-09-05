@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,8 +15,11 @@ import {
 } from 'react-native'
 import { getVersion, getBuildNumber } from 'react-native-device-info'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import Toast from 'react-native-toast-message'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
+import { ToastType } from '../components/toast/BaseToast'
+import { useAuth } from '../contexts/auth'
 import { useConfiguration } from '../contexts/configuration'
 import { DispatchAction } from '../contexts/reducers/store'
 import { useStore } from '../contexts/store'
@@ -26,6 +30,7 @@ import { Screens, SettingStackParams, Stacks } from '../types/navigators'
 import { SettingSection } from '../types/settings'
 import * as PushNotificationHelper from '../utils/PushNotificationHelper'
 import { useAppAgent } from '../utils/agent'
+import { getDefaultHolderDidDocument } from '../utils/helpers'
 import { testIdWithKey } from '../utils/testable'
 
 type SettingsProps = StackScreenProps<SettingStackParams>
@@ -41,6 +46,8 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   const { settings, enableTours } = useConfiguration()
   const [enablePushNotifications, setEnablePushNotifications] = useState(false)
   const [pushNotificationCapable, setPushNotificationCapable] = useState(true)
+  const [holderDid, setHolderDid] = useState('')
+  const { isGoogleAccountSignedIn, googleSignOut } = useAuth()
 
   const languages = [{ id: Locales.en, value: t('Language.English') }]
 
@@ -104,6 +111,9 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     if (agent) {
       getPushNotificationCapable()
       initializePushNotificationsToggle()
+      getDefaultHolderDidDocument(agent).then(didDoc => {
+        setHolderDid(didDoc?.id)
+      })
     }
   }, [agent])
 
@@ -123,6 +133,15 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     developerOptionCount.current = developerOptionCount.current + 1
   }
 
+  const copyToClipboard = () => {
+    Clipboard.setString(holderDid)
+    Toast.hide()
+    Toast.show({
+      type: ToastType.Success,
+      text1: 'DID copied',
+    })
+  }
+
   const settingsSections: SettingSection[] = [
     {
       header: {
@@ -136,6 +155,21 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
           testID: testIdWithKey('NameWallet'),
           onPress: () => navigation.navigate(Screens.NameWallet as never),
           value: 'Edit',
+        },
+      ],
+    },
+    {
+      header: {
+        icon: 'settings',
+        title: t('DIDs.Dids'),
+      },
+      data: [
+        {
+          title: holderDid,
+          accessibilityLabel: t('DIDs.Dids'),
+          testID: testIdWithKey('DID'),
+          onPress: copyToClipboard,
+          value: 'Copy',
         },
       ],
     },
@@ -176,7 +210,30 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
           onPress: () => navigation.navigate(Screens.ExportWallet as never),
           value: undefined,
         },
-      ],
+        {
+          title: t('Backup.backup_google_drive'),
+          accessibilityLabel: t('Settings.GoogleDriveBackup'),
+          testID: testIdWithKey('BackupGoogleDrive'),
+          onPress: async () => {
+            if (isGoogleAccountSignedIn) {
+              navigation.navigate(Screens.ExportWallet, { backupType: 'google_drive' })
+            } else {
+              navigation.navigate(Screens.GoogleDriveSignIn as never)
+            }
+          },
+          value: undefined,
+        },
+        isGoogleAccountSignedIn && {
+          title: t('GoogleDrive.SignOutGoogle'),
+          accessibilityLabel: t('GoogleDrive.SignOutGoogle'),
+          testID: testIdWithKey('SignOutGoogleAccount'),
+          onPress: async () => {
+            await googleSignOut()
+            navigation.navigate(Screens.Settings)
+          },
+          value: undefined,
+        },
+      ].filter(Boolean),
     },
 
     {
@@ -369,7 +426,12 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
         testID={testID}
         style={styles.sectionRow}
         onPress={onPress}>
-        <Text style={[TextTheme.headingFour, { fontWeight: 'normal', marginRight: 14 }]}>{title}</Text>
+        <Text
+          style={[TextTheme.headingFour, { fontWeight: 'normal', marginRight: 14, width: '80%' }]}
+          ellipsizeMode="tail"
+          numberOfLines={1}>
+          {title}
+        </Text>
         <Text style={[TextTheme.headingFour, { fontWeight: 'normal', color: ColorPallet.brand.link }]}>{value}</Text>
       </TouchableOpacity>
     </ScrollView>

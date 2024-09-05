@@ -4,6 +4,7 @@ import {
   CredentialExchangeRecord,
   updateCredentialExchangeRecord,
   deleteCredentialExchangeRecordById,
+  useConnections,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { BrandingOverlayType, CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
@@ -76,6 +77,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
   const [isRevoked, setIsRevoked] = useState<boolean>(false)
   const [revocationDate, setRevocationDate] = useState<string>('')
   const [preciseRevocationDate, setPreciseRevocationDate] = useState<string>('')
+  const [isDeletingCredential, setIsDeletingCredential] = useState<boolean>(false)
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState<boolean>(false)
   const [isRevokedMessageHidden, setIsRevokedMessageHidden] = useState<boolean>(
     (credential!.metadata.get(CredentialMetadata.customMetadata) as customMetadata)?.revoked_detail_dismissed ?? false,
@@ -89,7 +91,8 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
     brandingOverlay: undefined,
   })
 
-  const credentialConnectionLabel = getCredentialConnectionLabel(credential)
+  const { records } = useConnections()
+  const credentialConnectionLabel = getCredentialConnectionLabel(records, credential)
   const isPresentationFieldsEmpty = !overlay.brandingOverlay?.digest
   const styles = StyleSheet.create({
     container: {
@@ -140,16 +143,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
   })
 
   useEffect(() => {
-    if (!agent) {
-      DeviceEventEmitter.emit(
-        EventTypes.ERROR_ADDED,
-        new BifoldError(t('Error.Title1033'), t('Error.Message1033'), t('CredentialDetails.CredentialNotFound'), 1033),
-      )
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!credential) {
+    if (!agent || !credential) {
       DeviceEventEmitter.emit(
         EventTypes.ERROR_ADDED,
         new BifoldError(t('Error.Title1033'), t('Error.Message1033'), t('CredentialDetails.CredentialNotFound'), 1033),
@@ -201,19 +195,25 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
       if (!credential) {
         return
       }
+      setIsDeletingCredential(true)
 
-      await deleteCredentialExchangeRecordById(agent, credential.id)
+      await deleteCredentialExchangeRecordById(agent, credential.id, {
+        deleteAssociatedCredentials: true,
+      })
+
+      setIsDeletingCredential(false)
 
       navigation.pop()
 
       // FIXME: This delay is a hack so that the toast doesn't appear until the modal is dismissed
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, 50))
 
       Toast.show({
         type: ToastType.Success,
         text1: t('CredentialDetails.CredentialRemoved'),
       })
     } catch (err: unknown) {
+      setIsDeletingCredential(false)
       const error = new BifoldError(t('Error.Title1032'), t('Error.Message1032'), (err as Error).message, 1025)
 
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
@@ -423,6 +423,7 @@ const CredentialDetails: React.FC<CredentialDetailsProps> = ({ navigation, route
         visible={isRemoveModalDisplayed}
         onSubmit={callSubmitRemove}
         onCancel={callCancelRemove}
+        disabled={isDeletingCredential}
       />
     </SafeAreaView>
   )

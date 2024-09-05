@@ -21,13 +21,19 @@ import {
   acceptInvitationFromUrl,
   createInvitation,
   AnonCredsRequestedPredicate,
-  getProofFormatData,
   getCredentialsForProofRequest,
   AnonCredsPredicateType,
   AnonCredsRequestedAttribute,
   parseInvitationFromUrl,
   findByReceivedInvitationId,
+  DidRecord,
+  DidRepository,
+  KeyType,
+  DifPresentationExchangeProofFormatService,
+  W3cCredentialRecord,
 } from '@adeya/ssi'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { DifPresentationExchangeProofFormat, DifPresentationExchangeDefinitionV1 } from '@credo-ts/core'
 import { CaptureBaseAttributeType } from '@hyperledger/aries-oca'
 import { TFunction } from 'i18next'
 import moment from 'moment'
@@ -297,7 +303,11 @@ export function getConnectionName(connection: ConnectionRecord | void): string |
   return connection?.alias || connection?.theirLabel
 }
 
-export function getCredentialConnectionLabel(credential?: CredentialExchangeRecord, connectionLabel?: string) {
+export function getCredentialConnectionLabel(
+  connections: ConnectionRecord[],
+  credential?: CredentialExchangeRecord,
+  connectionLabel?: string,
+) {
   if (!credential) {
     if (connectionLabel) {
       return connectionLabel
@@ -306,7 +316,7 @@ export function getCredentialConnectionLabel(credential?: CredentialExchangeReco
   }
 
   if (credential.connectionId) {
-    const connection = useConnectionById(credential.connectionId)
+    const connection = connections.find(connection => connection.id === credential.connectionId)
     return connection?.alias || connection?.theirLabel || credential.connectionId
   }
 
@@ -492,6 +502,133 @@ const addMissingDisplayAttributes = (attrReq: AnonCredsRequestedAttribute) => {
   return processedAttributes
 }
 
+export const extractKeyFromPath = (path: string) => {
+  // Remove the initial '$.' if present
+  let cleanPath = path.replace(/^\$\./, '')
+
+  // Replace ['key'] with .key
+  cleanPath = cleanPath.replace(/\['/g, '.').replace(/'\]/g, '')
+
+  // Split the cleaned path by dot to get the parts
+  const parts = cleanPath.split('.')
+
+  // Return the last part which is the key
+  return parts[parts.length - 1]
+}
+
+const addW3CMissingDisplayAttributes = (attrReq: DifPresentationExchangeDefinitionV1['input_descriptors'][number]) => {
+  const credName = attrReq.id
+
+  //there is no credId in this context so use credName as a placeholder
+  const processedAttributes: ProofCredentialAttributes = {
+    credExchangeRecord: undefined,
+    altCredentials: [credName],
+    credId: credName,
+    schemaId: undefined,
+    credDefId: undefined,
+    credName: credName,
+    attributes: [] as Attribute[],
+  }
+  const { constraints } = attrReq
+
+  const paths = constraints?.fields[0].path ?? []
+
+  // Added a 0th path for now
+  for (const attributeName of paths) {
+    const attrName = extractKeyFromPath(attributeName)
+
+    processedAttributes.attributes?.push(
+      new Attribute({
+        revoked: false,
+        credentialId: credName,
+        name: attrName,
+        value: '',
+      }),
+    )
+  }
+  return processedAttributes
+}
+
+export const processW3CProofAttributes = (
+  request?: ProofFormatDataMessagePayload<[DifPresentationExchangeProofFormat], 'request'> | undefined,
+  credentials?: GetCredentialsForRequestReturn<[DifPresentationExchangeProofFormatService]>,
+): { [key: string]: ProofCredentialAttributes } => {
+  const processedAttributes = {} as { [key: string]: ProofCredentialAttributes }
+
+  const requestedProofAttributes = request?.presentationExchange?.presentation_definition
+  const retrievedCredentialAttributes = credentials?.proofFormats?.presentationExchange?.requirements
+
+  if (!requestedProofAttributes || !retrievedCredentialAttributes) {
+    return {}
+  }
+  for (const retrievedCredentialAttribute of retrievedCredentialAttributes) {
+    const currentInputDescriptorId = retrievedCredentialAttribute.submissionEntry[0].inputDescriptorId
+
+    const altCredentials = [...(retrievedCredentialAttribute.submissionEntry[0].verifiableCredentials ?? [])].map(
+      cred => cred.credentialRecord.id,
+    )
+
+    const credentialList = [...(retrievedCredentialAttribute.submissionEntry[0].verifiableCredentials ?? [])]
+
+    const inputDescriptor = requestedProofAttributes.input_descriptors.find(i => i.id === currentInputDescriptorId)
+
+    if (credentialList.length <= 0) {
+      const missingAttributes = addW3CMissingDisplayAttributes(inputDescriptor)
+      if (!processedAttributes[missingAttributes.credName]) {
+        processedAttributes[missingAttributes.credName] = missingAttributes
+      } else {
+        processedAttributes[missingAttributes.credName].attributes?.push(...(missingAttributes.attributes ?? []))
+      }
+    }
+
+    // iterate over all credentials that satisfy the proof
+    for (const credential of credentialList) {
+      const w3cCredentialRecord = credential.credentialRecord as W3cCredentialRecord
+      const credName = w3cCredentialRecord.credential.type[1]
+      const paths = inputDescriptor.constraints?.fields[0].path ?? []
+
+      const attributeNames = paths.map(path => extractKeyFromPath(path))
+      for (const attributeName of attributeNames) {
+        if (!processedAttributes[w3cCredentialRecord.id]) {
+          // init processedAttributes object
+          processedAttributes[w3cCredentialRecord.id] = {
+            credExchangeRecord: w3cCredentialRecord,
+            altCredentials,
+            credId: w3cCredentialRecord.id,
+            schemaId: undefined,
+            credDefId: undefined,
+            credName,
+            attributes: [],
+            inputDescriptorIds: [],
+          }
+        }
+
+        const isInputDescriptorIdPresent = processedAttributes[w3cCredentialRecord.id].inputDescriptorIds?.find(
+          id => id === currentInputDescriptorId,
+        )
+
+        if (!isInputDescriptorIdPresent) {
+          processedAttributes[w3cCredentialRecord.id].inputDescriptorIds?.push(currentInputDescriptorId)
+        }
+
+        let attributeValue = ''
+        if (w3cCredentialRecord) {
+          attributeValue = w3cCredentialRecord.credential.credentialSubject.claims[attributeName]
+        }
+        processedAttributes[w3cCredentialRecord.id].attributes?.push(
+          new Attribute({
+            credentialId: w3cCredentialRecord.id,
+            name: attributeName,
+            value: attributeValue,
+          }),
+        )
+      }
+    }
+  }
+
+  return processedAttributes
+}
+
 export const processProofAttributes = (
   request?: ProofFormatDataMessagePayload<[LegacyIndyProofFormat, AnonCredsProofFormat], 'request'> | undefined,
   credentials?: GetCredentialsForRequestReturn<[LegacyIndyProofFormatService, AnonCredsProofFormatService]>,
@@ -577,6 +714,7 @@ export const processProofAttributes = (
       }
     }
   }
+
   return processedAttributes
 }
 
@@ -717,7 +855,8 @@ export const retrieveCredentialsForProof = async (
   t: TFunction<'translation', undefined>,
 ) => {
   try {
-    const format = await getProofFormatData(agent, proof.id)
+    const format = await agent.proofs.getFormatData(proof.id)
+    const hasPresentationExchange = format.request?.presentationExchange !== undefined
     const hasAnonCreds = format.request?.anoncreds !== undefined
     const hasIndy = format.request?.indy !== undefined
     const credentials = await getCredentialsForProofRequest(agent, {
@@ -748,6 +887,7 @@ export const retrieveCredentialsForProof = async (
               },
             }
           : {}),
+        ...(hasPresentationExchange ? { presentationExchange: {} } : {}),
       },
     })
     if (!credentials) {
@@ -760,6 +900,20 @@ export const retrieveCredentialsForProof = async (
 
     if (!(format && credentials && fullCredentials)) {
       return
+    }
+
+    if (hasPresentationExchange) {
+      const presentationExchange = format.request?.presentationExchange
+      const difPexCredentialsForRequest = credentials.proofFormats.presentationExchange
+
+      if (!difPexCredentialsForRequest || !presentationExchange) throw new Error('Invalid presentation request')
+
+      const attributes = processW3CProofAttributes(format.request, credentials)
+
+      const proofFormat = credentials.proofFormats.presentationExchange
+
+      const groupedProof = Object.values(attributes)
+      return { groupedProof: groupedProof, retrievedCredentials: proofFormat, fullCredentials }
     }
 
     const proofFormat = credentials.proofFormats.anoncreds ?? credentials.proofFormats.indy
@@ -893,7 +1047,9 @@ export const checkIfAlreadyConnected = async (agent: AdeyaAgent, invitationUrl: 
  * @returns a connection record from parsing and receiving the invitation
  */
 export const connectFromInvitation = async (agent: AdeyaAgent, uri: string) => {
-  return await acceptInvitationFromUrl(agent, uri)
+  return await acceptInvitationFromUrl(agent, uri, {
+    reuseConnection: true,
+  })
 }
 
 /**
@@ -1070,4 +1226,41 @@ export function generateRandomWalletName() {
       .slice(1),
   )
   return name
+}
+
+export const getDefaultHolderDidDocument = async (agent: AdeyaAgent) => {
+  try {
+    let defaultDidRecord: DidRecord | null
+    const didRepository = await agent.dependencyManager.resolve(DidRepository)
+
+    defaultDidRecord = await didRepository.findSingleByQuery(agent.context, {
+      isDefault: true,
+    })
+
+    if (!defaultDidRecord) {
+      const did = await agent.dids.create({
+        method: 'key',
+        options: {
+          keyType: KeyType.Ed25519,
+        },
+      })
+
+      const [didRecord] = await agent.dids.getCreatedDids({
+        did: did.didState.did,
+        method: 'key',
+      })
+
+      didRecord.setTag('isDefault', true)
+
+      await didRepository.update(agent.context, didRecord)
+      defaultDidRecord = didRecord
+    }
+
+    const resolvedDidDocument = await agent.dids.resolveDidDocument(defaultDidRecord.did)
+
+    return resolvedDidDocument
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Error did create', error)
+  }
 }

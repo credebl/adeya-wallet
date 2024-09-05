@@ -15,6 +15,7 @@ export enum Screens {
   Notifications = 'Notifications',
   CredentialOffer = 'Credential Offer',
   ProofRequest = 'Proof Request',
+  ProofRequestW3C = 'Proof Request W3C',
   ProofRequestDetails = 'Proof Request Details',
   ProofRequestUsageHistory = 'Proof Request Usage History',
   Settings = 'Settings',
@@ -46,9 +47,12 @@ export enum Screens {
   ImportSuccess = 'Import Success',
   CredentialDetailsW3C = 'Credential Details W3C',
   ProofChangeCredential = 'Choose a credential',
+  ProofChangeCredentialW3C = 'Choose a W3C credential',
   DataRetention = 'Data Retention',
   Explore = 'Explore',
   OrganizationDetails = 'Organization Details',
+  RenderCertificate = 'Render Certificate',
+  GoogleDriveSignIn = 'Google Drive Sign In',
 }
 
 export enum Stacks {
@@ -114,7 +118,9 @@ export type ContactStackParams = {
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofDetails]: { recordId: string; isHistory?: boolean }
   [Screens.ProofRequest]: { proofId: string }
+  [Screens.ProofRequestW3C]: { proofId: string }
   [Screens.Home]: undefined
+  [Screens.RenderCertificate]: { filePath: string }
 }
 
 export type ProofRequestsStackParams = {
@@ -129,12 +135,19 @@ export type ProofRequestsStackParams = {
     proofId: string
     onCredChange: (arg: string) => void
   }
+  [Screens.ProofChangeCredentialW3C]: {
+    selectedCred: string
+    altCredentials: string[]
+    proofId: string
+    onCredChange: (arg: string) => void
+  }
 }
 
 export type CredentialStackParams = {
   [Screens.Credentials]: undefined
   [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
   [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
+  [Screens.RenderCertificate]: { filePath: string }
   [Screens.Scan]: undefined
 }
 export type OrganizationStackParams = {
@@ -180,12 +193,13 @@ export type NotificationStackParams = {
   [Screens.CredentialDetails]: { credentialId: string }
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofRequest]: { proofId: string }
+  [Screens.ProofRequestW3C]: { proofId: string }
   [Screens.CustomNotification]: undefined
   [Screens.ProofDetails]: { recordId: string }
 }
 
 export type DeliveryStackParams = {
-  [Screens.Connection]: { connectionId?: string; threadId?: string }
+  [Screens.Connection]: { connectionId?: string; threadId?: string; outOfBandId?: string }
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofRequest]: { proofId: string }
   [Screens.OnTheWay]: { credentialId: string }

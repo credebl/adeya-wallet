@@ -4,11 +4,12 @@ import {
   LogLevel,
   InitConfig,
   getAgentModules,
-  isWalletImportable,
   DidsModule,
   IndyVdrIndyDidResolver,
   SingleContextStorageLruCache,
   CacheModule,
+  MediatorPickupStrategy,
+  WebDidResolver,
 } from '@adeya/ssi'
 import { PolygonDidResolver, PolygonModule } from '@ayanworks/credo-polygon-w3c-module'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -24,11 +25,13 @@ import {
   Keyboard,
   ScrollView,
 } from 'react-native'
+import ReactNativeBlobUtil from 'react-native-blob-util'
 import { Config } from 'react-native-config'
-import { DocumentPickerResponse, isCancel, pickSingle, types } from 'react-native-document-picker'
+import { isCancel, pickSingle, types } from 'react-native-document-picker'
 import * as RNFS from 'react-native-fs'
 import { heightPercentageToDP } from 'react-native-responsive-screen'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
+import { unzip } from 'react-native-zip-archive'
 
 import indyLedgers from '../../configs/ledgers/indy'
 import ButtonLoading from '../components/animated/ButtonLoading'
@@ -128,9 +131,15 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
         key: credentials.key,
       }
 
+      const { fs } = ReactNativeBlobUtil
+      const restoreDirectoryPath = `${fs.dirs.DocumentDir}`
+      const walletFilePath = `${restoreDirectoryPath}/ADEYA_WALLET_RESTORE/ADEYA_WALLET.wallet`
+
+      await unzip(selectedFilePath, restoreDirectoryPath + '/ADEYA_WALLET_RESTORE')
+
       const importConfig = {
         key: encodeHash,
-        path: selectedFilePath,
+        path: walletFilePath,
       }
 
       const agentConfig: InitConfig = {
@@ -140,26 +149,18 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
         autoUpdateStorageOnStartup: true,
       }
 
-      const walletImportCheck = await isWalletImportable({ ...walletConfig }, importConfig)
-
-      if (!walletImportCheck) {
-        Toast.show({
-          type: ToastType.Error,
-          text1: `You've entered an invalid passphrase.`,
-          position: 'bottom',
-        })
-        setVerify(false)
-        return
-      }
-
       const agent = await importWalletWithAgent({
         agentConfig,
         importConfig,
         modules: {
-          ...getAgentModules(Config.MEDIATOR_URL!, indyLedgers),
+          ...getAgentModules({
+            indyNetworks: indyLedgers,
+            mediatorInvitationUrl: Config.MEDIATOR_URL!,
+            mediatorPickupStrategy: MediatorPickupStrategy.PickUpV2LiveMode,
+          }),
           polygon: new PolygonModule({}),
           dids: new DidsModule({
-            resolvers: [new PolygonDidResolver(), new IndyVdrIndyDidResolver()],
+            resolvers: [new PolygonDidResolver(), new IndyVdrIndyDidResolver(), new WebDidResolver()],
           }),
           cache: new CacheModule({
             cache: new SingleContextStorageLruCache({
@@ -168,6 +169,8 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
           }),
         },
       })
+
+      await RNFS.unlink(restoreDirectoryPath + '/ADEYA_WALLET_RESTORE')
 
       setAgent(agent!)
       setVerify(true)
@@ -204,20 +207,10 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
 
   const handleSelect = async () => {
     try {
-      const res: DocumentPickerResponse = await pickSingle({
-        type: [types.allFiles],
+      const res = await pickSingle({
+        type: [types.zip],
         copyTo: 'documentDirectory',
       })
-
-      if (!res.name?.endsWith('.wallet')) {
-        Toast.show({
-          type: ToastType.Error,
-          text1: 'Please select a valid wallet file',
-          visibilityTime: 2000,
-        })
-        navigation.goBack()
-        return
-      }
 
       if (!res.fileCopyUri) {
         Toast.show({

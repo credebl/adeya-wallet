@@ -1,6 +1,9 @@
 import { exportWallet as exportAdeyaWallet } from '@adeya/ssi'
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
 import { useNavigation, useRoute } from '@react-navigation/core'
+import { GDrive, ListQueryBuilder, MimeTypes } from '@robinbobin/react-native-google-drive-api-wrapper'
 import shuffle from 'lodash.shuffle'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -8,16 +11,15 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  PermissionsAndroid,
-  Platform,
-  Share,
   Dimensions,
   PixelRatio,
   StyleSheet,
+  Platform,
+  Share,
 } from 'react-native'
-import { DownloadDirectoryPath, exists, mkdir, unlink } from 'react-native-fs'
+import * as RNFS from 'react-native-fs'
 import Toast from 'react-native-toast-message'
-import RNFetchBlob from 'rn-fetch-blob'
+import { zip } from 'react-native-zip-archive'
 
 import ButtonLoading from '../components/animated/ButtonLoading'
 import Button, { ButtonType } from '../components/buttons/Button'
@@ -136,88 +138,110 @@ function ExportWalletConfirmation() {
     const encodeHash = seed
 
     try {
-      const documentDirectory: string = DownloadDirectoryPath
-      const backupDirectory = `${documentDirectory}/Wallet_Backup`
-      const destFileExists = await exists(backupDirectory)
-      if (destFileExists) {
-        await unlink(backupDirectory)
-      }
-      const date = new Date()
-      const dformat = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
-      const WALLET_FILE_NAME = `SSI_Wallet_${dformat}`
-
-      await mkdir(backupDirectory)
-      const encryptedFileName = `${WALLET_FILE_NAME}.wallet`
-      const encryptedFileLocation = `${backupDirectory}/${encryptedFileName}`
-
-      const exportConfig = {
-        key: encodeHash,
-        path: encryptedFileLocation,
-      }
-
-      await exportAdeyaWallet(agent, exportConfig)
-
-      Toast.show({
-        type: ToastType.Success,
-        text1: 'Backup successfully',
-      })
-      setMatchPhrase(true)
-      navigation.navigate(Screens.Success, { encryptedFileLocation })
-    } catch (e) {
-      Toast.show({
-        type: ToastType.Error,
-        text1: 'Backup failed',
-      })
-    }
-  }
-  const exportWalletIOS = async (seed: string) => {
-    setMatchPhrase(true)
-
-    const encodeHash = seed
-    const { fs } = RNFetchBlob
-    try {
-      const documentDirectory = fs.dirs.DocumentDir
-
-      const zipDirectory = `${documentDirectory}/Wallet_Backup`
-
-      const destFileExists = await fs.exists(zipDirectory)
-      if (destFileExists) {
-        await fs.unlink(zipDirectory)
-      }
-
-      const date = new Date()
-      const dformat = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
-      const WALLET_FILE_NAME = `SSI_Wallet_${dformat}`
-
-      await fs.mkdir(zipDirectory).catch(err =>
-        Toast.show({
-          type: ToastType.Error,
-          text1: err,
-        }),
-      )
-      const encryptedFileName = `${WALLET_FILE_NAME}.wallet`
-      const encryptedFileLocation = `${zipDirectory}/${encryptedFileName}`
-
-      const exportConfig = {
-        key: encodeHash,
-        path: encryptedFileLocation,
-      }
-
-      await exportAdeyaWallet(agent, exportConfig)
-
+      let downloadDirectory = ''
       if (Platform.OS === 'ios') {
-        await Share.share({
-          title: 'Share file',
-          url: encryptedFileLocation,
-        })
+        downloadDirectory = RNFS.DocumentDirectoryPath
+      } else {
+        downloadDirectory = RNFS.DownloadDirectoryPath
+      }
+
+      const backupTimeStamp = moment().format('YYYY-MM-DD-HH-mm-ss')
+      // const backupDirectory = `${documentDirectory}/Wallet_Backup`
+      const zipUpDirectory = `${downloadDirectory}/ADEYA-Wallet-${backupTimeStamp}`
+
+      const destFileExists = await RNFS.exists(zipUpDirectory)
+      if (destFileExists) {
+        await RNFS.unlink(zipUpDirectory)
+      }
+
+      const WALLET_FILE_NAME = 'ADEYA_WALLET'
+
+      const zipFileName = `${WALLET_FILE_NAME}-${backupTimeStamp}.zip`
+      await RNFS.mkdir(zipUpDirectory)
+      const encryptedFileName = `${WALLET_FILE_NAME}.wallet`
+      const encryptedFileLocation = `${zipUpDirectory}/${encryptedFileName}`
+      const destinationZipPath = `${downloadDirectory}/${zipFileName}`
+
+      const exportConfig = {
+        key: encodeHash,
+        path: encryptedFileLocation,
+      }
+
+      await exportAdeyaWallet(agent, exportConfig)
+
+      await zip(zipUpDirectory, destinationZipPath)
+
+      await RNFS.unlink(zipUpDirectory)
+
+      if (parms?.params?.backupType === 'google_drive') {
+        const gdrive = new GDrive()
+        gdrive.accessToken = (await GoogleSignin.getTokens()).accessToken
+        gdrive.fetchCoercesTypes = true
+        gdrive.fetchRejectsOnHttpErrors = true
+        gdrive.fetchTimeout = 15000
+
+        const zipFileData = await RNFS.readFile(destinationZipPath, 'base64')
+        try {
+          const { result } = await gdrive.files.createIfNotExists(
+            {
+              q: new ListQueryBuilder()
+                .e('name', 'ADEYA Wallet Backups')
+                .and()
+                .e('mimeType', MimeTypes.FOLDER)
+                .and()
+                .in('root', 'parents'),
+            },
+            gdrive.files.newMetadataOnlyUploader().setRequestBody({
+              name: 'ADEYA Wallet Backups',
+              mimeType: MimeTypes.FOLDER,
+              parents: ['root'],
+            }),
+          )
+
+          const response = await gdrive.files
+            .newMultipartUploader()
+            .setData(zipFileData, 'application/zip')
+            .setIsBase64(true)
+            .setRequestBody({
+              name: zipFileName,
+              parents: [result.id],
+            })
+            .execute()
+
+          const folderData = await gdrive.files.getMetadata(result.id)
+          const fileData = await gdrive.files.getMetadata(response.id)
+          Toast.show({
+            type: ToastType.Success,
+            text1: t('GoogleDrive.BackupSuccess'),
+          })
+          setMatchPhrase(true)
+          navigation.navigate(Screens.Success, {
+            encryptedFileLocation: `Backup file uploaded successfully to Google Drive\n\nFolder: ${folderData.name}\n\nFile: ${fileData.name}`,
+          })
+          return
+        } catch (e) {
+          Toast.show({
+            type: ToastType.Error,
+            text1: t('GoogleDrive.BackupFailed'),
+            position: 'bottom',
+          })
+          return
+        }
+      } else {
+        if (Platform.OS === 'ios') {
+          await Share.share({
+            title: 'Share backup zip file',
+            url: destinationZipPath,
+          })
+        }
       }
 
       Toast.show({
         type: ToastType.Success,
-        text1: 'Backup successfully',
+        text1: 'Backup successfully completed',
       })
       setMatchPhrase(true)
-      navigation.navigate(Screens.Success, { encryptedFileLocation })
+      navigation.navigate(Screens.Success, { encryptedFileLocation: destinationZipPath })
     } catch (e) {
       Toast.show({
         type: ToastType.Error,
@@ -248,36 +272,14 @@ function ExportWalletConfirmation() {
     setNextPhraseIndex(index)
   }
 
-  const askPermission = async (sysPassPhrase: string) => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
-          title: 'Permission',
-          message: 'ADEYA Wallet needs to write to storage',
-          buttonPositive: '',
-        })
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          await exportWallet(sysPassPhrase)
-        }
-      } catch (error) {
-        Toast.show({
-          type: ToastType.Error,
-          text1: `${error}`,
-        })
-      }
-    } else {
-      await exportWalletIOS(sysPassPhrase)
-    }
-  }
-
-  const verifyPhrase = () => {
+  const verifyPhrase = async () => {
     const addedPassPhraseData = arraySetPhraseData.join('')
     const displayedPassphrase = parms?.params?.phraseData.map(item => item).join('')
     if (displayedPassphrase.trim() !== '') {
       const sysPassPhrase = addedPassPhraseData.trim()
       const userPassphrase = displayedPassphrase.trim()
       if (sysPassPhrase === userPassphrase) {
-        askPermission(sysPassPhrase)
+        await exportWallet(sysPassPhrase)
       } else {
         Toast.show({
           type: ToastType.Error,

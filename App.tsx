@@ -2,9 +2,11 @@
 global.Buffer = require('buffer').Buffer
 
 import { AdeyaAgentProvider } from '@adeya/ssi'
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
 import * as React from 'react'
 import { useEffect, useMemo } from 'react'
 import { StatusBar } from 'react-native'
+import { Config } from 'react-native-config'
 import SplashScreen from 'react-native-splash-screen'
 import Toast from 'react-native-toast-message'
 
@@ -38,6 +40,15 @@ const App = () => {
     // Hide the native splash / loading screen so that our
     // RN version can be displayed
     SplashScreen.hide()
+
+    if (Config.GOOGLE_WEB_CLIENT_ID && Config.GOOGLE_IOS_CLIENT_ID) {
+      GoogleSignin.configure({
+        webClientId: Config.GOOGLE_WEB_CLIENT_ID,
+        iosClientId: Config.GOOGLE_IOS_CLIENT_ID,
+        offlineAccess: true,
+        scopes: ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive.metadata'],
+      })
+    }
   }, [])
 
   return (

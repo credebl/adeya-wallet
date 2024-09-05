@@ -1,6 +1,6 @@
-// import { useAdeyaAgent,TypedArrayEncoder } from '@adeya/ssi'
+import { useAdeyaAgent } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, StyleSheet, View, Text, Dimensions, TouchableOpacity, Image } from 'react-native'
 
@@ -11,6 +11,8 @@ import { AttachTourStep } from '../components/tour/AttachTourStep'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import { HomeStackParams, Screens } from '../types/navigators'
+import { AdeyaAgentModules } from '../utils/agent'
+import { getDefaultHolderDidDocument } from '../utils/helpers'
 
 const { width } = Dimensions.get('window')
 const offset = 25
@@ -19,27 +21,21 @@ const offsetPadding = 5
 type HomeProps = StackScreenProps<HomeStackParams, Screens.Home>
 
 const Home: React.FC<HomeProps> = ({ navigation }) => {
+  const { agent } = useAdeyaAgent<AdeyaAgentModules>()
   const { useCustomNotifications } = useConfiguration()
   const { notifications } = useCustomNotifications()
   const { t } = useTranslation()
-  // const { agent } = useAdeyaAgent()
-  // This syntax is required for the jest mocks to work
-  // eslint-disable-next-line import/no-named-as-default-member
   const { HomeTheme } = useTheme()
 
-  // const createDid = async () => {
-  //   const holderDid = await agent.dids.create({
-  //     method: 'key',
-  //     options: {
-  //       keyType: 'ed25519',
-  //     },
-  //     secret: {
-  //       privateKey: TypedArrayEncoder.fromString('afjdemoverysecure000000000000key'),
-  //     },
-  //   })
-  //   // eslint-disable-next-line no-console
-  //   console.log('holderDid', holderDid)
-  // }
+  useEffect(() => {
+    if (!agent) return
+
+    const setupDefaultDid = async () => {
+      await getDefaultHolderDidDocument(agent)
+    }
+
+    setupDefaultDid()
+  }, [agent])
 
   const styles = StyleSheet.create({
     container: {

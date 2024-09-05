@@ -4,19 +4,25 @@ import {
   CredentialExchangeRecord,
   W3cCredentialRecord,
   getW3cCredentialRecordById,
-  getAllCredentialExchangeRecords,
   deleteCredentialExchangeRecordById,
+  useCredentialByState,
+  CredentialState,
+  useConnections,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
-import { BrandingOverlayType, CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
+import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
+import * as CryptoJS from 'crypto-js'
+import { toString as toQRCodeString } from 'qrcode'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import { DeviceEventEmitter, Image, ImageBackground, Platform, StyleSheet, Text, View } from 'react-native'
+import { Config } from 'react-native-config'
+import RNHTMLtoPDF from 'react-native-html-to-pdf'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
-import CredentialCard from '../components/misc/CredentialCard'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
+import RecordRemove from '../components/record/RecordRemove'
 import W3CCredentialRecord from '../components/record/W3CCredentialRecord'
 import { ToastType } from '../components/toast/BaseToast'
 import { EventTypes } from '../constants'
@@ -54,6 +60,10 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState<boolean>(false)
   const [tables, setTables] = useState<W3CCredentialAttributeField[]>([])
   const [w3cCredential, setW3cCredential] = useState<W3cCredentialRecord>()
+  const credentialsList = useCredentialByState(CredentialState.Done)
+  const [isDeletingCredential, setIsDeletingCredential] = useState<boolean>(false)
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState<boolean>(false)
+  const { records: connectionRecords } = useConnections()
 
   const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay>>({
     bundle: undefined,
@@ -103,16 +113,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   })
 
   useEffect(() => {
-    if (!agent) {
-      DeviceEventEmitter.emit(
-        EventTypes.ERROR_ADDED,
-        new BifoldError(t('Error.Title1033'), t('Error.Message1033'), t('CredentialDetails.CredentialNotFound'), 1033),
-      )
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!credential) {
+    if (!agent || !credential) {
       DeviceEventEmitter.emit(
         EventTypes.ERROR_ADDED,
         new BifoldError(t('Error.Title1033'), t('Error.Message1033'), t('CredentialDetails.CredentialNotFound'), 1033),
@@ -131,6 +132,8 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
         } else if (credential instanceof CredentialExchangeRecord) {
           const credentialRecordId = credential.credentials[0].credentialRecordId
           const record = await getW3cCredentialRecordById(agent, credentialRecordId)
+          const connection = connectionRecords.find(connection => connection.id === credential?.connectionId)
+          record.connectionLabel = connection?.theirLabel
           return record
         }
       }
@@ -148,7 +151,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
         credentialDefinitionId: w3cCredential.credential.type[1],
       },
       meta: {
-        alias: w3cCredential.credential.issuerId,
+        alias: w3cCredential?.connectionLabel ?? w3cCredential.credential.issuerId,
         credConnectionId: w3cCredential.credential.issuerId,
         credName: w3cCredential.credential.type[1],
       },
@@ -169,18 +172,25 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
       if (!(agent && credential)) {
         return
       }
-      const credentialList = await getAllCredentialExchangeRecords(agent)
-      const rec = credentialList.find(cred => cred.credentials[0]?.credentialRecordId === credential.id)
+      const rec = credentialsList.find(cred => cred.credentials[0]?.credentialRecordId === credential.id)
+      setIsDeletingCredential(true)
       if (rec) {
-        await deleteCredentialExchangeRecordById(agent, rec.id)
+        await deleteCredentialExchangeRecordById(agent, rec.id, {
+          deleteAssociatedCredentials: true,
+        })
       }
+      setIsDeletingCredential(false)
+      navigation.pop()
+
+      // FIXME: This delay is a hack so that the toast doesn't appear until the modal is dismissed
+      await new Promise(resolve => setTimeout(resolve, 50))
+
       Toast.show({
         type: ToastType.Success,
         text1: t('CredentialDetails.CredentialRemoved'),
       })
-
-      navigation.pop()
     } catch (err: unknown) {
+      setIsDeletingCredential(false)
       const error = new BifoldError(t('Error.Title1032'), t('Error.Message1032'), (err as Error).message, 1025)
 
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
@@ -191,6 +201,11 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     setIsRemoveModalDisplayed(false)
   }
 
+  const handleOnRemove = () => {
+    setIsRemoveModalDisplayed(true)
+  }
+
+  const callOnRemove = useCallback(() => handleOnRemove(), [])
   const callSubmitRemove = useCallback(() => handleSubmitRemove(), [])
   const callCancelRemove = useCallback(() => handleCancelRemove(), [])
 
@@ -270,13 +285,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   }
 
   const header = () => {
-    return OCABundleResolver.getBrandingOverlayType() === BrandingOverlayType.Branding10 ? (
-      <View>
-        {credential && (
-          <CredentialCard schemaId={w3cCredential?.credential.context[1] as string} style={{ margin: 16 }} />
-        )}
-      </View>
-    ) : (
+    return (
       <View style={styles.container}>
         <CredentialDetailSecondaryHeader />
         <CredentialCardLogo />
@@ -297,11 +306,90 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
           }}>
           <Text testID={testIdWithKey('IssuerName')}>
             <Text style={TextTheme.title}>{t('CredentialDetails.IssuedBy') + ' '}</Text>
-            <Text style={TextTheme.normal}>{w3cCredential?.credential.issuerId ?? ''}</Text>
+            <Text style={TextTheme.normal}>{w3cCredential?.connectionLabel ?? ''}</Text>
           </Text>
         </View>
+        <RecordRemove onRemove={callOnRemove} />
       </View>
     )
+  }
+
+  const getA4Sizes = (type: 'landscape' | 'portrait') => {
+    return {
+      width: type === 'landscape' ? 842 : 595,
+      height: type === 'landscape' ? 595 : 842,
+    }
+  }
+
+  const generateQRCodeString = async (text: string) => {
+    return toQRCodeString(text, {
+      width: 95,
+      margin: 1,
+      color: {
+        light: '#0000',
+      },
+    })
+  }
+
+  const navigateToRenderCertificate = async () => {
+    try {
+      setIsGeneratingPdf(true)
+
+      const certificateAttributes = w3cCredential?.credential.credentialSubject.claims
+
+      const dataToEncrypt = JSON.stringify({
+        email: certificateAttributes['email'] ?? 'email',
+        schemaUrl: w3cCredential?.credential.contexts[1],
+      })
+
+      // eslint-disable-next-line import/namespace
+      const encryptedToken = CryptoJS.AES.encrypt(dataToEncrypt, Config.DATA_ENCRYPTION_KEY!).toString()
+
+      const qrCodeSvg = await generateQRCodeString(encryptedToken)
+
+      const prettyVc = w3cCredential?.credential.prettyVc
+      let content = prettyVc.certificate
+
+      const contactDetailsPlaceholder = '{{qrcode}}'
+      const contactDetailsEscapedPlaceholder = contactDetailsPlaceholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+      content = content.replace(new RegExp(contactDetailsEscapedPlaceholder, 'g'), qrCodeSvg)
+
+      Object.keys(certificateAttributes).forEach(key => {
+        // Statically picking the value of placeholder
+        const placeholder = `{{credential['${key}']}}`
+        // Escaping the placeholder to avoid regex issues
+        const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        // Replacing the placeholder with the actual value
+        content = content.replace(new RegExp(escapedPlaceholder, 'g'), certificateAttributes[key])
+      })
+
+      const options: RNHTMLtoPDF.Options = {
+        html: content,
+        fileName: w3cCredential?.credential.type[1],
+        directory: 'Documents',
+        // add height and width to the options of a4 paper size
+        ...getA4Sizes(prettyVc.orientation),
+      }
+
+      const file = await RNHTMLtoPDF.convert(options)
+
+      let filePath = file.filePath as string
+
+      if (Platform.OS === 'android') {
+        filePath = 'file://' + filePath
+      }
+
+      navigation.navigate(Screens.RenderCertificate, {
+        filePath,
+      })
+
+      setIsGeneratingPdf(false)
+    } catch (error) {
+      setIsGeneratingPdf(false)
+      // eslint-disable-next-line no-console
+      console.log('Error generating pdf : ', error)
+    }
   }
 
   return (
@@ -313,6 +401,9 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
           hideFieldValues
           header={header}
           footer={footer}
+          w3cCredential={w3cCredential}
+          renderCertificate={navigateToRenderCertificate}
+          isCertificateLoading={isGeneratingPdf}
         />
       )}
       <CommonRemoveModal
@@ -320,6 +411,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
         visible={isRemoveModalDisplayed}
         onSubmit={callSubmitRemove}
         onCancel={callCancelRemove}
+        disabled={isDeletingCredential}
       />
     </SafeAreaView>
   )

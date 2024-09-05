@@ -8,6 +8,8 @@ import {
   acceptCredentialOffer,
   declineCredentialOffer,
   sendCredentialProblemReport,
+  AutoAcceptCredential,
+  useConnections,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
@@ -34,7 +36,7 @@ import { W3CCredentialAttributeField } from '../types/record'
 import { ModalUsage } from '../types/remove'
 import { useAppAgent } from '../utils/agent'
 import { buildFieldsFromJSONLDCredential, formatCredentialSubject, getCredentialIdentifiers } from '../utils/credential'
-import { getCredentialConnectionLabel } from '../utils/helpers'
+import { getCredentialConnectionLabel, getDefaultHolderDidDocument } from '../utils/helpers'
 import { buildFieldsFromAnonCredsCredential } from '../utils/oca'
 import { testIdWithKey } from '../utils/testable'
 
@@ -63,7 +65,8 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
   const credential = useCredentialById(credentialId)
   const [jsonLdOffer, setJsonLdOffer] = useState<JsonLdFormatDataCredentialDetail>()
   const [tables, setTables] = useState<W3CCredentialAttributeField[]>([])
-  const credentialConnectionLabel = getCredentialConnectionLabel(credential)
+  const { records } = useConnections()
+  const credentialConnectionLabel = getCredentialConnectionLabel(records, credential)
 
   const styles = StyleSheet.create({
     headerTextContainer: {
@@ -83,16 +86,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
   })
 
   useEffect(() => {
-    if (!agent) {
-      DeviceEventEmitter.emit(
-        EventTypes.ERROR_ADDED,
-        new BifoldError(t('Error.Title1035'), t('Error.Message1035'), t('CredentialOffer.CredentialNotFound'), 1035),
-      )
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!credential) {
+    if (!agent && !credential) {
       DeviceEventEmitter.emit(
         EventTypes.ERROR_ADDED,
         new BifoldError(t('Error.Title1035'), t('Error.Message1035'), t('CredentialOffer.CredentialNotFound'), 1035),
@@ -161,7 +155,38 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
         return
       }
       setAcceptModalVisible(true)
-      await acceptCredentialOffer(agent, { credentialRecordId: credential.id })
+
+      const credentialFormatData = await getFormattedCredentialData(agent, credential.id)
+
+      // Added holder did as id if did is not present and negotiate offer
+      if (
+        !credentialFormatData?.offer?.jsonld?.credential?.credentialSubject?.id &&
+        credentialFormatData?.offer?.jsonld
+      ) {
+        const holderDid = await getDefaultHolderDidDocument(agent)
+        await agent.credentials.negotiateOffer({
+          credentialFormats: {
+            jsonld: {
+              credential: {
+                ...credentialFormatData?.offer?.jsonld?.credential,
+                credentialSubject: {
+                  ...credentialFormatData?.offer?.jsonld?.credential?.credentialSubject,
+                  // Added holder did as id if did is not present
+                  id: holderDid?.id,
+                },
+              },
+              options: {
+                ...credentialFormatData?.offer?.jsonld?.options,
+              },
+            },
+          },
+          credentialRecordId: credential.id,
+          // we added auto accept credential to always accept the credential further flows
+          autoAcceptCredential: AutoAcceptCredential.Always,
+        })
+      } else {
+        await acceptCredentialOffer(agent, { credentialRecordId: credential.id })
+      }
     } catch (err: unknown) {
       setButtonsVisible(true)
       const error = new BifoldError(t('Error.Title1024'), t('Error.Message1024'), (err as Error).message, 1024)
@@ -200,29 +225,10 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
         </View>
         {!loading && credential && (
           <View style={{ marginHorizontal: 15, marginBottom: 16 }}>
-            <CredentialCard credential={credential} />
-          </View>
-        )}
-      </>
-    )
-  }
-
-  const jsonLdHeader = () => {
-    return (
-      <>
-        <ConnectionImage connectionId={credential?.connectionId} />
-        <View style={styles.headerTextContainer}>
-          <Text style={styles.headerText} testID={testIdWithKey('HeaderText')}>
-            <Text>{credentialConnectionLabel || t('ContactDetails.AContact')}</Text>{' '}
-            {t('CredentialOffer.IsOfferingYouACredential')}
-          </Text>
-        </View>
-        {!loading && credential && (
-          <View style={{ marginHorizontal: 15, marginBottom: 16 }}>
             <CredentialCard
               credential={credential}
+              schemaId={jsonLdOffer?.credential?.type[1] ?? ''}
               connectionLabel={credentialConnectionLabel}
-              schemaId={jsonLdOffer?.credential.type[1]}
             />
           </View>
         )}
@@ -271,7 +277,7 @@ const CredentialOffer: React.FC<CredentialOfferProps> = ({ navigation, route }) 
           tables={tables}
           fields={overlay.presentationFields || []}
           hideFieldValues={false}
-          header={jsonLdHeader}
+          header={header}
           footer={footer}
         />
       ) : (
