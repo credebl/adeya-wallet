@@ -223,9 +223,18 @@ const Chat: React.FC<ChatProps> = ({ navigation, route }) => {
               [ProofState.PresentationSent]: toProofDetails,
               [ProofState.PresentationReceived]: toProofDetails,
               [ProofState.RequestReceived]: () => {
-                navigation.navigate(Stacks.ContactStack as any, {
-                  screen: Screens.ProofRequest,
-                  params: { proofId: record.id },
+                agent.proofs.getFormatData(record.id).then(value => {
+                  if (value?.request?.indy) {
+                    navigation.navigate(Stacks.ContactStack as any, {
+                      screen: Screens.ProofRequest,
+                      params: { proofId: record.id },
+                    })
+                  } else {
+                    navigation.navigate(Stacks.ContactStack as any, {
+                      screen: Screens.ProofRequestW3C,
+                      params: { proofId: record.id },
+                    })
+                  }
                 })
               },
             }

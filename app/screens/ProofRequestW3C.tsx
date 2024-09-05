@@ -9,6 +9,7 @@ import {
   sendProofProblemReport,
   GetCredentialsForRequestReturn,
   DifPresentationExchangeProofFormatService,
+  utils,
 } from '@adeya/ssi'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { DifPexCredentialsForRequestRequirement, SubmissionEntryCredential } from '@credo-ts/core'
@@ -22,7 +23,7 @@ import Button, { ButtonType } from '../components/buttons/Button'
 import { CredentialCard } from '../components/misc'
 import ConnectionImage from '../components/misc/ConnectionImage'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
-import { EventTypes } from '../constants'
+import { CREDENTIAL, EventTypes } from '../constants'
 import { useAnimatedComponents } from '../contexts/animated-components'
 import { useConfiguration } from '../contexts/configuration'
 import { useNetwork } from '../contexts/network'
@@ -421,9 +422,13 @@ const ProofRequestW3C: React.FC<ProofRequestProps> = ({ navigation, route }) => 
                     credDefId={item.credDefId}
                     schemaId={item.schemaId}
                     displayItems={[...(item.attributes ?? [])]}
-                    credName={item.credName.substring(item.credName.lastIndexOf('/') + 1)}
-                    existsInWallet={item.credId !== undefined}
-                    satisfiedPredicates={true}
+                    credName={
+                      utils.isValidUuid(item.credName)
+                        ? CREDENTIAL
+                        : item.credName.substring(item.credName.lastIndexOf('/') + 1)
+                    }
+                    existsInWallet={item?.inputDescriptorIds}
+                    satisfiedPredicates={item.credId !== undefined}
                     hasAltCredentials={item.altCredentials && item.altCredentials.length > 1}
                     handleAltCredChange={
                       item.altCredentials && item.altCredentials.length > 1

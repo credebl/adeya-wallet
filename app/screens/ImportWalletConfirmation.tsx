@@ -25,13 +25,13 @@ import {
   Keyboard,
   ScrollView,
 } from 'react-native'
+import ReactNativeBlobUtil from 'react-native-blob-util'
 import { Config } from 'react-native-config'
 import { isCancel, pickSingle, types } from 'react-native-document-picker'
 import * as RNFS from 'react-native-fs'
 import { heightPercentageToDP } from 'react-native-responsive-screen'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 import { unzip } from 'react-native-zip-archive'
-import RNFetchBlob from 'rn-fetch-blob'
 
 import indyLedgers from '../../configs/ledgers/indy'
 import ButtonLoading from '../components/animated/ButtonLoading'
@@ -131,7 +131,7 @@ const ImportWalletVerify: React.FC<ImportWalletVerifyProps> = ({ navigation }) =
         key: credentials.key,
       }
 
-      const { fs } = RNFetchBlob
+      const { fs } = ReactNativeBlobUtil
       const restoreDirectoryPath = `${fs.dirs.DocumentDir}`
       const walletFilePath = `${restoreDirectoryPath}/ADEYA_WALLET_RESTORE/ADEYA_WALLET.wallet`
 

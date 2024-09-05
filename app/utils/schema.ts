@@ -1,7 +1,9 @@
 import { AnonCredsCredentialMetadataKey, CredentialExchangeRecord as CredentialRecord } from '@adeya/ssi'
 
+import { CREDENTIAL } from '../constants'
+
 export function parseSchemaFromId(schemaId?: string): { name: string; version: string } {
-  let name = 'Credential'
+  let name = CREDENTIAL
   let version = ''
   if (schemaId) {
     const schemaIdRegex = /(.*?):([0-9]):([a-zA-Z .\-_0-9]+):([a-z0-9._-]+)$/
