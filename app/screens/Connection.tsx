@@ -11,7 +11,7 @@ import Button, { ButtonType } from '../components/buttons/Button'
 import { useAnimatedComponents } from '../contexts/animated-components'
 import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
-import { useOutOfBandByConnectionId } from '../hooks/connections'
+import { useOutOfBandById } from '../hooks/connections'
 import { useNotifications } from '../hooks/notifications'
 import { Screens, TabStacks, DeliveryStackParams, Stacks } from '../types/navigators'
 import { useAppAgent } from '../utils/agent'
@@ -35,7 +35,7 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
   // delay message, the user should be redirected to the home screen.
   const { connectionTimerDelay, autoRedirectConnectionToHome } = useConfiguration()
   const connTimerDelay = connectionTimerDelay ?? 10000 // in ms
-  const { connectionId, threadId } = route.params
+  const { connectionId, outOfBandId, threadId } = route.params
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const connection = connectionId ? useConnectionById(connectionId) : undefined
   const { t } = useTranslation()
@@ -43,7 +43,7 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
   const { ColorPallet, TextTheme } = useTheme()
   const { ConnectionLoading } = useAnimatedComponents()
   const { agent } = useAppAgent()
-  const oobRecord = useOutOfBandByConnectionId(agent, connectionId ?? '')
+  const oobRecord = useOutOfBandById(agent, outOfBandId ?? '')
   const goalCode = oobRecord?.outOfBandInvitation.goalCode
   const merge: MergeFunction = (current, next) => ({ ...current, ...next })
   const [state, dispatch] = useReducer(merge, {
@@ -52,6 +52,7 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
     shouldShowDelayMessage: false,
     connectionIsActive: false,
   })
+
   const styles = StyleSheet.create({
     container: {
       height: '100%',
@@ -168,7 +169,7 @@ const Connection: React.FC<ConnectionProps> = ({ navigation, route }) => {
     if (state.notificationRecord && goalCode) {
       goalCodeAction(goalCode)()
     }
-  }, [connection, goalCode, state.notificationRecord])
+  }, [connection, oobRecord, goalCode, state.notificationRecord])
 
   useMemo(() => {
     startTimer()

@@ -7,12 +7,17 @@ import {
   deleteCredentialExchangeRecordById,
   useCredentialByState,
   CredentialState,
+  useConnections,
 } from '@adeya/ssi'
 import { BrandingOverlay } from '@hyperledger/aries-oca'
 import { CredentialOverlay } from '@hyperledger/aries-oca/build/legacy'
+import * as CryptoJS from 'crypto-js'
+import { toString as toQRCodeString } from 'qrcode'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeviceEventEmitter, Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import { DeviceEventEmitter, Image, ImageBackground, Platform, StyleSheet, Text, View } from 'react-native'
+import { Config } from 'react-native-config'
+import RNHTMLtoPDF from 'react-native-html-to-pdf'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
@@ -57,6 +62,8 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
   const [w3cCredential, setW3cCredential] = useState<W3cCredentialRecord>()
   const credentialsList = useCredentialByState(CredentialState.Done)
   const [isDeletingCredential, setIsDeletingCredential] = useState<boolean>(false)
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState<boolean>(false)
+  const { records: connectionRecords } = useConnections()
 
   const [overlay, setOverlay] = useState<CredentialOverlay<BrandingOverlay>>({
     bundle: undefined,
@@ -125,6 +132,8 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
         } else if (credential instanceof CredentialExchangeRecord) {
           const credentialRecordId = credential.credentials[0].credentialRecordId
           const record = await getW3cCredentialRecordById(agent, credentialRecordId)
+          const connection = connectionRecords.find(connection => connection.id === credential?.connectionId)
+          record.connectionLabel = connection?.theirLabel
           return record
         }
       }
@@ -305,10 +314,82 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
     )
   }
 
-  const navigateToRenderCertificate = () => {
-    navigation.navigate(Screens.RenderCertificate, {
-      credential: w3cCredential as W3cCredentialRecord,
+  const getA4Sizes = (type: 'landscape' | 'portrait') => {
+    return {
+      width: type === 'landscape' ? 842 : 595,
+      height: type === 'landscape' ? 595 : 842,
+    }
+  }
+
+  const generateQRCodeString = async (text: string) => {
+    return toQRCodeString(text, {
+      width: 95,
+      margin: 1,
+      color: {
+        light: '#0000',
+      },
     })
+  }
+
+  const navigateToRenderCertificate = async () => {
+    try {
+      setIsGeneratingPdf(true)
+
+      const certificateAttributes = w3cCredential?.credential.credentialSubject.claims
+
+      const dataToEncrypt = JSON.stringify({
+        email: certificateAttributes['email'] ?? 'email',
+        schemaUrl: w3cCredential?.credential.contexts[1],
+      })
+
+      // eslint-disable-next-line import/namespace
+      const encryptedToken = CryptoJS.AES.encrypt(dataToEncrypt, Config.DATA_ENCRYPTION_KEY!).toString()
+
+      const qrCodeSvg = await generateQRCodeString(encryptedToken)
+
+      const prettyVc = w3cCredential?.credential.prettyVc
+      let content = prettyVc.certificate
+
+      const contactDetailsPlaceholder = '{{qrcode}}'
+      const contactDetailsEscapedPlaceholder = contactDetailsPlaceholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+      content = content.replace(new RegExp(contactDetailsEscapedPlaceholder, 'g'), qrCodeSvg)
+
+      Object.keys(certificateAttributes).forEach(key => {
+        // Statically picking the value of placeholder
+        const placeholder = `{{credential['${key}']}}`
+        // Escaping the placeholder to avoid regex issues
+        const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        // Replacing the placeholder with the actual value
+        content = content.replace(new RegExp(escapedPlaceholder, 'g'), certificateAttributes[key])
+      })
+
+      const options: RNHTMLtoPDF.Options = {
+        html: content,
+        fileName: w3cCredential?.credential.type[1],
+        directory: 'Documents',
+        // add height and width to the options of a4 paper size
+        ...getA4Sizes(prettyVc.orientation),
+      }
+
+      const file = await RNHTMLtoPDF.convert(options)
+
+      let filePath = file.filePath as string
+
+      if (Platform.OS === 'android') {
+        filePath = 'file://' + filePath
+      }
+
+      navigation.navigate(Screens.RenderCertificate, {
+        filePath,
+      })
+
+      setIsGeneratingPdf(false)
+    } catch (error) {
+      setIsGeneratingPdf(false)
+      // eslint-disable-next-line no-console
+      console.log('Error generating pdf : ', error)
+    }
   }
 
   return (
@@ -322,6 +403,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
           footer={footer}
           w3cCredential={w3cCredential}
           renderCertificate={navigateToRenderCertificate}
+          isCertificateLoading={isGeneratingPdf}
         />
       )}
       <CommonRemoveModal

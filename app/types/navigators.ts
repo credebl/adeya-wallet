@@ -121,6 +121,7 @@ export type ContactStackParams = {
   [Screens.ProofRequest]: { proofId: string }
   [Screens.ProofRequestW3C]: { proofId: string }
   [Screens.Home]: undefined
+  [Screens.RenderCertificate]: { filePath: string }
 }
 
 export type ProofRequestsStackParams = {
@@ -147,7 +148,7 @@ export type CredentialStackParams = {
   [Screens.Credentials]: undefined
   [Screens.CredentialDetails]: { credential: CredentialExchangeRecord }
   [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
-  [Screens.RenderCertificate]: { credential: Pick<W3cCredentialRecord, 'credential'> }
+  [Screens.RenderCertificate]: { filePath: string }
   [Screens.Scan]: undefined
 }
 export type OrganizationStackParams = {
@@ -199,7 +200,7 @@ export type NotificationStackParams = {
 }
 
 export type DeliveryStackParams = {
-  [Screens.Connection]: { connectionId?: string; threadId?: string }
+  [Screens.Connection]: { connectionId?: string; threadId?: string; outOfBandId?: string }
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofRequest]: { proofId: string }
   [Screens.OnTheWay]: { credentialId: string }

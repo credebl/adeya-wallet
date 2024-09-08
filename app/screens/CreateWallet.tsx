@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/core'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, Text, Platform, Modal, TouchableOpacity } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import Button, { ButtonType } from '../components/buttons/Button'
 import { useTheme } from '../contexts/theme'
@@ -20,7 +20,9 @@ const CreateWallet: React.FC = () => {
 
   const proceedWithRestore = () => {
     toggleModal()
-    navigation.navigate(Screens.ImportWalletVerify as never)
+    setTimeout(() => {
+      navigation.navigate(Screens.ImportWalletVerify as never)
+    }, 300)
   }
 
   const styles = StyleSheet.create({
@@ -101,9 +103,7 @@ const CreateWallet: React.FC = () => {
             </View>
             <Text style={styles.instructionsText}>{t('Restore.RestoreInstructions')}</Text>
             {Platform.OS === 'ios' && (
-              <Text style={styles.instructionsText}>
-                <Text style={{ fontWeight: 'bold' }}>For iOS users:</Text> {t('Restore.RestoreInstructionsIOS')}
-              </Text>
+              <Text style={styles.instructionsText}>{t('Restore.RestoreInstructionsIOS')}</Text>
             )}
             <View style={styles.restoreWalletView}>
               <Button

@@ -1,7 +1,7 @@
 import { W3cCredentialRecord } from '@adeya/ssi'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import { useTheme } from '../../contexts/theme'
 import { Field, W3CCredentialAttributeField } from '../../types/record'
@@ -23,6 +23,7 @@ export interface RecordProps {
     }
   }
   renderCertificate?: () => void
+  isCertificateLoading?: boolean
 }
 
 const W3CCredentialRecord: React.FC<RecordProps> = ({
@@ -32,11 +33,15 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({
   tables,
   w3cCredential,
   renderCertificate,
+  isCertificateLoading,
 }) => {
   const { t } = useTranslation()
   const [shown, setShown] = useState<boolean[][]>([])
   const [showAll, setShowAll] = useState<boolean>(true)
   const { ListItems, TextTheme, ColorPallet } = useTheme()
+
+  const isPrettyVcAvailable =
+    w3cCredential?.credential?.prettyVc && Object.keys(w3cCredential?.credential?.prettyVc).length > 0
 
   const styles = StyleSheet.create({
     linkContainer: {
@@ -56,7 +61,7 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({
     },
     rowContainer: {
       flexDirection: 'row',
-      justifyContent: w3cCredential?.credential?.prettyVc ? 'space-between' : 'flex-end',
+      justifyContent: isPrettyVcAvailable ? 'space-between' : 'flex-end',
       backgroundColor: ColorPallet.grayscale.white,
     },
     linkText: {
@@ -118,19 +123,23 @@ const W3CCredentialRecord: React.FC<RecordProps> = ({
           <RecordHeader>
             {header()}
             <View style={styles.rowContainer}>
-              {w3cCredential?.credential?.prettyVc ? (
+              {isPrettyVcAvailable && (
                 <View style={styles.linkContainer}>
-                  <TouchableOpacity
-                    style={styles.link}
-                    activeOpacity={1}
-                    onPress={renderCertificate}
-                    testID={testIdWithKey('ViewCertificate')}
-                    accessible={true}
-                    accessibilityLabel={t('Record.ViewCertificate')}>
-                    <Text style={[ListItems.recordLink, styles.linkText]}>{t('Record.ViewCertificate')}</Text>
-                  </TouchableOpacity>
+                  {isCertificateLoading ? (
+                    <ActivityIndicator size={'small'} />
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.link}
+                      activeOpacity={1}
+                      onPress={renderCertificate}
+                      testID={testIdWithKey('ViewCertificate')}
+                      accessible={true}
+                      accessibilityLabel={t('Record.ViewCertificate')}>
+                      <Text style={[ListItems.recordLink, styles.linkText]}>{t('Record.ViewCertificate')}</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
-              ) : null}
+              )}
 
               {hideFieldValues ? (
                 <View style={styles.linkContainer}>

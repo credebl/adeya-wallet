@@ -72,7 +72,7 @@ export const formatCredentialSubject = (
 
     const value = subject[key]
 
-    if (!value) return // omit properties with no value
+    // if (!value) return // omit properties with no value
 
     if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
       stringRows.push({
