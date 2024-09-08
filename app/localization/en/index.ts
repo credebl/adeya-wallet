@@ -574,6 +574,7 @@ const translation = {
     "OrganizationConnection": "Connection",
     "RenderCertificate": "Certificate",
     "GoogleDriveSignIn": "Google Drive Sign In",
+    "DigiLocker": "Fetch From DigiLocker"
   },
   "Loading": {
     "TakingTooLong": "This is taking longer than usual. You can return to home or continue waiting.",
@@ -730,6 +731,10 @@ const translation = {
     "RestoreWallet": "Restore Wallet",
     "RestoreInstructions": "Note: To restore your wallet, you can use a backup from your cloud storage or local device. Please ensure that the Google Drive app is installed on your device and you are signed in.",
     "RestoreInstructionsIOS": "If you can't see Google Drive in the file picker, open the Files app --> tap on the three dots at the top --> select 'Edit' --> enable Google Drive.",
+  },
+  "DigiLocker": {
+    "Government": " Government IDs",
+    "DigiLockerInstructions": "Note: To fetch your documents from DigiLocker, you need to authenticate with your DigiLocker account.",
   },
 }
 
