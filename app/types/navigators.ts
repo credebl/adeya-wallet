@@ -53,6 +53,7 @@ export enum Screens {
   OrganizationDetails = 'Organization Details',
   RenderCertificate = 'Render Certificate',
   GoogleDriveSignIn = 'Google Drive Sign In',
+  DigiLockerScreen = 'Fetch From DigiLocker',
 }
 
 export enum Stacks {

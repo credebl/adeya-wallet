@@ -8,6 +8,7 @@ import { useConfiguration } from '../contexts/configuration'
 import { useTheme } from '../contexts/theme'
 import CreateWallet from '../screens/CreateWallet'
 import DataRetention from '../screens/DataRetention'
+import DigiLockerScreen from '../screens/DigiLockerScreen'
 import ExportWallet from '../screens/ExportWallet'
 import ExportWalletConfirmation from '../screens/ExportWalletConfirmation'
 import GoogleDriveSignIn from '../screens/GoogleDriveSignIn'
@@ -93,6 +94,11 @@ const SettingStack: React.FC = () => {
         name={Screens.Terms}
         component={terms}
         options={{ title: t('Screens.Terms'), headerBackTestID: testIdWithKey('Back') }}
+      />
+      <Stack.Screen
+        name={Screens.DigiLockerScreen}
+        component={DigiLockerScreen}
+        options={{ title: 'Fetch From DigiLocker', headerBackTestID: testIdWithKey('Back') }}
       />
       <Stack.Screen
         name={Screens.Developer}
