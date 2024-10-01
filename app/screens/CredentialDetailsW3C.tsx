@@ -367,6 +367,7 @@ const CredentialDetailsW3C: React.FC<CredentialDetailsProps> = ({ navigation, ro
       const options: RNHTMLtoPDF.Options = {
         html: content,
         fileName: w3cCredential?.credential.type[1],
+        padding: 0,
         directory: 'Documents',
         // add height and width to the options of a4 paper size
         ...getA4Sizes(prettyVc.orientation),
