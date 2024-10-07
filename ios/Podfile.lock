@@ -684,15 +684,15 @@ PODS:
     - React-Core
   - RNVectorIcons (10.0.0):
     - React-Core
-  - RNZipArchive (6.1.2):
+  - RNZipArchive (7.0.1):
     - React-Core
-    - RNZipArchive/Core (= 6.1.2)
-    - SSZipArchive (~> 2.2)
-  - RNZipArchive/Core (6.1.2):
+    - RNZipArchive/Core (= 7.0.1)
+    - SSZipArchive (~> 2.5.5)
+  - RNZipArchive/Core (7.0.1):
     - React-Core
-    - SSZipArchive (~> 2.2)
+    - SSZipArchive (~> 2.5.5)
   - SocketRocket (0.6.1)
-  - SSZipArchive (2.4.3)
+  - SSZipArchive (2.5.5)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -1050,11 +1050,11 @@ SPEC CHECKSUMS:
   RNShare: bed7c4fbe615f3d977f22feb0902af9a790c1660
   RNSVG: 80584470ff1ffc7994923ea135a3e5ad825546b9
   RNVectorIcons: 8b5bb0fa61d54cd2020af4f24a51841ce365c7e9
-  RNZipArchive: 6d736ee4e286dbbd9d81206b7a4da355596ca04a
+  RNZipArchive: 7bb4c70d6aa2dd235212c0a4a3de0a4e237e2569
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
+  SSZipArchive: c69881e8ac5521f0e622291387add5f60f30f3c4
   Yoga: 8796b55dba14d7004f980b54bcc9833ee45b28ce
 
-PODFILE CHECKSUM: c4f2b64f733d5092ed97bf9c8913baae9338ea31
+PODFILE CHECKSUM: 917f70721de439f934fcbed8c677d33ee4d8a63c
 
 COCOAPODS: 1.15.2
