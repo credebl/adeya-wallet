@@ -61,30 +61,12 @@ const styles = StyleSheet.create({
 const HistoryListItem: React.FC<Props> = ({ item }) => {
   const { t } = useTranslation()
   const { TextTheme, Assets } = useTheme()
-  //TODO: navigate to history details
-  //   const navigation = useNavigation<StackNavigationProp<RootStackParams, 'HistoryDetails'>>()
 
   //TODO: render icon
   const renderCardIcon = (item: CustomRecord) => {
     switch (item.content.type) {
       case HistoryCardType.CardAccepted: {
         return <Assets.svg.historyCardAcceptedIcon />
-      }
-      case HistoryCardType.CardDeclined: {
-        //TODO: return different icon
-        return <Assets.svg.historyCardRevokedIcon />
-      }
-      case HistoryCardType.CardExpired: {
-        return <Assets.svg.historyCardExpiredIcon />
-      }
-      case HistoryCardType.CardRevoked: {
-        return <Assets.svg.historyCardRevokedIcon />
-      }
-      case HistoryCardType.InformationSent: {
-        return <Assets.svg.historyInformationSentIcon />
-      }
-      case HistoryCardType.PinChanged: {
-        return <Assets.svg.historyPinUpdatedIcon />
       }
       case HistoryCardType.ProofRequest: {
         return <Assets.svg.historyProofRequestIcon />
@@ -153,58 +135,11 @@ const HistoryListItem: React.FC<Props> = ({ item }) => {
         return null
     }
   }
-  // const renderCardDescription = (item: CustomRecord) => {
-  //   console.log("🚀 ~ renderCardDescription ~ item:", item)
-  //   switch (item.content.type) {
-  //     case HistoryCardType.CardAccepted: {
-  //       return <Text style={[TextTheme.labelTitle, { color: styles.infoBox.color }]}>{item.content.correspondenceName}</Text>
-  //     }
-  //     case HistoryCardType.CardDeclined: {
-  //       return <Text style={[TextTheme.labelTitle, { color: styles.historyCardRevoked.color }]}>{item.content.correspondenceName}</Text>
-  //     }
-  //     case HistoryCardType.CardExpired: {
-  //       return (
-  //         <Text style={TextTheme.labelTitle}>
-  //           {t('History.CardDescription.CardExpired', { cardName: item.content.correspondenceName })}
-  //         </Text>
-  //       )
-  //     }
-  //     case HistoryCardType.CardRevoked: {
-  //       return (
-  //         <Text style={[TextTheme.labelTitle, { color: styles.historyCardRevoked.color }]}>
-  //           {t('History.CardDescription.CardRevoked', { cardName: item.content.correspondenceName })}
-  //         </Text>
-  //       )
-  //     }
-  //     case HistoryCardType.InformationSent: {
-  //       return <Text style={[TextTheme.labelTitle, { color: styles.successColor.color }]}>{item.content.correspondenceName}</Text>
-  //     }
-  //     case HistoryCardType.PinChanged: {
-  //       return <Text style={[TextTheme.labelTitle, { color: styles.infoBox.color }]}>{t('History.CardDescription.WalletPinUpdated')}</Text>
-  //     }
-  //     case HistoryCardType.ProofRequest: {
-  //       return <Text style={[TextTheme.labelTitle, { color: styles.infoBox.color }]}>{item.content.correspondenceName}</Text>
-  //     }
-  //     case HistoryCardType.Connection: {
-  //       return <Text style={[TextTheme.labelTitle, { color: styles.infoBox.color }]}>{item.content.connection}</Text>
-  //     }
-  //     default:
-  //       return null
-  //   }
-  // }
 
   const renderCardDate = (date?: Date) => {
     if (!date) return null
-
-    // const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' }
-    // const isDateToday = isToday(date)
     const dateFormate = moment(date).format('DD/MM/YYYY HH:mm:ss')
-    return (
-      <Text style={[TextTheme.caption, styles.cardDate]}>
-        {/* {isDateToday ? t('History.Today') : date.toLocaleDateString('en-US', options)} */}
-        {dateFormate}
-      </Text>
-    )
+    return <Text style={[TextTheme.caption, styles.cardDate]}>{dateFormate}</Text>
   }
 
   const renderCard = (item: CustomRecord) => {
@@ -214,10 +149,9 @@ const HistoryListItem: React.FC<Props> = ({ item }) => {
           <View style={styles.card}>{renderCardIcon(item)}</View>
           <View style={styles.cardContent}>
             {renderCardTitle(item)}
-            {/* <View style={styles.cardDescriptionContent}>{renderCardDescription(item)}</View> */}
             {renderCardDate(item.content.createdAt)}
           </View>
-          <View style={styles.arrowContainer}>{/* <Assets.svg.iconChevronRight /> */}</View>
+          <View style={styles.arrowContainer}></View>
         </View>
         <View style={styles.cardBottomBorder} />
       </View>
