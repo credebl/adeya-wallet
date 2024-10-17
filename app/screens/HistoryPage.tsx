@@ -74,29 +74,6 @@ const HistoryPage: React.FC<HistoryPageProps> = () => {
       <View style={style.screenContainer}>
         <View style={style.contentContainer}>
           <View>
-            {/* <Button
-              title={t('History.SortFilterButton')}
-              buttonType={ButtonType.Secondary}
-              testID={actionButtonTestId}
-              onPress={async () => {
-                //TODO: Save settings
-                // console.log('save history')
-              }}
-              accessibilityLabel={actionButtonLabel}
-            /> */}
-            {/* <Button
-              title={t('History.SortFilterButton')}
-              testID={actionButtonTestId}
-              accessibilityLabel={actionButtonLabel}
-              buttonType={ButtonType.Secondary}
-              onPress={async () => {
-                //TODO: Save settings
-                // console.log('save history')
-              }}>
-              {!continueEnabled && isLoading ? <ButtonLoading /> : null}
-            </Button> */}
-            {/* <View style={style.gap} /> */}
-
             <FlatList
               showsVerticalScrollIndicator={false}
               style={{ flexGrow: 0 }}
