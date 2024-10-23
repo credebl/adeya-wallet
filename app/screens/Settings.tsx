@@ -199,6 +199,21 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     },
     {
       header: {
+        icon: 'government',
+        title: t('DigiLocker.Government'),
+      },
+      data: [
+        {
+          title: t('Screens.DigiLocker'),
+          accessibilityLabel: t('Screens.DigiLocker'),
+          testID: testIdWithKey('DigiLocker'),
+          onPress: () => navigation.getParent()?.navigate(Stacks.SettingStack, { screen: Screens.DigiLockerScreen }),
+          value: undefined,
+        },
+      ],
+    },
+    {
+      header: {
         icon: 'settings',
         title: 'Security',
       },
