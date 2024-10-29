@@ -53,24 +53,24 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   const { records: connectionRecords } = useConnections()
 
   useEffect(() => {
-    const updateCredentials = async () => {
+    const updateHomeScreenCredentials = async () => {
       if (!agent) {
         return
       }
-      const w3cCredentialRecords = await getAllW3cCredentialRecords(agent)
+      const w3cCredentialRecord = await getAllW3cCredentialRecords(agent)
 
-      const updatedCredentials = credentials.map(credential => {
+      const updatedCredential = credentials.map(credential => {
         if (isW3CCredential(credential)) {
           const credentialRecordId = credential.credentials[0].credentialRecordId
           try {
-            const record = w3cCredentialRecords.find(record => record.id === credentialRecordId)
+            const record = w3cCredentialRecord.find(record => record.id === credentialRecordId)
             if (!credential?.connectionId) {
               throw new Error('Connection Id notfound')
             }
-            const connection = connectionRecords.find(connection => connection.id === credential?.connectionId)
-            const enhancedRecord = record as EnhancedW3CRecord
-            enhancedRecord.connectionLabel = connection?.theirLabel
-            return enhancedRecord
+            const connections = connectionRecords.find(connection => connection.id === credential?.connectionId)
+            const enhancedRecords = record as EnhancedW3CRecord
+            enhancedRecords.connectionLabel = connections?.theirLabel
+            return enhancedRecords
           } catch (e: unknown) {
             throw new Error(`${e}`)
           }
@@ -78,11 +78,11 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
         return credential
       })
 
-      return updatedCredentials
+      return updatedCredential
     }
 
-    updateCredentials().then(updatedCredentials => {
-      setCredentialList(updatedCredentials?.slice(-3, 3))
+    updateHomeScreenCredentials().then(updatedCredential => {
+      setCredentialList(updatedCredential?.slice(-3, 3))
     })
   }, [credentials])
   useEffect(() => {

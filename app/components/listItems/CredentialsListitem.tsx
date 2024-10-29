@@ -23,7 +23,6 @@ interface EnhancedW3CRecord extends W3cCredentialRecord {
 interface Props {
   isHorizontal?: boolean
   onPress: (credential: CredentialExchangeRecord) => void
-  CredentialEmptyList?: string
 }
 
 const { width } = Dimensions.get('window')
@@ -110,7 +109,7 @@ const CredentialsListItem: React.FC<Props> = ({ isHorizontal = false, onPress })
           .slice(1),
       ]}
       decelerationRate="fast"
-      ListEmptyComponent={() => (
+      ListEmptyComponent={
         <View>
           {!isHorizontal ? (
             <CredentialEmptyList message={t('Credentials.EmptyCredentailsList')} />
@@ -120,7 +119,7 @@ const CredentialsListItem: React.FC<Props> = ({ isHorizontal = false, onPress })
             </View>
           )}
         </View>
-      )}
+      }
       data={credentialList?.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf())}
       keyExtractor={credential => credential?.id}
       renderItem={({ item: credential }) => (
