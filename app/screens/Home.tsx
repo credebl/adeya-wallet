@@ -29,11 +29,10 @@ import { AdeyaAgentModules } from '../utils/agent'
 import { isW3CCredential } from '../utils/credential'
 import { getDefaultHolderDidDocument } from '../utils/helpers'
 
-const offset = 25
-
 interface EnhancedW3CRecord extends W3cCredentialRecord {
   connectionLabel?: string
 }
+const offset = 25
 type HomeProps = StackScreenProps<HomeStackParams, Screens.Home>
 
 const Home: React.FC<HomeProps> = ({ navigation }) => {
@@ -45,6 +44,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   const [store] = useStore()
   const [historyItems, setHistoryItems] = useState<CustomRecord[]>()
   const { credentialListOptions: CredentialListOptions } = useConfiguration()
+
   const credentials = [
     ...useCredentialByState(CredentialState.CredentialReceived),
     ...useCredentialByState(CredentialState.Done),
@@ -52,39 +52,6 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   const [credentialList, setCredentialList] = useState<(CredentialExchangeRecord | EnhancedW3CRecord)[] | undefined>([])
   const { records: connectionRecords } = useConnections()
 
-  useEffect(() => {
-    if (!agent) return
-
-    const setupDefaultDid = async () => {
-      await getDefaultHolderDidDocument(agent)
-
-      let connectionCount = await agent.connections.findAllByQuery({
-        state: DidExchangeState.Completed,
-      })
-      connectionCount = connectionCount.filter(r => !r.connectionTypes.includes(ConnectionType.Mediator))
-      const credentialCount = await agent.credentials.findAllByQuery({
-        state: CredentialState.Done,
-      })
-      setConnectionCount(connectionCount.length)
-      setCredentialCount(credentialCount.length)
-    }
-
-    setupDefaultDid()
-  }, [agent])
-
-  const getHistory = async () => {
-    const allRecords = await getGenericRecordsByQuery(agent, { type: RecordType.HistoryRecord })
-    allRecords.sort((objA, objB) => Number(objB.content.createdAt) - Number(objA.content.createdAt))
-
-    const hasAllRecords = !!allRecords?.length
-    if (hasAllRecords) {
-      const top5Records = allRecords.slice(0, 5)
-      setHistoryItems(top5Records)
-    }
-  }
-  useEffect(() => {
-    getHistory()
-  }, [])
   useEffect(() => {
     const updateCredentials = async () => {
       if (!agent) {
@@ -118,6 +85,39 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       setCredentialList(updatedCredentials?.slice(-3, 3))
     })
   }, [credentials])
+  useEffect(() => {
+    if (!agent) return
+
+    const setupDefaultDid = async () => {
+      await getDefaultHolderDidDocument(agent)
+
+      let connectionCount = await agent.connections.findAllByQuery({
+        state: DidExchangeState.Completed,
+      })
+      connectionCount = connectionCount.filter(r => !r.connectionTypes.includes(ConnectionType.Mediator))
+      const credentialCount = await agent.credentials.findAllByQuery({
+        state: CredentialState.Done,
+      })
+      setConnectionCount(connectionCount.length)
+      setCredentialCount(credentialCount.length)
+    }
+
+    setupDefaultDid()
+  }, [agent])
+
+  const getHistory = async () => {
+    const allRecords = await getGenericRecordsByQuery(agent, { type: RecordType.HistoryRecord })
+    allRecords.sort((objA, objB) => Number(objB.content.createdAt) - Number(objA.content.createdAt))
+
+    const hasAllRecords = !!allRecords?.length
+    if (hasAllRecords) {
+      const top5Records = allRecords.slice(0, 5)
+      setHistoryItems(top5Records)
+    }
+  }
+  useEffect(() => {
+    getHistory()
+  }, [])
 
   const styles = StyleSheet.create({
     container: {
@@ -299,21 +299,16 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       </View>
 
       <View style={styles.favContainer}>
-        {credentialList && (
-          <CredentialsListitem
-            credentialList={credentialList?.sort(
-              (a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
-            )}
-            isHorizontal
-            onPress={credential => {
-              credential instanceof CredentialExchangeRecord
-                ? navigation.navigate(Screens.CredentialDetails, {
-                    credential: credential as CredentialExchangeRecord,
-                  })
-                : navigation.navigate(Screens.CredentialDetailsW3C, { credential: credential })
-            }}
-          />
-        )}
+        <CredentialsListitem
+          isHorizontal
+          onPress={credential => {
+            credential instanceof CredentialExchangeRecord
+              ? navigation.navigate(Screens.CredentialDetails, {
+                  credential: credential as CredentialExchangeRecord,
+                })
+              : navigation.navigate(Screens.CredentialDetailsW3C, { credential: credential })
+          }}
+        />
       </View>
 
       <View>
@@ -328,9 +323,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
             </TouchableOpacity>
           )}
         </View>
-        {/* <View style={styles.cardBottomBorder} /> */}
       </View>
-      {/* } */}
 
       <ScrollView>
         {historyItems && historyItems.length > 0 && store.preferences.useHistoryCapability ? (
@@ -342,7 +335,6 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
         )}
       </ScrollView>
 
-      {/* <Button title="Create did" onPress={createDid} /> */}
       <View style={styles.fabContainer}>
         <ScanButton />
       </View>
