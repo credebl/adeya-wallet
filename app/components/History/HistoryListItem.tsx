@@ -133,7 +133,7 @@ const HistoryListItem: React.FC<Props> = ({ item }) => {
     }
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: Date) => {
     const now = moment() // Current date and time
     const date = moment(dateString) // Message date and time
     const diffDays = now.diff(date, 'days')

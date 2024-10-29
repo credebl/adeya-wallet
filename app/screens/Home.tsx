@@ -12,14 +12,14 @@ import {
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 
 import HistoryListItem from '../components/History/HistoryListItem'
 import { getGenericRecordsByQuery } from '../components/History/HistoryManager'
 import { CustomRecord, RecordType } from '../components/History/types'
 import ScanButton from '../components/common/ScanButton'
-import { CredentialCard } from '../components/misc'
+import CredentialsListitem from '../components/listItems/CredentialsListitem'
 import { useConfiguration } from '../contexts/configuration'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
@@ -29,9 +29,7 @@ import { AdeyaAgentModules } from '../utils/agent'
 import { isW3CCredential } from '../utils/credential'
 import { getDefaultHolderDidDocument } from '../utils/helpers'
 
-const { width } = Dimensions.get('window')
 const offset = 25
-const offsetPadding = 5
 
 interface EnhancedW3CRecord extends W3cCredentialRecord {
   connectionLabel?: string
@@ -299,54 +297,25 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
           </TouchableOpacity>
         )}
       </View>
-      {/* <View style={styles.cardBottomBorder} /> */}
-      {/* } */}
+
       <View style={styles.favContainer}>
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          scrollEnabled={!!credentialList?.length}
-          style={styles.credentialsCardList}
-          snapToOffsets={[
-            0,
-            ...Array(credentialList?.length)
-              .fill(0)
-              .map((n: number, i: number) => i * (width - 2 * (offset - offsetPadding)))
-              .slice(1),
-          ]}
-          decelerationRate="fast"
-          ListEmptyComponent={() => (
-            <View style={styles.noFavContainer}>
-              <Text style={styles.noFav}>{t('Home.DontHaveCredentials')}</Text>
-            </View>
-          )}
-          data={credentialList?.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf())}
-          keyExtractor={credential => credential.id}
-          renderItem={({ item: credential }) => (
-            <View style={styles.renderView}>
-              {credential instanceof CredentialExchangeRecord ? (
-                <CredentialCard
-                  credential={credential}
-                  onPress={() =>
-                    navigation.navigate(Screens.CredentialDetails, {
-                      credential: credential as CredentialExchangeRecord,
-                    })
-                  }
-                />
-              ) : (
-                <CredentialCard
-                  schemaId={credential?.credential?.type[1]}
-                  connectionLabel={credential?.connectionLabel}
-                  credential={credential}
-                  onPress={() => navigation.navigate(Screens.CredentialDetailsW3C, { credential: credential })}
-                />
-              )}
-            </View>
-          )}
-        />
+        {credentialList && (
+          <CredentialsListitem
+            credentialList={credentialList?.sort(
+              (a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
+            )}
+            isHorizontal
+            onPress={credential => {
+              credential instanceof CredentialExchangeRecord
+                ? navigation.navigate(Screens.CredentialDetails, {
+                    credential: credential as CredentialExchangeRecord,
+                  })
+                : navigation.navigate(Screens.CredentialDetailsW3C, { credential: credential })
+            }}
+          />
+        )}
       </View>
 
-      {/* {historyItems && historyItems.length && */}
       <View>
         <View style={styles.headerView}>
           <Text style={styles.historyText}>{t('Global.History')}</Text>
