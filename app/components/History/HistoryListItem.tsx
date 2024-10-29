@@ -32,10 +32,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     width: '80%',
   },
-  cardDescriptionContent: {
-    // marginTop: 5,
-    // marginBottom: 10,
-  },
   cardDate: {
     color: '#666666',
   },
