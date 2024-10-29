@@ -78,7 +78,8 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
     const allRecords = await getGenericRecordsByQuery(agent, { type: RecordType.HistoryRecord })
     allRecords.sort((objA, objB) => Number(objB.content.createdAt) - Number(objA.content.createdAt))
 
-    if (allRecords && allRecords.length) {
+    const hasAllRecords = !!allRecords?.length
+    if (hasAllRecords) {
       const top5Records = allRecords.slice(0, 5)
       setHistoryItems(top5Records)
     }
@@ -215,23 +216,11 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
     title: {
       marginTop: 16,
     },
-    welcomeText: {
-      ...HomeTheme.notificationsHeader,
-      fontSize: 24,
-      fontWeight: 'bold',
-      fontStyle: 'normal',
-      marginHorizontal: 20,
-      justifyContent: 'center',
-      alignContent: 'center',
-      alignSelf: 'center',
-      paddingVertical: 20,
-    },
     credentialsCardList: { flexGrow: 0, marginLeft: 15 },
     renderView: {
       marginRight: 15,
       marginTop: 15,
       width: wp('85%'),
-      // marginBottom: index === credentials.length - 1 ? 45 : 0,
     },
     noFavContainer: {
       flexDirection: 'column',
@@ -316,7 +305,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
-          scrollEnabled={credentialList?.length > 0 ? true : false}
+          scrollEnabled={!!credentialList?.length}
           style={styles.credentialsCardList}
           snapToOffsets={[
             0,
@@ -361,7 +350,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       <View>
         <View style={styles.headerView}>
           <Text style={styles.historyText}>{t('Global.History')}</Text>
-          {historyItems && historyItems.length && (
+          {historyItems && historyItems.length > 0 && (
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate(Stacks.HistoryStack, { screen: Screens.HistoryPage })
@@ -375,7 +364,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       {/* } */}
 
       <ScrollView>
-        {historyItems && historyItems.length && store.preferences.useHistoryCapability ? (
+        {historyItems && historyItems.length > 0 && store.preferences.useHistoryCapability ? (
           renderHistoryView()
         ) : (
           <View style={styles.messageContainer}>
