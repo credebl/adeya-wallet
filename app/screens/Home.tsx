@@ -19,7 +19,7 @@ import HistoryListItem from '../components/History/HistoryListItem'
 import { getGenericRecordsByQuery } from '../components/History/HistoryManager'
 import { CustomRecord, RecordType } from '../components/History/types'
 import ScanButton from '../components/common/ScanButton'
-import CredentialsListitem from '../components/listItems/CredentialsListitem'
+import CredentialsListItem from '../components/listItems/CredentialsListItem'
 import { useConfiguration } from '../contexts/configuration'
 import { useStore } from '../contexts/store'
 import { useTheme } from '../contexts/theme'
@@ -299,7 +299,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       </View>
 
       <View style={styles.favContainer}>
-        <CredentialsListitem
+        <CredentialsListItem
           isHorizontal
           onPress={credential => {
             credential instanceof CredentialExchangeRecord

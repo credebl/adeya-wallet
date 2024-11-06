@@ -9,7 +9,7 @@ import {
 } from '@adeya/ssi'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, FlatList, StyleSheet, View } from 'react-native'
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 
 import { useConfiguration } from '../../contexts/configuration'
@@ -76,18 +76,8 @@ const CredentialsListItem: React.FC<Props> = ({ isHorizontal = false, onPress })
   }, [credentials])
 
   const styles = StyleSheet.create({
-    credentialList: { flexGrow: 0 },
-    credentialsCardList: { flexGrow: 0, marginLeft: 15 },
-    noFavContainer: {
-      flexDirection: 'column',
-      justifyContent: 'center',
-      width: wp('95%'),
-    },
-    noFav: {
-      fontWeight: '700',
-      fontSize: 24,
-      textAlign: 'center',
-    },
+    credentialList: { width: wp('90%'), height: wp('40%') },
+    credentialsCardList: { marginLeft: 15 },
     renderView: {
       marginRight: 15,
       marginTop: 15,
@@ -100,7 +90,7 @@ const CredentialsListItem: React.FC<Props> = ({ isHorizontal = false, onPress })
       horizontal={isHorizontal}
       showsHorizontalScrollIndicator={false}
       scrollEnabled={!!credentialList?.length}
-      style={isHorizontal ? styles.credentialsCardList : styles.credentialList}
+      style={isHorizontal ? styles.credentialList : styles.credentialsCardList}
       snapToOffsets={[
         0,
         ...Array(credentialList?.length)
@@ -110,14 +100,8 @@ const CredentialsListItem: React.FC<Props> = ({ isHorizontal = false, onPress })
       ]}
       decelerationRate="fast"
       ListEmptyComponent={
-        <View>
-          {!isHorizontal ? (
-            <CredentialEmptyList message={t('Credentials.EmptyCredentailsList')} />
-          ) : (
-            <View style={styles.noFavContainer}>
-              <Text style={styles.noFav}>{t('Home.DontHaveCredentials')}</Text>
-            </View>
-          )}
+        <View style={isHorizontal ? styles.credentialList : styles.credentialsCardList}>
+          <CredentialEmptyList message={t('Credentials.EmptyCredentailsList')} />
         </View>
       }
       data={credentialList?.sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf())}

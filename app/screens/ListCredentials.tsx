@@ -5,7 +5,7 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import ScanButton from '../components/common/ScanButton'
-import CredentialsListItem from '../components/listItems/CredentialsListitem'
+import CredentialsListItem from '../components/listItems/CredentialsListItem'
 import { useConfiguration } from '../contexts/configuration'
 import { CredentialStackParams, Screens } from '../types/navigators'
 
