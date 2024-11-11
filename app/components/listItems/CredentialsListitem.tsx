@@ -73,7 +73,7 @@ const CredentialsListItem: React.FC<Props> = ({ isHorizontal = false, onPress })
     updateCredentials().then(updatedCredentials => {
       setCredentialList(updatedCredentials?.slice(-3, 3))
     })
-  }, [credentials])
+  }, [])
 
   const styles = StyleSheet.create({
     credentialList: { width: wp('90%'), height: wp('40%') },

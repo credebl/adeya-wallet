@@ -131,8 +131,8 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
           }
 
           const { connectionRecord, outOfBandRecord } = await connectFromInvitation(agent, urlData)
-          logHistoryRecord(connectionRecord)
           setLoading(false)
+          logHistoryRecord(connectionRecord)
           navigation.getParent()?.navigate(Stacks.ConnectionStack, {
             screen: Screens.Connection,
             params: { connectionId: connectionRecord?.id, outOfBandId: outOfBandRecord.id },
