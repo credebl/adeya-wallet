@@ -1,12 +1,15 @@
 import type { BarCodeReadEvent } from 'react-native-camera'
 
+import { ConnectionRecord } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Platform } from 'react-native'
 import { check, Permission, PERMISSIONS, request, RESULTS } from 'react-native-permissions'
 import Toast from 'react-native-toast-message'
 
+import { saveHistory } from '../components/History/HistoryManager'
+import { HistoryCardType, HistoryRecord } from '../components/History/types'
 import NewQRView from '../components/misc/NewQRView'
 import QRScanner from '../components/misc/QRScanner'
 import CameraDisclosureModal from '../components/modals/CameraDisclosureModal'
@@ -21,6 +24,7 @@ import {
   checkIfAlreadyConnected,
   connectFromInvitation,
   fetchUrlData,
+  getConnectionName,
   getJson,
   getUrl,
   isValidUrl,
@@ -41,6 +45,36 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
     defaultToConnect = route.params['defaultToConnect']
   }
 
+  const logHistoryRecord = async (connectionRecord: ConnectionRecord | undefined) => {
+    const contactLabel: string | void = await getConnectionName(connectionRecord)
+
+    try {
+      if (!(agent && store.preferences.useHistoryCapability)) {
+        return
+      }
+      const type = HistoryCardType.Connection
+      if (!connectionRecord) {
+        return
+      }
+
+      try {
+        // Prepare the history record object
+        const recordData: HistoryRecord = {
+          type: type,
+          message: type,
+          createdAt: connectionRecord?.createdAt, // Assuming `data` has `createdAt` field
+          correspondenceId: connectionRecord?.id,
+          connection: contactLabel,
+        }
+        // Save the history record asynchronously
+        await saveHistory(recordData, agent)
+      } catch (error) {
+        // error when save history
+      }
+    } catch (err: unknown) {
+      // error when agent and preferences not getting
+    }
+  }
   const handleInvitation = async (value: string): Promise<void> => {
     try {
       setLoading(true)
@@ -60,6 +94,7 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
 
       const { connectionRecord, outOfBandRecord } = await connectFromInvitation(agent, value)
       setLoading(false)
+      logHistoryRecord(connectionRecord)
       navigation.getParent()?.navigate(Stacks.ConnectionStack, {
         screen: Screens.Connection,
         params: { connectionId: connectionRecord?.id, outOfBandId: outOfBandRecord.id },
@@ -96,8 +131,8 @@ const Scan: React.FC<ScanProps> = ({ navigation, route }) => {
           }
 
           const { connectionRecord, outOfBandRecord } = await connectFromInvitation(agent, urlData)
-
           setLoading(false)
+          logHistoryRecord(connectionRecord)
           navigation.getParent()?.navigate(Stacks.ConnectionStack, {
             screen: Screens.Connection,
             params: { connectionId: connectionRecord?.id, outOfBandId: outOfBandRecord.id },

@@ -23,7 +23,8 @@ const HistoryPage: React.FC<HistoryPageProps> = () => {
     screenContainer: {
       height: '100%',
       backgroundColor: ColorPallet.brand.primaryBackground,
-      padding: 20,
+      paddingHorizontal: 20,
+      paddingVertical: 5,
       justifyContent: 'space-between',
     },
     title: {
