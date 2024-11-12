@@ -1,28 +1,38 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import React, { useEffect, useState, useCallback } from 'react'
 import {
-  View,
-  Text,
-  Alert,
-  Linking,
-  AppState,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
+  fetchAadhaarData,
+  fetchDigiLockerToken,
+  fetchDocumentData,
+  fetchIssuedDocuments,
+  initiateDigiLockerOAuth,
+  parseAadhaarData,
+  parseDrivingLicenseData,
+  parsePANData,
+} from '@adeya/digilocker'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, { useCallback, useEffect, useState } from 'react'
+import {
   ActivityIndicator,
+  Alert,
+  AppState,
+  Image,
+  Linking,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native'
+import { Config } from 'react-native-config'
 import { v4 as uuidv4 } from 'uuid'
 
 import {
-  initiateDigiLockerOAuth,
-  fetchDigiLockerToken,
-  fetchAadhaarData,
-  fetchIssuedDocuments,
-  fetchDocumentData,
-} from '../api/digilocker'
-import { parseAadhaarData, parsePANData, parseDrivingLicenseData } from '../utils/digilockerDataParse'
+  DigiLocker,
+  DigiLocker_Aadhaar_Logo,
+  DigiLocker_ITD_Logo,
+  DigiLocker_Logo,
+  DigiLocker_NE_Preview_Logo,
+} from '../constants'
 
 const getQueryParams = (url: string): { [key: string]: string } => {
   const params: { [key: string]: string } = {}
@@ -38,6 +48,9 @@ const getQueryParams = (url: string): { [key: string]: string } => {
   }
   return params
 }
+const DIGI_LOCKER_CLIENT_ID = Config.DIGILOCKER_CLIENT_ID
+const DIGI_LOCKER_CLIENT_SECRET = Config.DIGILOCKER_CLIENT_SECRET
+const DIGILOCKER_REDIRECT_URI = Config.DIGILOCKER_REDIRECT_URI
 
 const DigiLockerScreen: React.FC = () => {
   const [appState, setAppState] = useState(AppState.currentState)
@@ -74,7 +87,13 @@ const DigiLockerScreen: React.FC = () => {
   const fetchAndStoreToken = async () => {
     if (!authCode || !codeVerifier) return
     try {
-      const tokenResponse = await fetchDigiLockerToken(authCode, codeVerifier)
+      const tokenResponse = await fetchDigiLockerToken({
+        authCode: authCode,
+        client_id: DIGI_LOCKER_CLIENT_ID,
+        client_secret: DIGI_LOCKER_CLIENT_SECRET,
+        redirect_url: DIGILOCKER_REDIRECT_URI,
+        codeVerifier: codeVerifier,
+      })
       const token = tokenResponse.access_token
       setAccessToken(token)
       await AsyncStorage.setItem('accessToken', token)
@@ -96,12 +115,7 @@ const DigiLockerScreen: React.FC = () => {
     setCodeVerifier(codeVerifier)
   }, [])
 
-  const handleAppStateChange = useCallback(
-    (nextAppState: string) => {
-      setAppState(nextAppState)
-    },
-    [appState],
-  )
+  const handleAppStateChange = useCallback((nextAppState: string) => setAppState(nextAppState), [appState])
 
   useEffect(() => {
     const appStateSubscription = AppState.addEventListener('change', handleAppStateChange)
@@ -119,7 +133,15 @@ const DigiLockerScreen: React.FC = () => {
     try {
       const generatedCodeVerifier = uuidv4()
       setCodeVerifier(generatedCodeVerifier)
-      await initiateDigiLockerOAuth(generatedCodeVerifier)
+      initiateDigiLockerOAuth({
+        client_id: DIGI_LOCKER_CLIENT_ID,
+        client_secret: DIGI_LOCKER_CLIENT_SECRET,
+        codeVerifier: generatedCodeVerifier,
+      })
+        .then(response => {
+          Linking.openURL(response)
+        })
+        .catch(() => {})
     } catch (error) {
       Alert.alert('Error', `Failed to initiate OAuth${error ? `: ${error}` : ''}`)
     }
@@ -165,23 +187,22 @@ const DigiLockerScreen: React.FC = () => {
     try {
       setLoading(true)
       const data = await fetchDocumentData(doc.uri, accessToken)
-      if (doctype === 'PANCR') {
+      if (doctype === DigiLocker.PAN_CARD) {
         const panData = await parsePANData(data)
         Alert.alert(
           'PAN Details',
           `PAN: ${panData?.panNumber}
-Name: ${panData?.name}
-Date of Birth: ${panData?.dob}
-Gender: ${panData?.gender}
-`,
+           Name: ${panData?.name}
+           Date of Birth: ${panData?.dob}
+           Gender: ${panData?.gender}`,
         )
       }
-      if (doctype === 'DRVLC') {
+      if (doctype === DigiLocker.DRIVING_LICENSE) {
         const drivingLicenseData = await parseDrivingLicenseData(data)
         Alert.alert(
           'Driving License Details',
           `License Number: ${drivingLicenseData?.licenseNumber}
-Name: ${drivingLicenseData?.name}
+           Name: ${drivingLicenseData?.name}
         `,
         )
       }
@@ -203,7 +224,7 @@ Name: ${drivingLicenseData?.name}
             </Text>
           </View>
           <Image
-            source={{ uri: 'https://www.digilocker.gov.in/assets/img/digilocker_logo_new.png' }}
+            source={{ uri: DigiLocker_Logo }}
             style={{ width: 110, height: 45, alignSelf: 'flex-end', marginRight: 10 }}
             resizeMode="contain"
           />
@@ -216,10 +237,7 @@ Name: ${drivingLicenseData?.name}
               <Text style={[styles.title, { maxWidth: 300 }]}>Fetch Aadhaar Data</Text>
               <Text style={styles.description}>Get your Aadhaar Card Details</Text>
             </View>
-            <Image
-              source={{ uri: 'https://presentations.gov.in/wp-content/uploads/2020/06/Aadhaar_Preview.png?x31571' }}
-              style={styles.logo}
-            />
+            <Image source={{ uri: DigiLocker_Aadhaar_Logo }} style={styles.logo} />
           </TouchableOpacity>
         )}
         {accessToken && (
@@ -232,7 +250,7 @@ Name: ${drivingLicenseData?.name}
             </View>
             <Image
               source={{
-                uri: 'https://upload.wikimedia.org/wikipedia/commons/archive/1/13/20190714131405%21Logo_of_Income_Tax_Department_India.png',
+                uri: DigiLocker_ITD_Logo,
               }}
               style={styles.logo}
               resizeMode="contain"
@@ -247,10 +265,7 @@ Name: ${drivingLicenseData?.name}
               <Text style={[styles.title, { maxWidth: 300 }]}>Fetch Driving License Data</Text>
               <Text style={styles.description}>Get your Driving License Details</Text>
             </View>
-            <Image
-              source={{ uri: 'https://presentations.gov.in/wp-content/uploads/2020/01/NE_Preview1.png?x31571' }}
-              style={styles.logo}
-            />
+            <Image source={{ uri: DigiLocker_NE_Preview_Logo }} style={styles.logo} />
           </TouchableOpacity>
         )}
         {aadhaarData && isAadhaarVisible && (

@@ -81,3 +81,16 @@ export const tourMargin = 25
 export const hitSlop = { top: 44, bottom: 44, left: 44, right: 44 }
 
 export const CREDENTIAL = 'Credential'
+
+export enum DigiLocker {
+  PAN_CARD = 'PANCR',
+  DRIVING_LICENSE = 'DRVLC',
+}
+
+export const DigiLocker_Logo = 'https://www.digilocker.gov.in/assets/img/digilocker_logo_new.png'
+export const DigiLocker_Aadhaar_Logo =
+  'https://presentations.gov.in/wp-content/uploads/2020/06/Aadhaar_Preview.png?x31571'
+export const DigiLocker_ITD_Logo =
+  'https://upload.wikimedia.org/wikipedia/commons/archive/1/13/20190714131405%21Logo_of_Income_Tax_Department_India.png'
+export const DigiLocker_NE_Preview_Logo =
+  'https://presentations.gov.in/wp-content/uploads/2020/01/NE_Preview1.png?x31571'
