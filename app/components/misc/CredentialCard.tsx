@@ -1,4 +1,12 @@
-import { CredentialExchangeRecord, W3cCredentialRecord } from '@adeya/ssi'
+import {
+  CredentialExchangeRecord,
+  GenericCredentialExchangeRecord,
+  getOpenId4VcCredentialMetadata,
+  getW3cCredentialDisplay,
+  getW3cIssuerDisplay,
+  openId4VcCredentialMetadataKey,
+  W3cCredentialRecord,
+} from '@adeya/ssi'
 import { Attribute, BrandingOverlayType, Predicate } from '@hyperledger/aries-oca/build/legacy'
 import React from 'react'
 import { ViewStyle } from 'react-native'
@@ -6,12 +14,13 @@ import { ViewStyle } from 'react-native'
 import { useConfiguration } from '../../contexts/configuration'
 import { useTheme } from '../../contexts/theme'
 import { GenericFn } from '../../types/fn'
+import OpenIDCredentialCard from '../OpenId/OpenIDCredentialCard'
 
 import CredentialCard10 from './CredentialCard10'
 import CredentialCard11 from './CredentialCard11'
 
 interface CredentialCardProps {
-  credential?: CredentialExchangeRecord | W3cCredentialRecord
+  credential?: GenericCredentialExchangeRecord
   credDefId?: string
   schemaId?: string
   credName?: string
@@ -66,16 +75,33 @@ const CredentialCard: React.FC<CredentialCardProps> = ({
     }
 
     if (credential instanceof W3cCredentialRecord || credential?.credentialAttributes?.length === 0) {
+      const openId4VcMetadata = getOpenId4VcCredentialMetadata(credential as W3cCredentialRecord)
+      const issuerDisplay = getW3cIssuerDisplay(credential, openId4VcMetadata)
+      const credentialDisplay = getW3cCredentialDisplay(credential, openId4VcMetadata)
       return (
-        <CredentialCard11
-          connectionLabel={connectionLabel}
-          credDefId={credDefId}
-          schemaId={schemaId}
-          credName={credName}
-          displayItems={displayItems}
-          style={style}
-          onPress={onPress}
-        />
+        <>
+          {Object.keys(credential.metadata.data).includes(openId4VcCredentialMetadataKey) ? (
+            <OpenIDCredentialCard
+              issuerName={issuerDisplay.name}
+              name={credentialDisplay.name}
+              subtitle={credentialDisplay.description}
+              bgColor={ColorPallet.brand.primary}
+              issuerImage={issuerDisplay.logo}
+              backgroundImage={credentialDisplay.backgroundImage}
+              onPress={onPress}
+            />
+          ) : (
+            <CredentialCard11
+              connectionLabel={connectionLabel}
+              credDefId={credDefId}
+              schemaId={schemaId}
+              credName={credName}
+              displayItems={displayItems}
+              style={style}
+              onPress={onPress}
+            />
+          )}
+        </>
       )
     } else if (credential instanceof CredentialExchangeRecord) {
       if (type === BrandingOverlayType.Branding01) {
