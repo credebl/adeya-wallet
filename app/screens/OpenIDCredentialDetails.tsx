@@ -1,15 +1,9 @@
-import {
-  getCredentialForDisplay,
-  getOpenId4VcCredentialMetadata,
-  getW3cCredentialDisplay,
-  getW3cIssuerDisplay,
-  W3cCredentialRecord,
-} from '@adeya/ssi'
+import { getCredentialForDisplay } from '@adeya/ssi'
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, FlatList, Text, View } from 'react-native'
-import { Edge, SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import OpenIdCredentialCard from '../components/OpenId/OpenIDCredentialCard'
 import { useOpenIDCredentials } from '../components/Provider/OpenIDCredentialRecordProvider'
@@ -18,10 +12,10 @@ import RecordField from '../components/record/RecordField'
 import RecordFooter from '../components/record/RecordFooter'
 import RecordHeader from '../components/record/RecordHeader'
 import RecordRemove from '../components/record/RecordRemove'
-import { EventTypes, OpenIDCredScreenMode } from '../constants'
+import { EventTypes } from '../constants'
 import { useTheme } from '../contexts/theme'
 import { TextTheme } from '../theme'
-import { DeliveryStackParams, Screens, TabStacks } from '../types/navigators'
+import { DeliveryStackParams, Screens } from '../types/navigators'
 import { ModalUsage } from '../types/remove'
 import { useAppAgent } from '../utils/agent'
 import { buildFieldsFromOpenIDTemplate } from '../utils/credential'
@@ -31,7 +25,7 @@ type OpenIDCredentialDetailsProps = StackScreenProps<DeliveryStackParams, Screen
 
 const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navigation, route }) => {
   // FIXME: change params to accept credential id to avoid 'non-serializable' warnings
-  const { credential, screenMode } = route.params
+  const { credential } = route.params
   const credentialDisplay = getCredentialForDisplay(credential)
   const { display, attributes } = credentialDisplay
   const fields = buildFieldsFromOpenIDTemplate(attributes)
@@ -53,27 +47,15 @@ const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navig
   }
   const handleDeclineTouched = async () => {
     toggleDeclineModalVisible()
-    if (screenMode === OpenIDCredScreenMode.offer)
-      navigation.getParent()?.navigate(TabStacks.HomeStack, { screen: Screens.Home })
-    else handleRemove()
+    handleRemove()
   }
 
   const header = () => {
-    const openId4VcMetadata = getOpenId4VcCredentialMetadata(credential as W3cCredentialRecord)
-    const issuerDisplay = getW3cIssuerDisplay(credential, openId4VcMetadata)
-    const credentialDisplay = getW3cCredentialDisplay(credential, openId4VcMetadata)
     return (
       <>
         {credential && (
           <View style={{ marginHorizontal: 15, marginBottom: 16, marginTop: 10 }}>
-            <OpenIdCredentialCard
-              issuerName={issuerDisplay.name}
-              name={credentialDisplay.name}
-              subtitle={credentialDisplay.description}
-              bgColor={ColorPallet.brand.primary}
-              issuerImage={issuerDisplay.logo}
-              backgroundImage={credentialDisplay.backgroundImage}
-            />
+            <OpenIdCredentialCard credentialRecord={credential} />
           </View>
         )}
       </>
@@ -123,16 +105,11 @@ const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navig
     )
   }
 
-  const screenEdges: Edge[] =
-    screenMode === OpenIDCredScreenMode.offer ? ['bottom', 'left', 'right'] : ['left', 'right']
-
   return (
-    <SafeAreaView style={{ flexGrow: 1 }} edges={screenEdges}>
+    <SafeAreaView style={{ flexGrow: 1 }} edges={['left', 'right']}>
       {body()}
       <CommonRemoveModal
-        usage={
-          screenMode === OpenIDCredScreenMode.offer ? ModalUsage.CredentialOfferDecline : ModalUsage.CredentialRemove
-        }
+        usage={ModalUsage.CredentialRemove}
         visible={isRemoveModalDisplayed}
         onSubmit={handleDeclineTouched}
         onCancel={toggleDeclineModalVisible}

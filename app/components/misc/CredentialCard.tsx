@@ -1,9 +1,6 @@
 import {
   CredentialExchangeRecord,
   GenericCredentialExchangeRecord,
-  getOpenId4VcCredentialMetadata,
-  getW3cCredentialDisplay,
-  getW3cIssuerDisplay,
   openId4VcCredentialMetadataKey,
   W3cCredentialRecord,
 } from '@adeya/ssi'
@@ -14,7 +11,7 @@ import { ViewStyle } from 'react-native'
 import { useConfiguration } from '../../contexts/configuration'
 import { useTheme } from '../../contexts/theme'
 import { GenericFn } from '../../types/fn'
-import OpenIDCredentialCard from '../OpenId/OpenIDCredentialCard'
+import OpenIdCredentialCard from '../OpenId/OpenIDCredentialCard'
 
 import CredentialCard10 from './CredentialCard10'
 import CredentialCard11 from './CredentialCard11'
@@ -75,21 +72,10 @@ const CredentialCard: React.FC<CredentialCardProps> = ({
     }
 
     if (credential instanceof W3cCredentialRecord || credential?.credentialAttributes?.length === 0) {
-      const openId4VcMetadata = getOpenId4VcCredentialMetadata(credential as W3cCredentialRecord)
-      const issuerDisplay = getW3cIssuerDisplay(credential, openId4VcMetadata)
-      const credentialDisplay = getW3cCredentialDisplay(credential, openId4VcMetadata)
       return (
         <>
           {Object.keys(credential.metadata.data).includes(openId4VcCredentialMetadataKey) ? (
-            <OpenIDCredentialCard
-              issuerName={issuerDisplay.name}
-              name={credentialDisplay.name}
-              subtitle={credentialDisplay.description}
-              bgColor={ColorPallet.brand.primary}
-              issuerImage={issuerDisplay.logo}
-              backgroundImage={credentialDisplay.backgroundImage}
-              onPress={onPress}
-            />
+            <OpenIdCredentialCard credentialRecord={credential} onPress={onPress} />
           ) : (
             <CredentialCard11
               connectionLabel={connectionLabel}

@@ -2,7 +2,6 @@ import {
   ClaimFormat,
   getOpenId4VcCredentialMetadata,
   getW3cCredentialDisplay,
-  getW3cIssuerDisplay,
   JsonTransformer,
   receiveCredentialFromOpenId4VciOffer,
   SdJwtVcRecord,
@@ -19,8 +18,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import OpenIDCredentialCard from '../components/OpenId/OpenIDCredentialCard'
 import { useOpenIDCredentials } from '../components/Provider/OpenIDCredentialRecordProvider'
-import RecordLoading from '../components/animated/RecordLoading'
-import Button, { ButtonType } from '../components/buttons/Button'
+import CommonFooter from '../components/common/FooterButton'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
 import W3CCredentialRecord from '../components/record/W3CCredentialRecord'
 import { EventTypes } from '../constants'
@@ -42,7 +40,7 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
   }
   const { agent } = useAppAgent()
   const { t } = useTranslation()
-  const { ListItems, ColorPallet } = useTheme()
+  const { ListItems } = useTheme()
   const { assertConnectedNetwork } = useNetwork()
   const [loading, setLoading] = useState<boolean>(true)
   const [buttonsVisible, setButtonsVisible] = useState(true)
@@ -59,9 +57,6 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
     headerText: {
       ...ListItems.recordAttributeLabel,
       flexShrink: 1,
-    },
-    footerButton: {
-      paddingTop: 10,
     },
     connectionLabel: {
       fontWeight: 'bold',
@@ -127,14 +122,13 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, error)
     }
   }
-  const header = () => {
+  const openIdHeader = () => {
     const credential = JsonTransformer.toJSON(
       (credentialRecord as W3cCredentialRecord).credential.claimFormat === ClaimFormat.JwtVc
         ? credentialRecord?.credential.credential
         : credentialRecord?.credential,
     ) as W3cCredentialJson
     const openId4Vc = getOpenId4VcCredentialMetadata(credentialRecord as W3cCredentialRecord)
-    const showIssuer = getW3cIssuerDisplay(credential, openId4Vc)
     const showCredential = getW3cCredentialDisplay(credential, openId4Vc)
     return (
       <>
@@ -146,50 +140,20 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
         </View>
         {!loading && credentialRecord && (
           <View style={{ marginHorizontal: 15, marginBottom: 16 }}>
-            <OpenIDCredentialCard
-              issuerName={showIssuer.name}
-              name={showCredential.name}
-              subtitle={showCredential.description}
-              bgColor={ColorPallet.brand.primary}
-              issuerImage={showIssuer.logo}
-              backgroundImage={showCredential.backgroundImage}
-            />
+            <OpenIDCredentialCard credentialRecord={credentialRecord} />
           </View>
         )}
       </>
     )
   }
-  const footer = () => {
+  const openIdFooter = () => {
     return (
-      <View
-        style={{
-          paddingHorizontal: 25,
-          paddingVertical: 16,
-          paddingBottom: 26,
-          backgroundColor: ColorPallet.brand.secondaryBackground,
-        }}>
-        {loading ? <RecordLoading /> : null}
-        <View style={styles.footerButton}>
-          <Button
-            title={t('Global.Accept')}
-            accessibilityLabel={t('Global.Accept')}
-            testID={testIdWithKey('AcceptCredentialOffer')}
-            buttonType={ButtonType.Primary}
-            onPress={handleAcceptTouched}
-            disabled={!buttonsVisible}
-          />
-        </View>
-        <View style={styles.footerButton}>
-          <Button
-            title={t('Global.Decline')}
-            accessibilityLabel={t('Global.Decline')}
-            testID={testIdWithKey('DeclineCredentialOffer')}
-            buttonType={ButtonType.Secondary}
-            onPress={toggleDeclineModalVisible}
-            disabled={!buttonsVisible}
-          />
-        </View>
-      </View>
+      <CommonFooter
+        loading={loading}
+        buttonsVisible={buttonsVisible}
+        handleAcceptTouched={handleAcceptTouched}
+        toggleDeclineModalVisible={toggleDeclineModalVisible}
+      />
     )
   }
   return (
@@ -200,8 +164,8 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
           tables={tables}
           fields={overlay.presentationFields || []}
           hideFieldValues={false}
-          header={header}
-          footer={footer}
+          header={openIdHeader}
+          footer={openIdFooter}
         />
       ) : null}
       <CommonRemoveModal

@@ -1,16 +1,22 @@
-import { DisplayImage } from '@adeya/ssi'
+import {
+  ClaimFormat,
+  GenericCredentialExchangeRecord,
+  getOpenId4VcCredentialMetadata,
+  getW3cCredentialDisplay,
+  getW3cIssuerDisplay,
+  JsonTransformer,
+  W3cCredentialJson,
+  W3cCredentialRecord,
+} from '@adeya/ssi'
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
+import { ColorPallet } from '../../theme'
+
 type OpenIdCredentialCardProps = {
+  credentialRecord: GenericCredentialExchangeRecord
   onPress?(): void
-  name: string
-  issuerName: string
-  subtitle?: string
-  bgColor?: string
   textColor?: string
-  issuerImage?: DisplayImage
-  backgroundImage?: DisplayImage
   shadow?: boolean
 }
 
@@ -18,16 +24,16 @@ export function getTextColorBasedOnBg(bgColor: string) {
   return Number.parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2 ? '#212529' : '#f6f9fc'
 }
 
-const OpenIdCredentialCard: React.FC<OpenIdCredentialCardProps> = ({
-  issuerName,
-  name,
-  backgroundImage,
-  issuerImage,
-  bgColor,
-  textColor,
-  onPress,
-  subtitle,
-}) => {
+const OpenIdCredentialCard: React.FC<OpenIdCredentialCardProps> = ({ credentialRecord, textColor, onPress }) => {
+  const credential = JsonTransformer.toJSON(
+    (credentialRecord as W3cCredentialRecord).credential.claimFormat === ClaimFormat.JwtVc
+      ? credentialRecord?.credential?.credential
+      : credentialRecord?.credential,
+  ) as W3cCredentialJson
+  const openId4VcMetadata = getOpenId4VcCredentialMetadata(credentialRecord as W3cCredentialRecord)
+  const issuerShow = getW3cIssuerDisplay(credential, openId4VcMetadata)
+  const credentialShow = getW3cCredentialDisplay(credential, openId4VcMetadata)
+
   const styles = StyleSheet.create({
     container: {
       borderRadius: 8,
@@ -103,26 +109,29 @@ const OpenIdCredentialCard: React.FC<OpenIdCredentialCardProps> = ({
     },
   })
 
-  textColor = textColor ? textColor : getTextColorBasedOnBg(bgColor ?? '#000')
+  textColor = textColor ? textColor : getTextColorBasedOnBg(ColorPallet.brand.primary ?? '#000')
 
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
-      <TouchableOpacity style={[styles.card, { backgroundColor: bgColor }]} onPress={onPress} activeOpacity={0.7}>
+    <View style={[styles.container, { backgroundColor: ColorPallet.brand.primary }]}>
+      <TouchableOpacity
+        style={[styles.card, { backgroundColor: ColorPallet.brand.primary }]}
+        onPress={onPress}
+        activeOpacity={0.7}>
         <ImageBackground
-          source={{ uri: backgroundImage?.url }}
+          source={{ uri: credentialShow?.backgroundImage?.url }}
           style={styles.backgroundView}
           imageStyle={styles.backgroundImage}
           resizeMode="cover">
           <View style={styles.cardContainer}>
             <View style={styles.cardHeader}>
               <View style={styles.iconContainer}>
-                {issuerImage?.url ? (
+                {issuerShow?.logo?.url ? (
                   <Image
                     source={{
-                      uri: issuerImage?.url,
+                      uri: issuerShow.logo.url,
                     }}
                     resizeMode="contain"
-                    alt={issuerImage?.altText}
+                    alt={issuerShow.logo.altText}
                     width={64}
                     height={48}
                   />
@@ -130,10 +139,10 @@ const OpenIdCredentialCard: React.FC<OpenIdCredentialCardProps> = ({
               </View>
               <View style={styles.textContainer}>
                 <Text style={[styles.heading, { color: textColor }]} numberOfLines={2}>
-                  {name}
+                  {credentialShow.name}
                 </Text>
                 <Text style={[styles.subtitle, { color: textColor }]} numberOfLines={1}>
-                  {subtitle}
+                  {credentialShow.description}
                 </Text>
               </View>
             </View>
@@ -141,7 +150,7 @@ const OpenIdCredentialCard: React.FC<OpenIdCredentialCardProps> = ({
               <View style={styles.footerTextContainer}>
                 <Text style={[styles.issuerLabel, { color: textColor }]}>Issuer</Text>
                 <Text style={[styles.issuerName, { color: textColor }]} numberOfLines={2}>
-                  {issuerName}
+                  {issuerShow.name}
                 </Text>
               </View>
             </View>
