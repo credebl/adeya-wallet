@@ -92,7 +92,7 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
     if (!credentialRecord) {
       return
     }
-    const updateCredentialPreview = () => {
+    const updateOpenIdCredentialPreview = () => {
       credentialRecord
       const jsonLdValues = formatCredentialSubject(
         (credentialRecord as W3cCredentialRecord).credential.credentialSubject,
@@ -103,7 +103,7 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
       setOverlay({ presentationFields: fields })
       setTables(jsonLdValues)
     }
-    updateCredentialPreview()
+    updateOpenIdCredentialPreview()
   }, [credentialRecord])
   const toggleDeclineModalVisible = () => setDeclineModalVisible(!declineModalVisible)
   const handleAcceptTouched = async () => {

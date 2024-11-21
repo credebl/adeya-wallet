@@ -13,7 +13,6 @@ import { Edge, SafeAreaView } from 'react-native-safe-area-context'
 
 import OpenIdCredentialCard from '../components/OpenId/OpenIDCredentialCard'
 import { useOpenIDCredentials } from '../components/Provider/OpenIDCredentialRecordProvider'
-import Button, { ButtonType } from '../components/buttons/Button'
 import CommonRemoveModal from '../components/modals/CommonRemoveModal'
 import RecordField from '../components/record/RecordField'
 import RecordFooter from '../components/record/RecordFooter'
@@ -28,8 +27,6 @@ import { useAppAgent } from '../utils/agent'
 import { buildFieldsFromOpenIDTemplate } from '../utils/credential'
 import { testIdWithKey } from '../utils/testable'
 
-import CredentialOfferAccept from './CredentialOfferAccept'
-
 type OpenIDCredentialDetailsProps = StackScreenProps<DeliveryStackParams, Screens.OpenIDCredentialDetails>
 
 const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navigation, route }) => {
@@ -41,11 +38,8 @@ const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navig
   const { t } = useTranslation()
   const { ColorPallet } = useTheme()
   const { agent } = useAppAgent()
-  const { storeOpenIdCredential, removeCredential } = useOpenIDCredentials()
-
+  const { removeCredential } = useOpenIDCredentials()
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState(false)
-  const [buttonsVisible, setButtonsVisible] = useState(true)
-  const [acceptModalVisible, setAcceptModalVisible] = useState(false)
 
   const styles = StyleSheet.create({
     headerTextContainer: {
@@ -76,40 +70,6 @@ const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navig
     if (screenMode === OpenIDCredScreenMode.offer)
       navigation.getParent()?.navigate(TabStacks.HomeStack, { screen: Screens.Home })
     else handleRemove()
-  }
-
-  const handleAcceptTouched = async () => {
-    try {
-      if (!agent) {
-        return
-      }
-      await storeOpenIdCredential(agent, credential)
-      setAcceptModalVisible(true)
-    } catch (err: unknown) {
-      setButtonsVisible(true)
-      DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, err)
-    }
-  }
-
-  const footerButton = (
-    title: string,
-    buttonPress: () => void,
-    buttonType: ButtonType,
-    testID: string,
-    accessibilityLabel: string,
-  ) => {
-    return (
-      <View style={styles.footerButton}>
-        <Button
-          title={title}
-          accessibilityLabel={accessibilityLabel}
-          testID={testID}
-          buttonType={buttonType}
-          onPress={buttonPress}
-          disabled={!buttonsVisible}
-        />
-      </View>
-    )
   }
 
   const header = () => {
@@ -146,49 +106,23 @@ const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navig
   const footer = () => {
     const paddingHorizontal = 24
     const paddingVertical = 16
-    const paddingBottom = 26
     return (
       <View style={{ marginBottom: 50 }}>
-        {screenMode === OpenIDCredScreenMode.offer ? (
+        <>
           <View
             style={{
-              paddingHorizontal: paddingHorizontal,
-              paddingVertical: paddingVertical,
-              paddingBottom: paddingBottom,
               backgroundColor: ColorPallet.brand.secondaryBackground,
+              marginTop: paddingVertical,
+              paddingHorizontal,
+              paddingVertical,
             }}>
-            {footerButton(
-              t('Global.Accept'),
-              handleAcceptTouched,
-              ButtonType.Primary,
-              testIdWithKey('AcceptCredentialOffer'),
-              t('Global.Accept'),
-            )}
-            {footerButton(
-              t('Global.Decline'),
-              toggleDeclineModalVisible,
-              ButtonType.Secondary,
-              testIdWithKey('DeclineCredentialOffer'),
-              t('Global.Decline'),
-            )}
+            <Text testID={testIdWithKey('IssuerName')}>
+              <Text style={[TextTheme.title]}>{t('CredentialDetails.IssuedBy') + ' '}</Text>
+              <Text style={[TextTheme.normal]}>{display.issuer.name || t('ContactDetails.AContact')}</Text>
+            </Text>
           </View>
-        ) : (
-          <>
-            <View
-              style={{
-                backgroundColor: ColorPallet.brand.secondaryBackground,
-                marginTop: paddingVertical,
-                paddingHorizontal,
-                paddingVertical,
-              }}>
-              <Text testID={testIdWithKey('IssuerName')}>
-                <Text style={[TextTheme.title]}>{t('CredentialDetails.IssuedBy') + ' '}</Text>
-                <Text style={[TextTheme.normal]}>{display.issuer.name || t('ContactDetails.AContact')}</Text>
-              </Text>
-            </View>
-            <RecordRemove onRemove={toggleDeclineModalVisible} />
-          </>
-        )}
+          <RecordRemove onRemove={toggleDeclineModalVisible} />
+        </>
       </View>
     )
   }
@@ -218,9 +152,6 @@ const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navig
   return (
     <SafeAreaView style={{ flexGrow: 1 }} edges={screenEdges}>
       {body()}
-      {screenMode === OpenIDCredScreenMode.offer && (
-        <CredentialOfferAccept visible={acceptModalVisible} credentialId={''} confirmationOnly={true} />
-      )}
       <CommonRemoveModal
         usage={
           screenMode === OpenIDCredScreenMode.offer ? ModalUsage.CredentialOfferDecline : ModalUsage.CredentialRemove
