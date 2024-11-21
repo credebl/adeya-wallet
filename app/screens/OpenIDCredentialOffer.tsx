@@ -93,7 +93,6 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
       return
     }
     const updateOpenIdCredentialPreview = () => {
-      credentialRecord
       const jsonLdValues = formatCredentialSubject(
         (credentialRecord as W3cCredentialRecord).credential.credentialSubject,
       )
@@ -134,26 +133,26 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
         ? credentialRecord?.credential.credential
         : credentialRecord?.credential,
     ) as W3cCredentialJson
-    const openId4VcMetadata = getOpenId4VcCredentialMetadata(credentialRecord as W3cCredentialRecord)
-    const issuerDisplay = getW3cIssuerDisplay(credential, openId4VcMetadata)
-    const credentialDisplay = getW3cCredentialDisplay(credential, openId4VcMetadata)
+    const openId4Vc = getOpenId4VcCredentialMetadata(credentialRecord as W3cCredentialRecord)
+    const showIssuer = getW3cIssuerDisplay(credential, openId4Vc)
+    const showCredential = getW3cCredentialDisplay(credential, openId4Vc)
     return (
       <>
         <View style={styles.headerTextContainer}>
           <Text style={[styles.headerText]} testID={testIdWithKey('HeaderText')}>
-            <Text style={styles.connectionLabel}>{issuerDisplay.name || t('ContactDetails.AContact')}</Text>{' '}
+            <Text style={styles.connectionLabel}>{showCredential.name || t('ContactDetails.AContact')}</Text>{' '}
             {t('CredentialOffer.IsOfferingYouACredential')}
           </Text>
         </View>
         {!loading && credentialRecord && (
           <View style={{ marginHorizontal: 15, marginBottom: 16 }}>
             <OpenIDCredentialCard
-              issuerName={issuerDisplay.name}
-              name={credentialDisplay.name}
-              subtitle={credentialDisplay.description}
+              issuerName={showIssuer.name}
+              name={showCredential.name}
+              subtitle={showCredential.description}
               bgColor={ColorPallet.brand.primary}
-              issuerImage={issuerDisplay.logo}
-              backgroundImage={credentialDisplay.backgroundImage}
+              issuerImage={showIssuer.logo}
+              backgroundImage={showCredential.backgroundImage}
             />
           </View>
         )}

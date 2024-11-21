@@ -8,7 +8,7 @@ import {
 import { StackScreenProps } from '@react-navigation/stack'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeviceEventEmitter, FlatList, StyleSheet, Text, View } from 'react-native'
+import { DeviceEventEmitter, FlatList, Text, View } from 'react-native'
 import { Edge, SafeAreaView } from 'react-native-safe-area-context'
 
 import OpenIdCredentialCard from '../components/OpenId/OpenIDCredentialCard'
@@ -41,20 +41,6 @@ const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navig
   const { removeCredential } = useOpenIDCredentials()
   const [isRemoveModalDisplayed, setIsRemoveModalDisplayed] = useState(false)
 
-  const styles = StyleSheet.create({
-    headerTextContainer: {
-      paddingHorizontal: 25,
-      paddingVertical: 16,
-    },
-    headerText: {
-      ...TextTheme.normal,
-      flexShrink: 1,
-    },
-    footerButton: {
-      paddingTop: 10,
-    },
-  })
-
   const toggleDeclineModalVisible = () => setIsRemoveModalDisplayed(!isRemoveModalDisplayed)
 
   const handleRemove = async () => {
@@ -78,15 +64,6 @@ const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navig
     const credentialDisplay = getW3cCredentialDisplay(credential, openId4VcMetadata)
     return (
       <>
-        {screenMode === OpenIDCredScreenMode.offer && (
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText} testID={testIdWithKey('HeaderText')}>
-              <Text>{display.issuer.name || t('ContactDetails.AContact')}</Text>{' '}
-              {t('CredentialOffer.IsOfferingYouACredential')}
-            </Text>
-          </View>
-        )}
-
         {credential && (
           <View style={{ marginHorizontal: 15, marginBottom: 16, marginTop: 10 }}>
             <OpenIdCredentialCard
