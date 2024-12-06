@@ -13,7 +13,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@adeya/ssi": "0.0.1-alpha.30",
+    "@adeya/ssi": "/Users/tusharbhayani/Downloads/TusharWorkspace/adeya-sdk/packages/ssi/adeya-ssi-0.0.1-alpha.34.tgz",
     "@ayanworks/credo-polygon-w3c-module": "1.0.0",
     "@ethersproject/shims": "^5.7.0",
     "@formatjs/intl-datetimeformat": "^6.10.0",
@@ -51,6 +51,7 @@
     "lodash.shuffle": "^4.2.0",
     "lodash.startcase": "^4.4.0",
     "moment": "^2.29.4",
+    "nanoid": "^5.0.9",
     "process": "^0.11.0",
     "qrcode": "^1.5.3",
     "query-string": "^8.1.0",
@@ -151,7 +152,8 @@
     "stream": "stream-browserify"
   },
   "resolutions": {
+    "@credo-ts/core": "0.5.13",
     "@credo-ts/askar": "0.5.13",
-    "@credo-ts/core": "0.5.13"
+    "nanoid": "^5.0.9"
   }
 }
