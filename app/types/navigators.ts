@@ -1,6 +1,8 @@
-import { CredentialExchangeRecord, W3cCredentialRecord } from '@adeya/ssi'
+import { CredentialExchangeRecord, OpenId4VPRequestRecord, SdJwtVcRecord, W3cCredentialRecord } from '@adeya/ssi'
 import { NavigatorScreenParams } from '@react-navigation/core'
 import { StackNavigationOptions } from '@react-navigation/stack'
+
+import { OpenIDCredScreenMode } from '../constants'
 
 export enum Screens {
   AttemptLockout = 'Temporarily Locked',
@@ -13,6 +15,9 @@ export enum Screens {
   Scan = 'Scan',
   Credentials = 'Credentials',
   CredentialDetails = 'Credential Details',
+  OpenIDCredentialDetails = 'Open ID Credential details',
+  OpenIdCredentialOffer = 'Open Id Credential Offer',
+  OpenIDProofPresentation = 'Open ID Proof Presentation',
   Notifications = 'Notifications',
   CredentialOffer = 'Credential Offer',
   ProofRequest = 'Proof Request',
@@ -153,6 +158,10 @@ export type CredentialStackParams = {
   [Screens.CredentialDetailsW3C]: { credential: W3cCredentialRecord }
   [Screens.RenderCertificate]: { filePath: string }
   [Screens.Scan]: undefined
+  [Screens.OpenIDCredentialDetails]: {
+    credential: SdJwtVcRecord | W3cCredentialRecord
+    screenMode: OpenIDCredScreenMode
+  }
 }
 export type OrganizationStackParams = {
   [Screens.Explore]: undefined
@@ -195,11 +204,17 @@ export type SettingStackParams = {
 
 export type NotificationStackParams = {
   [Screens.CredentialDetails]: { credentialId: string }
+  [Screens.OpenIDCredentialDetails]: {
+    credential: SdJwtVcRecord | W3cCredentialRecord
+    screenMode: OpenIDCredScreenMode
+  }
   [Screens.CredentialOffer]: { credentialId: string }
   [Screens.ProofRequest]: { proofId: string }
   [Screens.ProofRequestW3C]: { proofId: string }
   [Screens.CustomNotification]: undefined
   [Screens.ProofDetails]: { recordId: string }
+  [Screens.OpenIdCredentialOffer]: { uri: string }
+  [Screens.OpenIDProofPresentation]: { credential: OpenId4VPRequestRecord }
 }
 
 export type DeliveryStackParams = {
@@ -210,6 +225,11 @@ export type DeliveryStackParams = {
   [Screens.Declined]: { credentialId: string }
   [Screens.Chat]: { connectionId: string }
   [Screens.ContactDetails]: { connectionId: string }
+  [Screens.OpenIDCredentialDetails]: {
+    credential: SdJwtVcRecord | W3cCredentialRecord
+    screenMode: OpenIDCredScreenMode
+  }
+  [Screens.ProofRequestW3C]: { proofId: string }
 }
 
 export type HistoryStackParams = {
