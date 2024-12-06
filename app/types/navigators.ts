@@ -1,4 +1,4 @@
-import { CredentialExchangeRecord, SdJwtVcRecord, W3cCredentialRecord } from '@adeya/ssi'
+import { CredentialExchangeRecord, OpenId4VPRequestRecord, SdJwtVcRecord, W3cCredentialRecord } from '@adeya/ssi'
 import { NavigatorScreenParams } from '@react-navigation/core'
 import { StackNavigationOptions } from '@react-navigation/stack'
 
@@ -17,6 +17,7 @@ export enum Screens {
   CredentialDetails = 'Credential Details',
   OpenIDCredentialDetails = 'Open ID Credential details',
   OpenIdCredentialOffer = 'Open Id Credential Offer',
+  OpenIDProofPresentation = 'Open ID Proof Presentation',
   Notifications = 'Notifications',
   CredentialOffer = 'Credential Offer',
   ProofRequest = 'Proof Request',
@@ -213,6 +214,7 @@ export type NotificationStackParams = {
   [Screens.CustomNotification]: undefined
   [Screens.ProofDetails]: { recordId: string }
   [Screens.OpenIdCredentialOffer]: { uri: string }
+  [Screens.OpenIDProofPresentation]: { credential: OpenId4VPRequestRecord }
 }
 
 export type DeliveryStackParams = {
