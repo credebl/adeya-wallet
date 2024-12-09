@@ -1,7 +1,10 @@
+import axios from 'axios'
 import startCase from 'lodash.startcase'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+// require the module
+import * as RNFS from 'react-native-fs'
 
 import { hiddenFieldValue } from '../../constants'
 import { useTheme } from '../../contexts/theme'
@@ -25,6 +28,34 @@ interface AttributeValueParams {
   style?: Record<string, unknown>
 }
 
+export const isValidURL = (url: string) => {
+  const regex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
+  return regex.test(encodeURI(url))
+}
+
+const openUrl = async (Url: string) => {
+  await Linking.openURL(Url)
+}
+async function downloadAndAddMetadata(imageUrl: string) {
+  try {
+    // 1. Download the image from the URL
+    const response = await axios.get(imageUrl, { responseType: 'arraybuffer' })
+
+    const buffer = Buffer.from(response.data)
+
+    // // 2. Add metadata to the downloaded PNG
+    // const pngWithMetadata = PngItxt.set(buffer, {
+    //   keyword: 'CustomMetadata',
+    //   value: metadata,
+    // })
+
+    // 3. Save the modified image locally
+    const outputPath = `${RNFS.DocumentDirectoryPath}/modified-image.png`
+    await RNFS.writeFile(outputPath, buffer.toString('base64'), 'base64')
+  } catch (error) {
+    //Error message
+  }
+}
 export const AttributeValue: React.FC<AttributeValueParams> = ({ field, style, shown }) => {
   const { ListItems } = useTheme()
   const styles = StyleSheet.create({
@@ -32,7 +63,26 @@ export const AttributeValue: React.FC<AttributeValueParams> = ({ field, style, s
       ...ListItems.recordAttributeText,
     },
   })
-
+  const tarea_regex = /(?:https?|ftp):\/\/[\S]*\.(?:png|jpe?g|gif|svg|webp)(?:\?\S+=\S*(?:&\S+=\S*)*)?/gi
+  const tarea: string | number | boolean = field.value
+  if (tarea_regex.test(String(tarea).toLowerCase()) == true) {
+    if (isValidURL(tarea.toString())) {
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            if (tarea.toString().includes('.png')) {
+              downloadAndAddMetadata(tarea.toString())
+            } else {
+              openUrl(tarea.toString())
+            }
+          }}>
+          <Text style={style || styles.text} testID={testIdWithKey('AttributeValue')}>
+            {shown ? field.value : hiddenFieldValue}
+          </Text>
+        </TouchableOpacity>
+      )
+    }
+  }
   return (
     <Text style={style || styles.text} testID={testIdWithKey('AttributeValue')}>
       {shown ? field.value : hiddenFieldValue}

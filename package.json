@@ -51,6 +51,7 @@
     "lodash.shuffle": "^4.2.0",
     "lodash.startcase": "^4.4.0",
     "moment": "^2.29.4",
+    "png-itxt": "^2.0.0",
     "process": "^0.11.0",
     "qrcode": "^1.5.3",
     "query-string": "^8.1.0",
