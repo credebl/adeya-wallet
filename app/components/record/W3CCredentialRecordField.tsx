@@ -1,10 +1,14 @@
-import axios from 'axios'
+/* eslint-disable no-console */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import crc32 from 'crc-32'
 import startCase from 'lodash.startcase'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 // require the module
 import * as RNFS from 'react-native-fs'
+import RNFetchBlob from 'rn-fetch-blob'
 
 import { hiddenFieldValue } from '../../constants'
 import { useTheme } from '../../contexts/theme'
@@ -36,23 +40,142 @@ export const isValidURL = (url: string) => {
 const openUrl = async (Url: string) => {
   await Linking.openURL(Url)
 }
+
+const createPngWithItxt = (outputPath: any, metadata: any, bitmap: any) => {
+  const pngSignature: any = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
+
+  const chunks = []
+
+  // Encode image data (assuming bitmap data, usually an IDAT chunk)
+  const imageData = encodeBitmapToPngData(bitmap)
+  chunks.push(createChunk('IHDR', new Array(13))) // Example IHDR chunk
+  chunks.push(createChunk('IDAT', imageData))
+
+  // Encode iTXt chunk
+  try {
+    const iTXtData = encodeItxtData(metadata)
+    chunks.push(createChunk('iTXt', iTXtData))
+  } catch (error) {
+    console.error('Invalid metadata format:', error)
+    return
+  }
+
+  // End chunk
+  const endChunkData: any = []
+  chunks.push(createChunk('IEND', endChunkData))
+
+  // Write to PNG file
+  try {
+    RNFS.writeFile(outputPath, pngSignature.concat(...chunks), 'base64')
+      .then(() => {
+        console.log('File created successfully at:', outputPath)
+        // Now share the image
+        shareImage(outputPath)
+      })
+      .catch(error => {
+        console.error('Error saving file:', error)
+      })
+  } catch (error) {
+    console.error('File write error:', error)
+  }
+}
+
+const createChunk = (type: any, data: any) => {
+  const lengthBytes = Buffer.alloc(4)
+  lengthBytes.writeUInt32BE(data.length, 0)
+  const typeBytes = Buffer.from(type, 'ascii')
+
+  // Calculate CRC
+  const crc = crc32.buf(Buffer.concat([typeBytes, Buffer.from(data)]))
+  const crcBytes = Buffer.alloc(4)
+  crcBytes.writeUInt32BE(crc, 0)
+
+  return Buffer.concat([lengthBytes, typeBytes, Buffer.from(data), crcBytes])
+}
+
+const encodeItxtData = (metadata: any) => {
+  const parts = metadata.split(';')
+  if (parts.length < 2) {
+    throw new Error('Invalid metadata format')
+  }
+
+  const keyword = parts[0].split('=')[0].trim()
+  const text = parts[1].split('=')[1].trim()
+
+  // Validate keyword
+  if (!/^[a-zA-Z0-9_]+$/.test(keyword)) {
+    throw new Error('Invalid character in keyword')
+  }
+
+  // Validate language tag (simplified for example)
+  const languageTag = 'eng'
+  if (!/^[a-zA-Z]{2,3}(-[a-zA-Z]{2,8})*$/.test(languageTag)) {
+    throw new Error('Invalid language tag syntax')
+  }
+
+  const compressed = false
+  const translatedKeyword = ''
+
+  const iTXtData = []
+  iTXtData.push(keyword.length)
+  iTXtData.push(...Buffer.from(keyword, 'ascii'))
+  iTXtData.push(compressed ? 1 : 0) // Compression flag
+  iTXtData.push(languageTag.length)
+  iTXtData.push(...Buffer.from(languageTag, 'ascii'))
+  iTXtData.push(translatedKeyword.length)
+  iTXtData.push(...Buffer.from(translatedKeyword, 'ascii'))
+  iTXtData.push(...Buffer.from(text, 'utf-8'))
+
+  return Buffer.from(iTXtData)
+}
+
+const encodeBitmapToPngData = (bitmap: any) => {
+  const base64Data = bitmap.toBase64String()
+  return Buffer.from(base64Data, 'base64')
+}
+
+const shareImage = (imagePath: any) => {
+  // Implement the logic to share the image
+  // This is typically handled by a native module like `react-native-share`
+  // Example:
+  // Share.open({ url: imagePath });
+  console.log('Image shared:', imagePath)
+}
+
 async function downloadAndAddMetadata(imageUrl: string) {
+  console.log('\n\n\n\n Android downloadAndAddMetadata = ')
   try {
     // 1. Download the image from the URL
-    const response = await axios.get(imageUrl, { responseType: 'arraybuffer' })
+    const response = await RNFetchBlob.config({
+      fileCache: true,
+    }).fetch('GET', imageUrl)
 
-    const buffer = Buffer.from(response.data)
+    // Convert response to base64 string
+    const base64Data = await response.base64()
 
-    // // 2. Add metadata to the downloaded PNG
-    // const pngWithMetadata = PngItxt.set(buffer, {
-    //   keyword: 'CustomMetadata',
-    //   value: metadata,
-    // })
+    if (base64Data) {
+      const bitmap = `data:image/png;base64,${base64Data}`
 
-    // 3. Save the modified image locally
-    const outputPath = `${RNFS.DocumentDirectoryPath}/modified-image.png`
-    await RNFS.writeFile(outputPath, buffer.toString('base64'), 'base64')
+      // const response = await axios.get(imageUrl, { responseType: 'arraybuffer' })
+
+      // const buffer = Buffer.from(response.data)
+
+      // // 2. Add metadata to the downloaded PNG
+      // const pngWithMetadata = PngItxt.set(buffer, {
+      //   keyword: 'CustomMetadata',
+      //   value: metadata,
+      // })
+
+      // 3. Save the modified image locally
+      const metadata = 'Author=John Doe; Description=This is a sample image'
+      const outputPath = `${RNFS.DocumentDirectoryPath}/modified-image.png`
+      createPngWithItxt(outputPath, metadata, bitmap)
+      console.log('\n\n\n\n Android outputPath = ', outputPath)
+    }
+
+    // await RNFS.writeFile(outputPath, buffer.toString('base64'), 'base64')
   } catch (error) {
+    console.log('\n\n\n\n Android ERROR = ', error)
     //Error message
   }
 }
