@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DeviceEventEmitter, FlatList, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import Toast from 'react-native-toast-message'
 
 import OpenIdCredentialCard from '../components/OpenId/OpenIDCredentialCard'
 import { useOpenIDCredentials } from '../components/Provider/OpenIDCredentialRecordProvider'
@@ -12,6 +13,7 @@ import RecordField from '../components/record/RecordField'
 import RecordFooter from '../components/record/RecordFooter'
 import RecordHeader from '../components/record/RecordHeader'
 import RecordRemove from '../components/record/RecordRemove'
+import { ToastType } from '../components/toast/BaseToast'
 import { EventTypes } from '../constants'
 import { useTheme } from '../contexts/theme'
 import { TextTheme } from '../theme'
@@ -41,6 +43,13 @@ const OpenIDCredentialDetails: React.FC<OpenIDCredentialDetailsProps> = ({ navig
     try {
       await removeCredential(agent, credential)
       navigation.pop()
+
+      // FIXME: This delay is a hack so that the toast doesn't appear until the modal is dismissed
+      await new Promise(resolve => setTimeout(resolve, 50))
+      Toast.show({
+        type: ToastType.Success,
+        text1: t('CredentialDetails.CredentialRemoved'),
+      })
     } catch (err) {
       DeviceEventEmitter.emit(EventTypes.ERROR_ADDED, err)
     }

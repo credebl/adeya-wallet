@@ -44,6 +44,7 @@ export const isW3CCredential = (credential: CredentialExchangeRecord) => {
   return (
     credential &&
     credential?.credentials[0].credentialRecordType === 'w3c' &&
+    !credential.metadata.get(AnonCredsCredentialMetadataKey)?.credentialDefinitionId &&
     credential?.credentialAttributes?.length === 0
   )
 }

@@ -1,4 +1,5 @@
 import {
+  AnonCredsCredentialMetadataKey,
   CredentialExchangeRecord,
   CredentialState,
   GenericCredentialExchangeRecord,
@@ -62,7 +63,10 @@ const ListCredentials: React.FC = () => {
       const w3cCredentialRecords = await getAllW3cCredentialRecords(agent)
 
       const updatedCredentials = credentials.map(credential => {
-        if (!Object.keys(credential.metadata.data).includes(openId4VcCredentialMetadataKey)) {
+        if (
+          !Object.keys(credential.metadata.data).includes(openId4VcCredentialMetadataKey) &&
+          !Object.keys(credential.metadata.data).includes(AnonCredsCredentialMetadataKey)
+        ) {
           const credentialRecordId = credential?.credentials[0].credentialRecordId
           try {
             const record = w3cCredentialRecords.find(record => record.id === credentialRecordId)

@@ -188,11 +188,11 @@ const OpenIDProofPresentation: React.FC<OpenIDProofPresentationProps> = ({
           backgroundColor: ColorPallet.brand.secondaryBackground,
         }}>
         {footerButton(
-          t('Global.Accept'),
+          t('Global.Share'),
           handleAcceptTouched,
           ButtonType.Primary,
-          testIdWithKey('AcceptCredentialOffer'),
-          t('Global.Accept'),
+          testIdWithKey('Share'),
+          t('Global.Share'),
         )}
         {footerButton(
           t('Global.Decline'),

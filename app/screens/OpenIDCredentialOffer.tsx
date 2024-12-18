@@ -61,6 +61,10 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
     connectionLabel: {
       fontWeight: 'bold',
     },
+    loader: {
+      justifyContent: 'center',
+      flex: 1,
+    },
   })
   useEffect(() => {
     const requestCredential = async (params: Query) => {
@@ -158,7 +162,7 @@ const OpenIdCredentialOffer: React.FC<OpenIdCredentialOfferProps> = ({ navigatio
   }
   return (
     <SafeAreaView style={{ flexGrow: 1 }} edges={['bottom', 'left', 'right']}>
-      {loading ? <ActivityIndicator size={'large'} /> : null}
+      {loading ? <ActivityIndicator style={styles.loader} size={'large'} /> : null}
       {credentialRecord ? (
         <W3CCredentialRecord
           tables={tables}
