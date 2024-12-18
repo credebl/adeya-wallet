@@ -152,8 +152,8 @@
     "stream": "stream-browserify"
   },
   "resolutions": {
-    "@credo-ts/core": "0.5.13",
-    "@credo-ts/askar": "0.5.13",
+    "@credo-ts/core": "0.5.11",
+    "@credo-ts/askar": "0.5.11",
     "nanoid": "^5.0.9"
   }
 }
